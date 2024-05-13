@@ -2,13 +2,13 @@
     <form>
         <div>
             <label>Username:</label>
-            <input type="text" v-model="username"><br>
+            <input type="text" v-model="username" required><br>
             <label>Password:</label>
-            <input type="password" v-model="password"><br>
+            <input type="password" v-model="password" required><br>
             <button @click="loginHandle">Login</button><br>
         </div>
         <div>
-            <input type="checkbox">
+            <input type="checkbox" v-model="remember">
             <label>Remember me</label>
             <router-link to="/forgot">Forgot password?</router-link>
         </div>
@@ -24,6 +24,7 @@
   const res = ref('')
   const username = ref('')
   const password = ref('')
+  const remember = ref(0)
   
   function loginHandle() {
     axios.get(``)
