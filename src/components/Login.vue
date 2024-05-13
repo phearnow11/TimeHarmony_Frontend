@@ -10,7 +10,7 @@
         <div>
             <input type="checkbox">
             <label>Remember me</label>
-            <router-link to="/forgotpassword">Forgot password?</router-link>
+            <router-link to="/forgot">Forgot password?</router-link>
         </div>
     </form>
     <!-- <p v-if="res">Hello {{ res.name }}!</p>
