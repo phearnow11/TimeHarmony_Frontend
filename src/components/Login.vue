@@ -20,8 +20,6 @@
   <script setup>
   import axios from 'axios';
   import { ref } from 'vue'
-  import emitter from '../eventBus';
-  import router from '../router';
   
   const res = ref('')
   const username = ref('')
@@ -37,8 +35,6 @@
         }
         else {
           console.log(response.data)
-          emitter.emit('log-user', response.data);
-          router.push('/')
         }
       })
       .catch(function (error) {
