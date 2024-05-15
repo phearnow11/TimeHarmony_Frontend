@@ -13,8 +13,6 @@
           <router-link to="/forgot">Forgot password?</router-link>
       </div>
     </form>
-    <!-- <p v-if="res">Hello {{ res.name }}!</p>
-    <p v-if="res">You are {{ res.age }} year olds.</p> -->
   </template>
   
   <script setup>
@@ -22,7 +20,6 @@
   import { ref } from 'vue'
   import router from '../router'
   import {useUserStore} from '../stores/user'
-  const res = ref('')
   const username = ref('')
   const password = ref('')
   const remember = ref(0)
@@ -31,7 +28,6 @@
   function loginHandle() {
     axios.get(`http://localhost:8080/user/login?username=${username.value}&password=${password.value}`)
       .then(function (response) {
-        res.value = response.data
         if (response.data.user_id == null) { //Can not find user
           console.log(`Wrong username or password.`);
         }
