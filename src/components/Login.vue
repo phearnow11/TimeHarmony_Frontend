@@ -20,11 +20,13 @@
   <script setup>
   import axios from 'axios';
   import { ref } from 'vue'
-  
+  import router from '../router'
+  import {useUserStore} from '../stores/user'
   const res = ref('')
   const username = ref('')
   const password = ref('')
   const remember = ref(0)
+  const user = useUserStore()
   
   function loginHandle() {
     axios.get(`http://localhost:8080/user/login?username=${username.value}&password=${password.value}`)
@@ -35,6 +37,11 @@
         }
         else {
           console.log(response.data)
+          user.user_id = response.data.user_id
+          user.username = response.data.username
+          user.password = response.data.password
+          user.email = response.data.email
+          router.push(`/`)
         }
       })
       .catch(function (error) {
