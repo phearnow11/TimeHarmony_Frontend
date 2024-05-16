@@ -12,6 +12,9 @@
           <label>Remember me</label>
           <router-link to="/forgot">Forgot password?</router-link>
       </div>
+      <div>
+			<span>Don't have an account? </span><router-link to="/signup">Sign up here</router-link>
+      </div>
     </form>
   </template>
   
