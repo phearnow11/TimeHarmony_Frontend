@@ -54,7 +54,6 @@
       <div>or</div>
       <login-via-google/>
       <login-via-facebook/>
-
       <div>
         <span>Don't have an account? </span
         ><router-link to="/signup" class="hover-underline-animation"
@@ -100,9 +99,6 @@ function loginHandle() {
     });
 }
 
-function hello(params) {
-  console.log("hello");
-}
 </script>
 
 <style scoped>
