@@ -52,23 +52,8 @@
         <button class="th-p-btn w-96">Login</button>
       </div>
       <div>or</div>
-      <div class="flex justify-center items-center w-full">
-        <div @click="hello" class="th-s-btn w-96 flex items-center justify-between">
-          <i class="fa-brands fa-google ml-2"></i>
-          <span class="flex-1 text-center">Login via Google</span>
-          <div class="w-6"></div>
-        </div>
-      </div>
-      <div class="flex justify-center items-center w-full">
-        <div
-          type="submit"
-          class="th-s-btn w-96 flex items-center justify-between"
-        >
-          <i class="fa-brands fa-facebook-f ml-2"></i>
-          <span class="flex-1 text-center">Login via Facebook</span>
-          <div class="w-6"></div>
-        </div>
-      </div>
+      <login-via-google/>
+      <login-via-facebook/>
 
       <div>
         <span>Don't have an account? </span
@@ -85,6 +70,8 @@ import axios from "axios";
 import { ref } from "vue";
 import router from "../router";
 import { useUserStore } from "../stores/user";
+import LoginViaGoogle from "../components/LoginViaGoogle.vue";
+import LoginViaFacebook from "../components/LoginViaFacebook.vue";
 const username = ref("");
 const password = ref("");
 const remember = ref(0);
