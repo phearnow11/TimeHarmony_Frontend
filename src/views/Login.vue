@@ -1,36 +1,75 @@
 <template>
   <div class="flex justify-center items-center thisForm">
-    <form @submit.prevent="loginHandle">
-      <div>
-        <div class="form__group field">
-          <input type="password" class="form__field" placeholder="Name" />
-          <label for="name" class="form__label">Username</label>
+    <form
+      @submit.prevent="loginHandle"
+      class="flex w-96 flex-col justify-center items-center gap-4"
+    >
+      <div class="from-content">
+        <div class="form__group field w-96">
+          <input
+            type="text"
+            class="form__field"
+            placeholder="Username"
+            v-model="username"
+            required
+          />
+          <label for="username" class="form__label">Username</label>
         </div>
-        <div class="form__group field">
-          <input type="password" class="form__field" placeholder="Name" />
-          <label for="name" class="form__label">Password</label>
+        <div class="form__group field w-96">
+          <input
+            type="password"
+            class="form__field"
+            placeholder="Password"
+            v-model="password"
+            required
+          />
+          <label for="password" class="form__label">Password</label>
         </div>
         <br />
-        <button type="submit" class="th-p-btn">Login</button><br />
       </div>
-      <div>
 
-          <label class="container flex items-center text-center gap-1">
-            <input type="checkbox" />
-            <svg viewBox="0 0 64 64" height="1em" width="1em">
-              <path
-                d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
-                pathLength="575.0541381835938"
-                class="path"
-              ></path>
-            </svg>
-            <label>Remember me</label>
-          </label>
-
-        <router-link to="/forgot" class="hover-underline-animation"
-          >Forgot password?</router-link
+      <div class="row-remember w-96 grid grid-cols-2 gap-4">
+        <label
+          class="container flex justify-start items-center text-center gap-2"
         >
+          <input type="checkbox" />
+          <svg viewBox="0 0 64 64" height="1em">
+            <path
+              d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+              pathLength="575.0541381835938"
+              class="path"
+            ></path>
+          </svg>
+          <label>Remember me</label>
+        </label>
+        <div class="flex justify-end">
+          <router-link to="/forgot" class="hover-underline-animation"
+            >Forgot password?</router-link
+          >
+        </div>
       </div>
+      <div class="flex justify-center items-center w-full">
+        <button class="th-p-btn w-96">Login</button>
+      </div>
+      <div>or</div>
+      <div class="flex justify-center items-center w-full">
+        <div @click="hello" class="th-s-btn w-96 flex items-center justify-between">
+          <i class="fa-brands fa-google ml-2"></i>
+          <span class="flex-1 text-center">Login via Google</span>
+          <div class="w-6"></div>
+        </div>
+      </div>
+      <div class="flex justify-center items-center w-full">
+        <div
+          type="submit"
+          class="th-s-btn w-96 flex items-center justify-between"
+        >
+          <i class="fa-brands fa-facebook-f ml-2"></i>
+          <span class="flex-1 text-center">Login via Facebook</span>
+          <div class="w-6"></div>
+        </div>
+      </div>
+
       <div>
         <span>Don't have an account? </span
         ><router-link to="/signup" class="hover-underline-animation"
@@ -73,10 +112,14 @@ function loginHandle() {
       console.log(error);
     });
 }
+
+function hello(params) {
+  console.log("hello");
+}
 </script>
 
 <style scoped>
-.thisForm{
+.thisForm {
   height: 70vh;
 }
 </style>

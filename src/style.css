@@ -12,14 +12,17 @@
   margin: 0 2%;
   --primary: #FFBD59;
   --secondary: #E6C591; 
+  --wait: #9b9b9b;
 }
 
 .hover-underline-animation {
   position: relative;
   text-decoration: none;
+  color: var(--wait);
 }
 
 .hover-underline-animation::after {
+  color: var(--secondary);
   content: '';
   position: absolute;
   width: 0;
@@ -34,7 +37,12 @@
 }
 
 .hover-underline-animation:hover::after {
+  color: var(--secondary);
   width: 100%;
+}
+
+.hover-underline-animation:hover {
+  color: var(--secondary);
 }
 
 .th-p-btn {
@@ -74,7 +82,7 @@
   align-items: center;
   border: 2px solid #ffbd59;
   box-sizing: border-box;
-  color: #E6C591;
+  color: var(--secondary);
   cursor: pointer;
   display: inline-flex;
   height: 48px;
@@ -107,8 +115,6 @@
 .form__group {
   position: relative;
   padding: 20px 0 0;
-  width: 100%;
-  max-width: 180px;
 }
 
 .form__field {
