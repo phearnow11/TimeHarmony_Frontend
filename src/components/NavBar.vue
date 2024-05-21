@@ -7,15 +7,11 @@
       <img src="../assets/time-harmony.png" class="h-16 max-w-full object-contain">
     </router-link>
     <div class="submenu flex flex-row-reverse">
-      <div @click="goToLogin" class="hover-underline-animation">Have an account? Login</div>
+      <router-link to="/login" class="hover-underline-animation">Have an account? Login</router-link>
     </div>
   </header>
 </template>
 
 <script setup>
-  import router from '../router';
 import MenuButton from './MenuButton.vue';
-  function goToLogin() {
-    router.push('/login')
-  }
 </script>
