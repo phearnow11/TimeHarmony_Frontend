@@ -1,7 +1,7 @@
 <template>
-  <div class="flex items-center justify-center min-h-screen">
+  <div class="flex items-center justify-center thisForm">
     <form @submit.prevent="signupHandle">
-      <div class="flex flex-col items-center space-y-5">
+      <div class="flex flex-col items-center">
         <div class="form__group field w-96">
           <input
             type="email"
@@ -86,14 +86,13 @@
             class="form__field"
             placeholder="Address"
             v-model="address"
-            required
           />
           <label for="address" class="form__label">Address</label>
         </div>
 
-        <button type="submit" class="w-full th-p-btn">Sign up</button>
+        <button type="submit" class="w-full th-p-btn mt-5">Sign up</button>
 
-        <div>
+        <div class="mt-4">
           <span>Already have an account? </span>
           <router-link to="/login" class="hover-underline-animation"
             >Log in here</router-link
@@ -137,3 +136,9 @@ function signupHandle() {
     });
 }
 </script>
+
+<style scoped>
+.thisForm {
+  height: 80vh;
+}
+</style>
