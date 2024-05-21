@@ -13,7 +13,9 @@
     "mitt": "^3.0.1",
     "pinia": "^2.1.7",
     "vue": "^3.4.21",
-    "vue-router": "^4.3.2"
+    "vue-google-oauth2": "^1.5.10",
+    "vue-router": "^4.3.2",
+    "vue3-google-login": "^2.0.26"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",
