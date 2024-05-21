@@ -14,8 +14,8 @@
         <button type="submit" class="th-p-btn">Login</button><br />
       </div>
       <div>
-        <div class="flex flex-row">
-          <label class="container">
+
+          <label class="container flex items-center text-center gap-1">
             <input type="checkbox" />
             <svg viewBox="0 0 64 64" height="1em" width="1em">
               <path
@@ -24,9 +24,8 @@
                 class="path"
               ></path>
             </svg>
+            <label>Remember me</label>
           </label>
-          <label>Remember me</label>
-        </div>
 
         <router-link to="/forgot" class="hover-underline-animation"
           >Forgot password?</router-link
