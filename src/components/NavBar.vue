@@ -13,5 +13,5 @@
 </template>
 
 <script setup>
-  import MenuButton from './MenuButton.vue';
+import MenuButton from './MenuButton.vue';
 </script>
