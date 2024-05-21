@@ -1,0 +1,203 @@
+/* ./src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+:root{
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: #212121;
+  color: var(--secondary);
+  margin: 0 2%;
+  --primary: #FFBD59;
+  --secondary: #E6C591; 
+}
+
+.hover-underline-animation {
+  position: relative;
+  text-decoration: none;
+}
+
+.hover-underline-animation::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  display: block;
+  margin: 0 auto;
+  background: #FFBD59;
+  transition: width 0.4s ease-in-out;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -2px;
+}
+
+.hover-underline-animation:hover::after {
+  width: 100%;
+}
+
+.th-p-btn {
+  align-items: center;
+  background-color: #ffbd59;
+  border: 2px solid #ffbd59;
+  box-sizing: border-box;
+  color: #1e1e1e;
+  cursor: pointer;
+  display: inline-flex;
+  height: 48px;
+  justify-content: center;
+  letter-spacing: -0.8px;
+  line-height: 24px;
+  min-width: 140px;
+  outline: 0;
+  padding: 0 17px;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.3s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.th-p-btn:hover {
+  background-color: #ffbd59df;
+  border-color: #ffbd59;
+}
+
+.th-p-btn:active {
+  background-color: #ffbd59df;
+  border-color: #ffbd59;
+}
+
+.th-s-btn {
+  align-items: center;
+  border: 2px solid #ffbd59;
+  box-sizing: border-box;
+  color: #E6C591;
+  cursor: pointer;
+  display: inline-flex;
+  height: 48px;
+  justify-content: center;
+  letter-spacing: -0.8px;
+  line-height: 24px;
+  min-width: 140px;
+  outline: 0;
+  padding: 0 17px;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.3s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.th-s-btn:hover {
+  border-color: #ffbd59df;
+  color: #E6C591;
+  fill: #ffbd59df;
+}
+
+.th-s-btn:active {
+  border-color: #ffbd59df;
+  color: #E6C591;
+  fill: #ffbd59df;
+}
+
+.form__group {
+  position: relative;
+  padding: 20px 0 0;
+  width: 100%;
+  max-width: 180px;
+}
+
+.form__field {
+  width: 100%;
+  border: none;
+  border-bottom: 0.5px solid #9b9b9b;
+  outline: 0;
+  font-size: 17px;
+  color: #fff;
+  padding: 7px 0;
+  background: transparent;
+  transition: border-color 0.2s;
+}
+
+.form__field::placeholder {
+  color: transparent;
+}
+
+.form__field:placeholder-shown ~ .form__label {
+  font-size: 17px;
+  cursor: text;
+  top: 20px;
+}
+
+.form__label {
+  position: absolute;
+  top: 0;
+  display: block;
+  transition: 0.2s;
+  font-size: 17px;
+  color: #9b9b9b;
+  pointer-events: none;
+}
+
+.form__field:focus {
+  padding-bottom: 6px;
+  border-width: 2px;
+  border-image: linear-gradient(#FFBD59,#FFBD59);
+  border-image-slice: 1;
+}
+
+.form__field:focus ~ .form__label {
+  position: absolute;
+  top: 0;
+  display: block;
+  transition: 0.2s;
+  font-size: 17px;
+  color: #E6C591;
+}
+
+/* reset input */
+.form__field:required, .form__field:invalid {
+  box-shadow: none;
+}
+
+@media (min-width: 768px) {
+  .th-p-btn {
+    min-width: 170px;
+  }
+
+  .th-s-btn {
+    min-width: 170px;
+  }
+}
+
+.container {
+  cursor: pointer;
+}
+
+.container input {
+  display: none;
+}
+
+.container svg {
+  overflow: visible;
+}
+
+.path {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke-dasharray 0.5s ease, stroke-dashoffset 0.5s ease;
+  stroke-dasharray: 241 9999999;
+  stroke-dashoffset: 0;
+}
+
+.container input:checked ~ svg .path {
+  stroke-dasharray: 70.5096664428711 9999999;
+  stroke-dashoffset: -262.2723388671875;
+}
