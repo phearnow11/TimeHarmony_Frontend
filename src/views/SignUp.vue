@@ -46,7 +46,7 @@
           <label for="repassword" class="form__label">Confirm password</label>
         </div>
 
-        <div class="form__group flex space-x-4 w-96">
+        <div class="flex space-x-4 w-96">
           <div class="form__group w-1/2">
             <input
               type="text"
