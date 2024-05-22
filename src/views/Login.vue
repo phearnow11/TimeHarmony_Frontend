@@ -73,7 +73,7 @@ import LoginViaGoogle from "../components/LoginViaGoogle.vue";
 import LoginViaFacebook from "../components/LoginViaFacebook.vue";
 const username = ref("");
 const password = ref("");
-const remember = ref(0);
+const remember = ref(false);
 const user = useUserStore();
 
 function loginHandle() {
@@ -91,6 +91,12 @@ function loginHandle() {
         user.username = response.data.username;
         user.password = response.data.password;
         user.email = response.data.email;
+
+        // Set cookie if remember is checked
+        if (remember.value) {
+          Cookies.set('user', JSON.stringify(response.data), { expires: 180 });// 6 months
+        }
+
         router.push(`/`);
       }
     })

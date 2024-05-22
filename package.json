@@ -11,6 +11,7 @@
   "dependencies": {
     "@healerlab/vue3-facebook-login": "^0.1.7",
     "axios": "^1.6.8",
+    "js-cookie": "^3.0.5",
     "mitt": "^3.0.1",
     "pinia": "^2.1.7",
     "vue": "^3.4.21",
