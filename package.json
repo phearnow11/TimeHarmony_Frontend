@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@healerlab/vue3-facebook-login": "^0.1.7",
     "axios": "^1.6.8",
     "mitt": "^3.0.1",
     "pinia": "^2.1.7",
