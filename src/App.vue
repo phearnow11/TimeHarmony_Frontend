@@ -8,5 +8,5 @@
 </template>
 
 <style scoped>
-
+  
 </style>
