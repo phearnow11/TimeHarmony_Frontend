@@ -10,9 +10,12 @@
   },
   "dependencies": {
     "@healerlab/vue3-facebook-login": "^0.1.7",
+    "@preline/carousel": "^2.1.0",
+    "@preline/overlay": "^2.1.0",
     "axios": "^1.6.8",
     "mitt": "^3.0.1",
     "pinia": "^2.1.7",
+    "preline": "^2.1.0",
     "vue": "^3.4.21",
     "vue-google-oauth2": "^1.5.10",
     "vue-router": "^4.3.2",
