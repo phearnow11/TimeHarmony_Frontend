@@ -188,6 +188,11 @@ function menu() {
 </template>
 
 <style scoped>
+#docs-sidebar{
+  display: none;
+}
+
+
 .menu-container {
     display: flex;
     align-items: center;

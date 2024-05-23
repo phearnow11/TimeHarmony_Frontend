@@ -3,7 +3,7 @@
     {{ userStore.username }}
     <button class="th-p-btn w-10 " @click="logout">Log out</button>
   </div>
-  <carousel/>
+
   
 <!-- Slider -->
 
@@ -15,7 +15,7 @@
 <script setup>
 import { useUserStore } from '../stores/user';
 import { useRouter } from 'vue-router';
-import Carousel from '../components/Carousel.vue';
+
 
 const userStore = useUserStore();
 const router = useRouter();
