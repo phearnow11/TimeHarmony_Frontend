@@ -5,7 +5,6 @@ export default {
     './public/**/*.html',
     './src/**/*.{js,jsx,ts,tsx,vue}',
     'node_modules/preline/dist/*.js',
-
   ],
   
   theme: {

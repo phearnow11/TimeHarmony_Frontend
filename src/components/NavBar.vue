@@ -1,7 +1,7 @@
 <template>
   <header class="myheader grid grid-cols-3 gap-4 h-20 items-center w-full top-0 z-50">
     <div>
-      <menu-button />
+      <side-bar />
     </div>
     <router-link class="flex justify-center items-center h-full" to="/">
       <img src="../assets/time-harmony.png" class="h-16 max-w-full object-contain">
@@ -13,5 +13,5 @@
 </template>
 
 <script setup>
-import MenuButton from './MenuButton.vue';
+import SideBar from './SideBar.vue';
 </script>
