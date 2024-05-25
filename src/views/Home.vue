@@ -1,9 +1,10 @@
 <template>
+  <carousel/>
   <div v-if="userStore.username">
     {{ userStore.username }}
     <button class="th-p-btn w-10 " @click="logout">Log out</button>
   </div>
-
+  
   
 <!-- Slider -->
 
@@ -15,7 +16,7 @@
 <script setup>
 import { useUserStore } from '../stores/user';
 import { useRouter } from 'vue-router';
-
+import carousel from '../components/Carousel.vue'
 
 const userStore = useUserStore();
 const router = useRouter();
