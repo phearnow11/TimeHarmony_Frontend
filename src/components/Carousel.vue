@@ -1,61 +1,116 @@
 <template>
-  <!-- Slider -->
-<div data-hs-carousel='{
-    "loadingClasses": "opacity-0",
-    "isAutoPlay": true
-  }' class="relative">
-  <div class="hs-carousel relative overflow-hidden w-full min-h-96 bg-white">
-    <div class="hs-carousel-body absolute top-0 bottom-0 start-0 flex flex-nowrap transition-transform duration-700 opacity-0">
-      <div class="hs-carousel-slide">
-        <div class="flex justify-center h-full bg-gray-100 p-6 dark:bg-neutral-900">
-          <span class="self-center text-4xl text-yellow-   transition duration-700 dark:text-white">Time Harmony</span>
-        </div>
-      </div>
-      <div class="hs-carousel-slide">
-        <div class="flex justify-center h-full bg-gray-200 p-6 dark:bg-neutral-800">
-          <span class="self-center text-4xl text-gray-800 transition duration-700 dark:text-white">Best Viet Nam Shop</span>
-        </div>
-      </div>
-      <div class="hs-carousel-slide">
-        <div class="flex justify-center h-full bg-gray-300 p-6 dark:bg-neutral-700">
-          <span class="self-center text-4xl text-gray-800 transition duration-700 dark:text-white">Your best place for buying and selling watch</span>
-        </div>
+  <div class="relative overflow-hidden w-full h-64" style="background-color: rgb(30, 30, 30);">
+    <!-- Slides -->
+    <div
+      class="flex transition-transform duration-700"
+      :style="{ transform: `translateX(-${currentIndex * 100}%)` }"
+      @mouseover="stopAutoplay"
+      @mouseleave="startAutoplay"
+    >
+      <div
+        v-for="(slide, index) in slides"
+        :key="index"
+        class="w-full h-full flex-shrink-0 flex items-center justify-center text-primary text-2xl"
+      >
+        {{ slide.content }}
       </div>
     </div>
+
+    <!-- Navigation Buttons -->
+    <button @click="prevSlide" class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-gray-600 rounded w-8 h-8 flex items-center justify-center">
+      <img src="../assets/arr.svg" class="colored-img w-5 rotate-180" alt="">
+    </button>
+    <button @click="nextSlide" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-600 rounded w-8 h-8 flex items-center justify-center">
+      <img src="../assets/arr.svg" class="colored-img w-5" alt="">
+    </button>
+
+    <!-- Navigation Dots -->
+    <div class="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
+      <div
+        v-for="(slide, index) in slides"
+        :key="index"
+        :class="{
+          'bg-primary': index === currentIndex,
+          'border-primary': index === currentIndex,
+          'bg-black-99': index !== currentIndex,
+          'border-secondary': index !== currentIndex
+        }"
+        class="w-7 h-2 border-2 cursor-pointer flex items-center justify-center"
+        @click="goToSlide(index)"
+      ></div>
+    </div>
   </div>
-
-  <button type="button" class="hs-carousel-prev hs-carousel:disabled:opacity-50 disabled:pointer-events-none absolute inset-y-0 start-0 inline-flex justify-center items-center w-[46px] h-full text-gray-800 hover:bg-gray-800/10 rounded-s-lg dark:text-white dark:hover:bg-white/10">
-    <span class="text-2xl" aria-hidden="true">
-      <svg class="flex-shrink-0 size-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="m15 18-6-6 6-6"></path>
-      </svg>
-    </span>
-    <span class="sr-only">Previous</span>
-  </button>
-  <button type="button" class="hs-carousel-next hs-carousel:disabled:opacity-50 disabled:pointer-events-none absolute inset-y-0 end-0 inline-flex justify-center items-center w-[46px] h-full text-gray-800 hover:bg-gray-800/10 rounded-e-lg dark:text-white dark:hover:bg-white/10">
-    <span class="sr-only">Next</span>
-    <span class="text-2xl" aria-hidden="true">
-      <svg class="flex-shrink-0 size-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="m9 18 6-6-6-6"></path>
-      </svg>
-    </span>
-  </button>
-
-  <div class="hs-carousel-pagination flex justify-center absolute bottom-3 start-0 end-0 space-x-2">
-  <span class="hs-carousel-active:bg-yellow-400  hs-carousel-active:border-yellow-400 rectangle-pagination border border-yellow-400 cursor-pointer dark:border-neutral-600 dark:hs-carousel-active:bg-yellow-400 dark:hs-carousel-active:border-yellow-400"></span>
-  <span class="hs-carousel-active:bg-yellow-400  hs-carousel-active:border-yellow-400 rectangle-pagination border border-yellow-400 cursor-pointer dark:border-neutral-600 dark:hs-carousel-active:bg-yellow-400 dark:hs-carousel-active:border-yellow-400"></span>
-  <span class="hs-carousel-active:bg-yellow-400  hs-carousel-active:border-yellow-400 rectangle-pagination border border-yellow-400 cursor-pointer dark:border-neutral-600 dark:hs-carousel-active:bg-yellow-400 dark:hs-carousel-active:border-yellow-400"></span>
-</div>
-</div>
-<!-- End Slider -->
 </template>
 
-<script>
-export default {
+<script setup>
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
-}
+const slides = [
+  { content: 'Time harmony' },
+  { content: 'Best Vietnam shop' },
+  { content: 'Your best place for buying and selling watches' }
+];
+
+const currentIndex = ref(0);
+let interval = null;
+
+const startAutoplay = () => {
+  interval = setInterval(nextSlide, 6000);
+};
+
+const stopAutoplay = () => {
+  clearInterval(interval);
+};
+
+const nextSlide = () => {
+  if (currentIndex.value === slides.length - 1) {
+    currentIndex.value = 0;
+  } else {
+    currentIndex.value++;
+  }
+};
+
+const prevSlide = () => {
+  if (currentIndex.value === 0) {
+    currentIndex.value = slides.length - 1;
+  } else {
+    currentIndex.value--;
+  }
+};
+
+const goToSlide = (index) => {
+  currentIndex.value = index;
+};
+
+onMounted(() => {
+  startAutoplay();
+});
+
+onBeforeUnmount(() => {
+  clearInterval(interval);
+});
 </script>
 
-<style>
+<style scoped>
+.carousel {
+  position: relative;
+  overflow: hidden;
+}
+.carousel img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
 
+button {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+}
+button:focus {
+  outline: none;
+}
 </style>

@@ -1,224 +1,301 @@
-<script setup>
-import { ref } from 'vue';
+<template>
+  <div id="app" class="relative">
+    <!-- Menu Button -->
+    <div @click="toggleSidebar" class="menu-container">
+      <div class="menu-button">
+        <div class="line"></div>
+        <div class="line middle"></div>
+        <div class="line"></div>
+      </div>
+      <span class="menu-label">Menu</span>
+    </div>
 
-const isSidebarVisible = ref(false);
+    <!-- Sidebar with Dimmer -->
+    <transition name="slide">
+      <div v-if="isSidebarOpen" class="fixed inset-0 flex z-40">
+        <!-- Sidebar -->
+        <div
+          class="absolute flex top-0 h-screen z-20 transform transition-transform duration-700"
+          :class="isSidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+        >
+          
+
+          <!-- Sidebar Content -->
+          <div class="w-64 bg-black-99 overflow-hidden flex justify-center">
+            <aside
+              class="flex flex-col w-64 h-screen px-4 py-8 overflow-y-auto border-r rtl:border-r-0 rtl:border-l bg-black-99"
+            >
+              <a>
+                <img
+                  class="w-auto h-auto"
+                  src="/src/assets/time-harmony.png"
+                  alt=""
+                />
+              </a>
+
+              <div class="relative mt-6">
+                <div class="form__group field w-56">
+                  <input
+                    type="text"
+                    class="form__field"
+                    placeholder="Search"
+                    v-model="search"
+                    required
+                  />
+                  <label for="search" class="form__label">Search</label>
+                </div>
+              </div>
+
+              <div class="flex flex-col justify-between flex-1 mt-6">
+                <nav>
+                  <a
+                    class="flex items-center px-4 py-2 text-black bg-primary"
+                    href="#"
+                  >
+                    <svg
+                      class="w-5 h-5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M19 11H5M19 11C20.1046 11 21 11.8954 21 13V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V13C3 11.8954 3.89543 11 5 11M19 11V9C19 7.89543 18.1046 7 17 7M5 11V9C5 7.89543 5.89543 7 7 7M7 7V5C7 3.89543 7.89543 3 9 3H15C16.1046 3 17 3.89543 17 5V7M7 7H17"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+
+                    <span class="mx-4 font-medium">Dashboard</span>
+                  </a>
+
+                  <a
+                    class="flex items-center px-4 py-2 mt-5 transition-colors duration-300 transform dark:text-gray-99 hover:bg-primary dark:hover:bg-primary dark:hover:text-black-99"
+                    href="#"
+                  >
+                    <svg
+                      class="w-5 h-5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M12 14C8.13401 14 5 17.134 5 21H19C19 17.134 15.866 14 12 14Z"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+
+                    <span class="mx-4 font-medium">Accounts</span>
+                  </a>
+
+                  <a
+                    class="flex items-center px-4 py-2 mt-5 transition-colors duration-300 transform dark:text-gray-99 hover:bg-primary dark:hover:bg-primary dark:hover:text-black-99"
+                    href="#"
+                  >
+                    <svg
+                      class="w-5 h-5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M15 5V7M15 11V13M15 17V19M5 5C3.89543 5 3 5.89543 3 7V10C4.10457 10 5 10.8954 5 12C5 13.1046 4.10457 14 3 14V17C3 18.1046 3.89543 19 5 19H19C20.1046 19 21 18.1046 21 17V14C19.8954 14 19 13.1046 19 12C19 10.8954 19.8954 10 21 10V7C21 5.89543 20.1046 5 19 5H5Z"
+                        stroke="currentColor"
+                        stroke-width="2"
+
+                      />
+                    </svg>
+
+                    <span class="mx-4 font-medium">Tickets</span>
+                  </a>
+
+                  <a
+                    class="flex items-center px-4 py-2 mt-5 transition-colors duration-300 transform dark:text-gray-99 hover:bg-primary dark:hover:bg-primary dark:hover:text-black-99"
+                    href="#"
+                  >
+                    <svg
+                      class="w-5 h-5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M10.3246 4.31731C10.751 2.5609 13.249 2.5609 13.6754 4.31731C13.9508 5.45193 15.2507 5.99038 16.2478 5.38285C17.7913 4.44239 19.5576 6.2087 18.6172 7.75218C18.0096 8.74925 18.5481 10.0492 19.6827 10.3246C21.4391 10.751 21.4391 13.249 19.6827 13.6754C18.5481 13.9508 18.0096 15.2507 18.6172 16.2478C19.5576 17.7913 17.7913 19.5576 16.2478 18.6172C15.2507 18.0096 13.9508 18.5481 13.6754 19.6827C13.249 21.4391 10.751 21.4391 10.3246 19.6827C10.0492 18.5481 8.74926 18.0096 7.75219 18.6172C6.2087 19.5576 4.44239 17.7913 5.38285 16.2478C5.99038 15.2507 5.45193 13.9508 4.31731 13.6754C2.5609 13.249 2.5609 10.751 4.31731 10.3246C5.45193 10.0492 5.99037 8.74926 5.38285 7.75218C4.44239 6.2087 6.2087 4.44239 7.75219 5.38285C8.74926 5.99037 10.0492 5.45193 10.3246 4.31731Z"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+
+                    <span class="mx-4 font-medium">Settings</span>
+                  </a>
+
+                  <hr class="my-6 border-black-99 dark:border-black-99" />
+
+                  <a
+                    class="flex items-center px-4 py-2 mt-5 transition-colors duration-300 transform dark:text-gray-99 hover:bg-primary dark:hover:bg-primary dark:hover:text-black-99"
+                    href="#"
+                  >
+                    <svg
+                      class="w-5 h-5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M15 5V7M15 11V13M15 17V19M5 5C3.89543 5 3 5.89543 3 7V10C4.10457 10 5 10.8954 5 12C5 13.1046 4.10457 14 3 14V17C3 18.1046 3.89543 19 5 19H19C20.1046 19 21 18.1046 21 17V14C19.8954 14 19 13.1046 19 12C19 10.8954 19.8954 10 21 10V7C21 5.89543 20.1046 5 19 5H5Z"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+
+                    <span class="mx-4 font-medium">Tickets</span>
+                  </a>
+
+                  <a
+                    class="flex items-center px-4 py-2 mt-5 transition-colors duration-300 transform dark:text-gray-99 hover:bg-primary dark:hover:bg-primary dark:hover:text-black-99"
+                    href="#"
+                  >
+                    <svg
+                      class="w-5 h-5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M10.3246 4.31731C10.751 2.5609 13.249 2.5609 13.6754 4.31731C13.9508 5.45193 15.2507 5.99038 16.2478 5.38285C17.7913 4.44239 19.5576 6.2087 18.6172 7.75218C18.0096 8.74925 18.5481 10.0492 19.6827 10.3246C21.4391 10.751 21.4391 13.249 19.6827 13.6754C18.5481 13.9508 18.0096 15.2507 18.6172 16.2478C19.5576 17.7913 17.7913 19.5576 16.2478 18.6172C15.2507 18.0096 13.9508 18.5481 13.6754 19.6827C13.249 21.4391 10.751 21.4391 10.3246 19.6827C10.0492 18.5481 8.74926 18.0096 7.75219 18.6172C6.2087 19.5576 4.44239 17.7913 5.38285 16.2478C5.99038 15.2507 5.45193 13.9508 4.31731 13.6754C2.5609 13.249 2.5609 10.751 4.31731 10.3246C5.45193 10.0492 5.99037 8.74926 5.38285 7.75218C4.44239 6.2087 6.2087 4.44239 7.75219 5.38285C8.74926 5.99037 10.0492 5.45193 10.3246 4.31731Z"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+
+                    <span class="mx-4 font-medium">Settings</span>
+                  </a>
+                </nav>
+
+                <a href="#" class="flex items-center px-4 -mx-2">
+                  <img
+                    class="object-cover mx-2 rounded-full h-9 w-9"
+                    src="../assets/yairozu.jpg"
+                    alt="avatar"
+                  />
+                  <span
+                    class="mx-2 font-medium text-gray-99"
+                    >Yairozu</span
+                  >
+                </a>
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        <!-- Dimmer -->
+        <transition name="fade">
+          <div
+            v-if="isSidebarOpen"
+            @click="toggleSidebar"
+            class="flex-1 bg-gray-99 bg-opacity-75 active:outline-none z-10"
+          ><!-- Close Button -->
+        <button class="absolute top-4 right-4 text-2xl focus:outline-none">
+            <img src="../assets/x-letter.svg" class="w-8" alt="">
+          </button></div>
+          
+        </transition>
+        
+      </div>
+    </transition>
+  </div>
+</template>
+
+<script setup>
+import { ref } from "vue";
+
+const isSidebarOpen = ref(false);
 
 function toggleSidebar() {
-  isSidebarVisible.value = !isSidebarVisible.value;
-}
-
-function menu() {
-  toggleSidebar();
+  isSidebarOpen.value = !isSidebarOpen.value;
 }
 </script>
 
-<template>
-  <!-- Menu Button -->
-  <div @click="menu" data-hs-overlay="#docs-sidebar" aria-controls="docs-sidebar" aria-label="Toggle navigation" class="menu-container">
-    <div class="menu-button">
-      <div class="line"></div>
-      <div class="line middle"></div>
-      <div class="line"></div>
-    </div>
-    <span class="menu-label">Menu</span>
-  </div>
-
-  <!-- Sidebar -->
-<div id="docs-sidebar" class="hs-overlay [--auto-close:lg] hs-overlay-open:translate-x-0 -translate-x-full transition-all duration-300 transform hidden fixed top-0 start-0 bottom-0 z-[60] w-64 bg-white border-e border-gray-200 pt-7 pb-10 overflow-y-auto lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500 dark:bg-neutral-800 dark:border-neutral-700">
-  <div class="px-6">
-    <a class="flex-none text-xl font-semibold dark:text-white" href="#" aria-label="Brand">Brand</a>
-  </div>
-  <nav class="hs-accordion-group p-6 w-full flex flex-col flex-wrap" data-hs-accordion-always-open>
-    <ul class="space-y-1.5">
-      <li>
-        <a class="flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-gray-700 rounded-lg hover:bg-gray-100 dark:bg-neutral-700 dark:text-white" href="#">
-          <svg class="size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-          Dashboard
-        </a>
-      </li>
-
-      <li class="hs-accordion" id="users-accordion">
-        <button type="button" class="hs-accordion-toggle hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300 dark:hs-accordion-active:text-white">
-          <svg class="size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          Users
-
-          <svg class="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 group-hover:text-gray-500 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
-
-          <svg class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 group-hover:text-gray-500 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-        </button>
-
-        <div id="users-accordion" class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden">
-          <ul class="hs-accordion-group ps-3 pt-2" data-hs-accordion-always-open>
-            <li class="hs-accordion" id="users-accordion-sub-1">
-              <button type="button" class="hs-accordion-toggle hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300 dark:hs-accordion-active:text-white">
-                Sub Menu 1
-
-                <svg class="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 group-hover:text-gray-500 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
-
-                <svg class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 group-hover:text-gray-500 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-              </button>
-
-              <div id="users-accordion-sub-1" class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden">
-                <ul class="pt-2 ps-2">
-                  <li>
-                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-300" href="#">
-                      Link 1
-                    </a>
-                  </li>
-                  <li>
-                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-300" href="#">
-                      Link 2
-                    </a>
-                  </li>
-                  <li>
-                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-300" href="#">
-                      Link 3
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </li>
-            <li class="hs-accordion" id="users-accordion-sub-2">
-              <button type="button" class="hs-accordion-toggle hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300 dark:hs-accordion-active:text-white">
-                Sub Menu 2
-
-                <svg class="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 group-hover:text-gray-500 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
-
-                <svg class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 group-hover:text-gray-500 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-              </button>
-
-              <div id="users-accordion-sub-2" class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden ps-2">
-                <ul class="pt-2 ps-2">
-                  <li>
-                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-300" href="#">
-                      Link 1
-                    </a>
-                  </li>
-                  <li>
-                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-300" href="#">
-                      Link 2
-                    </a>
-                  </li>
-                  <li>
-                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-300" href="#">
-                      Link 3
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </li>
-
-      <li class="hs-accordion" id="account-accordion">
-        <button type="button" class="hs-accordion-toggle hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300 dark:hs-accordion-active:text-white">
-          <svg class="size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="15" r="3"/><circle cx="9" cy="7" r="4"/><path d="M10 15H6a4 4 0 0 0-4 4v2"/><path d="m21.7 16.4-.9-.3"/><path d="m15.2 13.9-.9-.3"/><path d="m16.6 18.7.3-.9"/><path d="m19.1 12.2.3-.9"/><path d="m19.6 18.7-.4-1"/><path d="m16.8 12.3-.4-1"/><path d="m14.3 16.6 1-.4"/><path d="m20.7 13.8 1-.4"/></svg>
-          Account
-
-          <svg class="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 group-hover:text-gray-500 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
-
-          <svg class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 group-hover:text-gray-500 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-        </button>
-
-        <div id="account-accordion" class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden">
-          <ul class="pt-2 ps-2">
-            <li>
-              <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-300" href="#">
-                Link 1
-              </a>
-            </li>
-            <li>
-              <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-300" href="#">
-                Link 2
-              </a>
-            </li>
-            <li>
-              <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-300" href="#">
-                Link 3
-              </a>
-            </li>
-          </ul>
-        </div>
-      </li>
-
-      <li class="hs-accordion" id="projects-accordion">
-        <button type="button" class="hs-accordion-toggle hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300 dark:hs-accordion-active:text-white">
-          <svg class="size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 2H8.6c-.4 0-.8.2-1.1.5-.3.3-.5.7-.5 1.1v12.8c0 .4.2.8.5 1.1.3.3.7.5 1.1.5h9.8c.4 0 .8-.2 1.1-.5.3-.3.5-.7.5-1.1V6.5L15.5 2z"/><path d="M3 7.6v12.8c0 .4.2.8.5 1.1.3.3.7.5 1.1.5h9.8"/><path d="M15 2v5h5"/></svg>
-          Projects
-
-          <svg class="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 group-hover:text-gray-500 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
-
-          <svg class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 group-hover:text-gray-500 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-        </button>
-
-        <div id="projects-accordion" class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden">
-          <ul class="pt-2 ps-2">
-            <li>
-              <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-300" href="#">
-                Link 1
-              </a>
-            </li>
-            <li>
-              <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-300" href="#">
-                Link 2
-              </a>
-            </li>
-            <li>
-              <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-300" href="#">
-                Link 3
-              </a>
-            </li>
-          </ul>
-        </div>
-      </li>
-
-      <li><a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300" href="#">
-        <svg class="size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
-        Calendar
-      </a></li>
-      <li><a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300" href="#">
-        <svg class="size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-        Documentation
-      </a></li>
-    </ul>
-  </nav>
-</div>
-
-</template>
-
 <style scoped>
 .menu-container {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 }
 
 .menu-button {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    width: 25px;
-    height: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 25px;
+  height: 24px;
 }
 
 .line {
-    width: 100%;
-    height: 2px;
-    background-color: #FFBD59;
-    transition: all 0.3s ease;
+  width: 100%;
+  height: 2px;
+  background-color: #ffbd59;
+  transition: all 0.3s ease;
 }
 
 .menu-container:hover .middle {
-    width: 150%;
+  width: 150%;
 }
 
 .menu-label {
-    font-size: 16px;
-    margin-left: 5px;  
-    transition: margin-left 0.3s ease;
+  font-size: 16px;
+  margin-left: 5px;
+  transition: margin-left 0.3s ease;
 }
 .menu-container:hover .menu-label {
-    margin-left: 20px;
+  margin-left: 20px;
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform 0.7s ease, opacity 0.7s ease;
+}
+
+.slide-enter-from,
+.slide-leave-to {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+.slide-enter-to,
+.slide-leave-from {
+  transform: translateX(0);
+  opacity: 1;
 }
 </style>
