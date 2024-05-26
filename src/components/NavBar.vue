@@ -13,5 +13,5 @@
 </template>
 
 <script setup>
-import SideBar from './SideBar.vue';
+  import SideBar from './SideBar.vue';
 </script>
