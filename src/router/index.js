@@ -34,13 +34,13 @@ const router = createRouter({
   ]
 });
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to) => {
   const publicPages = ['/login', '/forgot', '/signup'];
   const authRequired = !publicPages.includes(to.path);
   const auth = useAuthStore()
 
   if (authRequired && !auth.user) {
-    return '/'
+    return '/login'
   }
 })
 

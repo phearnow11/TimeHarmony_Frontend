@@ -13,7 +13,7 @@ export const useAuthStore = defineStore('auth', {
         async login(username, password) {
             try {
                 const res = await axios.post(
-                    'http://localhost:8080/token',
+                    'http://localhost:8080/api/auth/token',
                     JSON.stringify({ username, password }),
                     {
                         headers: {

@@ -1,7 +1,7 @@
 <template>
   <div class="flex justify-center items-center thisForm">
     <form
-      @submit.prevent="loginHandle"
+      @submit.prevent="onSubmit"
       class="flex w-96 flex-col justify-center items-center gap-4"
     >
       <div class="from-content">
@@ -10,7 +10,7 @@
             type="text"
             class="form__field"
             placeholder="Username"
-            v-model="username"
+            v-model="user.username"
             required
           />
           <label for="username" class="form__label">Username</label>
@@ -20,7 +20,7 @@
             type="password"
             class="form__field"
             placeholder="Password"
-            v-model="password"
+            v-model="user.password"
             required
           />
           <label for="password" class="form__label">Password</label>
@@ -66,25 +66,23 @@
 
 <script setup>
 import axios from "axios";
-import { onMounted, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import router from "../router";
 import { useUserStore } from "../stores/user";
 import LoginViaGoogle from "../components/LoginViaGoogle.vue";
 import LoginViaFacebook from "../components/LoginViaFacebook.vue";
 import { useAuthStore } from "../stores/auth";
-const username = ref("");
-const password = ref("");
-const remember = ref(false);
-
-const auth = useAuthStore()
-const user = auth.user
-const token = auth.token
-
-const data = ref('')
-
-onMounted(()=>{
-  axios.post(`localhost:8080/api/auth/token`)
+const user = reactive({
+  username: '',
+  password: '',
 })
+
+function onSubmit(){
+  if(user.username != '' && user.password != ''){
+    useAuthStore().login(user.username,user.password)
+  }
+}
+const remember = ref(false);
 
 function loginHandle() {
   axios
