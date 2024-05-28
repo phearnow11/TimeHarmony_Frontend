@@ -66,15 +66,25 @@
 
 <script setup>
 import axios from "axios";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import router from "../router";
 import { useUserStore } from "../stores/user";
 import LoginViaGoogle from "../components/LoginViaGoogle.vue";
 import LoginViaFacebook from "../components/LoginViaFacebook.vue";
+import { useAuthStore } from "../stores/auth";
 const username = ref("");
 const password = ref("");
 const remember = ref(false);
-const user = useUserStore();
+
+const auth = useAuthStore()
+const user = auth.user
+const token = auth.token
+
+const data = ref('')
+
+onMounted(()=>{
+  axios.post(`localhost:8080/api/auth/token`)
+})
 
 function loginHandle() {
   axios
