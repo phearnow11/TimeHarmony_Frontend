@@ -9,9 +9,9 @@
 <script setup>
 
 import { useAuthStore } from '../stores/auth'; // Assuming there's an auth store
-import carousel from '../components/Carousel.vue';re
+import carousel from '../components/Carousel.vue';
 
-const user = authStore.user
+const user = useAuthStore().user
 
 const logout = () => {
   useAuthStore().logout();
