@@ -79,7 +79,7 @@ const remember = ref(false);
 
 function onSubmit() {
   if (user.username && user.password) {
-    useAuthStore().login(user.username, user.password);
+    useAuthStore().login(user.username, user.password, remember.value);
   }
 }
 </script>

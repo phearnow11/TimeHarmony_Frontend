@@ -1,7 +1,7 @@
 import axios from "axios";
 import { defineStore } from "pinia";
 import router from "../router";
-import Cookies from "js-cookie"; // Import Cookies library
+import Cookies from "js-cookie";
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
@@ -10,7 +10,7 @@ export const useAuthStore = defineStore('auth', {
         returnURL: '/',
     }),
     actions: {
-        login(username, password) {
+        login(username, password, remember) {
             axios.post(
                 'http://localhost:8080/api/auth/token',
                 {}, // Empty body
@@ -26,12 +26,16 @@ export const useAuthStore = defineStore('auth', {
             )
             .then((res) => {
                 console.log(res.data);
-                if (res.status == 200) {
+                if (res.status === 200) {
                     this.user = res.data.user;
                     this.token = res.data.token; // Assign token from response data
                     // Save token and user in cookies
                     Cookies.set('token', this.token, { expires: 7 }); // Example: Expires in 7 days
-                    Cookies.set('user', JSON.stringify(this.user), { expires: 7 }); // Save user as string
+                    if (remember) {
+                        Cookies.set('user', JSON.stringify({ username }), { expires: 7 }); // Save username only if "Remember Me" is checked
+                    } else {
+                        Cookies.remove('user'); // Remove username from cookies if "Remember Me" is unchecked
+                    }
                     router.push(this.returnURL || '/');
                 }
             })
