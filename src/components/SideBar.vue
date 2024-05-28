@@ -18,7 +18,10 @@
           class="absolute flex top-0 h-screen z-20 transform transition-transform duration-700"
           :class="isSidebarOpen ? 'translate-x-0' : '-translate-x-full'"
         >
-          
+        <button v-if="isSidebarOpen"
+            @click="toggleSidebar" class="absolute top-4 right-4 text-2xl">
+          <close-btn/>
+          </button>
 
           <!-- Sidebar Content -->
           <div class="w-64 bg-black-99 overflow-hidden flex justify-center">
@@ -226,9 +229,7 @@
             @click="toggleSidebar"
             class="flex-1 bg-gray-99 bg-opacity-75 active:outline-none z-10"
           ><!-- Close Button -->
-        <button class="absolute top-4 right-4 text-2xl focus:outline-none">
-            <img src="../assets/x-letter.svg" class="w-8" alt="">
-          </button></div>
+        </div>
           
         </transition>
         
@@ -239,6 +240,7 @@
 
 <script setup>
 import { ref } from "vue";
+import CloseBtn from "../components/CloseBtn.vue";
 
 const isSidebarOpen = ref(false);
 

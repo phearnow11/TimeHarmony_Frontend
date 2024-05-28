@@ -9,7 +9,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
     "@healerlab/vue3-facebook-login": "^0.1.7",
+    "@jamescoyle/vue-icon": "^0.1.2",
+    "@mdi/js": "^7.4.47",
+    "@mui/icons-material": "^5.15.18",
+    "@mui/material": "^5.15.18",
     "@preline/carousel": "^2.1.0",
     "@preline/overlay": "^2.1.0",
     "axios": "^1.6.8",
