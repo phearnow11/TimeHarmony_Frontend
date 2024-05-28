@@ -65,54 +65,23 @@
 </template>
 
 <script setup>
-import axios from "axios";
-import { onMounted, reactive, ref } from "vue";
-import router from "../router";
-import { useUserStore } from "../stores/user";
-import LoginViaGoogle from "../components/LoginViaGoogle.vue";
-import LoginViaFacebook from "../components/LoginViaFacebook.vue";
-import { useAuthStore } from "../stores/auth";
+import { reactive, ref } from 'vue';
+import { useAuthStore } from '../stores/auth';
+import LoginViaGoogle from '../components/LoginViaGoogle.vue';
+import LoginViaFacebook from '../components/LoginViaFacebook.vue';
+
 const user = reactive({
   username: '',
   password: '',
-})
+});
 
-function onSubmit(){
-  if(user.username != '' && user.password != ''){
-    useAuthStore().login(user.username,user.password)
-  }
-}
 const remember = ref(false);
 
-function loginHandle() {
-  axios
-    .get(
-      `http://localhost:8080/user/login?username=${username.value}&password=${password.value}`
-    )
-    .then(function (response) {
-      if (response.data.user_id == null) {
-        //Can not find user
-        console.log(`Wrong username or password.`);
-      } else {
-        console.log(response.data);
-        user.user_id = response.data.user_id;
-        user.username = response.data.username;
-        user.password = response.data.password;
-        user.email = response.data.email;
-
-        // Set cookie if remember is checked
-        if (remember.value) {
-          Cookies.set('user', JSON.stringify(response.data), { expires: 180 });// 6 months
-        }
-
-        router.push(`/`);
-      }
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+function onSubmit() {
+  if (user.username && user.password) {
+    useAuthStore().login(user.username, user.password);
+  }
 }
-
 </script>
 
 <style scoped>
