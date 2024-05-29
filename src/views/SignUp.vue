@@ -106,6 +106,7 @@
 <script setup>
 import { reactive } from "vue";
 import { useUserStore } from "../stores/user";
+import router from "../router";
 
 const signUpForm = reactive({
   username: '',
@@ -139,6 +140,7 @@ async function signupHandle() {
   try {
     const response = await userStore.signUp();
     console.log("Signup successful", response);
+    router.push('/login')
     // Redirect or show success message
   } catch (error) {
     console.error("Signup error", error);
