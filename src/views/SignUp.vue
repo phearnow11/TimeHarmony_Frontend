@@ -52,7 +52,7 @@
               type="text"
               class="form__field"
               placeholder="Firstname"
-              v-model="firstname"
+              v-model="first_name"
               required
             />
             <label for="firstname" class="form__label">First Name</label>
@@ -62,7 +62,7 @@
               type="text"
               class="form__field"
               placeholder="Lastname"
-              v-model="lastname"
+              v-model="last_name"
               required
             />
             <label for="lastname" class="form__label">Last Name</label>
@@ -105,36 +105,57 @@
 
 
 <script setup>
-import { ref } from "vue";
 import axios from "axios";
+import { reactive } from "vue";
 
-const email = ref("");
-const username = ref("");
-const password = ref("");
-const repassword = ref("");
-const firstname = ref("");
-const lastname = ref("");
-const phone = ref("");
-const address = ref("");
+const user = reactive({
+  username: '',
+  password: '',
+  repassword: '',
+  email: '',
+  first_name: '',
+  last_name: '',
+  phone: '',
+  address: '',
+});
+
+
+import { nextTick } from 'vue';
 
 function signupHandle() {
-  axios
-    .post("http://localhost:8080/user/register", {
-      email: email.value,
-      username: username.value,
-      password: password.value,
-      firstname: firstname.value,
-      lastname: lastname.value,
-      phone: phone.value,
-      address: address.value,
-    })
-    .then((response) => {
-      console.log(response);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  if (user.password !== user.repassword) {
+    console.log("Passwords do not match");
+    return;
+  }
+
+  const userData = [
+    {
+      email: user.email,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      phone: user.phone,
+      address: user.address,
+
+    },
+    {
+      username: user.username,
+      password: user.password,
+
+    }
+  ]
+  nextTick().then(() => {
+    axios
+      .post("http://localhost:8080/member/save-user", userData)
+      .then((response) => {
+        console.log("Signup successful", response);
+      })
+      .catch((error) => {
+        console.error("Signup error", error);
+      });
+  });
 }
+
+
 </script>
 
 <style scoped>
