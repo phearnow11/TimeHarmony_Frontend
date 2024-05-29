@@ -7,7 +7,7 @@
             type="email"
             class="form__field"
             placeholder="Email"
-            v-model="email"
+            v-model="signUpForm.email"
             required
           />
           <label for="email" class="form__label">Email</label>
@@ -18,7 +18,7 @@
             type="text"
             class="form__field"
             placeholder="Username"
-            v-model="username"
+            v-model="signUpForm.username"
             required
           />
           <label for="username" class="form__label">Username</label>
@@ -29,7 +29,7 @@
             type="password"
             class="form__field"
             placeholder="Password"
-            v-model="password"
+            v-model="signUpForm.password"
             required
           />
           <label for="password" class="form__label">Password</label>
@@ -40,7 +40,7 @@
             type="password"
             class="form__field"
             placeholder="Password"
-            v-model="repassword"
+            v-model="signUpForm.repassword"
             required
           />
           <label for="repassword" class="form__label">Confirm password</label>
@@ -52,7 +52,7 @@
               type="text"
               class="form__field"
               placeholder="Firstname"
-              v-model="first_name"
+              v-model="signUpForm.first_name"
               required
             />
             <label for="firstname" class="form__label">First Name</label>
@@ -62,7 +62,7 @@
               type="text"
               class="form__field"
               placeholder="Lastname"
-              v-model="last_name"
+              v-model="signUpForm.last_name"
               required
             />
             <label for="lastname" class="form__label">Last Name</label>
@@ -74,7 +74,7 @@
             type="text"
             class="form__field"
             placeholder="Phone"
-            v-model="phone"
+            v-model="signUpForm.phone"
             required
           />
           <label for="phone" class="form__label">Phone</label>
@@ -85,7 +85,7 @@
             type="text"
             class="form__field"
             placeholder="Address"
-            v-model="address"
+            v-model="signUpForm.address"
           />
           <label for="address" class="form__label">Address</label>
         </div>
@@ -103,12 +103,11 @@
   </div>
 </template>
 
-
 <script setup>
-import axios from "axios";
 import { reactive } from "vue";
+import { useUserStore } from "../stores/user";
 
-const user = reactive({
+const signUpForm = reactive({
   username: '',
   password: '',
   repassword: '',
@@ -119,43 +118,33 @@ const user = reactive({
   address: '',
 });
 
+const userStore = useUserStore();
 
-import { nextTick } from 'vue';
-
-function signupHandle() {
-  if (user.password !== user.repassword) {
+async function signupHandle() {
+  if (signUpForm.password !== signUpForm.repassword) {
     console.log("Passwords do not match");
     return;
   }
 
-  const userData = [
-    {
-      "email": user.email,
-     "Fname": user.first_name,
-      "Lname": user.last_name,
-      "phone": user.phone,
-      "address": user.address,
-
-    },
-    {
-     "username": user.username,
-      "password": user.password,
-
-    }
-  ]
-  nextTick().then(() => {
-    axios
-      .post("http://localhost:8080/member/save-user", userData)
-      .then((response) => {
-        console.log("Signup successful", response);
-      })
-      .catch((error) => {
-        console.error("Signup error", error);
-      });
+  userStore.newUser({
+    username: signUpForm.username,
+    password: signUpForm.password,
+    email: signUpForm.email,
+    first_name: signUpForm.first_name,
+    last_name: signUpForm.last_name,
+    phone: signUpForm.phone,
+    address: signUpForm.address,
   });
+
+  try {
+    const response = await userStore.signUp();
+    console.log("Signup successful", response);
+    // Redirect or show success message
+  } catch (error) {
+    console.error("Signup error", error);
+    // Handle signup error
+  }
 }
-
-
 </script>
 
 <style scoped>
