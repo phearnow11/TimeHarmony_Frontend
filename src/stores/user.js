@@ -42,7 +42,7 @@ export const useUserStore = defineStore('user', {
             }
         },
 
-        newUser(userInfo) {
+        loadUser(userInfo) {
             this.username = userInfo.username || '';
             this.password = userInfo.password || '';
             this.email = userInfo.email || '';

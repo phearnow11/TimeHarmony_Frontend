@@ -14,12 +14,12 @@ import { useAuthStore } from '../stores/auth';
 import carousel from '../components/Carousel.vue';
 
 const authStore = useAuthStore();
-const user_id = authStore.user_id;
 
 const logout = () => {
   authStore.logout();
 };
 
+const user_id = authStore.user_id;
 onMounted(() => {
   if (user_id) {
     axios.get(`http://localhost:8080/member/get-member?member_id=${user_id}`)

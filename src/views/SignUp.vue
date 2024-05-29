@@ -127,7 +127,7 @@ async function signupHandle() {
     return;
   }
 
-  userStore.newUser({
+  userStore.loadUser({
     username: signUpForm.username,
     password: signUpForm.password,
     email: signUpForm.email,
