@@ -34,14 +34,14 @@ const router = createRouter({
   ]
 });
 
-router.beforeEach(async (to) => {
-  const publicPages = ['/login', '/forgot', '/signup'];
-  const authRequired = !publicPages.includes(to.path);
-  const auth = useAuthStore()
+// router.beforeEach(async (to) => {
+//   const publicPages = ['/login', '/forgot', '/signup'];
+//   const authRequired = !publicPages.includes(to.path);
+//   const auth = useAuthStore()
 
-  if (authRequired && !auth.user) {
-    return '/login'
-  }
-})
+//   if (authRequired && !auth.user) {
+//     return '/login'
+//   }
+// })
 
 export default router;

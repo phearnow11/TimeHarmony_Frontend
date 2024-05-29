@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
-        user: Cookies.get('user') ? JSON.parse(Cookies.get('user')) : null,
+        user_id: Cookies.get('user_id') ? Cookies.get('user_id') : null,
         token: Cookies.get('token') ? Cookies.get('token') : null,
         returnURL: '/',
     }),
@@ -16,8 +16,8 @@ export const useAuthStore = defineStore('auth', {
                 {}, // Empty body
                 {
                     auth: {
-                        username: username,
-                        password: password
+                        username,
+                        password
                     },
                     headers: {
                         'Content-Type': 'application/json'
@@ -25,16 +25,15 @@ export const useAuthStore = defineStore('auth', {
                 }
             )
             .then((res) => {
-                console.log(res.data);
                 if (res.status === 200) {
-                    this.user = res.data.user;
-                    this.token = res.data.token; // Assign token from response data
-                    // Save token and user in cookies
-                    Cookies.set('token', this.token, { expires: 7 }); // Example: Expires in 7 days
+                    this.user_id = res.data.user.member_id;
+                    this.token = res.data.token;
+                    // Save token and user_id in cookies
+                    Cookies.set('token', this.token, { expires: 7 }); // Expires in 7 days
                     if (remember) {
-                        Cookies.set('user', JSON.stringify({ username }), { expires: 7 }); // Save username only if "Remember Me" is checked
+                        Cookies.set('user_id', this.user_id, { expires: 7 });
                     } else {
-                        Cookies.remove('user'); // Remove username from cookies if "Remember Me" is unchecked
+                        Cookies.remove('user_id');
                     }
                     router.push(this.returnURL || '/');
                 }
@@ -42,12 +41,12 @@ export const useAuthStore = defineStore('auth', {
             .catch((error) => {
                 console.error('Error logging in:', error);
             });
-        },        
+        },
         logout() {
-            this.user = null;
+            this.user_id = null;
             this.token = null;
             Cookies.remove('token');
-            Cookies.remove('user');
+            Cookies.remove('user_id');
             router.push('/login');
         }
     }

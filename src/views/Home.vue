@@ -1,34 +1,35 @@
 <template>
   <carousel />
-  <div v-if="user">
-    {{ user.username }}
+  <!-- Show user's username and logout button if logged in -->
+  <div v-if="user_id">
+    User ID: {{ user_id }}
     <button class="th-p-btn w-10" @click="logout">Log out</button>
   </div>
 </template>
 
 <script setup>
-
-import { useAuthStore } from '../stores/auth'; // Assuming there's an auth store
+import { onMounted } from 'vue';
+import axios from 'axios';
+import { useAuthStore } from '../stores/auth'; 
 import carousel from '../components/Carousel.vue';
 
-const user = useAuthStore().user
+const authStore = useAuthStore();
+const user_id = authStore.user_id;
 
 const logout = () => {
-  useAuthStore().logout();
+  authStore.logout();
 };
 
-// onMounted(() => {
-//   const token = authStore.token;
-//   axios.post('http://localhost:8080/api/auth/token', {}, {
-//     headers: {
-//       Authorization: `Bearer ${token}`
-//     }
-//   })
-//   .then(response => {
-//     data.value = response.data;
-//   })
-//   .catch(error => {
-//     console.error('Error fetching token data:', error);
-//   });
-// });
+onMounted(() => {
+  if (user_id) {
+    axios.get(`http://localhost:8080/member/get-member?member_id=${user_id}`)
+      .then((res) => {
+        console.log('Member data:', res.data);
+        // Optionally, update the user state with additional data from this response
+      })
+      .catch((err) => {
+        console.error('Error fetching member data:', err);
+      });
+  }
+});
 </script>

@@ -130,16 +130,16 @@ function signupHandle() {
 
   const userData = [
     {
-      email: user.email,
-      first_name: user.first_name,
-      last_name: user.last_name,
-      phone: user.phone,
-      address: user.address,
+      "email": user.email,
+     "Fname": user.first_name,
+      "Lname": user.last_name,
+      "phone": user.phone,
+      "address": user.address,
 
     },
     {
-      username: user.username,
-      password: user.password,
+     "username": user.username,
+      "password": user.password,
 
     }
   ]

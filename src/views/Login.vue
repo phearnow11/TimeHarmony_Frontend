@@ -78,10 +78,12 @@ const user = reactive({
 const remember = ref(false);
 
 function onSubmit() {
+  const authStore = useAuthStore();
   if (user.username && user.password) {
-    useAuthStore().login(user.username, user.password, remember.value);
+    authStore.login(user.username, user.password, remember.value);
   }
 }
+
 </script>
 
 <style scoped>
