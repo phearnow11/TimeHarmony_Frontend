@@ -249,7 +249,6 @@
 
 <script setup>
 import { ref } from "vue";
-import CloseBtn from "../components/CloseBtn.vue";
 
 const isSidebarOpen = ref(false);
 
