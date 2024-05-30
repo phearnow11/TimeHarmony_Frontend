@@ -36,18 +36,27 @@
                 />
               </a>
 
-              <div class="relative mt-6">
-                <div class="form__group field w-56">
-                  <input
-                    type="text"
-                    class="form__field"
-                    placeholder="Search"
-                    v-model="search"
-                    required
-                  />
-                  <label for="search" class="form__label">Search</label>
-                </div>
-              </div>
+              <div class="ui-input-container">
+  <input
+    required=""
+    placeholder="Type something..."
+    class="ui-input"
+    type="text"
+  />
+  <div class="ui-input-underline"></div>
+  <div class="ui-input-highlight"></div>
+  <div class="ui-input-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <path
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        stroke-width="2"
+        stroke="currentColor"
+        d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
+      ></path>
+    </svg>
+  </div>
+</div>
 
               <div class="flex flex-col justify-between flex-1 mt-6">
                 <nav>
@@ -272,7 +281,7 @@ function toggleSidebar() {
 .line {
   width: 100%;
   height: 2px;
-  background-color: #ffbd59;
+  background-color: var(--primary);
   transition: all 0.3s ease;
 }
 
@@ -304,5 +313,71 @@ function toggleSidebar() {
 .slide-leave-from {
   transform: translateX(0);
   opacity: 1;
+}
+
+.ui-input-container {
+  position: relative;
+  width: 300px;
+}
+
+.ui-input {
+  width: 100%;
+  padding: 10px 10px 10px 40px;
+  font-size: 1em;
+  border: none;
+  border-bottom: 2px solid #ccc;
+  outline: none;
+  background-color: transparent;
+  transition: border-color 0.3s;
+}
+
+.ui-input:focus {
+  border-color: var(--secondary);
+}
+
+.ui-input-underline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background-color: var(--primary);
+  transform: scaleX(0);
+}
+
+.ui-input:focus + .ui-input-underline {
+  transform: scaleX(1);
+}
+
+.ui-input-highlight {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  background-color: var(--back);
+  transition: width 0.3s;
+}
+
+.ui-input:focus ~ .ui-input-highlight {
+  width: 100%;
+}
+
+.ui-input-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+  transition: color 0.3s;
+}
+
+.ui-input:focus ~ .ui-input-icon {
+  color: #E6C591;
+}
+
+.ui-input-icon svg {
+  width: 20px;
+  height: 20px;
 }
 </style>

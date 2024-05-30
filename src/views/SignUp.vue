@@ -35,7 +35,7 @@
           <label for="password" class="form__label">Password</label>
         </div>
 
-        <div class="form__group field w-96">
+        <div class="form__group field w-96" id="">
           <input
             type="password"
             class="form__field"
@@ -124,6 +124,7 @@ const userStore = useUserStore();
 async function signupHandle() {
   if (signUpForm.password !== signUpForm.repassword) {
     console.log("Passwords do not match");
+
     return;
   }
 
