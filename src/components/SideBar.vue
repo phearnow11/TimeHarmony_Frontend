@@ -1,8 +1,8 @@
 <template>
   <div id="app" class="relative">
     <!-- Menu Button -->
-    <div @click="toggleSidebar" class="menu-container">
-      <div class="menu-button">
+    <div  @click="toggleSidebar" class="menu-container">
+      <div  class="menu-button">
         <div class="line"></div>
         <div class="line middle"></div>
         <div class="line"></div>
@@ -20,7 +20,7 @@
         >
         <button v-if="isSidebarOpen"
             @click="toggleSidebar" class="absolute top-4 right-4 text-2xl">
-          <close-btn/>
+            <div class="close-icon"></div>
           </button>
 
           <!-- Sidebar Content -->
@@ -268,6 +268,7 @@ function toggleSidebar() {
   display: flex;
   align-items: center;
   cursor: pointer;
+  width: 100%;
 }
 
 .menu-button {
@@ -276,17 +277,22 @@ function toggleSidebar() {
   justify-content: space-around;
   width: 25px;
   height: 24px;
+  transition: all 0.3s ease;
+}
+
+.menu-container:hover .menu-button .middle {
+  width: 150%;
+}
+
+.menu-container:hover .menu-label {
+  margin-left: 20px;
 }
 
 .line {
   width: 100%;
   height: 2px;
   background-color: var(--primary);
-  transition: all 0.3s ease;
-}
-
-.menu-container:hover .middle {
-  width: 150%;
+  transition: width 0.3s ease;
 }
 
 .menu-label {
@@ -294,9 +300,7 @@ function toggleSidebar() {
   margin-left: 5px;
   transition: margin-left 0.3s ease;
 }
-.menu-container:hover .menu-label {
-  margin-left: 20px;
-}
+
 
 .slide-enter-active,
 .slide-leave-active {

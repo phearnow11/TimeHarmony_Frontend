@@ -10,7 +10,7 @@ export const useUserStore = defineStore('user', {
         last_name: '',
         address: '',
         phone: '',
-        image: '',
+        image: 'https://files.catbox.moe/n1w3b0.png',
         active: '',
     }),
 

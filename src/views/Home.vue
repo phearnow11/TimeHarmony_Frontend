@@ -5,6 +5,9 @@
     User ID: {{ user_id }}
     <button class="th-p-btn w-10" @click="logout">Log out</button>
   </div>
+
+  
+
 </template>
 
 <script setup>
