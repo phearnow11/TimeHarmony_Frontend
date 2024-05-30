@@ -12,7 +12,7 @@ export const useAuthStore = defineStore('auth', {
     actions: {
         login(username, password, remember) {
             axios.post(
-                'http://localhost:8080/api/auth/token',
+                'http://localhost:8080/api/auth/login',
                 {}, // Empty body
                 {
                     auth: {
@@ -43,6 +43,7 @@ export const useAuthStore = defineStore('auth', {
             });
         },
         logout() {
+            axios.post(`http://localhost:8080/api/auth/logout?member_id=${this.user_id}`)
             this.user_id = null;
             this.token = null;
             Cookies.remove('token');
