@@ -1,10 +1,10 @@
 <template>
-  <div class="flex justify-center items-center thisForm">
+  <div class="flex justify-center items-center min-h-screen">
     <form
       @submit.prevent="onSubmit"
       class="flex w-96 flex-col justify-center items-center gap-4"
     >
-      <div class="from-content">
+      <div class="form-content">
         <div class="form__group field w-96">
           <input
             type="text"
@@ -55,8 +55,8 @@
       <login-via-google/>
       <login-via-facebook/>
       <div>
-        <span>Don't have an account? </span
-        ><router-link to="/signup" class="hover-underline-animation"
+        <span>Don't have an account? </span>
+        <router-link to="/signup" class="hover-underline-animation"
           >Sign up here</router-link
         >
       </div>
@@ -83,11 +83,11 @@ function onSubmit() {
     authStore.login(user.username, user.password, remember.value);
   }
 }
-
 </script>
 
 <style scoped>
+/* Ensure the parent container takes the full height */
 .thisForm {
-  height: 70vh;
+  height: 100vh;
 }
 </style>

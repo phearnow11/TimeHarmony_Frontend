@@ -4,7 +4,6 @@ export default {
     // Example content paths...
     './public/**/*.html',
     './src/**/*.{js,jsx,ts,tsx,vue}',
-    'node_modules/preline/dist/*.js',
   ],
   
   theme: {
@@ -18,7 +17,6 @@ export default {
     },
   },
   plugins: [
-    require('preline/plugin'),
   ],
   
 }

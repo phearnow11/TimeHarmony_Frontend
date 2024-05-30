@@ -1,12 +1,15 @@
 <template>
-  <carousel />
-  <!-- Show user's username and logout button if logged in -->
-  <div v-if="user_id">
-    User ID: {{ user_id }}
-    <button class="th-p-btn w-10" @click="logout">Log out</button>
-  </div>
+  <div class="mt-28">
 
+    <carousel />
+    <!-- Show user's username and logout button if logged in -->
+    <div v-if="user_id">
+      User ID: {{ user_id }}
+      <button class="th-p-btn w-10" @click="logout">Log out</button>
+    </div>
   
+    
+  </div>
 
 </template>
 

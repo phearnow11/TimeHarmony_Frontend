@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center justify-center thisForm">
     <form @submit.prevent="forgotHandle">
-      <div class="flex flex-col items-center space-y-3">
+      <div class="flex flex-col items-center space-y-5">
         <div class="form__group field w-96">
           <input
             type="email"
@@ -51,6 +51,6 @@ function forgotHandle() {
 
 <style scoped>
 .thisForm {
-  height: 74vh;
+  height: 100vh;
 }
 </style>
