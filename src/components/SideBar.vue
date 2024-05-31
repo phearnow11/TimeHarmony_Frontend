@@ -206,15 +206,15 @@
         </div>
 
         <!-- Dimmer -->
-        <transition name="fade">
+        <!-- <transition name="fade">
           <div
             v-if="isSidebarOpen"
             @click="toggleSidebar"
             class="flex-1 bg-gray-99 bg-opacity-75 active:outline-none z-10"
-          ><!-- Close Button -->
+          >
         </div>
           
-        </transition>
+        </transition> -->
         
       </div>
     </transition>
@@ -277,7 +277,7 @@ function toggleSidebar() {
 
 .slide-enter-active,
 .slide-leave-active {
-  transition: transform 0.7s ease, opacity 0.7s ease;
+  transition: transform 0.6s ease, opacity 0.6s ease;
 }
 
 .slide-enter-from,
