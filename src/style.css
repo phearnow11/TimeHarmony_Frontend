@@ -230,7 +230,7 @@
   content: '';
   position: absolute;
   width: 100%;
-  height: 2px; /* Adjust thickness as needed */
+  height: 1.5px; /* Adjust thickness as needed */
   background-color: #FFBD59; /* Color for the close icon */
   top: 50%;
   left: 0;

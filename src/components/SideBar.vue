@@ -19,26 +19,20 @@
           :class="isSidebarOpen ? 'translate-x-0' : '-translate-x-full'"
         >
         <button v-if="isSidebarOpen"
-            @click="toggleSidebar" class="absolute top-4 right-4 text-2xl">
+            @click="toggleSidebar" class="absolute top-7 right-4 text-2xl">
             <div class="close-icon"></div>
           </button>
 
           <!-- Sidebar Content -->
           <div class="w-64 bg-black-99 overflow-hidden flex justify-center">
             <aside
-              class="flex flex-col w-64 h-screen px-4 py-8 overflow-y-auto border-r rtl:border-r-0 rtl:border-l bg-black-99"
+              class="flex flex-col w-64  h-screen px-4 py-8 overflow-y-auto border-r rtl:border-r-0 rtl:border-l bg-black-99"
             >
-              <a>
-                <img
-                  class="w-auto h-auto"
-                  src="/src/assets/time-harmony.png"
-                  alt=""
-                />
-              </a>
+              
 
               
 
-              <div class="flex flex-col justify-between flex-1 mt-6">
+              <div class="flex flex-col justify-between flex-1 mt-14">
                 <nav>
                   <a
                     class="flex items-center px-4 py-2 text-black bg-primary"

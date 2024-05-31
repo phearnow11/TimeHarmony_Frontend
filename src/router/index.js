@@ -31,6 +31,13 @@ const router = createRouter({
         console.error(err);
       }),
     },
+    {
+      path: '/upload',
+      name: 'Upload',
+      component: () => import('../views/Upload.vue').catch(err => {
+        console.error(err);
+      }),
+    },
   ]
 });
 
