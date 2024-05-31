@@ -34,7 +34,6 @@
     </div>
     
     <div class="flex justify-end items-center h-full gap-4 col-span-2">
-      a
       <router-link to="/upload" class="hover-underline-animation" v-if="auth.user_id">Upload</router-link>
       <router-link to="/login" class="hover-underline-animation" v-if="!auth.user_id && route.path !== '/login'">
         Have an account? Login
@@ -81,7 +80,7 @@ body {
 
 .ui-input-container {
   position: relative;
-  width: 100%;
+  width: auto;
 }
 
 .ui-input {

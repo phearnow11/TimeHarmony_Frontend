@@ -8,16 +8,25 @@ export default {
   
   theme: {
     extend: {
-      colors:{
+      colors: {
         'primary': '#FFBD59',
         'secondary': '#E6C591',
-        'black-99' : '#1E1E1E',
-        'gray-99': '#979b9b'
-      }
+        'black-99': '#1E1E1E',
+        'gray-99': '#979b9b',
+      },
     },
   },
   plugins: [
+    function({ addBase }) {
+      addBase({
+        'html': {
+          'scrollbar-width': 'none', /* Firefox */
+          '-ms-overflow-style': 'none', /* Internet Explorer 10+ */
+        },
+        'html::-webkit-scrollbar': {
+          'display': 'none', /* Safari and Chrome */
+        },
+      });
+    },
   ],
-  
 }
-
