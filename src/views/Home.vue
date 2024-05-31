@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-28">
+  <div class="pt-28">
 
     <carousel />
     <!-- Show user's username and logout button if logged in -->

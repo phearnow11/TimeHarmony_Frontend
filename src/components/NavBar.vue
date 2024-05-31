@@ -1,5 +1,5 @@
 <template>
-  <header class="myheader grid grid-cols-3 gap-4 h-20 items-center top-0 z-50 fixed bg-blue-950 w-full px-4">
+ <header class="myheader grid grid-cols-3 gap-4 h-20 items-center sticky top-0 z-50 bg-blue-950 w-full px-4">
     <div class="flex items-center">
       <side-bar />
     </div>
