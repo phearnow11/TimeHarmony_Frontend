@@ -1,5 +1,5 @@
 <template>
-  <header
+  <nav
     class="myheader grid grid-cols-6 gap-4 h-20 items-center sticky top-0 z-50 w-full px-4 bg-black-99"
   >
     <div class="flex items-center justify-between">
@@ -39,7 +39,7 @@
         >Have an account? Login</router-link
       >
     </div>
-  </header>
+  </nav>
 </template>
 
 <script setup>
@@ -58,7 +58,8 @@ body {
   width: 100%;
   left: 0;
   right: 0;
-  margin-right: 0; /* Ensure there is no unintended margin */
+  padding: 0;
+  margin: 0;
 }
 
 .ui-input-container {
