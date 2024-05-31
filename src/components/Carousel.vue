@@ -35,7 +35,7 @@
           'bg-black-99': index !== currentIndex,
           'border-secondary': index !== currentIndex
         }"
-        class="w-7 h-2 border-2 cursor-pointer flex items-center justify-center"
+        class="w-7 h-1 cursor-pointer flex items-center justify-center dot"
         @click="goToSlide(index)"
       ></div>
     </div>
@@ -92,6 +92,10 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+.dot{
+  border: 0.5px solid ;
+}
+
 .carousel {
   position: relative;
   overflow: hidden;
