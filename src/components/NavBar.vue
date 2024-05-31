@@ -70,12 +70,15 @@ body {
 }
 
 .myheader {
-  box-shadow: #fab5704c 0px 48px 200px 0px;
+  /* box-shadow: #fab5704c 0px 48px 200px 0px; */
+  box-shadow: rgba(153, 153, 153, 0.685) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
   width: 100%;
   position: sticky;
   top: 0;
   z-index: 50;
-  background-color: var(--black-99);
+  background-color: rgba(20, 20, 20, 0.836);
+  backdrop-filter: blur(10px); /* Apply a blur effect to the background */
+  -webkit-backdrop-filter: blur(10px); /* For Safari */
 }
 
 .ui-input-container {

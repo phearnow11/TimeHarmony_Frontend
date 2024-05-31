@@ -16,6 +16,36 @@
     <product-card/>
     <product-card/>
     <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
   </div>
 
 </template>
