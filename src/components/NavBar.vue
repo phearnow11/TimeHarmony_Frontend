@@ -1,5 +1,5 @@
 <template>
-  <nav class="myheader grid grid-cols-6 gap-4 h-20 items-center sticky top-0 z-50 bg-black-99 w-full">
+  <nav class="myheader grid grid-cols-6 gap-4 h-20 items-center sticky top-0 z-50 bg-black-99 w-full pl-6 pr-6">
     <div class="flex items-center justify-between col-span-1">
       <side-bar />
       <div class="flex justify-center items-center h-full">
@@ -70,7 +70,7 @@ body {
 }
 
 .myheader {
-  box-shadow: rgba(85, 70, 7, 0.15) 0px 48px 100px 0px;
+  box-shadow: #fab5704c 0px 48px 200px 0px;
   width: 100%;
   position: sticky;
   top: 0;

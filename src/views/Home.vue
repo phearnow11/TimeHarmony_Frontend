@@ -9,6 +9,15 @@
     </div>
   </div>
 
+  <div class="mt-8 grid grid-cols-4 sm:grid-cols-6 ml-36 mr-36">
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+    <product-card/>
+  </div>
+
 </template>
 
 <script setup>
@@ -16,6 +25,7 @@ import { onMounted } from 'vue';
 import axios from 'axios';
 import { useAuthStore } from '../stores/auth'; 
 import carousel from '../components/Carousel.vue';
+import ProductCard from '../components/ProductCard.vue';
 
 const authStore = useAuthStore();
 
