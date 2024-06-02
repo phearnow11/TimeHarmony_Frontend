@@ -6,7 +6,7 @@
         <router-link to="/">
           <img
             src="../assets/time-harmony.png"
-            class="h-14"
+            class="h-14 logo"
           />
         </router-link>
       </div>
@@ -51,6 +51,12 @@ const route = useRoute();
 </script>
 
 <style>
+.logo{
+  width: 100%;
+  max-width: 140px;
+  height: auto;
+}
+
 body {
   margin: 0;
   padding: 0;

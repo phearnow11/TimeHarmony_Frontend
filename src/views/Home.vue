@@ -9,43 +9,8 @@
     </div>
   </div>
 
-  <div class="mt-8 grid grid-cols-4 sm:grid-cols-6 ml-36 mr-36">
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
-    <product-card/>
+  <div class="mt-8 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4 lg:gap-4 ml-6 mr-6">
+    <product-card v-for="index in 32" :key="index"/>
   </div>
 
 </template>
