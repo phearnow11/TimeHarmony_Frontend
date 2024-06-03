@@ -3,7 +3,7 @@
     <div class="box">
         <img class="watch-img" src="https://alowatch.vn/wp-content/uploads/2021/04/moa10054.jpg"/>
         <div>
-        <strong class="product-name">Đồng hồ Rolex siêu đẹp còn mới new 98%</strong>
+        <strong class="product-name">Đồng hồ Rolex siêhjgewhjghegjgjhjhgdsjagjshgda</strong>
         <div class="retailer">
             <img class="avatar" src="https://files.catbox.moe/n1w3b0.png"/><span class="username">ThinhPhoenix</span>
         </div>
