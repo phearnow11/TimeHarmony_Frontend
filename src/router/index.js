@@ -11,6 +11,13 @@ const router = createRouter({
       }),
     },
     {
+      path: '/search',
+      name: 'SearchResult',
+      component: () => import('../views/SearchResult.vue').catch(err => {
+        console.error(err);
+      }),
+    },
+    {
       path: '/login',
       name: 'Login',
       component: () => import('../views/Login.vue').catch(err => {

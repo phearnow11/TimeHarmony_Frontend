@@ -1,34 +1,36 @@
 <template>
-  <nav class="myheader grid grid-cols-6 gap-4 h-20 items-center sticky top-0 z-50 bg-black-99 w-full pl-6 pr-6">
+  <nav v-if="!auth.user_id && route.path !== '/login'" class="myheader grid grid-cols-6 gap-4 h-20 items-center sticky top-0 z-50 bg-black-99 w-full pl-6 pr-6">
     <div class="flex items-center justify-between col-span-1">
       <side-bar />
       <div class="flex justify-center items-center h-full">
         <router-link to="/">
-          <img
-            src="../assets/time-harmony.png"
-            class="h-14 logo"
-          />
+          <img src="../assets/time-harmony.png" class="h-14 logo" />
         </router-link>
       </div>
     </div>
-    <div class="ui-input-container col-span-3">
+    <div class="ui-input-container col-span-3" @click="showHint = true">
       <input
-        required=""
+        required
         placeholder="Type something..."
         class="ui-input"
         type="text"
+        v-model="searchQuery"
+        @keyup.enter="search"
+        @input="updateHint"
       />
       <div class="ui-input-underline"></div>
       <div class="ui-input-highlight"></div>
       <div class="ui-input-icon">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
           <path
-            
             stroke-width="2"
             stroke="currentColor"
             d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
           ></path>
         </svg>
+      </div>
+      <div v-if="showHint && searchQuery" class="hint-dropdown">
+        Searching "{{ searchQuery }}..."
       </div>
     </div>
     
@@ -45,6 +47,29 @@
 import { useAuthStore } from "../stores/auth";
 import SideBar from "./SideBar.vue";
 import { useRoute } from 'vue-router';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+const searchQuery = ref('');
+const showHint = ref(false);
+const router = useRouter();
+
+const search = () => {
+  if (searchQuery.value.trim()) {
+    router.push({ name: 'SearchResult', query: { q: searchQuery.value } });
+    showHint.value = false;
+  }
+};
+
+const updateHint = () => {
+  showHint.value = true;
+};
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.ui-input-container')) {
+    showHint.value = false;
+  }
+});
 
 const auth = useAuthStore();
 const route = useRoute();
@@ -88,7 +113,7 @@ body {
 
 .ui-input-container {
   position: relative;
-  width: auto;
+  width: 100%;
 }
 
 .ui-input {
@@ -153,4 +178,16 @@ body {
   height: 20px;
 }
 
+.hint-dropdown {
+  background-color: rgba(0, 0, 0, 0.6); /* Black with opacity */
+  color: --primary;
+  padding: 8px;
+  margin-top: 2px;
+  backdrop-filter: blur(5px); /* Backdrop blur */
+  width: 100%;
+  text-align: left;
+  position: absolute;
+  top: 100%;
+  left: 0;
+}
 </style>

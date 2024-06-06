@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="relative">
     <!-- Menu Button -->
-    <div  @click="toggleSidebar" class="menu-container">
+    <div  @click="toggleSidebar" class="menu-container ">
       <div  class="menu-button">
         <div class="line"></div>
         <div class="line middle"></div>
@@ -28,11 +28,7 @@
             <aside
               class="flex flex-col w-64  h-screen px-4 py-8 overflow-y-auto border-r rtl:border-r-0 rtl:border-l bg-black-99"
             >
-              
-
-              
-
-              <div class="flex flex-col justify-between flex-1 mt-14">
+            <div class="flex flex-col justify-between flex-1 mt-14">
                 <nav>
                   <a
                     class="flex items-center px-4 py-2 text-black bg-primary"

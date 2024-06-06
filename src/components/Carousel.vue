@@ -1,61 +1,49 @@
 <template>
-  <div class="relative overflow-hidden w-full h-64" style="background-color: rgb(30, 30, 30);">
+  <div class="relative overflow-hidden w-full h-64" style="background-color: rgb(30, 30, 30)">
     <!-- Slides -->
-    <div
-      class="flex transition-transform duration-700"
-      :style="{ transform: `translateX(-${currentIndex * 100}%)` }"
-      @mouseover="stopAutoplay"
-      @mouseleave="startAutoplay"
-    >
-      <div
-        v-for="(slide, index) in slides"
-        :key="index"
-        class="w-full h-full flex-shrink-0 flex items-center justify-center text-primary text-2xl"
-      >
-        {{ slide.content }}
+    <div class="relative w-full h-full">
+      <div v-for="(slide, index) in slides" :key="index" :class="['absolute w-full h-full transition-opacity duration-1000 ease-in-out', { 'opacity-100': index === currentIndex, 'opacity-0': index !== currentIndex }]" @mouseover="stopAutoplay" @mouseleave="startAutoplay">
+        <img :src="slide" alt="Slide Image" class="w-full h-full object-cover" />
       </div>
     </div>
 
     <!-- Navigation Buttons -->
     <button @click="prevSlide" class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-gray-600 rounded w-8 h-8 flex items-center justify-center">
-      <img src="../assets/arr.svg" class="colored-img w-5 rotate-180" alt="">
+      <img src="../assets/arr.svg" class="colored-img w-5 rotate-180" alt="" />
     </button>
     <button @click="nextSlide" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-600 rounded w-8 h-8 flex items-center justify-center">
-      <img src="../assets/arr.svg" class="colored-img w-5" alt="">
+      <img src="../assets/arr.svg" class="colored-img w-5" alt="" />
     </button>
 
     <!-- Navigation Dots -->
     <div class="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
-      <div
-        v-for="(slide, index) in slides"
-        :key="index"
-        :class="{
-          'bg-primary': index === currentIndex,
-          'border-primary': index === currentIndex,
-          'bg-black-99': index !== currentIndex,
-          'border-secondary': index !== currentIndex
-        }"
-        class="w-7 h-1 cursor-pointer flex items-center justify-center dot"
-        @click="goToSlide(index)"
-      ></div>
+      <div v-for="(slide, index) in slides" :key="index" :class="{
+        'bg-primary': index === currentIndex,
+        'border-primary': index === currentIndex,
+        'bg-black-99': index !== currentIndex,
+        'border-secondary': index !== currentIndex
+      }" class="w-7 h-1 cursor-pointer flex items-center justify-center dot" @click="goToSlide(index)"></div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from "vue";
+import timeHarmony from '../assets/c4.png';
+import anotherImage from '../assets/c5.png';
+import thirdImage from '../assets/c6.png';
 
 const slides = [
-  { content: 'Time harmony' },
-  { content: 'Best Vietnam shop' },
-  { content: 'Your best place for buying and selling watches' }
+  timeHarmony,
+  anotherImage,
+  thirdImage
 ];
 
 const currentIndex = ref(0);
 let interval = null;
 
 const startAutoplay = () => {
-  interval = setInterval(nextSlide, 6000);
+  interval = setInterval(nextSlide, 4000);
 };
 
 const stopAutoplay = () => {
@@ -66,7 +54,7 @@ const nextSlide = () => {
   if (currentIndex.value === slides.length - 1) {
     currentIndex.value = 0;
   } else {
-    currentIndex.value++;
+    currentIndex.value += 1;
   }
 };
 
@@ -74,7 +62,7 @@ const prevSlide = () => {
   if (currentIndex.value === 0) {
     currentIndex.value = slides.length - 1;
   } else {
-    currentIndex.value--;
+    currentIndex.value -= 1;
   }
 };
 
@@ -87,13 +75,13 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  clearInterval(interval);
+  stopAutoplay();
 });
 </script>
 
 <style scoped>
-.dot{
-  border: 0.5px solid ;
+.dot {
+  border: 0.5px solid;
 }
 
 .carousel {
@@ -102,8 +90,8 @@ onBeforeUnmount(() => {
 }
 .carousel img {
   width: 100%;
-  height: auto;
-  object-fit: cover;
+  height: 100%;
+  object-fit: cover; /* Ensures the image covers the container */
 }
 
 button {
@@ -116,5 +104,22 @@ button {
 }
 button:focus {
   outline: none;
+}
+
+@media (min-width: 640px) {
+  .carousel {
+    height: 50vh;
+  }
+}
+
+@media (min-width: 1024px) {
+  .carousel {
+    height: 60vh;
+  }
+}
+
+/* Transition styles */
+.transition-opacity {
+  transition: opacity 1s ease-in-out;
 }
 </style>

@@ -1,9 +1,13 @@
 <template>
   <div class="flex justify-center items-center min-h-screen">
+    
     <form
       @submit.prevent="onSubmit"
       class="flex w-96 flex-col justify-center items-center gap-4"
     >
+    <router-link to="/">
+          <img src="../assets/time-harmony.png" class="h-14 logo" />
+        </router-link>
       <div class="form-content">
         <div class="form__group field w-96">
           <input

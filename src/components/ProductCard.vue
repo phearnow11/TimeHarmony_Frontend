@@ -1,14 +1,14 @@
 <template>
   <div class="container">
     <div class="box">
-        <img class="watch-img" src="https://alowatch.vn/wp-content/uploads/2021/04/moa10054.jpg"/>
-        <div>
+      <img class="watch-img" src="https://alowatch.vn/wp-content/uploads/2021/04/moa10054.jpg" />
+      <div>
         <strong class="product-name">Đồng hồ Rolex siêhjgewhjghegjgjhjhgdsjagjshgda</strong>
         <div class="retailer">
-            <img class="avatar" src="https://files.catbox.moe/n1w3b0.png"/><span class="username">ThinhPhoenix</span>
+          <img class="avatar" src="https://files.catbox.moe/n1w3b0.png" /><span class="username">ThinhPhoenix</span>
         </div>
-        <span class="price-tag">PRICE</span> <span>12.000.000.000 VND</span>
-        </div>
+        <span class="price-tag">PRICE</span> <span class="price">12.000.000.000 VND</span>
+      </div>
     </div>
   </div>
 </template>
@@ -21,8 +21,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1em; /* Add spacing between cards */
-  flex-wrap: wrap; /* Allow cards to wrap */
+  gap: 1em;
+  flex-wrap: wrap;
 }
 .container::before,
 .container::after {
@@ -36,9 +36,9 @@
 }
 
 .container .box {
-  width: calc((90% - 0.5em) - 0.5em); /* Half of the container width minus the gap */
-  max-width: 12.5em; /* Maximum width for the card */
-  height: 20em; /* Fixed height to ensure uniform size */
+  width: calc((90% - 0.5em) - 0.5em);
+  max-width: 18em; /* Increased maximum width for the card */
+  height: 24em; /* Increased height */
   padding: 1rem;
   background-color: rgba(255, 255, 255, 0.074);
   border: 1px solid rgba(255, 255, 255, 0.222);
@@ -76,48 +76,71 @@
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* Limit to 2 lines */
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   white-space: normal;
   word-break: break-word;
   hyphens: auto;
+  font-size: 1.2vw; /* Responsive font size */
 }
 .container .box div p {
   margin: 0;
-  font-size: 0.9em;
+  font-size: 1.2vw; /* Responsive font size */
   font-weight: 300;
   letter-spacing: 0.1em;
 }
-.container .box div span {
-  color: whitesmoke;
-  font-size: 0.7rem;
-  font-weight: 300;
-}
-.container .box div span:nth-child(3) {
+.container .box div span.price-tag {
   color: var(--secondary);
+  font-size: 1vw; /* Responsive font size */
   font-weight: 500;
   margin-right: 0.2rem;
 }
+.container .box div span.price {
+  color: whitesmoke;
+  font-size: 1vw; /* Responsive font size */
+  font-weight: 300;
+}
 .container .box .avatar {
-  width: 20px;
-  height: 20px;
+  width: 2vw; /* Responsive size */
+  height: 2vw; /* Responsive size */
   vertical-align: middle;
 }
 .container .box .username {
   vertical-align: middle;
-  margin-left: 5px;
+  margin-left: 0.5vw; /* Responsive margin */
+  font-size: 1vw; /* Responsive font size */
 }
 .retailer {
   display: flex;
   justify-content: start;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 2vw; /* Responsive margin */
 }
 
-/* Media query for smaller screens */
 @media screen and (max-width: 768px) {
   .container .box {
-    width: calc(100% - 1em); /* Full width with spacing */
+    width: calc(100% - 1em);
+  }
+  .container .box div strong.product-name {
+    font-size: 3vw; /* Adjust font size for smaller screens */
+  }
+  .container .box div p {
+    font-size: 3vw; /* Adjust font size for smaller screens */
+  }
+  .container .box div span.price-tag,
+  .container .box div span.price {
+    font-size: 2.5vw; /* Adjust font size for smaller screens */
+  }
+  .container .box .avatar {
+    width: 5vw; /* Adjust size for smaller screens */
+    height: 5vw; /* Adjust size for smaller screens */
+  }
+  .container .box .username {
+    font-size: 2.5vw; /* Adjust font size for smaller screens */
+    margin-left: 1vw; /* Adjust margin for smaller screens */
+  }
+  .retailer {
+    margin-bottom: 5vw; /* Adjust margin for smaller screens */
   }
 }
 </style>
