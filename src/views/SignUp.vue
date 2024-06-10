@@ -1,7 +1,17 @@
 <template>
-  <div class="flex items-center justify-center thisForm">
-    <form @submit.prevent="signupHandle">
-      <div class="flex flex-col items-center">
+  <div class="flex justify-center items-center min-h-screen">
+    <div class="signup-container flex gap-8 items-center">
+      <div class="logo-container flex flex-col items-center">
+        <router-link to="/">
+          <img src="../assets/time-harmony.png" class="logo" />
+        </router-link>
+        <span class="signup-text">- Sign Up -</span>
+      </div>
+
+      <form
+        @submit.prevent="signupHandle"
+        class="flex w-96 flex-col items-center gap-2"
+      >
         <div class="form__group field w-96">
           <input
             type="email"
@@ -35,23 +45,23 @@
           <label for="password" class="form__label">Password</label>
         </div>
 
-        <div class="form__group field w-96" id="">
+        <div class="form__group field w-96">
           <input
             type="password"
             class="form__field"
-            placeholder="Password"
+            placeholder="Confirm password"
             v-model="signUpForm.repassword"
             required
           />
           <label for="repassword" class="form__label">Confirm password</label>
         </div>
 
-        <div class="flex space-x-4 w-96">
+        <div class="flex space-x-2 w-96">
           <div class="form__group w-1/2">
             <input
               type="text"
               class="form__field"
-              placeholder="Firstname"
+              placeholder="First Name"
               v-model="signUpForm.first_name"
               required
             />
@@ -61,7 +71,7 @@
             <input
               type="text"
               class="form__field"
-              placeholder="Lastname"
+              placeholder="Last Name"
               v-model="signUpForm.last_name"
               required
             />
@@ -90,16 +100,17 @@
           <label for="address" class="form__label">Address</label>
         </div>
 
-        <button type="submit" class="w-full th-p-btn mt-5">Sign up</button>
+        <button type="submit" class="w-full th-p-btn mt-3">Sign up</button>
 
-        <div class="mt-4">
+      
+        <div class="mt-1">
           <span>Already have an account? </span>
           <router-link to="/login" class="hover-underline-animation"
             >Log in here</router-link
           >
         </div>
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -124,7 +135,6 @@ const userStore = useUserStore();
 async function signupHandle() {
   if (signUpForm.password !== signUpForm.repassword) {
     console.log("Passwords do not match");
-
     return;
   }
 
@@ -141,17 +151,48 @@ async function signupHandle() {
   try {
     const response = await userStore.signUp();
     console.log("Signup successful", response);
-    router.push('/login')
-    // Redirect or show success message
+    router.push('/login');
   } catch (error) {
     console.error("Signup error", error);
-    // Handle signup error
   }
 }
 </script>
 
 <style scoped>
+/* Ensure the parent container takes the full height */
 .thisForm {
   height: 100vh;
+}
+
+/* Add styles for the signup container */
+.signup-container {
+  display: flex;
+  align-items: center;
+  gap: 2rem; /* Adjust the gap between logo and form as needed */
+}
+
+/* Style the logo container */
+.logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Style the signup text */
+.signup-text {
+  color: var(--primary-color); /* Replace with your primary color variable */
+  font-size: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+/* Adjust the logo size */
+.logo {
+  width: 200px;
+  height: auto;
+}
+
+/* Optional: Add margin to move the form slightly to the right */
+form {
+  margin-left: 10rem; /* Adjust the value as needed */
 }
 </style>

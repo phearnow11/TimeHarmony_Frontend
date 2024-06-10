@@ -45,7 +45,18 @@ const router = createRouter({
         console.error(err);
       }),
     },
-  ]
+    {
+      path: '/about',
+      name: 'About',
+      component: () => import('../views/About.vue').catch(err => {
+        console.error(err);
+      }),
+    },
+  ],
+  scrollBehavior(to, from, savedPosition) {
+    // Always scroll to top
+    return { top: 0 };
+  },
 });
 
 // router.beforeEach(async (to) => {

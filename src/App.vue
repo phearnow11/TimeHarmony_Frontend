@@ -4,11 +4,24 @@
 </script>
 
 <template>
-  <nav-bar/>
-  <router-view/>
-  <Footer/>
+  <div class="app-container">
+    <NavBar/>
+    <main class="main-content">
+      <router-view/>
+    </main>
+    <Footer/>
+  </div>
 </template>
 
 <style scoped>
+html, body, #app, .app-container {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
 
+.main-content {
+  flex: 1;
+}
 </style>

@@ -8,12 +8,15 @@
     </div>
 
     <!-- Navigation Buttons -->
-    <button @click="prevSlide" class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-gray-600 rounded w-8 h-8 flex items-center justify-center">
+     <div class="">
+      <button @click="prevSlide" class="gradient-left-button absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-600 w-8 h-8 flex items-center justify-center">
       <img src="../assets/arr.svg" class="colored-img w-5 rotate-180" alt="" />
     </button>
-    <button @click="nextSlide" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-600 rounded w-8 h-8 flex items-center justify-center">
+    
+    <button @click="nextSlide" class="gradient-right-button absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-600 rounded w-8 h-8 flex items-center justify-center">
       <img src="../assets/arr.svg" class="colored-img w-5" alt="" />
     </button>
+  </div>
 
     <!-- Navigation Dots -->
     <div class="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
@@ -121,5 +124,18 @@ button:focus {
 /* Transition styles */
 .transition-opacity {
   transition: opacity 1s ease-in-out;
+}
+
+.gradient-left-button{
+  background-image: linear-gradient(to left, transparent, rgba(0, 0, 0, 0.633));
+  width: auto;
+  height: 100%;
+  padding-left: 40px;
+}
+.gradient-right-button{
+  background-image: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.633));
+  width: auto;
+  height: 100%;
+  padding-right: 40px;
 }
 </style>

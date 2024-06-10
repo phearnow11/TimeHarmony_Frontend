@@ -36,9 +36,9 @@
 }
 
 .container .box {
-  width: calc((90% - 0.5em) - 0.5em);
-  max-width: 18em; /* Increased maximum width for the card */
-  height: 24em; /* Increased height */
+  width: calc((95% - 0.5em) - 0.5em);
+  max-width: 22em; /* Increased maximum width for the card */
+  height: 25em; /* Increased height */
   padding: 1rem;
   background-color: rgba(255, 255, 255, 0.074);
   border: 1px solid rgba(255, 255, 255, 0.222);

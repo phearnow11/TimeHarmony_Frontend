@@ -1,5 +1,5 @@
 <template>
-  <nav v-if="!auth.user_id && route.path !== '/login'" class="myheader grid grid-cols-6 gap-4 h-20 items-center sticky top-0 z-50 bg-black-99 w-full pl-6 pr-6">
+  <nav v-if="!auth.user_id && route.path !== '/login' && route.path !== '/signup'" class="myheader grid grid-cols-6 gap-4 h-20 items-center sticky top-0 z-50 w-full pl-6 pr-6">
     <div class="flex items-center justify-between col-span-1">
       <side-bar />
       <div class="flex justify-center items-center h-full">
@@ -29,7 +29,7 @@
           ></path>
         </svg>
       </div>
-      <div v-if="showHint && searchQuery" class="hint-dropdown">
+      <div v-if="showHint && searchQuery" class="hint-dropdown" @click="navigateToSearchResult" @mouseover="hovered = true" @mouseleave="hovered = false">
         Searching "{{ searchQuery }}..."
       </div>
     </div>
@@ -52,6 +52,7 @@ import { useRouter } from 'vue-router';
 
 const searchQuery = ref('');
 const showHint = ref(false);
+const hovered = ref(false);
 const router = useRouter();
 
 const search = () => {
@@ -65,6 +66,13 @@ const updateHint = () => {
   showHint.value = true;
 };
 
+const navigateToSearchResult = () => {
+  if (searchQuery.value.trim()) {
+    router.push({ name: 'SearchResult', query: { q: searchQuery.value } });
+    showHint.value = false;
+  }
+};
+
 document.addEventListener('click', (e) => {
   if (!e.target.closest('.ui-input-container')) {
     showHint.value = false;
@@ -76,7 +84,7 @@ const route = useRoute();
 </script>
 
 <style>
-.logo{
+.logo {
   width: 100%;
   max-width: 140px;
   height: auto;
@@ -87,6 +95,7 @@ body {
   padding: 0;
   box-sizing: border-box; /* Ensure consistent box-sizing */
 }
+
 /* Global Styles */
 *,
 *::before,
@@ -100,7 +109,6 @@ body {
 }
 
 .myheader {
-  /* box-shadow: #fab5704c 0px 48px 200px 0px; */
   box-shadow: rgba(153, 153, 153, 0.685) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
   width: 100%;
   position: sticky;
@@ -179,15 +187,30 @@ body {
 }
 
 .hint-dropdown {
-  background-color: rgba(0, 0, 0, 0.6); /* Black with opacity */
-  color: --primary;
+  background-color: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(25px);
+    box-shadow: rgba(153, 153, 153, 0.685) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
   padding: 8px;
   margin-top: 2px;
-  backdrop-filter: blur(5px); /* Backdrop blur */
   width: 100%;
   text-align: left;
   position: absolute;
   top: 100%;
   left: 0;
+  cursor: pointer;
+}
+
+.glass{
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border:1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.hint-dropdown:hover {
+  color: rgba(20, 20, 20, 1); /* Slightly darker background color on hover */
+  background-color: var(--primary);
 }
 </style>
