@@ -1,13 +1,24 @@
 <template>
-  
+    <div class="">
+        <div class="flex justify-center items-center gap-6 text-center title">
+            <span>4</span>
+            <clock/>
+            <span>4</span>
+        </div>
+        <div class="flex flex-col justify-center items-center gap-5">
+            <span>It looks like something is missing!</span>
+            <button class="th-p-btn">
+                Back to home
+            </button>
+        </div>
+    </div>
 </template>
-
-<script>
-export default {
-
-}
+<script setup>
+import Clock from '../components/Clock.vue'
 </script>
 
-<style>
-
+<style scoped>
+.title{
+    font-size: 15rem;
+}
 </style>

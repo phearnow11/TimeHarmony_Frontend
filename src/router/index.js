@@ -52,6 +52,13 @@ const router = createRouter({
         console.error(err);
       }),
     },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'Error',
+      component: () => import('../views/Error.vue').catch(err => {
+        console.error(err);
+      }),
+    },
   ],
   scrollBehavior(to, from, savedPosition) {
     // Always scroll to top
