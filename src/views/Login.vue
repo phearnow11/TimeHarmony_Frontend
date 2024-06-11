@@ -3,7 +3,7 @@
     <div class="login-container flex gap-8 items-center">
       <div class="logo-container flex flex-col items-center">
         <router-link to="/">
-          <img src="../assets/time-harmony.png" class="logo" />
+          <img src="../assets/time-harmony.png" class="logo w-60"/>
         </router-link>
         <span class="login-text">- Login -</span>
       </div>
@@ -124,11 +124,6 @@ function onSubmit() {
   font-size: 1.5rem;
   margin-top: 0.5rem;
 }
-
-.logo{
-  width: 200%;
-}
-
 /* Optional: Add margin to move the form slightly to the right */
 form {
   margin-left: 20rem; /* Adjust the value as needed */

@@ -1,5 +1,8 @@
 <template>
-  <nav v-if="auth.user_id || route.path !== '/login' && route.path !== '/signup'" class="myheader grid grid-cols-6 gap-4 h-20 items-center sticky top-0 z-50 w-full pl-6 pr-6">
+  <nav
+    v-if="auth.user_id || (route.path !== '/login' && route.path !== '/signup')"
+    class="myheader grid grid-cols-6 gap-4 h-20 items-center sticky top-0 z-50 w-full pl-6 pr-6"
+  >
     <div class="flex items-center justify-between col-span-1">
       <side-bar />
       <div class="flex justify-center items-center h-full">
@@ -29,16 +32,43 @@
           ></path>
         </svg>
       </div>
-      <div v-if="showHint && searchQuery" class="hint-dropdown" @click="navigateToSearchResult" @mouseover="hovered = true" @mouseleave="hovered = false">
+      <div
+        v-if="showHint && searchQuery"
+        class="hint-dropdown"
+        @click="navigateToSearchResult"
+        @mouseover="hovered = true"
+        @mouseleave="hovered = false"
+      >
         Searching "{{ searchQuery }}..."
       </div>
     </div>
-    
+
     <div class="flex justify-end items-center h-full gap-4 col-span-2">
-      <router-link to="/upload" class="hover-underline-animation" v-if="auth.user_id">Upload</router-link>
-      <router-link to="/login" class="hover-underline-animation" v-if="!auth.user_id && route.path !== '/login'">
+      <router-link
+        to="/upload"
+        class="hover-underline-animation"
+        v-if="auth.user_id"
+        >Upload</router-link
+      >
+      <router-link
+        to="/login"
+        class="hover-underline-animation"
+        v-if="!auth.user_id && route.path !== '/login'"
+      >
         Have an account? Login
       </router-link>
+      <router-link>
+        <span class="mdi mdi-message-text-outline"></span>
+      </router-link>
+      <router-link>
+        <span class="mdi mdi-heart-outline"></span>
+      </router-link>
+      <router-link>
+        <span class="mdi mdi-shopping-outline"></span>
+      </router-link>
+      <div>
+        <img :src="useUserStore().image" alt="avatar" class="avatar w-12" />
+      </div>
     </div>
   </nav>
 </template>
@@ -46,18 +76,19 @@
 <script setup>
 import { useAuthStore } from "../stores/auth";
 import SideBar from "./SideBar.vue";
-import { useRoute } from 'vue-router';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute } from "vue-router";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useUserStore } from "../stores/user";
 
-const searchQuery = ref('');
+const searchQuery = ref("");
 const showHint = ref(false);
 const hovered = ref(false);
 const router = useRouter();
 
 const search = () => {
   if (searchQuery.value.trim()) {
-    router.push({ name: 'SearchResult', query: { q: searchQuery.value } });
+    router.push({ name: "SearchResult", query: { q: searchQuery.value } });
     showHint.value = false;
   }
 };
@@ -68,13 +99,13 @@ const updateHint = () => {
 
 const navigateToSearchResult = () => {
   if (searchQuery.value.trim()) {
-    router.push({ name: 'SearchResult', query: { q: searchQuery.value } });
+    router.push({ name: "SearchResult", query: { q: searchQuery.value } });
     showHint.value = false;
   }
 };
 
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.ui-input-container')) {
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".ui-input-container")) {
     showHint.value = false;
   }
 });
@@ -83,7 +114,18 @@ const auth = useAuthStore();
 const route = useRoute();
 </script>
 
-<style>
+<style scoped>
+.avatar {
+  border: var(--primary) solid 2px;
+}
+
+textarea:focus,
+input:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
 .logo {
   width: 100%;
   max-width: 140px;
@@ -108,8 +150,14 @@ body {
   padding: 0;
 }
 
+/* Remove focus outline for all focusable elements */
+*:focus {
+  outline: none !important;
+}
+
 .myheader {
-  box-shadow: rgba(153, 153, 153, 0.685) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
+  box-shadow: rgba(153, 153, 153, 0.685) 0px 1px 1px,
+    rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
   width: 100%;
   position: sticky;
   top: 0;
@@ -130,13 +178,16 @@ body {
   font-size: 1em;
   border: none;
   border-bottom: 2px solid #ccc;
-  outline: none;
   background-color: transparent;
-  transition: border-color 0.3s;
+  transition: border-color 0.3s, background-color 0.3s, padding 0.3s; /* Added padding transition */
 }
 
 .ui-input:focus {
   border-color: var(--secondary);
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 10px 10px 10px 40px; /* Ensuring the padding remains the same on focus */
 }
 
 .ui-input-underline {
@@ -189,7 +240,8 @@ body {
 .hint-dropdown {
   background-color: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(25px);
-    box-shadow: rgba(153, 153, 153, 0.685) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
+  box-shadow: rgba(153, 153, 153, 0.685) 0px 1px 1px,
+    rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
   padding: 8px;
   margin-top: 2px;
   width: 100%;
@@ -200,17 +252,27 @@ body {
   cursor: pointer;
 }
 
-.glass{
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 20px;
-    border:1px solid rgba(255, 255, 255, 0.18);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+.glass {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0)
+  );
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
 .hint-dropdown:hover {
   color: rgba(20, 20, 20, 1); /* Slightly darker background color on hover */
   background-color: var(--primary);
+}
+
+.logo {
+  width: 100%;
+  max-width: 140px;
+  height: auto;
 }
 </style>
