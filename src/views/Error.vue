@@ -6,10 +6,12 @@
             <span>4</span>
         </div>
         <div class="flex flex-col justify-center items-center gap-5">
-            <span>It looks like something is missing!</span>
-            <button class="th-p-btn">
-                Back to home
-            </button>
+            <span>Oops, sorry we can not find page you are looking for!</span>
+            <router-link to="/">
+                <button class="th-p-btn">
+                    Back to home
+                </button>
+            </router-link>
         </div>
     </div>
 </template>
