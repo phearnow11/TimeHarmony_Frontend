@@ -45,12 +45,13 @@
           <label for="password" class="form__label">Password</label>
         </div>
 
-        <div class="form__group field w-96">
+        <div :class="['form__group', 'field', 'w-96', {'input-error': !passwordsMatch}]">
           <input
             type="password"
             class="form__field"
             placeholder="Confirm password"
             v-model="signUpForm.repassword"
+            @blur="checkPasswords"
             required
           />
           <label for="repassword" class="form__label">Confirm password</label>
@@ -114,7 +115,7 @@
 </template>
 
 <script setup>
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import { useUserStore } from "../stores/user";
 import router from "../router";
 
@@ -129,27 +130,40 @@ const signUpForm = reactive({
   address: "",
 });
 
+const passwordsMatch = ref(true);
+
 const userStore = useUserStore();
 
+function checkPasswords() {
+  passwordsMatch.value = signUpForm.password === signUpForm.repassword;
+  if (!passwordsMatch.value) {
+    const label = document.querySelector('label[for="repassword"]');
+    label.classList.add("shake");
+    setTimeout(() => {
+      label.classList.remove("shake");
+    }, 500);
+  }
+}
+
 async function signupHandle() {
-  if (signUpForm.password !== signUpForm.repassword) {
+  if (!passwordsMatch.value) {
     console.log("Passwords do not match");
     return;
   }
   try {
     const userData = [
-    {
-        "Fname": signUpForm.first_name,
-        "Lname": signUpForm.last_name,
-        "phone": signUpForm.phone,
-        "email": signUpForm.email,
-        "image": "https://files.catbox.moe/n1w3b0.png",
+      {
+        Fname: signUpForm.first_name,
+        Lname: signUpForm.last_name,
+        phone: signUpForm.phone,
+        email: signUpForm.email,
+        image: "https://files.catbox.moe/n1w3b0.png",
       },
       {
-        "username": signUpForm.username,
-        "password": signUpForm.password,
-      }
-    ]
+        username: signUpForm.username,
+        password: signUpForm.password,
+      },
+    ];
     const response = await userStore.signUp(userData);
     console.log("Signup successful", response);
     router.push("/login");
@@ -195,5 +209,32 @@ async function signupHandle() {
 /* Optional: Add margin to move the form slightly to the right */
 form {
   margin-left: 10rem; /* Adjust the value as needed */
+}
+
+.input-error .form__field {
+  border-color: red;
+}
+
+.input-error .form__label {
+  color: red;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+  75% {
+    transform: translateX(-5px);
+  }
+}
+
+.shake {
+  animation: shake 0.5s;
 }
 </style>
