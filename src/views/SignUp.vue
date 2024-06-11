@@ -102,7 +102,6 @@
 
         <button type="submit" class="w-full th-p-btn mt-3">Sign up</button>
 
-      
         <div class="mt-1">
           <span>Already have an account? </span>
           <router-link to="/login" class="hover-underline-animation"
@@ -120,14 +119,14 @@ import { useUserStore } from "../stores/user";
 import router from "../router";
 
 const signUpForm = reactive({
-  username: '',
-  password: '',
-  repassword: '',
-  email: '',
-  first_name: '',
-  last_name: '',
-  phone: '',
-  address: '',
+  username: "",
+  password: "",
+  repassword: "",
+  email: "",
+  first_name: "",
+  last_name: "",
+  phone: "",
+  address: "",
 });
 
 const userStore = useUserStore();
@@ -137,21 +136,23 @@ async function signupHandle() {
     console.log("Passwords do not match");
     return;
   }
-
-  userStore.loadUser({
-    username: signUpForm.username,
-    password: signUpForm.password,
-    email: signUpForm.email,
-    first_name: signUpForm.first_name,
-    last_name: signUpForm.last_name,
-    phone: signUpForm.phone,
-    address: signUpForm.address,
-  });
-
   try {
-    const response = await userStore.signUp();
+    const userData = [
+    {
+        "Fname": signUpForm.first_name,
+        "Lname": signUpForm.last_name,
+        "phone": signUpForm.phone,
+        "email": signUpForm.email,
+        "image": "https://files.catbox.moe/n1w3b0.png",
+      },
+      {
+        "username": signUpForm.username,
+        "password": signUpForm.password,
+      }
+    ]
+    const response = await userStore.signUp(userData);
     console.log("Signup successful", response);
-    router.push('/login');
+    router.push("/login");
   } catch (error) {
     console.error("Signup error", error);
   }

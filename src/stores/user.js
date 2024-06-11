@@ -1,57 +1,53 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 
-export const useUserStore = defineStore('user', {
-    state: () => ({
-        username: '',
-        password: '',
-        email: '',
-        first_name: '',
-        last_name: '',
-        address: '',
-        phone: '',
-        image: 'https://files.catbox.moe/n1w3b0.png',
-        active: '',
-    }),
+export const useUserStore = defineStore("user", {
+  state: () => ({
+    username: "",
+    password: "",
+    email: "",
+    first_name: "",
+    last_name: "",
+    address: "",
+    phone: "",
+    image: "https://files.catbox.moe/n1w3b0.png",
+    active: "",
+    user_id: null,  // Add this to your state
+  }),
 
-    actions: {
-        async signUp() {
-            const userData = [
-                {
-                    email: this.email,
-                    Fname: this.first_name,
-                    Lname: this.last_name,
-                    phone: this.phone,
-                    // address: this.address,
-                    image: this.image,
-                    // active: this.active
-                    },
-                {
-                    username: this.username,
-                    password: this.password
-                }
-                    ];
+  actions: {
+    async signUp(userData) {
+      try {
+        const response = await axios.post(
+          "http://localhost:8080/guest/register/member",
+          userData
+        );
+        console.log("Signup successful", response);
+        return response;
+      } catch (error) {
+        console.error("Signup error", error);
+        throw error;
+      }
+    },
 
-            try {
-                const response = await axios.post("http://localhost:8080/guest/register/member", userData);
-                console.log("Signup successful", response);
-                return response;
-            } catch (error) {
-                console.error("Signup error", error);
-                throw error;
-            }
-        },
+    async loadUser(user_id) {
+      try {
+        const res = await axios.get(`http://localhost:8080/member/get/${user_id}`);
+        console.log("Member data:", res.data);
 
-        loadUser(userInfo) {
-            this.username = userInfo.username || '';
-            this.password = userInfo.password || '';
-            this.email = userInfo.email || '';
-            this.first_name = userInfo.first_name || '';
-            this.last_name = userInfo.last_name || '';
-            this.phone = userInfo.phone || '';
-            this.address = userInfo.address || '';
-            this.image = userInfo.image || '';
-            this.active = userInfo.active || '';
-        }
-    }
+        // Update the state with user data
+        this.username = res.data.username;
+        this.email = res.data.email;
+        this.first_name = res.data.first_name;
+        this.last_name = res.data.last_name;
+        this.address = res.data.address;
+        this.phone = res.data.phone;
+        this.image = res.data.member_image;
+        this.active = res.data.active;
+        this.user_id = res.data.member_id;
+      } catch (err) {
+        console.error("Error fetching member data:", err);
+      }
+    },
+  },
 });

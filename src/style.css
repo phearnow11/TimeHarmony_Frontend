@@ -116,6 +116,7 @@
 .form__group {
   position: relative;
   padding: 20px 0 0;
+  outline: 0;
 }
 
 .form__field {
@@ -128,16 +129,19 @@
   padding: 7px 0;
   background: transparent;
   transition: border-color 0.2s;
+  outline: 0;
 }
 
 .form__field::placeholder {
   color: transparent;
+  outline: 0;
 }
 
 .form__field:placeholder-shown ~ .form__label {
   font-size: 17px;
   cursor: text;
   top: 20px;
+  outline: 0;
 }
 
 .form__label {
@@ -148,6 +152,7 @@
   font-size: 17px;
   color: #9b9b9b;
   pointer-events: none;
+  outline: 0;
 }
 
 .form__field:focus {
@@ -155,6 +160,7 @@
   border-width: 2px;
   border-image: linear-gradient(#FFBD59,#FFBD59);
   border-image-slice: 1;
+  outline: 0; /* Ensure no blue outline */
 }
 
 .form__field:focus ~ .form__label {
@@ -164,11 +170,36 @@
   transition: 0.2s;
   font-size: 17px;
   color: #E6C591;
+  outline: 0;
 }
 
 /* reset input */
 .form__field:required, .form__field:invalid {
   box-shadow: none;
+  outline: 0;
+}
+
+* Additional specific styling to override blue outline */
+input:-webkit-autofill,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #212121 inset !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+input,
+textarea,
+select {
+  outline: none; /* Ensure no blue outline */
+  box-shadow: none; /* Ensure no box-shadow outline */
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none; /* Ensure no blue outline */
+  box-shadow: none !important; /* Override any box-shadow */
 }
 
 @media (min-width: 768px) {

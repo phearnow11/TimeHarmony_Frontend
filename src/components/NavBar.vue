@@ -57,13 +57,13 @@
       >
         Have an account? Login
       </router-link>
-      <router-link>
+      <router-link to="">
         <span class="mdi mdi-message-text-outline"></span>
       </router-link>
-      <router-link>
+      <router-link to="">
         <span class="mdi mdi-heart-outline"></span>
       </router-link>
-      <router-link>
+      <router-link to="/cart">
         <span class="mdi mdi-shopping-outline"></span>
       </router-link>
       <div>
@@ -120,11 +120,6 @@ const route = useRoute();
 }
 
 textarea:focus,
-input:focus {
-  outline: none !important;
-  box-shadow: none !important;
-  border: none !important;
-}
 
 .logo {
   width: 100%;
@@ -150,10 +145,7 @@ body {
   padding: 0;
 }
 
-/* Remove focus outline for all focusable elements */
-*:focus {
-  outline: none !important;
-}
+
 
 .myheader {
   box-shadow: rgba(153, 153, 153, 0.685) 0px 1px 1px,
@@ -184,9 +176,7 @@ body {
 
 .ui-input:focus {
   border-color: var(--secondary);
-  outline: none !important;
-  box-shadow: none !important;
-  border: none !important;
+
   padding: 10px 10px 10px 40px; /* Ensuring the padding remains the same on focus */
 }
 

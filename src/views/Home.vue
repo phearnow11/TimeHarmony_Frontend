@@ -2,8 +2,8 @@
   <div class="pt-6">
     <carousel :startAutoPlay="false" :timeout="3000" :showNavigation="true" :showPagination="true" />
     <!-- Show user's username and logout button if logged in -->
-    <div v-if="user_id">
-      User ID: {{ user_id }}
+    <div v-if="useUserStore().last_name">
+      User ID: {{ useUserStore().last_name }}
       <button class="th-p-btn w-10" @click="logout">Log out</button>
     </div>
   </div>
@@ -16,29 +16,17 @@
 
 <script setup>
 import { onMounted } from 'vue';
-import axios from 'axios';
 import { useAuthStore } from '../stores/auth'; 
 import carousel from '../components/Carousel.vue';
 import ProductCard from '../components/ProductCard.vue';
-import footer from '../components/Footer.vue';
-
-const authStore = useAuthStore();
+import { useUserStore } from '../stores/user';
 
 const logout = () => {
-  authStore.logout();
+  useAuthStore().logout();
 };
 
-const user_id = authStore.user_id;
+const user_id = useAuthStore().user_id;
 onMounted(() => {
-  if (user_id) {
-    axios.get(`http://localhost:8080/member/get/${user_id}`)
-      .then((res) => {
-        console.log('Member data:', res.data);
-        // Optionally, update the user state with additional data from this response
-      })
-      .catch((err) => {
-        console.error('Error fetching member data:', err);
-      });
-  }
+  useUserStore().loadUser(user_id)
 });
 </script>

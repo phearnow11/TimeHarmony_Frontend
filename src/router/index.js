@@ -53,6 +53,13 @@ const router = createRouter({
       }),
     },
     {
+      path: '/cart',
+      name: 'Cart',
+      component: () => import('../views/Cart.vue').catch(err => {
+        console.error(err);
+      }),
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'Error',
       component: () => import('../views/Error.vue').catch(err => {
