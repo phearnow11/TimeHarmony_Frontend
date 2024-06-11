@@ -22,18 +22,18 @@ export const useUserStore = defineStore('user', {
                     Fname: this.first_name,
                     Lname: this.last_name,
                     phone: this.phone,
-                    address: this.address,
+                    // address: this.address,
                     image: this.image,
-                    active: this.active
-                },
+                    // active: this.active
+                    },
                 {
                     username: this.username,
                     password: this.password
                 }
-            ];
+                    ];
 
             try {
-                const response = await axios.post("http://localhost:8080/member/save-user", userData);
+                const response = await axios.post("http://localhost:8080/guest/register/member", userData);
                 console.log("Signup successful", response);
                 return response;
             } catch (error) {

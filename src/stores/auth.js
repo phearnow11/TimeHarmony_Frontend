@@ -26,7 +26,8 @@ export const useAuthStore = defineStore('auth', {
             )
             .then((res) => {
                 if (res.status === 200) {
-                    this.user_id = res.data.user.member_id;
+                    console.log(res.data.user);
+                    this.user_id = res.data.user;
                     this.token = res.data.token;
                     // Save token and user_id in cookies
                     Cookies.set('token', this.token, { expires: 7 }); // Expires in 7 days

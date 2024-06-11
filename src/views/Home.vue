@@ -31,7 +31,7 @@ const logout = () => {
 const user_id = authStore.user_id;
 onMounted(() => {
   if (user_id) {
-    axios.get(`http://localhost:8080/member/get-member?member_id=${user_id}`)
+    axios.get(`http://localhost:8080/member/get/${user_id}`)
       .then((res) => {
         console.log('Member data:', res.data);
         // Optionally, update the user state with additional data from this response

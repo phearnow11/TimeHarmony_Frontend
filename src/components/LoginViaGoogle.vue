@@ -68,14 +68,14 @@ export default {
         if (userResponse && userResponse.data) {
           // Set user details and token in auth store
           const user = userResponse.data;
-          authStore.user = user;
-          authStore.token = accessToken;
+          // authStore.user = user;
+          // authStore.token = accessToken;
 
-          // Save token and user in cookies
-          Cookies.set('token', accessToken, { expires: 7 });
-          Cookies.set('user', JSON.stringify(user), { expires: 7 });
+          // // Save token and user in cookies
+          // Cookies.set('token', accessToken, { expires: 7 });
+          // Cookies.set('user', JSON.stringify(user), { expires: 7 });
 
-          console.log(user.name);
+          console.log(user.email);
           router.push('/');
         } else {
           console.error("Failed to fetch user details.");
