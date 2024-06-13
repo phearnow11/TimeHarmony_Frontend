@@ -66,25 +66,86 @@
       <router-link to="/cart">
         <span class="mdi mdi-shopping-outline"></span>
       </router-link>
-      <div>
-        <img :src="useUserStore().image" alt="avatar" class="avatar w-12" />
+      <!-- Guest Page -->
+      <div v-if="!auth.user_id" class="relative">
+        <div @click="toggleMenu" class="user cursor-pointer">
+          <span class="mdi mdi-account-outline"></span>
+        </div>
+        <div v-show="showMenu">
+          <div class="submenu absolute top-10 right-0.5 pt-1 w-48">
+            <a
+              href="/signup"
+              class="submenu-item block px-4 py-2 hover-underline-animation"
+              >Sign Up</a
+            >
+            
+          </div>
+        </div>
       </div>
+      <!-- Guest Page -->
+      <!-- User Page -->
+      <div v-if="auth.user_id" class="relative">
+        <div @click="toggleMenu" class="user cursor-pointer flex items-center">
+          <span>{{ greeting }},</span>
+          <span class="ml-2 mr-1">
+            <img src="../assets/yairozu.jpg" class="img-responsive" alt="Image Description">
+          </span>
+          <span> {{ useUserStore().last_name }} </span>
+        </div>
+        <div v-show="showMenu">
+          <div class="submenu absolute top-10 right-0.5 text-white pt-1 w-48">
+            <a
+              href="#"
+              class="submenu-item block px-4 py-2 hover-underline-animation"
+              >Settings</a
+            >
+            <a
+              @click="logout"
+              class="submenu-item block px-4 py-2 cursor-pointer hover-underline-animation"
+              >Log Out</a
+            >
+            
+          </div>
+        </div>
+      </div>
+      <!-- User Page -->
     </div>
   </nav>
 </template>
 
 <script setup>
 import { useAuthStore } from "../stores/auth";
-import SideBar from "./SideBar.vue";
+import SideBar from "./MenuBar.vue";
 import { useRoute } from "vue-router";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "../stores/user";
+import { onMounted } from "vue";
+
 
 const searchQuery = ref("");
 const showHint = ref(false);
 const hovered = ref(false);
 const router = useRouter();
+const showMenu = ref(false);
+const greeting = ref("");
+const submenus = ref({
+  setting: false,
+  logout: false,
+  style: false,
+  collection: false,
+  // Add other submenus as needed
+});
+
+const logout = () => {
+  useAuthStore().logout();
+};
+
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".user") && !e.target.closest(".dropdown-menu")) {
+    showMenu.value = false;
+  }
+});
 
 const search = () => {
   if (searchQuery.value.trim()) {
@@ -110,6 +171,32 @@ document.addEventListener("click", (e) => {
   }
 });
 
+function toggleMenu() {
+  showMenu.value = !showMenu.value;
+}
+
+function showSubmenu(menu) {
+  submenus.value[menu] = true;
+}
+function setGreeting() {
+  const now = new Date();
+  const hour = now.getHours();
+
+  if (hour >= 0 && hour < 5) {
+    greeting.value = "Good night";
+  } else if (hour >= 5 && hour < 12) {
+    greeting.value = "Good morning";
+  } else if (hour >= 12 && hour < 18) {
+    greeting.value = "Good afternoon";
+  } else{
+    greeting.value = "Good evening";
+  }
+}
+
+onMounted(() => {
+  setGreeting();
+});
+
 const auth = useAuthStore();
 const route = useRoute();
 </script>
@@ -120,7 +207,6 @@ const route = useRoute();
 }
 
 textarea:focus,
-
 .logo {
   width: 100%;
   max-width: 140px;
@@ -145,7 +231,20 @@ body {
   padding: 0;
 }
 
+.mdi {
+  font-size: 20px;
+  transition: transform 0.3s ease;
+}
 
+.img-responsive {
+  width: 30px; /* Đặt kích thước bạn muốn */
+  height: 30px;
+  object-fit: cover;
+}
+
+.mdi:hover {
+  transform: scale(1.3);
+}
 
 .myheader {
   box-shadow: rgba(153, 153, 153, 0.685) 0px 1px 1px,
@@ -242,17 +341,53 @@ body {
   cursor: pointer;
 }
 
-.glass {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.1),
-    rgba(255, 255, 255, 0)
-  );
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+.submenu {
+  background-color: rgba(20, 20, 20, 0.95); /* Increased opacity */
+  backdrop-filter: blur(30px); /* Increased blur */
+  -webkit-backdrop-filter: blur(30px); /* Increased blur */
+}
+
+.submenu-item {
+  display: block;
+  text-decoration: none;
+  width: 100%;
+  padding: 10px;
+}
+
+.hover-underline-animation {
+  position: relative;
+  text-decoration: none;
+  color: var(--wait);
+}
+
+.hover-underline-animation::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  display: block;
+  margin: 0 auto;
+  background: #ffbd59;
+  transition: width 0.4s ease-in-out;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -2px;
+}
+
+.hover-underline-animation:hover::after {
+  width: 100%;
+}
+
+.hover-underline-animation:hover {
+  color: var(--secondary);
+}
+
+.hover-active {
+  color: var(--secondary);
+}
+
+.hover-active::after {
+  width: 100%;
 }
 
 .hint-dropdown:hover {

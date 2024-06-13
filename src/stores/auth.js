@@ -49,7 +49,7 @@ export const useAuthStore = defineStore('auth', {
             this.token = null;
             Cookies.remove('token');
             Cookies.remove('user_id');
-            router.push('/login');
+            router.push('/');
         }
     }
 });

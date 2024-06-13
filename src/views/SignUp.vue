@@ -20,7 +20,7 @@
             v-model="signUpForm.email"
             required
           />
-          <label for="email" class="form__label">Email</label>
+          <label for="email" class="form__label">Email*</label>
         </div>
 
         <div class="form__group field w-96">
@@ -31,7 +31,7 @@
             v-model="signUpForm.username"
             required
           />
-          <label for="username" class="form__label">Username</label>
+          <label for="username" class="form__label">Username*</label>
         </div>
 
         <div class="form__group field w-96">
@@ -42,7 +42,7 @@
             v-model="signUpForm.password"
             required
           />
-          <label for="password" class="form__label">Password</label>
+          <label for="password" class="form__label">Password*</label>
         </div>
 
         <div :class="['form__group', 'field', 'w-96', {'input-error': !passwordsMatch}]">
@@ -54,7 +54,7 @@
             @blur="checkPasswords"
             required
           />
-          <label for="repassword" class="form__label">Confirm password</label>
+          <label for="repassword" class="form__label">Confirm password*</label>
         </div>
 
         <div class="flex space-x-2 w-96">
@@ -66,7 +66,7 @@
               v-model="signUpForm.first_name"
               required
             />
-            <label for="firstname" class="form__label">First Name</label>
+            <label for="firstname" class="form__label">First Name*</label>
           </div>
           <div class="form__group w-1/2">
             <input
@@ -76,7 +76,7 @@
               v-model="signUpForm.last_name"
               required
             />
-            <label for="lastname" class="form__label">Last Name</label>
+            <label for="lastname" class="form__label">Last Name*</label>
           </div>
         </div>
 
