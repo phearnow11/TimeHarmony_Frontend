@@ -24,4 +24,10 @@ html, body, #app, .app-container {
 .main-content {
   flex: 1;
 }
+
+.app-container {
+  min-height: 100vh; /* set a minimum height of 100% of the viewport height */
+  display: flex;
+  flex-direction: column;
+}
 </style>

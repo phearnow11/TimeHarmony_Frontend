@@ -1,7 +1,8 @@
 <template>
+  <div v-if="route.path !== '/chat'">
   <nav
-    v-if="auth.user_id || (route.path !== '/login' && route.path !== '/signup')"
-    class="myheader grid grid-cols-6 gap-4 h-20 items-center sticky top-0 z-50 w-full pl-6 pr-6"
+  v-if="(auth.user_id) || (route.path !== '/login' && route.path !== '/signup')"
+  class="myheader grid grid-cols-6 gap-4 h-20 items-center sticky top-0 z-50 w-full pl-6 pr-6"
   >
     <div class="flex items-center justify-between col-span-1">
       <side-bar />
@@ -50,55 +51,50 @@
         v-if="auth.user_id"
         >Upload</router-link
       >
-      <router-link
-        to="/login"
-        class="hover-underline-animation"
-        v-if="!auth.user_id && route.path !== '/login'"
-      >
-        Have an account? Login
+      <router-link to="/chat">
+        <span class="mdi mdi-message-text-outline hover-animation"></span>
       </router-link>
       <router-link to="">
-        <span class="mdi mdi-message-text-outline"></span>
-      </router-link>
-      <router-link to="">
-        <span class="mdi mdi-heart-outline"></span>
+        <span class="mdi mdi-heart-outline hover-animation"></span>
       </router-link>
       <router-link to="/cart">
-        <span class="mdi mdi-shopping-outline"></span>
+        <span class="mdi mdi-shopping-outline hover-animation"></span>
       </router-link>
       <!-- Guest Page -->
       <div v-if="!auth.user_id" class="relative">
-        <div @click="toggleMenu" class="user cursor-pointer">
-          <span class="mdi mdi-account-outline"></span>
+        <div @click="toggleMenu" class="user cursor-pointer flex items-center hover-animation">
+          <span class="mdi mdi-account-outline "></span>
+          <span class="arrow-icon" :class="{ 'rotate-180': showMenu }">
+            <img src="../assets/arr.svg" class="w-3" alt="Arrow Icon">
+          </span>
         </div>
-        <div v-show="showMenu">
-          <div class="submenu absolute top-10 right-0.5 pt-1 w-48">
-            <a
-              href="/signup"
-              class="submenu-item block px-4 py-2 hover-underline-animation"
-              >Sign Up</a
-            >
-            
-          </div>
+        <div v-show="showMenu" class="submenu absolute top-10 right-0.5 pt-1 w-48">
+          
+          <router-link to="/login" class="submenu-item block px-4 py-2 hover-underline-animation">Log in</router-link>
+          <router-link to="/signup" class="submenu-item block px-4 py-2 hover-underline-animation">Sign Up</router-link>
         </div>
       </div>
       <!-- Guest Page -->
       <!-- User Page -->
       <div v-if="auth.user_id" class="relative">
-        <div @click="toggleMenu" class="user cursor-pointer flex items-center">
-          <span>{{ greeting }},</span>
+        <div @click="toggleMenu" class="user cursor-pointer flex items-center hover-animation">
+          <span>{{ greeting }}, {{ useUserStore().first_name }} </span>
           <span class="ml-2 mr-1">
             <img src="../assets/yairozu.jpg" class="img-responsive" alt="Image Description">
           </span>
-          <span> {{ useUserStore().last_name }} </span>
+          <span class="arrow-icon" :class="{ 'rotate-180': showMenu }">
+      <img src="../assets/arr.svg" class="w-3" alt="Arrow Icon">
+    </span>
         </div>
         <div v-show="showMenu">
+          
           <div class="submenu absolute top-10 right-0.5 text-white pt-1 w-48">
-            <a
-              href="#"
-              class="submenu-item block px-4 py-2 hover-underline-animation"
-              >Settings</a
-            >
+            <router-link to="/setting/profile" 
+            class="submenu-item block px-4 py-2 hover-underline-animation"
+            >Settings</router-link>
+            <router-link to="/appraiser" 
+            class="submenu-item block px-4 py-2 hover-underline-animation"
+            >Appraise</router-link>
             <a
               @click="logout"
               class="submenu-item block px-4 py-2 cursor-pointer hover-underline-animation"
@@ -111,6 +107,7 @@
       <!-- User Page -->
     </div>
   </nav>
+  </div>
 </template>
 
 <script setup>
@@ -233,7 +230,6 @@ body {
 
 .mdi {
   font-size: 20px;
-  transition: transform 0.3s ease;
 }
 
 .img-responsive {
@@ -242,9 +238,7 @@ body {
   object-fit: cover;
 }
 
-.mdi:hover {
-  transform: scale(1.3);
-}
+
 
 .myheader {
   box-shadow: rgba(153, 153, 153, 0.685) 0px 1px 1px,
@@ -261,6 +255,8 @@ body {
 .ui-input-container {
   position: relative;
   width: 100%;
+  display: flex;
+  align-items: center;
 }
 
 .ui-input {
@@ -270,7 +266,7 @@ body {
   border: none;
   border-bottom: 2px solid #ccc;
   background-color: transparent;
-  transition: border-color 0.3s, background-color 0.3s, padding 0.3s; /* Added padding transition */
+  transition: border-color 0.3s, background-color 0.3s, padding 0.3s;
 }
 
 .ui-input:focus {
@@ -339,6 +335,30 @@ body {
   top: 100%;
   left: 0;
   cursor: pointer;
+  color: var(--wait);
+  text-decoration: none;
+}
+
+.hint-dropdown::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  display: block;
+  margin: 0 auto;
+  background: #ffbd59;
+  transition: width 0.4s ease-in-out;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -2px;
+}
+
+.hint-dropdown:hover::after {
+  width: 100%;
+}
+
+.hint-dropdown:hover {
+  color: var(--secondary);
 }
 
 .submenu {
@@ -352,6 +372,29 @@ body {
   text-decoration: none;
   width: 100%;
   padding: 10px;
+}
+
+.hover-animation {
+  position: relative;
+  text-decoration: none;
+  color: var(--wait);
+}
+
+.hover-animation::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  display: block;
+  margin: 0 auto;
+  background: #ffbd59;
+  transition: width 0.6s ease-in-out;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -2px;
+}
+.hover-animation:hover {
+  color: var(--secondary);
 }
 
 .hover-underline-animation {
@@ -390,9 +433,14 @@ body {
   width: 100%;
 }
 
-.hint-dropdown:hover {
-  color: rgba(20, 20, 20, 1); /* Slightly darker background color on hover */
-  background-color: var(--primary);
+.arrow-icon {
+  margin-left: 3px;
+  transition: transform 0.4s ease-in-out;
+  transform: rotate(90deg);
+}
+
+.rotate-180 {
+  transform: rotate(270deg);
 }
 
 .logo {

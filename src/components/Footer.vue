@@ -1,5 +1,5 @@
 <template>
-  <footer class="footer">
+  <footer v-if="route.path !== '/chat'" class="footer">
     <div class="w-full max-w-screen-xl mx-auto px-4 md:py-4">
       <div class="sm:flex sm:items-center sm:justify-between">
         <router-link to="/" class="flex items-center mb-4 sm:mb-0">
@@ -26,14 +26,12 @@
   </footer>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      date: new Date().getFullYear()
-    }
-  }
-}
+<script setup>
+import { useRoute } from 'vue-router';
+import { computed } from 'vue';
+
+const route = useRoute();
+const date = computed(() => new Date().getFullYear());
 </script>
 
 <style scoped>

@@ -60,6 +60,35 @@ const router = createRouter({
       }),
     },
     {
+      path: '/chat',
+      name: 'Chat',
+      component: () => import('../views/Chat.vue').catch(err => {
+        console.error(err);
+      }),
+    },
+    {
+      path: '/appraiser',
+      name: 'Appraiser',
+      component: () => import('../views/Appraiser.vue').catch(err => {
+        console.error(err);
+      }),
+    },
+    {
+      path: '/setting/profile',
+      name: 'AccountSetting',
+      component: () => import('../views/Setting/AccountSetting.vue').catch(err => {
+        console.error(err);
+      }),
+    },
+    {
+      path: '/setting/password',
+      name: 'PasswordSetting',
+      component: () => import('../views/Setting/PasswordSetting.vue').catch(err => {
+        console.error(err);
+      }),
+    },
+   
+    {
       path: '/:pathMatch(.*)*',
       name: 'Error',
       component: () => import('../views/Error.vue').catch(err => {
@@ -82,5 +111,7 @@ const router = createRouter({
 //     return '/login'
 //   }
 // })
+
+
 
 export default router;
