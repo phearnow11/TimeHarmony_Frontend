@@ -14,6 +14,8 @@
 </template>
 
 <style scoped>
+
+
 .container {
   margin-top: 5em;
   position: relative;
@@ -68,6 +70,8 @@
   filter: none;
 }
 .container .box div strong.product-name {
+  margin-top: 4px;
+  color: white;
   display: block;
   margin-bottom: 0.5rem;
   max-width: 100%;
@@ -96,12 +100,13 @@
 .container .box div span.price {
   color: whitesmoke;
   font-size: 1vw; /* Responsive font size */
-  font-weight: 300;
+  font-weight: bold;
 }
 .container .box .avatar {
   width: 2vw; /* Responsive size */
   height: 2vw; /* Responsive size */
   vertical-align: middle;
+  border: 1px solid var(--primary)
 }
 .container .box .username {
   vertical-align: middle;

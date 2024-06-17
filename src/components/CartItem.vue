@@ -14,7 +14,11 @@
 </template>
 
 <style scoped>
+*{
+    color: white;
+}
 .container {
+    color: white;
     width: 100;
     margin: 0;
     padding: 0;
@@ -27,6 +31,7 @@
 }
 
 .container .box:hover {
+    color: white;
   box-shadow: 0px 0px 20px 1px #ffbb763f;
   border: 1px solid rgba(255, 255, 255, 0.454);
 }
@@ -78,6 +83,7 @@
 }
 
 .container .box div strong.product-name {
+    color: white;
     display: block;
     margin-bottom: 0.5rem;
     max-width: 100%;
@@ -129,6 +135,9 @@
     justify-content: start;
     align-items: center;
     margin-bottom: 2vw; /* Responsive margin */
+}
+.product-name{
+    color: white;
 }
 
 @media screen and (max-width: 768px) {
