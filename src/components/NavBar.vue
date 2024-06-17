@@ -1,7 +1,6 @@
 <template>
-  <div v-if="route.path !== '/chat'">
   <nav
-  v-if="(auth.user_id) || (route.path !== '/login' && route.path !== '/signup')"
+  v-if="(auth.user_id) || (route.path !== '/login' && route.path !== '/signup' && route.path !== '/chat')"
   class="myheader grid grid-cols-6 gap-4 h-20 items-center sticky top-0 z-50 w-full pl-6 pr-6"
   >
     <div class="flex items-center justify-between col-span-1">
@@ -115,7 +114,6 @@
       <!-- User Page -->
     </div>
   </nav>
-  </div>
 </template>
 
 <script setup>
