@@ -103,10 +103,20 @@ const router = createRouter({
   },
 });
 
-router.beforeEach(async (to) => {
-  const user_id = useAuthStore().user_id;
-  if (user_id != null) useUserStore().loadUser(user_id);
-})
+router.beforeEach(async (to, from, next) => {
+  const authStore = useAuthStore();
+  const user_id = authStore.user_id;
+
+  if (user_id != null) {
+    useUserStore().loadUser(user_id);
+    
+    // Redirect authenticated users away from login, signup, and forgot pages
+    if (['/login', '/signup', '/forgot'].includes(to.path)) {
+      return next('/');
+    }
+  }
+  next();
+});
 
 
 
