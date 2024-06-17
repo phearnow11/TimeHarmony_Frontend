@@ -1,21 +1,46 @@
 <template>
   <div class="container">
     <div class="box">
-      <img class="watch-img" src="https://alowatch.vn/wp-content/uploads/2021/04/moa10054.jpg" />
+      <img class="watch-img" :src="productImage" />
       <div>
-        <strong class="product-name">Đồng hồ Rolex còn mới siêu đẹp</strong>
+        <strong class="product-name">{{ productName }}</strong>
         <div class="retailer">
-          <img class="avatar" src="https://files.catbox.moe/n1w3b0.png" /><span class="username">ThinhPhoenix</span>
+          <img class="avatar" :src="retailerAvatar" /><span class="username hover-underline-animation">{{ retailerName }}</span>
         </div>
-        <span class="price-tag">PRICE</span> <span class="price">12.000.000.000 VND</span>
+        <span class="price-tag">PRICE</span> <span class="price">{{ price }}</span>
       </div>
     </div>
   </div>
 </template>
 
+<script>
+export default {
+  props: {
+    productName: {
+      type: String,
+      required: true
+    },
+    productImage: {
+      type: String,
+      required: true
+    },
+    retailerName: {
+      type: String,
+      required: true
+    },
+    retailerAvatar: {
+      type: String,
+      required: true
+    },
+    price: {
+      type: String,
+      required: true
+    }
+  }
+}
+</script>
+
 <style scoped>
-
-
 .container {
   margin-top: 5em;
   position: relative;
