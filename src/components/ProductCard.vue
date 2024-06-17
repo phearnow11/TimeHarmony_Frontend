@@ -3,7 +3,7 @@
     <div class="box">
       <img class="watch-img" src="https://alowatch.vn/wp-content/uploads/2021/04/moa10054.jpg" />
       <div>
-        <strong class="product-name">Đồng hồ Rolex siêhjgewhjghegjgjhjhgdsjagjshgda</strong>
+        <strong class="product-name">Đồng hồ Rolex còn mới siêu đẹp</strong>
         <div class="retailer">
           <img class="avatar" src="https://files.catbox.moe/n1w3b0.png" /><span class="username">ThinhPhoenix</span>
         </div>
@@ -18,7 +18,7 @@
   margin-top: 5em;
   position: relative;
   font-family: sans-serif;
-  display: flex;
+  display: inline-flex; /* Changed to inline-flex to fit content */
   justify-content: center;
   align-items: center;
   gap: 1em;
@@ -36,9 +36,7 @@
 }
 
 .container .box {
-  width: calc((95% - 0.5em) - 0.5em);
   max-width: 22em; /* Increased maximum width for the card */
-  height: 25em; /* Increased height */
   padding: 1rem;
   background-color: rgba(255, 255, 255, 0.074);
   border: 1px solid rgba(255, 255, 255, 0.222);
