@@ -1,39 +1,88 @@
 <template>
     <div class="container flex items-center justify-center">
-        <div class="box">
+        <div class="box" :class="{ 'checked': remember }" @click="toggleCheckbox">
+            <label class="checkbox-container">
+                <input type="checkbox" v-model="remember" @click.stop />
+                <svg viewBox="0 0 64 64" height="1em">
+                    <path
+                        d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                        class="path"
+                    ></path>
+                </svg>
+            </label>
             <img class="watch-img" src="https://alowatch.vn/wp-content/uploads/2021/04/moa10054.jpg" />
             <div class="info">
-                <strong class="product-name">Đồng hồ Rolex siêhjgewhjghegjgjhjhgdsjagjshgda</strong>
+                <strong class="product-name">Đồng hồ Rolex</strong>
                 <div class="retailer">
-                    <img class="avatar" src="https://files.catbox.moe/n1w3b0.png" /><span class="username">ThinhPhoenix</span>
+                    <img class="avatar" src="https://files.catbox.moe/n1w3b0.png" />
+                    <span class="username">ThinhPhoenix</span>
                 </div>
-                <span class="price-tag">PRICE</span> <span class="price">12.000.000.000 VND</span>
+                <div class="action-buttons">
+                    <div class="hover-underline-animation" @click.stop="removeFromCart">Remove this watch from cart</div>
+                </div>
+                <div class="price-details">
+                    <span class="price-tag">PRICE</span>
+                    <span class="price">12.000.000.000 VND</span>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
+<script>
+export default {
+    data() {
+        return {
+            remember: false
+        };
+    },
+    methods: {
+        toggleCheckbox() {
+            this.remember = !this.remember;
+        },
+        removeFromCart() {
+            // Replace with your remove from cart logic
+            console.log("Remove from cart clicked");
+        }
+    }
+};
+</script>
+
 <style scoped>
-*{
-    color: white;
+.hover-underline-animation::after {
+    color: var(--secondary);
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    display: block;
+    margin: 0 auto;
+    background: #ff402b;
+    transition: width 0.4s ease-in-out;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -2px;
 }
+
+.hover-underline-animation:hover::after {
+    color: red;
+    width: 100%;
+}
+
+.hover-underline-animation:hover {
+    color: red;
+}
+
 .container {
     color: white;
-    width: 100;
+    width: 100%;
     margin: 0;
     padding: 0;
-    position: relative;
     font-family: sans-serif;
     display: flex;
     justify-content: center;
     gap: 1em;
     flex-wrap: wrap;
-}
-
-.container .box:hover {
-    color: white;
-  box-shadow: 0px 0px 20px 1px #ffbb763f;
-  border: 1px solid rgba(255, 255, 255, 0.454);
 }
 
 .container .box {
@@ -42,128 +91,129 @@
     padding: 1rem;
     background-color: rgba(255, 255, 255, 0.074);
     border: 1px solid rgba(255, 255, 255, 0.222);
-    -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
     transition: all ease 0.3s;
     display: flex;
-    box-sizing: border-box;
+    align-items: center;
+    position: relative;
+    cursor: pointer; /* Add cursor pointer for clickable effect */
+    overflow: hidden; /* Ensure overflow hidden to hide expanded border */
+    box-sizing: border-box; /* Ensure padding doesn't increase width */
+    border-left: 4px solid transparent; /* Initial transparent border */
 }
 
-.container .box .watch-img {
-    width: 30%; /* Adjust the width of the image to make it smaller */
-    height: auto;
-    object-fit: cover;
-    filter: grayscale(100%);
-    transition: transform 0.3s ease, filter 0.3s ease;
-    transform-origin: center;
+.container .box.checked {
+    border-left-color: var(--primary); /* Border color when checked */
 }
 
-.container .box .info {
-    width: 70%; /* Adjust the width of the info section accordingly */
+.container .box:hover {
+    box-shadow: 0px 0px 20px 1px #ffbb763f;
+    border: 1px solid rgba(255, 255, 255, 0.454);
+}
+
+.container .box .checkbox-container {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    overflow: hidden;
-    padding: 0 1em; /* Added padding for spacing */
+    align-items: center;
 }
 
+.container .box .checkbox-container input {
+    margin-right: 0.5rem;
+}
 
 .container .box .watch-img {
-    width: 12rem;
-    height: auto;
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
+    width: 10rem; /* Set a fixed width for the image */
+    height: 10rem; /* Set a fixed height to make it square */
+    object-fit: cover; /* Maintain aspect ratio and cover container */
     filter: grayscale(100%);
-    transition: transform 0.3s ease, filter 0.3s ease;
-    transform-origin: center;
+    transition: filter 0.3s ease;
 }
 
-.container .box:hover img {
+.container .box:hover .watch-img {
     filter: none;
 }
 
-.container .box div strong.product-name {
-    color: white;
-    display: block;
+.container .box .info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-left: 1rem;
+    flex-grow: 1;
+}
+
+.container .box .product-name {
+    font-size: 1.2rem;
     margin-bottom: 0.5rem;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
     white-space: normal;
     word-break: break-word;
     hyphens: auto;
-    font-size: 1.2vw; /* Responsive font size */
 }
 
-.container .box div p {
-    margin: 0;
-    font-size: 1.2vw; /* Responsive font size */
-    font-weight: 300;
-    letter-spacing: 0.1em;
-}
-
-.container .box div span.price-tag {
-    color: var(--secondary);
-    font-size: 1vw; /* Responsive font size */
-    font-weight: 500;
-    margin-right: 0.2rem;
-}
-
-.container .box div span.price {
-    color: whitesmoke;
-    font-size: 1vw; /* Responsive font size */
-    font-weight: 300;
-}
-
-.container .box .avatar {
-    width: 2vw; /* Responsive size */
-    height: 2vw; /* Responsive size */
-    vertical-align: middle;
-}
-
-.container .box .username {
-    vertical-align: middle;
-    margin-left: 0.5vw; /* Responsive margin */
-    font-size: 1vw; /* Responsive font size */
-}
-
-.retailer {
+.container .box .retailer {
     display: flex;
-    justify-content: start;
     align-items: center;
-    margin-bottom: 2vw; /* Responsive margin */
+    margin-bottom: 1rem;
 }
-.product-name{
-    color: white;
+
+.container .box .retailer .avatar {
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid var(--primary);
+    margin-right: 0.5rem;
+}
+
+.container .box .retailer .username {
+    font-size: 1rem;
+}
+
+.container .box .price-details {
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    text-align: right;
+}
+
+.container .box .price-tag {
+    font-size: 1rem;
+    color: var(--secondary);
+    margin-right: 0.5rem;
+}
+
+.container .box .price {
+    font-size: 1rem;
+    font-weight: bold;
+    color: whitesmoke;
+}
+
+.container .box .action-buttons {
+    display: flex;
+    align-items: center;
 }
 
 @media screen and (max-width: 768px) {
     .container .box {
-        width: calc(100% - 1em);
+        width: calc(100% - 2em);
     }
-    .container .box div strong.product-name {
-        font-size: 3vw; /* Adjust font size for smaller screens */
+    .container .box .product-name {
+        font-size: 1rem;
     }
-    .container .box div p {
-        font-size: 3vw; /* Adjust font size for smaller screens */
+    .container .box .retailer .username,
+    .container .box .price-tag,
+    .container .box .price {
+        font-size: 0.9rem;
     }
-    .container .box div span.price-tag,
-    .container .box div span.price {
-        font-size: 2.5vw; /* Adjust font size for smaller screens */
+    .container .box .hover-underline-animation {
+        font-size: 0.9rem;
     }
-    .container .box .avatar {
-        width: 5vw; /* Adjust size for smaller screens */
-        height: 5vw; /* Adjust size for smaller screens */
+    .container .box .watch-img {
+        width: 6rem;
+        height: 6rem;
     }
-    .container .box .username {
-        font-size: 2.5vw; /* Adjust font size for smaller screens */
-        margin-left: 1vw; /* Adjust margin for smaller screens */
-    }
-    .retailer {
-        margin-bottom: 5vw; /* Adjust margin for smaller screens */
+    .container .box .price-details {
+        bottom: 0.25rem;
+        right: 0.25rem;
     }
 }
 </style>
