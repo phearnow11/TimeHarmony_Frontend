@@ -58,7 +58,7 @@
   justify-content: center;
   letter-spacing: -0.8px;
   line-height: 24px;
-  min-width: 140px;
+  /* min-width: 140px; */
   outline: 0;
   padding: 0 17px;
   text-align: center;
@@ -90,7 +90,7 @@
   justify-content: center;
   letter-spacing: -0.8px;
   line-height: 24px;
-  min-width: 140px;
+  /* min-width: 140px; */
   outline: 0;
   padding: 0 17px;
   text-align: center;
@@ -203,13 +203,13 @@ select:focus {
 }
 
 @media (min-width: 768px) {
-  .th-p-btn {
+  /* .th-p-btn {
     min-width: 170px;
   }
 
   .th-s-btn {
     min-width: 170px;
-  }
+  } */
 }
 
 .container {

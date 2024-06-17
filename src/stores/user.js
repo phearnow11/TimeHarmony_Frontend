@@ -36,7 +36,7 @@ export const useUserStore = defineStore("user", {
         console.log("Member data:", res.data);
 
         // Update the state with user data
-        this.username = res.data.username;
+        this.username = res.data.user_log_info.username;
         this.email = res.data.email;
         this.first_name = res.data.first_name;
         this.last_name = res.data.last_name;

@@ -45,12 +45,20 @@
     </div>
 
     <div class="flex justify-end items-center h-full gap-4 col-span-2">
-      <router-link
+      <!-- <router-link
         to="/upload"
         class="hover-underline-animation"
         v-if="auth.user_id"
         >Upload</router-link
+      > -->
+      <button v-if="auth.user_id" class="th-p-btn upload-button pl-4 pr-4">
+        <router-link
+        to="/upload"
+      
+        
+        >Upload <span class="mdi mdi-plus"></span></router-link
       >
+      </button>
       <router-link to="/chat">
         <span class="mdi mdi-message-text-outline hover-animation"></span>
       </router-link>
@@ -80,7 +88,7 @@
         <div @click="toggleMenu" class="user cursor-pointer flex items-center hover-animation">
           <span>{{ greeting }}, {{ useUserStore().first_name }} </span>
           <span class="ml-2 mr-1">
-            <img src="../assets/yairozu.jpg" class="img-responsive" alt="Image Description">
+            <img :src="useUserStore().image" class="img-responsive" alt="Image Description">
           </span>
           <span class="arrow-icon" :class="{ 'rotate-180': showMenu }">
       <img src="../assets/arr.svg" class="w-3" alt="Arrow Icon">
@@ -233,9 +241,10 @@ body {
 }
 
 .img-responsive {
-  width: 30px; /* Đặt kích thước bạn muốn */
-  height: 30px;
+  width: 35px; /* Đặt kích thước bạn muốn */
+  height: 35px;
   object-fit: cover;
+  border: 1.5px solid var(--secondary)
 }
 
 
@@ -447,5 +456,10 @@ body {
   width: 100%;
   max-width: 140px;
   height: auto;
+}
+
+.upload-button{
+  width: 6.8rem;
+  height: 35px;
 }
 </style>

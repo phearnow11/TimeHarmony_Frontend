@@ -8,10 +8,10 @@
         </router-link>
         <div class="ui-input-container">
           <input
-          type="text"
-          placeholder="Search..."
-          required
-          class="ui-input"
+            type="text"
+            placeholder="Search..."
+            required
+            class="ui-input"
           />
           <div class="ui-input-underline"></div>
           <div class="ui-input-highlight"></div>
@@ -79,6 +79,7 @@
   </div>
 </template>
 
+
 <script setup>
 import { ref, onMounted, nextTick } from 'vue';
 import { useAuthStore } from '../stores/auth';
@@ -127,13 +128,20 @@ function sendMessage() {
 
 function scrollToBottom() {
   const container = messageContainer.value;
-  container.scrollTop = container.scrollHeight;
+  if (container) {
+    container.scrollTop = container.scrollHeight;
+  } else {
+    console.error('messageContainer is null');
+  }
 }
 
 onMounted(() => {
-  scrollToBottom();
+  nextTick(() => {
+    scrollToBottom();
+  });
 });
 </script>
+
 
 <style scoped>
 .ui-input-container {
