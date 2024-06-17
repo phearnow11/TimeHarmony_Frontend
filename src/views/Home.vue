@@ -74,6 +74,9 @@
 import carousel from "../components/Carousel.vue";
 import ProductCard from "../components/ProductCard.vue";
 import Brand from "../components/Brand.vue";
+import { useWatchStore } from "../stores/watch";
+
+useWatchStore().getWatchesOfPage(0)
 
 </script>
 

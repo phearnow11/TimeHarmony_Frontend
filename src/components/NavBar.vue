@@ -50,14 +50,13 @@
         v-if="auth.user_id"
         >Upload</router-link
       > -->
-      <button v-if="auth.user_id" class="th-p-btn upload-button pl-4 pr-4">
-        <router-link
-        to="/upload"
+      <router-link to="/upload" v-if="auth.user_id">
+
+        <button  class="th-p-btn upload-button pl-4 pr-4">
+          Upload <span class="mdi mdi-plus"></span>
+        </button>
+      </router-link>
       
-        
-        >Upload <span class="mdi mdi-plus"></span></router-link
-      >
-      </button>
       <router-link to="/chat">
         <span class="mdi mdi-message-text-outline hover-animation"></span>
       </router-link>

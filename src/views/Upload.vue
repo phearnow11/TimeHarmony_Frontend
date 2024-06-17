@@ -1,60 +1,148 @@
 <template>
   <div class="flex flex-col items-center justify-center w-full">
-    <label
-      for="dropzone-file"
-      class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
-    >
-      <div class="flex flex-col items-center justify-center pt-5 pb-6">
-        <svg
-          class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 20 16"
-        >
-          <path
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-          />
-        </svg>
-        <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
-          <span class="font-semibold">Click to upload</span> or drag and drop
-        </p>
-        <p class="text-xs text-gray-500 dark:text-gray-400">
-          SVG, PNG, JPG or GIF (MAX. 800x400px)
-        </p>
-      </div>
-      <input id="dropzone-file" type="file" class="hidden" />
-    </label>
-    <div class="form-content">
+    <form class="file-upload-form">
+      <label for="file" class="file-upload-label">
+        <div class="file-upload-design">
+          <span class="mdi mdi-cloud-upload-outline text-xl"></span>
+          <p>Drag and Drop</p>
+          <p>or</p>
+          <span class="hover-underline-animation">Browse file</span>
+        </div>
+        <input id="file" type="file" />
+      </label>
+    </form>
+
+    <div class="form-content mt-3">
       <div class="form__group field w-96">
         <input type="text" class="form__field" placeholder="Watch's Name" />
         <label for="watchname" class="form__label">Watch's Name</label>
       </div>
     </div>
+
     <div class="form-content">
-    <div class="form__group field w-96">
-      <textarea 
-        class="form__field" 
-        placeholder="Description" 
-        id="description"
-        rows="4"
-        v-model="description"
-        @input="adjustHeight"
-        ref="textarea"
-        :style="{ height: textareaHeight + 'px' }"
-      ></textarea>
-      <label for="description" class="form__label">Description</label>
+      <div class="form__group field w-96 mt-5">
+        <textarea
+          class="form__field form__field-description"
+          placeholder="Description"
+          id="description"
+          rows="4"
+          v-model="description"
+          @input="adjustHeight"
+          ref="textarea"
+          :style="{ height: textareaHeight + 'px' }"
+          @focus="isFocused = true"
+          @blur="isFocused = false"
+        ></textarea>
+        <label
+          for="description"
+          class="desclabel"
+          :class="{ active: isFocused }"
+          >Description</label
+        >
+      </div>
     </div>
-  </div>
+
     <div class="form-content">
       <div class="form__group field w-96">
         <input type="text" class="form__field" placeholder="Price" />
         <label for="price" class="form__label">Price</label>
       </div>
     </div>
+
+
+
+
+
   </div>
+
+
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      description: "",
+      textareaHeight: "80", // Initial height of textarea
+      isFocused: false, // Flag to track textarea focus state
+    };
+  },
+  methods: {
+    adjustHeight() {
+      // Adjust textarea height dynamically based on content
+      this.textareaHeight = this.$refs.textarea.scrollHeight;
+    },
+  },
+};
+</script>
+
+<style scoped>
+.form__field {
+  padding: 0.5rem; /* Adjust padding as needed */
+  width: 100%; /* Ensure the input fills its container */
+  resize: vertical; /* Allow vertical resizing for textarea */
+}
+
+.form__field-description {
+  border: 0.5px solid #9b9b9b; /* Border for description textarea */
+  min-height: 80px; /* Adjust minimum height for textarea */
+  margin-top: 1rem; /* Ensure space between top border and label */
+  position: relative; /* Ensure relative positioning for containing the textarea */
+  z-index: 1; /* Ensure textarea is behind the label */
+}
+
+.desclabel {
+  color: #9b9b9b;
+  font-size: 17px;
+  position: absolute;
+  top: -0rem; /* Adjust top positioning to overlap with textarea border */
+  left: 0rem; /* Align with textarea */
+  z-index: 2; /* Ensure label is above the textarea border */
+  transition: color 0.2s ease-out; /* Smooth transition for label color change */
+}
+
+.desclabel.active {
+  color: var(--secondary); /* Change label color when textarea is focused */
+}
+
+.form__field-description:focus {
+  border: 1px solid #ffbd59;
+}
+
+.file-upload-form {
+  margin-top: 12px;
+  width: 90%;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.file-upload-label {
+  width: 100%;
+}
+
+.file-upload-label input {
+  display: none;
+}
+
+.file-upload-label svg {
+  height: 50px;
+  fill: rgb(255, 255, 255);
+  margin-bottom: 20px;
+}
+
+.file-upload-label {
+  cursor: pointer;
+  padding: 30px 70px;
+  border: 2px dashed rgb(82, 82, 82);
+}
+
+.file-upload-design {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+</style>
