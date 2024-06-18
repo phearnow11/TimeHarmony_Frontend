@@ -84,7 +84,7 @@
       <!-- User Page -->
       <div v-if="auth.user_id" class="relative">
         <div @click="toggleMenu" class="user cursor-pointer flex items-center hover-animation">
-          <span>{{ greeting }}, {{ useUserStore().first_name }} </span>
+          <span class=" capitalize">{{ greeting }}, {{ useUserStore().first_name }} </span>
           <span class="ml-2 mr-1">
             <img :src="useUserStore().image" class="img-responsive" alt="Image Description">
           </span>
