@@ -1,7 +1,13 @@
 <template>
   <div class="container">
-    <div class="box">
-      <img class="watch-img" :src="productImage" />
+    <div class="box" :class="{ bookmarked: isBookmarked }">
+      <div class="image-container">
+        <img class="watch-img" :src="productImage" />
+        <i
+          :class="['fa-sharp', isBookmarked ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark', 'bookmark-icon', { 'active': isBookmarked }]"
+          @click="toggleBookmark"
+        ></i>
+      </div>
       <div>
         <strong class="product-name">{{ productName }}</strong>
         <div class="retailer">
@@ -12,7 +18,6 @@
     </div>
   </div>
 </template>
-
 <script>
 export default {
   props: {
@@ -36,16 +41,25 @@ export default {
       type: String,
       required: true
     }
+  },
+  data() {
+    return {
+      isBookmarked: false
+    };
+  },
+  methods: {
+    toggleBookmark() {
+      this.isBookmarked = !this.isBookmarked;
+    }
   }
 }
 </script>
-
 <style scoped>
 .container {
   margin-top: 5em;
   position: relative;
   font-family: sans-serif;
-  display: inline-flex; /* Changed to inline-flex to fit content */
+  display: inline-flex;
   justify-content: center;
   align-items: center;
   gap: 1em;
@@ -63,22 +77,29 @@ export default {
 }
 
 .container .box {
-  max-width: 22em; /* Increased maximum width for the card */
+  max-width: 22em;
   padding: 1rem;
   background-color: rgba(255, 255, 255, 0.074);
   border: 1px solid rgba(255, 255, 255, 0.222);
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
-  transition: all ease 0.3s;
+  transition: ease-in-out 0.1s;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   overflow: hidden;
   box-sizing: border-box;
+  position: relative;
+}
+.container .box.bookmarked {
+  border: 3px solid var(--primary);
 }
 .container .box:hover {
   box-shadow: 0px 0px 20px 1px #ffbb763f;
   border: 1px solid rgba(255, 255, 255, 0.454);
+}
+.image-container {
+  position: relative;
 }
 .container .box .watch-img {
   width: 100%;
@@ -94,6 +115,25 @@ export default {
 .container .box:hover img {
   filter: none;
 }
+
+.bookmark-icon {
+  position: absolute;
+  top: -40px;
+  right: 10px;
+  font-size: 1.5em;
+  color: var(--primary);
+  transition: top 0.3s ease, color 0.3s ease;
+}
+
+.bookmark-icon.active {
+  top: 10px;
+  color: var(--primary);
+}
+
+.container .box:hover .bookmark-icon {
+  top: 10px;
+}
+
 .container .box div strong.product-name {
   margin-top: 4px;
   color: white;
@@ -108,41 +148,41 @@ export default {
   white-space: normal;
   word-break: break-word;
   hyphens: auto;
-  font-size: 1.2vw; /* Responsive font size */
+  font-size: 1.2vw;
 }
 .container .box div p {
   margin: 0;
-  font-size: 1.2vw; /* Responsive font size */
+  font-size: 1.2vw;
   font-weight: 300;
   letter-spacing: 0.1em;
 }
 .container .box div span.price-tag {
   color: var(--secondary);
-  font-size: 1vw; /* Responsive font size */
+  font-size: 1vw;
   font-weight: 500;
   margin-right: 0.2rem;
 }
 .container .box div span.price {
   color: whitesmoke;
-  font-size: 1vw; /* Responsive font size */
+  font-size: 1vw;
   font-weight: bold;
 }
 .container .box .avatar {
-  width: 2vw; /* Responsive size */
-  height: 2vw; /* Responsive size */
+  width: 2vw;
+  height: 2vw;
   vertical-align: middle;
-  border: 1px solid var(--primary)
+  border: 1px solid var(--primary);
 }
 .container .box .username {
   vertical-align: middle;
-  margin-left: 0.5vw; /* Responsive margin */
-  font-size: 1vw; /* Responsive font size */
+  margin-left: 0.5vw;
+  font-size: 1vw;
 }
 .retailer {
   display: flex;
   justify-content: start;
   align-items: center;
-  margin-bottom: 2vw; /* Responsive margin */
+  margin-bottom: 2vw;
 }
 
 @media screen and (max-width: 768px) {
@@ -150,25 +190,25 @@ export default {
     width: calc(100% - 1em);
   }
   .container .box div strong.product-name {
-    font-size: 3vw; /* Adjust font size for smaller screens */
+    font-size: 3vw;
   }
   .container .box div p {
-    font-size: 3vw; /* Adjust font size for smaller screens */
+    font-size: 3vw;
   }
   .container .box div span.price-tag,
   .container .box div span.price {
-    font-size: 2.5vw; /* Adjust font size for smaller screens */
+    font-size: 2.5vw;
   }
   .container .box .avatar {
-    width: 5vw; /* Adjust size for smaller screens */
-    height: 5vw; /* Adjust size for smaller screens */
+    width: 5vw;
+    height: 5vw;
   }
   .container .box .username {
-    font-size: 2.5vw; /* Adjust font size for smaller screens */
-    margin-left: 1vw; /* Adjust margin for smaller screens */
+    font-size: 2.5vw;
+    margin-left: 1vw;
   }
   .retailer {
-    margin-bottom: 5vw; /* Adjust margin for smaller screens */
+    margin-bottom: 5vw;
   }
 }
 </style>
