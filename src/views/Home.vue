@@ -6,11 +6,6 @@
       :showNavigation="true"
       :showPagination="true"
     />
-    <!-- Uncomment and adjust the following section to show user's username and logout button if logged in -->
-    <!-- <div v-if="useUserStore().last_name">
-      User ID: {{ useUserStore().last_name }}
-      <button class="th-p-btn w-10" @click="logout">Log out</button>
-    </div> -->
     <brand />
   </div>
 
@@ -27,6 +22,10 @@
       price="12.000.000.000 VND"
       v-for="i in 30" :key="i"
     />
+  </div>
+
+  <div class="mt-8">
+    <input type="file" @change="handleFileUpload" />
   </div>
 
   <div class="pagination:container flex justify-center items-center mt-10">
@@ -65,20 +64,16 @@ import carousel from '../components/Carousel.vue';
 import ProductCard from '../components/ProductCard.vue';
 import Brand from '../components/Brand.vue';
 import { useWatchStore } from '../stores/watch';
-import { useCloudinaryStore } from '../stores/cloudinary';
 
-// Initialize the watch store and upload an image to Cloudinary
 const watchStore = useWatchStore();
-const cloudinaryStore = useCloudinaryStore();
 
 watchStore.getWatchesOfPage(0);
-// cloudinaryStore.uploadImage('https://files.catbox.moe/n1w3b0.png');
 </script>
 
 <style scoped>
 .popular-watch-text {
   position: absolute;
-  top: 0px; /* Adjust the top position as needed */
+  top: 0px;
   text-align: left;
 }
 
