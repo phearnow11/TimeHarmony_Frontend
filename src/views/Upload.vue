@@ -89,7 +89,7 @@ const handleFiles = async (files) => {
   for (let i = 0; i < files.length; i++) {
     try {
       const response = await useContentDeliveryNetwork().uploadFile(files[i]);
-      uploadedImages.value.push(response.secure_url); // Assuming response structure, adjust as per your API response
+      uploadedImages.value.push(response.data.secure_url); // Assuming response structure, adjust as per your API response
     } catch (error) {
       console.error('Error uploading file:', error);
       // Handle error as needed, e.g., show error message to user
