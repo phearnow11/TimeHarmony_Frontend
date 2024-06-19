@@ -19,7 +19,11 @@
         <div v-for="(image, index) in uploadedImages" :key="index" class="uploaded-image">
           <img :src="image.url" alt="Uploaded Image" />
           <div class="image-overlay"></div> <!-- Add the gradient overlay div on top of the image -->
-          <div v-if="image.loading" class="loading-spinner"></div>
+          <div v-if="image.loading" class="loader-container">
+            <div class="loader">
+              <div class="loaderBar"></div> <!-- Loading bar for progress -->
+            </div>
+          </div>
           <button class="close-button" @click="removeImage(index)">×</button>
         </div>
       </div>
@@ -225,8 +229,7 @@ const removeImage = (index) => {
   height: 100%;
   background: linear-gradient(to bottom, rgba(0, 0, 0, 0.759), transparent); /* Add gradient overlay on top of the image */
 }
-
-.loading-spinner {
+.loader-container {
   position: absolute;
   top: 0;
   left: 0;
@@ -239,20 +242,58 @@ const removeImage = (index) => {
   background: rgba(23, 23, 23, 0.5); /* Adjust the alpha value for transparency */
 }
 
-.loading-spinner::before {
-  content: "";
-  box-sizing: border-box;
-  width: 24px;
-  height: 24px;
-  border: 4px solid #9b9b9b;
-  border-top-color: #ffbd59;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+.loader {
+  width: 80px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  padding: 1px;
+
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.loader:before {
+  content: '';
+  border: 1px solid var(--secondary);
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  bottom: -4px;
+  left: -4px;
+}
+
+.loader .loaderBar {
+  position: absolute;
+  top: 0;
+  right: 100%;
+  bottom: 0;
+  left: 0;
+  background: var(--secondary);
+  width: 0;
+  animation: borealisBar 2s linear infinite;
+}
+
+@keyframes borealisBar {
+  0% {
+    left: 0%;
+    right: 100%;
+    width: 0%;
+  }
+  10% {
+    left: 0%;
+    right: 75%;
+    width: 25%;
+  }
+  90% {
+    right: 0%;
+    left: 75%;
+    width: 25%;
+  }
+  100% {
+    left: 100%;
+    right: 0%;
+    width: 0%;
+  }
 }
 
 .close-button {
