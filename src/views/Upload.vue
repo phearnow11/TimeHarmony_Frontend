@@ -1,7 +1,8 @@
 <template>
-  <div class="flex grid-cols-2 items-start justify-center w-full">
-    <div class="col-span-1 mt-8">
-      <div class="file-upload-form" @drop.prevent="handleDrop" @dragover.prevent>
+  <div class="flex grid-cols-2 items-center justify-center w-full">
+    <div class="col-span-1 mt-8 mx-auto">
+      <div class="flex items-start">
+        <div class="file-upload-form" @drop.prevent="handleDrop" @dragover.prevent>
         <label for="file" class="file-upload-label">
           <div class="file-upload-design">
             <span class="mdi mdi-cloud-upload-outline text-xl"></span>
@@ -12,6 +13,8 @@
         </label>
         <input id="file" type="file" accept="image/png, image/gif, image/jpeg" style="display: none" @change="handleFileUpload">
       </div>
+      </div>
+      
       <div class="mt-3 upload-img grid grid-cols-5 gap-3">
         <div v-for="(image, index) in uploadedImages" :key="index" class="uploaded-image">
           <img :src="image.url" alt="Uploaded Image" />
@@ -21,7 +24,7 @@
         </div>
       </div>
     </div>
-    <div class="col-span-1">
+    <div class="col-span-1 mx-auto">
       <div class="form-content">
         <div class="form__group field w-96">
           <input v-model="watchName" type="text" class="form__field" placeholder="Watch's Name" />
@@ -127,6 +130,23 @@ const removeImage = (index) => {
 </script>
 
 <style scoped>
+.col-span-1 {
+  width: 50%; /* Set the width of the left column to 50% */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center the content vertically */
+  align-items: center; /* Center the content horizontally */
+}
+
+.file-upload-form {
+  margin-top: 12px;
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center the drag-and-drop file section */
+}
+
 .form__field {
   padding: 0.5rem; /* Adjust padding as needed */
   width: 100%; /* Ensure the input fills its container */
@@ -141,9 +161,9 @@ const removeImage = (index) => {
   z-index: 1; /* Ensure textarea is behind the label */
 }
 
-.upload-img {
+/* .upload-img {
   margin-left: -23%;
-}
+} */
 
 .desclabel {
   color: #9b9b9b;
@@ -163,16 +183,8 @@ const removeImage = (index) => {
   border: 1px solid #ffbd59;
 }
 
-.file-upload-form {
-  margin-top: 12px;
-  width: 100%;
-  height: fit-content;
-  display: flex;
-}
-
 .file-upload-label {
   width: 100%;
-  margin-right: 10rem;
   cursor: pointer;
   padding: 30px 150px;
   border: 2px dashed rgb(82, 82, 82);
@@ -185,6 +197,13 @@ const removeImage = (index) => {
   justify-content: center;
   gap: 5px;
 }
+
+.upload-img {
+  display: flex;
+  justify-content: center; /* Center the uploaded images horizontally */
+  gap: 10px; /* Add gap between the uploaded images for spacing */
+}
+
 .uploaded-image {
   position: relative;
   width: 100px;
@@ -194,12 +213,10 @@ const removeImage = (index) => {
 }
 
 .uploaded-image img {
-  position: relative;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-
 .image-overlay {
   position: absolute;
   top: 0;
