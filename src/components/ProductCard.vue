@@ -11,7 +11,10 @@
       <div>
         <strong class="product-name">{{ productName }}</strong>
         <div class="retailer">
-          <img class="avatar" :src="retailerAvatar" /><span class="username hover-underline-animation">{{ retailerName }}</span>
+          <img class="avatar" :src="retailerAvatar" />
+          <router-link to="/retailer">
+            <span class="username hover-underline-animation">{{ retailerName }}</span>
+          </router-link>
         </div>
         <span class="price-tag">PRICE</span> <span class="price">{{ price }}</span>
       </div>

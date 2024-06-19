@@ -88,7 +88,14 @@ const router = createRouter({
         console.error(err);
       }),
     },
-   
+    
+    {
+      path: '/retailer',
+      name: 'Retailer',
+      component: () => import('../views/Retailer.vue').catch(err => {
+        console.error(err);
+      }),
+    },
     {
       path: '/:pathMatch(.*)*',
       name: 'Error',

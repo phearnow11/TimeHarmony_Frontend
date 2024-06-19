@@ -7,14 +7,16 @@
             <span class="mdi mdi-cloud-upload-outline text-xl"></span>
             <p>Drag and Drop</p>
             <p>or</p>
-            <span class="hover-underline-animation" @click="handleFileUpload">Browse file</span>
+            <span class="hover-underline-animation" @click="handleFileBrowse">Browse file</span>
           </div>
         </label>
         <input id="file" type="file" accept="image/png, image/gif, image/jpeg" style="display: none" @change="handleFileUpload">
       </div>
       <div class="mt-3 upload-img grid grid-cols-5 gap-3">
         <div v-for="(image, index) in uploadedImages" :key="index" class="uploaded-image">
-          <img :src="image" alt="Uploaded Image" />
+          <img :src="image.url" alt="Uploaded Image" />
+          <div class="image-overlay"></div> <!-- Add the gradient overlay div on top of the image -->
+          <div v-if="image.loading" class="loading-spinner"></div>
           <button class="close-button" @click="removeImage(index)">×</button>
         </div>
       </div>
@@ -87,20 +89,41 @@ const handleFileUpload = async (event) => {
 
 const handleFiles = async (files) => {
   for (let i = 0; i < files.length; i++) {
-    try {
-      const response = await useContentDeliveryNetwork().uploadFile(files[i]);
-      uploadedImages.value.push(response.data.secure_url); // Assuming response structure, adjust as per your API response
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      // Handle error as needed, e.g., show error message to user
-    }
+    const file = files[i];
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const localUrl = reader.result;
+      const imageObject = { url: localUrl, loading: true };
+      uploadedImages.value.push(imageObject);
+
+      // Upload to CDN
+      uploadToCDN(file, imageObject);
+    };
+
+    reader.readAsDataURL(file);
+  }
+};
+
+const uploadToCDN = async (file, imageObject) => {
+  try {
+    const response = await useContentDeliveryNetwork().uploadFile(file);
+    // Update image URL and loading status after successful upload
+    imageObject.url = response.data.secure_url;
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    // Handle error as needed, e.g., show error message to user
+  } finally {
+    // Update loading status after upload attempt
+    imageObject.loading = false;
+    // Force Vue to re-render to reflect changes in imageObject
+    uploadedImages.value = [...uploadedImages.value];
   }
 };
 
 const removeImage = (index) => {
   uploadedImages.value.splice(index, 1);
 };
-
 </script>
 
 <style scoped>
@@ -162,32 +185,68 @@ const removeImage = (index) => {
   justify-content: center;
   gap: 5px;
 }
-
 .uploaded-image {
   position: relative;
   width: 100px;
   height: 100px;
-  border: 1px solid #ddd;
+  border: 0.5px solid var(--primary);
   padding: 5px;
 }
 
 .uploaded-image img {
+  position: relative;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.759), transparent); /* Add gradient overlay on top of the image */
+}
+
+.loading-spinner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+  background: rgba(23, 23, 23, 0.5); /* Adjust the alpha value for transparency */
+}
+
+.loading-spinner::before {
+  content: "";
+  box-sizing: border-box;
+  width: 24px;
+  height: 24px;
+  border: 4px solid #9b9b9b;
+  border-top-color: #ffbd59;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 .close-button {
   position: absolute;
-  top: 5px;
-  right: 5px;
-  background: #ff6b6b;
+  top: -5px; /* Adjust the top position to move the button upwards */
+  right: 5px; /* Adjust the right position to move the button to the right edge */
   border: none;
-  color: white;
-  font-size: 16px;
-  width: 20px;
+  font-size: 20px;
+  width: 15px;
   height: 20px;
-  border-radius: 50%;
   cursor: pointer;
+  
 }
 </style>
