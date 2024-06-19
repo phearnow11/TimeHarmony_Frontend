@@ -3,7 +3,7 @@
     <div class="col-span-1 mt-8 mx-auto">
       <div class="flex items-start">
         <div class="file-upload-form" @drop.prevent="handleDrop" @dragover.prevent>
-          <label for="file" class="file-upload-label">
+          <label for="file" class="file-upload-label w-full">
             <div class="file-upload-design">
               <span class="mdi mdi-cloud-upload-outline text-xl"></span>
               <p>Drag and Drop</p>
@@ -26,10 +26,10 @@
         </div>
       </div>
     </div>
-    <div class="col-span-1 mx-auto">
+    <div class="col-span-1 mx-auto flex justify-start items-start">
       <h3 class=" text-3xl">Information</h3>
       <div class="form-content">
-        <div class="form__group field w-96">
+        <div class="form__group field">
           <input v-model="watchName" type="text" class="form__field" placeholder="Watch's Name" />
           <label for="watchname" class="form__label">Watch's Name</label>
         </div>
@@ -266,6 +266,13 @@
           <label for="price" class="form__label">UPC</label>
         </div>
       </div>
+      <br>
+      <div class="flex gap-10">
+        <div class="flex justify-end items-center">
+          <div class="hover-underline-animation" @click.stop="removeFromCart">Clear my input</div>
+        </div>
+        <button class="th-p-btn w-60">Finish</button>
+      </div>
     </div>
   </div>
 </template>
@@ -337,6 +344,10 @@ const removeImage = (index) => {
 </script>
 
 <style scoped>
+.field{
+  width: 42rem;
+}
+
 .col-span-1 {
   width: 50%; /* Set the width of the left column to 50% */
   display: flex;
@@ -347,7 +358,7 @@ const removeImage = (index) => {
 
 .file-upload-form {
   margin-top: 12px;
-  width: 100%;
+  width: 140%;
   height: fit-content;
   display: flex;
   flex-direction: column;
@@ -389,7 +400,7 @@ const removeImage = (index) => {
 .file-upload-label {
   width: 100%;
   cursor: pointer;
-  padding: 30px 150px;
+  padding: 30px 250px;
   border: 2px dashed rgb(82, 82, 82);
 }
 
@@ -488,8 +499,90 @@ const removeImage = (index) => {
   }
 } 
 
-h3{
+h3 {
+  margin-top: 4rem;
   text-align: left;
-  width: 50%;
+  width: 45rem;
+  font-family: 'Arial', sans-serif; /* Use a clean and modern font */
+  font-size: 2rem; /* Increase the font size */
+  color: var(--secondary); /* Darker color for better readability */
+  position: relative;
+  margin-bottom: 1rem; /* Add some space below the heading */
+  padding-bottom: 0.5rem; /* Add padding to the bottom */
+  border-bottom: 2px solid #ffbd59; /* Add a bottom border for emphasis */
+}
+
+.hover-underline-animation::after {
+    color: var(--secondary);
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    display: block;
+    margin: 0 auto;
+    background: #ff402b;
+    transition: width 0.4s ease-in-out;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -2px;
+}
+
+.hover-underline-animation:hover::after {
+    color: red;
+    width: 100%;
+}
+
+.hover-underline-animation:hover {
+    color: red;
+}
+
+@media (max-width: 1024px) {
+  .col-span-1 {
+    width: 90%;
+  }
+  .file-upload-form {
+    width: 100%;
+  }
+  .form__group.field {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .col-span-1 {
+    width: 100%;
+    padding: 0 20px;
+  }
+  .file-upload-form {
+    padding: 20px;
+  }
+  .file-upload-label {
+    padding: 20px;
+  }
+  h3 {
+    font-size: 1.5rem;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .file-upload-design {
+    gap: 2px;
+  }
+  .form__field {
+    font-size: 0.9rem;
+  }
+  .file-upload-label {
+    padding: 15px;
+  }
+  .uploaded-image {
+    width: 80px;
+    height: 80px;
+  }
+  .close-button {
+    font-size: 18px;
+    width: 12px;
+    height: 18px;
+  }
 }
 </style>
