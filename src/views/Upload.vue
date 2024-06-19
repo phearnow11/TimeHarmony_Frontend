@@ -1,25 +1,24 @@
 <template>
-  
   <div class="flex grid-cols-2 items-center justify-center w-full">
     <div class="col-span-1 mt-8 mx-auto">
       <div class="flex items-start">
         <div class="file-upload-form" @drop.prevent="handleDrop" @dragover.prevent>
-        <label for="file" class="file-upload-label">
-          <div class="file-upload-design">
-            <span class="mdi mdi-cloud-upload-outline text-xl"></span>
-            <p>Drag and Drop</p>
-            <p>or</p>
-            <span class="hover-underline-animation" @click="handleFileUpload">Browse file</span>
-          </div>
-        </label>
-        <input id="file" type="file" accept="image/png, image/gif, image/jpeg" style="display: none" @change="handleFileUpload">
-      </div>
+          <label for="file" class="file-upload-label">
+            <div class="file-upload-design">
+              <span class="mdi mdi-cloud-upload-outline text-xl"></span>
+              <p>Drag and Drop</p>
+              <p>or</p>
+              <span class="hover-underline-animation" @click="handleFileUpload">Browse file</span>
+            </div>
+          </label>
+          <input id="file" type="file" accept="image/png, image/gif, image/jpeg" style="display: none" @change="handleFileUpload">
+        </div>
       </div>
       
       <div class="mt-3 upload-img grid grid-cols-5 gap-3">
-        <div v-for="(image, index) in uploadedImages" :key="index" class="uploaded-image">
+        <div v-for="(image, index) in uploadedImages" :key="index" class="uploaded-image w-full sm:w-1/5">
           <img :src="image.url" alt="Uploaded Image" />
-          <div class="image-overlay"></div> <!-- Add the gradient overlay div on top of the image -->
+          <div class="image-overlay"></div>
           <div v-if="image.loading" class="loader-container flex justify-center items-center">
             <span class="loader"></span>
           </div>
@@ -82,11 +81,6 @@ const handleDrop = async (event) => {
   const files = event.dataTransfer.files;
   await handleFiles(files);
 };
-
-// const handleFileBrowse = async () => {
-//   const inputElement = document.getElementById('file');
-//   inputElement.click();
-// };
 
 const handleFileUpload = async (event) => {
   const files = event.target.files;
@@ -164,10 +158,6 @@ const removeImage = (index) => {
   z-index: 1; /* Ensure textarea is behind the label */
 }
 
-/* .upload-img {
-  margin-left: -23%;
-} */
-
 .desclabel {
   color: #9b9b9b;
   font-size: 17px;
@@ -201,12 +191,6 @@ const removeImage = (index) => {
   gap: 5px;
 }
 
-.upload-img {
-  display: flex;
-  justify-content: center; /* Center the uploaded images horizontally */
-  gap: 10px; /* Add gap between the uploaded images for spacing */
-}
-
 .uploaded-image {
   position: relative;
   width: 100px;
@@ -220,6 +204,7 @@ const removeImage = (index) => {
   height: 100%;
   object-fit: cover;
 }
+
 .image-overlay {
   position: absolute;
   top: 0;
@@ -228,6 +213,7 @@ const removeImage = (index) => {
   height: 100%;
   background: linear-gradient(to bottom, rgba(0, 0, 0, 0.759), transparent); /* Add gradient overlay on top of the image */
 }
+
 .loader-container {
   position: absolute;
   top: 0;
@@ -248,7 +234,6 @@ const removeImage = (index) => {
   justify-content: center;
   position: relative;
   padding: 1px;
-
 }
 
 .loader .loaderBar {
@@ -262,8 +247,6 @@ const removeImage = (index) => {
   animation: borealisBar 2s linear infinite;
 }
 
-
-
 .close-button {
   position: absolute;
   top: -5px; /* Adjust the top position to move the button upwards */
@@ -273,7 +256,6 @@ const removeImage = (index) => {
   width: 15px;
   height: 20px;
   cursor: pointer;
-  
 }
 
 .loader::after {
