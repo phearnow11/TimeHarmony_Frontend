@@ -10,6 +10,7 @@
             <span class="hover-underline-animation" @click="handleFileUpload">Browse file</span>
           </div>
         </label>
+        <input id="file" type="file" accept="image/png, image/gif, image/jpeg" style="display: none" @change="handleFileUpload">
       </div>
       <div class="mt-3 upload-img grid grid-cols-5 gap-3">
         <div v-for="(image, index) in uploadedImages" :key="index" class="uploaded-image">
