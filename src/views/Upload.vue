@@ -1,4 +1,5 @@
 <template>
+  <span class="loader"></span>
   <div class="flex grid-cols-2 items-center justify-center w-full">
     <div class="col-span-1 mt-8 mx-auto">
       <div class="flex items-start">
@@ -307,4 +308,34 @@ const removeImage = (index) => {
   cursor: pointer;
   
 }
+
+
+
+.loader {
+  width: 48px;
+  height: 48px;
+  display: inline-block;
+  position: relative;
+}
+.loader::after,
+.loader::before {
+  content: '';  
+  box-sizing: border-box;
+  width: 48px;
+  height: 48px;
+  border: 2px solid #FFF;
+  position: absolute;
+  left: 0;
+  top: 0;
+  animation: rotation 2s ease-in-out infinite alternate;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+} 
 </style>
