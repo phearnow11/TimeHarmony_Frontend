@@ -1,4 +1,5 @@
 <template>
+  
   <div class="flex grid-cols-2 items-center justify-center w-full">
     <div class="col-span-1 mt-8 mx-auto">
       <div class="flex items-start">
@@ -19,10 +20,8 @@
         <div v-for="(image, index) in uploadedImages" :key="index" class="uploaded-image">
           <img :src="image.url" alt="Uploaded Image" />
           <div class="image-overlay"></div> <!-- Add the gradient overlay div on top of the image -->
-          <div v-if="image.loading" class="loader-container">
-            <div class="loader">
-              <div class="loader-inner"></div>
-            </div>
+          <div v-if="image.loading" class="loader-container flex justify-center items-center">
+            <span class="loader"></span>
           </div>
           <button class="close-button" @click="removeImage(index)">×</button>
         </div>
@@ -229,7 +228,6 @@ const removeImage = (index) => {
   height: 100%;
   background: linear-gradient(to bottom, rgba(0, 0, 0, 0.759), transparent); /* Add gradient overlay on top of the image */
 }
-
 .loader-container {
   position: absolute;
   top: 0;
@@ -240,69 +238,31 @@ const removeImage = (index) => {
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(5px);
-  background: rgba(23, 23, 23, 0.5);
+  background: rgba(23, 23, 23, 0.5); /* Adjust the alpha value for transparency */
 }
 
 .loader {
-  display: inline-block;
-  width: 30px;
-  height: 30px;
+  width: 80px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
   position: relative;
-  border: 4px solid var(--secondary);
-  animation: loader 2s infinite ease;
+  padding: 1px;
+
 }
 
-.loader-inner {
-  vertical-align: top;
-  display: inline-block;
-  width: 100%;
-  background-color: var(--secondary);
-  animation: loader-inner 2s infinite ease-in;
+.loader .loaderBar {
+  position: absolute;
+  top: 0;
+  right: 100%;
+  bottom: 0;
+  left: 0;
+  background: var(--secondary);
+  width: 0;
+  animation: borealisBar 2s linear infinite;
 }
 
-@keyframes loader {
-  0% {
-    transform: rotate(0deg);
-  }
-  
-  25% {
-    transform: rotate(180deg);
-  }
-  
-  50% {
-    transform: rotate(180deg);
-  }
-  
-  75% {
-    transform: rotate(360deg);
-  }
-  
-  100% {
-    transform: rotate(360deg);
-  }
-}
 
-@keyframes loader-inner {
-  0% {
-    height: 0%;
-  }
-  
-  25% {
-    height: 0%;
-  }
-  
-  50% {
-    height: 100%;
-  }
-  
-  75% {
-    height: 100%;
-  }
-  
-  100% {
-    height: 0%;
-  }
-}
 
 .close-button {
   position: absolute;
@@ -316,5 +276,23 @@ const removeImage = (index) => {
   
 }
 
+.loader::after {
+  content: '';  
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--secondary);
+  left: 0;
+  top: 0;
+  animation: rotation 2s ease-in-out infinite alternate;
+}
 
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+} 
 </style>
