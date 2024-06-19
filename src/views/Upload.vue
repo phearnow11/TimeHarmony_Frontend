@@ -7,7 +7,7 @@
             <span class="mdi mdi-cloud-upload-outline text-xl"></span>
             <p>Drag and Drop</p>
             <p>or</p>
-            <span class="hover-underline-animation" @click="handleFileBrowse">Browse file</span>
+            <span class="hover-underline-animation" @click="handleFileUpload">Browse file</span>
           </div>
         </label>
         <input id="file" type="file" accept="image/png, image/gif, image/jpeg" style="display: none" @change="handleFileUpload">
@@ -77,10 +77,10 @@ const handleDrop = async (event) => {
   await handleFiles(files);
 };
 
-const handleFileBrowse = async () => {
-  const inputElement = document.getElementById('file');
-  inputElement.click();
-};
+// const handleFileBrowse = async () => {
+//   const inputElement = document.getElementById('file');
+//   inputElement.click();
+// };
 
 const handleFileUpload = async (event) => {
   const files = event.target.files;
