@@ -60,8 +60,8 @@
       <h3 class=" text-3xl">Features</h3>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="calender" type="text" class="form__field" placeholder="Price" />
-          <label for="price" class="form__label">Calender</label>
+          <input v-model="calendar" type="text" class="form__field" placeholder="Price" />
+          <label for="price" class="form__label">Calendar</label>
         </div>
       </div>
       <div class="form-content">
@@ -267,11 +267,11 @@
         </div>
       </div>
       <br>
-      <div class="flex gap-10">
+      <div class="flex justify-end button-div">
         <div class="flex items-center submit-watch">
           <div class="hover-underline-animation" @click.stop="removeFromCart">Clear my input</div>
         </div>
-        <button class="th-p-btn">Finish Submit</button>
+        <button class="th-p-btn w-44">Finish Submit</button>
       </div>
     </div>
   </div>
@@ -377,6 +377,10 @@ const removeImage = (index) => {
   margin-top: 1rem; /* Ensure space between top border and label */
   position: relative; /* Ensure relative positioning for containing the textarea */
   z-index: 1; /* Ensure textarea is behind the label */
+}
+
+.button-div{
+  padding-left: 24rem;
 }
 
 .desclabel {
@@ -587,6 +591,6 @@ h3 {
 }
 
 .submit-watch{
-  width: 180%;
+  width: 50%;
 }
 </style>
