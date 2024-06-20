@@ -50,7 +50,7 @@
       <div class="form-content">
         <div class="form__group field">
           <input
-            v-model="watchName"
+            v-model="watchData.name"
             type="text"
             class="form__field"
             placeholder="Watch's Name"
@@ -65,7 +65,7 @@
             placeholder="Description"
             id="description"
             rows="4"
-            v-model="description"
+            v-model="watchData.description"
             @input="adjustHeight"
             ref="textarea"
             :style="{ height: textareaHeight + 'px' }"
@@ -83,7 +83,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="price"
+            v-model="watchData.price"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -95,7 +95,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="calendar"
+            v-model="watchData.calender"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -106,7 +106,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="feature"
+            v-model="watchData.feature"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -117,7 +117,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="movement"
+            v-model="watchData.movement"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -128,7 +128,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="functions"
+            v-model="watchData.functions"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -139,7 +139,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="engine"
+            v-model="watchData.engine"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -150,7 +150,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="water_resistant"
+            v-model="watchData.water_resistant"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -162,7 +162,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="dial_type"
+            v-model="watchData.dial_type"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -173,7 +173,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="dial_color"
+            v-model="watchData.dial_color"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -184,7 +184,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="crystal"
+            v-model="watchData.crystal"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -195,7 +195,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="hands"
+            v-model="watchData.hands"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -206,7 +206,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="second_makers"
+            v-model="watchData.second_makers"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -217,7 +217,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="dial_makers"
+            v-model="watchData.dial_makers"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -228,7 +228,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="luminescent"
+            v-model="watchData.luminescent"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -240,7 +240,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="band_color"
+            v-model="watchData.band_color"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -251,7 +251,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="band_type"
+            v-model="watchData.band_type"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -262,7 +262,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="band_width"
+            v-model="watchData.band_width"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -273,7 +273,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="clasp"
+            v-model="watchData.clasp"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -284,7 +284,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="bracelet"
+            v-model="watchData.bracelet"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -296,7 +296,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="bezel"
+            v-model="watchData.bezel"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -307,7 +307,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="bezel_material"
+            v-model="watchData.bezel_material"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -318,7 +318,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="bezel_color"
+            v-model="watchData.bezel_color"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -329,7 +329,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="case_back"
+            v-model="watchData.case_back"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -340,7 +340,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="case_material"
+            v-model="watchData.case_material"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -351,7 +351,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="case_shape"
+            v-model="watchData.case_shape"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -359,22 +359,12 @@
           <label for="price" class="form__label">Case Shape</label>
         </div>
       </div>
-      <div class="form-content">
-        <div class="form__group field w-96">
-          <input
-            v-model="crown"
-            type="text"
-            class="form__field"
-            placeholder="Price"
-          />
-          <label for="price" class="form__label">Crown</label>
-        </div>
-      </div>
+      
       <h3 class="text-3xl">About</h3>
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="brand"
+            v-model="watchData.brand"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -385,7 +375,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="series"
+            v-model="watchData.series"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -396,7 +386,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="model"
+            v-model="watchData.model"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -425,7 +415,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="style_type"
+            v-model="watchData.style_type"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -436,7 +426,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="sub_class"
+            v-model="watchData.sub_class"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -447,34 +437,12 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="made_label"
+            v-model="watchData.made_label"
             type="text"
             class="form__field"
             placeholder="Price"
           />
           <label for="price" class="form__label">Made Label</label>
-        </div>
-      </div>
-      <div class="form-content">
-        <div class="form__group field w-96">
-          <input
-            v-model="warranty"
-            type="text"
-            class="form__field"
-            placeholder="Price"
-          />
-          <label for="price" class="form__label">Warranty</label>
-        </div>
-      </div>
-      <div class="form-content">
-        <div class="form__group field w-96">
-          <input
-            v-model="upc"
-            type="text"
-            class="form__field"
-            placeholder="Price"
-          />
-          <label for="price" class="form__label">UPC</label>
         </div>
       </div>
       <br />
@@ -484,16 +452,54 @@
             Clear my input
           </div>
         </div>
-        <button class="th-p-btn w-44">Finish Submit</button>
+        <button @click="uploadHandle" class="th-p-btn w-44">Finish Submit</button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { reactive, ref, watch } from "vue";
 import { useContentDeliveryNetwork } from "../stores/cdn"; // Adjust path as necessary
+import { useWatchStore } from "../stores/watch";
+import { useUserStore } from "../stores/user";
 
+
+
+const watchData = reactive({
+  
+  name: "",
+  price: "",
+  description: "",
+  brand: "",
+  series: "",
+  model: "",
+  gender: "",
+  style_type: "",
+  sub_class: "",
+  made_label: "",
+  calender: "",
+  feature: "",
+  movement: "",
+  functions: "",
+  engine: "",
+  water_resistant: "",
+  band_color: "",
+  band_type: "",
+  clasp: "",
+  bracelet: "",
+  dial_type: "",
+  dial_color: "",
+  crystal: "",
+  second_makers: "",
+  bezel: "",
+  bezel_material: "",
+  case_back: "",
+  case_dimension: "",
+  case_shape: ""
+
+}
+)
 const description = ref("");
 const textareaHeight = ref("80"); // Initial height of textarea
 const isFocused = ref(false); // Flag to track textarea focus state
@@ -506,6 +512,48 @@ const adjustHeight = () => {
   // Adjust textarea height dynamically based on content
   textareaHeight.value = textareaRef.value.scrollHeight;
 };
+
+async function uploadHandle() {
+   try {
+    const uploadData = {
+      name: watchData.name,
+      price: watchData.price,
+      description: watchData.description,
+      brand: watchData.brand,
+      series: watchData.series,
+      model: watchData.model,
+      gender: watchData.gender,
+      style: watchData.style_type,
+      subclass: watchData.sub_class,
+      madelabel: watchData.made_label,
+      calender: watchData.calender,
+      feature: watchData.feature,
+      movement: watchData.movement,
+      functions: watchData.functions,
+      engine: watchData.engine,
+      waterresistant: watchData.water_resistant,
+      bandcolor: watchData.band_color,
+      bandtype: watchData.band_type,
+      clasp: watchData.clasp,
+      bracelet: watchData.bracelet,
+      dialtype: watchData.dial_type,
+      dialcolor: watchData.dial_color,
+      crystal: watchData.crystal,
+      secondmaker: watchData.second_makers,
+      bezel: watchData.bezel,
+      bezelmaterial: watchData.bezel_material,
+      caseback: watchData.case_back,
+      casedimension: watchData.case_dimension,
+      caseshape: watchData.case_shape
+
+    };
+    useWatchStore().loadWatch(uploadData)
+    const response = await useWatchStore().uploadWatch(useUserStore().user_id);
+    console.log("Upload successful", response);
+  } catch (error) {
+    console.error("Upload error", error);
+  }
+}
 
 const handleDrop = async (event) => {
   const files = event.dataTransfer.files;
@@ -837,6 +885,34 @@ h3 {
   padding: 0.25rem;
   width: 300px;
   font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .radio-inputs {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .radio-inputs {
+    width: 100%;
+    font-size: 12px;
+  }
+
+  .radio-inputs .radio .name {
+    padding: 0.15rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .radio-inputs {
+    width: 100%;
+    font-size: 10px;
+  }
+
+  .radio-inputs .radio .name {
+    padding: 0.1rem;
+  }
 }
 
 .radio-inputs .radio {
