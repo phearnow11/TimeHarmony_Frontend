@@ -88,7 +88,13 @@ const router = createRouter({
         console.error(err);
       }),
     },
-    
+    {
+      path: '/detail/:id',
+      name: 'ProductDetail',
+      component: () => import('../views/ProductDetail.vue').catch(err => {
+        console.error(err);
+      }),
+    },
     {
       path: '/retailer',
       name: 'Retailer',
