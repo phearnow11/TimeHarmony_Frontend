@@ -10,7 +10,7 @@
   </div>
 
   <div class="mt-8 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 sm:gap-3 md:gap-3 lg:gap-3 ml-20 mr-20 relative">
-    <div class="popular-watch-text flex items-center w-full">
+    <div class="popular-watch-text flex items-center w-full mb-10">
       <span class="text-primary text-2xl font-light mr-2">WATCHES FOR YOU</span>
       <div class="border-t border-gray-99 flex-grow mt-1 h-1/6"></div>
     </div>
@@ -86,6 +86,7 @@ const fetchRetailerInfo = async () => {
   position: absolute;
   top: 0px;
   text-align: left;
+  margin-bottom: 2rem;
 }
 
 *:focus {
@@ -141,6 +142,7 @@ body, body html {
   cursor: pointer;
   padding: 0 6px;
 }
+
 
 @media (hover: hover) {
   .pagination\:number:hover {

@@ -3,7 +3,7 @@
     <div class="login-container flex gap-8 items-center">
       <div class="logo-container flex flex-col items-center">
         <router-link to="/">
-          <img src="../assets/time-harmony.png" class="logo w-60"/>
+          <img src="../assets/time-harmony.png" class="logo w-60" />
         </router-link>
         <span class="login-text">- Login -</span>
       </div>
@@ -56,14 +56,21 @@
             >
           </div>
         </div>
-        <div class="flex justify-center items-center w-full">
-          <button class="th-p-btn w-96">Login</button>
+        <div class="flex justify-center items-center w-full relative">
+          <button class="th-p-btn w-96 relative" :disabled="isLoading">
+            <span :class="{ 'opacity-0': isLoading }">Login</span>
+            <div v-if="isLoading" class="loader-container">
+              <div class="loader">
+                <div class="loaderBar"></div>
+              </div>
+            </div>
+          </button>
         </div>
         <div class="flex items-center w-full my-4">
           <div class="border-t border-gray-99 flex-grow mr-3"></div>
           <span>or</span>
           <div class="border-t border-gray-99 flex-grow ml-3"></div>
-        </div>        
+        </div>
         <login-via-google />
         <login-via-facebook />
         <div>
@@ -78,22 +85,30 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue';
-import { useAuthStore } from '../stores/auth';
-import LoginViaGoogle from '../components/LoginViaGoogle.vue';
-import LoginViaFacebook from '../components/LoginViaFacebook.vue';
+import { reactive, ref } from "vue";
+import { useAuthStore } from "../stores/auth";
+import LoginViaGoogle from "../components/LoginViaGoogle.vue";
+import LoginViaFacebook from "../components/LoginViaFacebook.vue";
+
+const isLoading = ref(false);
 
 const user = reactive({
-  username: '',
-  password: '',
+  username: "",
+  password: "",
 });
 
 const remember = ref(false);
 
-function onSubmit() {
+async function onSubmit() {
   const authStore = useAuthStore();
   if (user.username && user.password) {
-    authStore.login(user.username, user.password, remember.value);
+    isLoading.value = true;
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate login delay
+      await authStore.login(user.username, user.password, remember.value);
+    } finally {
+      isLoading.value = false;
+    }
   }
 }
 </script>
@@ -128,4 +143,65 @@ function onSubmit() {
 form {
   margin-left: 20rem; /* Adjust the value as needed */
 }
+
+.loader-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+  background: rgba(
+    23,
+    23,
+    23,
+    0.5
+  ); /* Adjust the alpha value for transparency */
+}
+
+.loader {
+  width: 80px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  padding: 1px;
+}
+
+.loader .loaderBar {
+  position: absolute;
+  top: 0;
+  right: 100%;
+  bottom: 0;
+  left: 0;
+  background: var(--secondary);
+  width: 0;
+  animation: borealisBar 2s linear infinite;
+}
+
+
+
+.loader::after {
+  content: "";
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--secondary);
+  left: 0;
+  top: 0;
+  animation: rotation 2s ease-in-out infinite alternate;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 </style>

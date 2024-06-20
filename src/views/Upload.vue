@@ -29,20 +29,22 @@
 
       <div class="mt-3 upload-img grid grid-cols-5 gap-3">
         <div
-          v-for="(image, index) in uploadedImages"
-          :key="index"
-          class="uploaded-image w-full sm:w-1/5"
-        >
-          <img :src="image" alt="Uploaded Image" />
-          <div class="image-overlay"></div>
-          <div
-            v-if="image.loading"
-            class="loader-container flex justify-center items-center"
-          >
-            <span class="loader"></span>
-          </div>
-          <button class="close-button" @click="removeImage(index)">×</button>
-        </div>
+  v-for="(image, index) in uploadedImages"
+  :key="index"
+  class="uploaded-image w-full sm:w-1/5"
+>
+  <img :src="image.url" alt="Uploaded Image" />
+  <div class="image-overlay"></div>
+  <div
+    v-if="image.loading"
+    class="loader-container flex justify-center items-center"
+  >
+    <div class="loader">
+      <div class="loaderBar"></div>
+    </div>
+  </div>
+  <button class="close-button" @click="removeImage(index)">×</button>
+</div>
       </div>
     </div>
     <div class="col-span-1 mx-auto flex justify-start items-start">
@@ -575,7 +577,7 @@ const handleFiles = async (files) => {
     reader.onload = () => {
       const localUrl = reader.result;
       const imageObject = { url: localUrl, loading: true };
-      // uploadedImages.value.push(imageObject);
+      uploadedImages.value.push(imageObject);
 
       // Upload to CDN
       uploadToCDN(file, imageObject);
@@ -590,13 +592,13 @@ const uploadToCDN = async (file, imageObject) => {
     const response = await useCloudinaryStore().uploadImage(file);
     // Update image URL and loading status after successful upload
     imageObject.url = response.secure_url;
-    uploadedImages.value.push(imageObject.url);
+    imageObject.loading = false;
   } catch (error) {
     console.error("Error uploading file:", error);
     // Handle error as needed, e.g., show error message to user
-  } finally {
-    // Update loading status after upload attempt
     imageObject.loading = false;
+    imageObject.error = true;
+  } finally {
     // Force Vue to re-render to reflect changes in imageObject
     uploadedImages.value = [...uploadedImages.value];
   }
@@ -745,16 +747,7 @@ const removeImage = (index) => {
   animation: borealisBar 2s linear infinite;
 }
 
-.close-button {
-  position: absolute;
-  top: -5px; /* Adjust the top position to move the button upwards */
-  right: 5px; /* Adjust the right position to move the button to the right edge */
-  border: none;
-  font-size: 20px;
-  width: 15px;
-  height: 20px;
-  cursor: pointer;
-}
+
 
 .loader::after {
   content: "";
@@ -774,6 +767,17 @@ const removeImage = (index) => {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.close-button {
+  position: absolute;
+  top: -5px; /* Adjust the top position to move the button upwards */
+  right: 5px; /* Adjust the right position to move the button to the right edge */
+  border: none;
+  font-size: 20px;
+  width: 15px;
+  height: 20px;
+  cursor: pointer;
 }
 
 h3 {

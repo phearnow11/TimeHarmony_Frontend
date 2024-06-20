@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="link" class="container">
+  <router-link :to="link" class="container mt-12">
     <div class="box" :class="{ bookmarked: isBookmarked }">
       <div class="image-container">
         <img class="watch-img" :src="productImage" />
@@ -7,7 +7,7 @@
           :class="['fa-sharp', isBookmarked ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark', 'bookmark-icon', { 'active': isBookmarked }]"
           @click="toggleBookmark"
         ></i>
-        <div class="gradient-overlay"></div> <!-- Add the gradient overlay here -->
+        <div class="gradient-overlay"></div>
       </div>
       <div>
         <strong class="product-name">{{ productName }}</strong>
@@ -58,8 +58,8 @@ export default {
   },
   methods: {
     toggleBookmark(event) {
-      event.stopPropagation();  // Prevent event propagation
-      event.preventDefault();   // Prevent default behavior
+      event.stopPropagation();
+      event.preventDefault();
       this.isBookmarked = !this.isBookmarked;
     }
   }
@@ -68,28 +68,15 @@ export default {
 
 <style scoped>
 .container {
-  margin-top: 5em;
-  position: relative;
-  font-family: sans-serif;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1em;
+  display: flex;
   flex-wrap: wrap;
-}
-.container::before,
-.container::after {
-  background-color: #fab5704c;
-  position: absolute;
-}
-.container::before {
-  width: 6rem;
-  top: 30%;
-  right: 7%;
+  justify-content: center;
+  gap: 1em;
 }
 
 .container .box {
   max-width: 22em;
+  width: 100%;
   padding: 1rem;
   background-color: rgba(255, 255, 255, 0.074);
   border: 1px solid rgba(255, 255, 255, 0.222);
@@ -101,7 +88,6 @@ export default {
   justify-content: space-between;
   overflow: hidden;
   box-sizing: border-box;
-  position: relative;
 }
 
 .container .box.bookmarked {
@@ -150,8 +136,7 @@ export default {
   font-size: 1.5em;
   color: var(--primary);
   transition: top 0.3s ease, color 0.3s ease;
-  z-index: 2; /* Add this line */
-
+  z-index: 2;
 }
 
 .bookmark-icon.active {
@@ -221,35 +206,31 @@ export default {
 }
 
 @media screen and (max-width: 768px) {
-  .container .box {
-    width: calc(100% - 1em);
-  }
-
   .container .box div strong.product-name {
-    font-size: 3vw;
+    font-size: 4vw;
   }
 
   .container .box div p {
-    font-size: 3vw;
+    font-size: 4vw;
   }
 
   .container .box div span.price-tag,
   .container .box div span.price {
-    font-size: 2.5vw;
+    font-size: 3.5vw;
   }
 
   .container .box .avatar {
-    width: 5vw;
-    height: 5vw;
+    width: 6vw;
+    height: 6vw;
   }
 
   .container .box .username {
-    font-size: 2.5vw;
+    font-size: 3.5vw;
     margin-left: 1vw;
   }
 
   .retailer {
-    margin-bottom: 5vw;
+    margin-bottom: 3vw;
   }
 }
 </style>
