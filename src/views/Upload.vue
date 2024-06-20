@@ -231,10 +231,21 @@
         </div>
       </div>
       <div class="form-content">
-        <div class="form__group field w-96">
-          <input v-model="gender" type="text" class="form__field" placeholder="Price" />
-          <label for="price" class="form__label">Gender</label>
-        </div>
+        <div class="radio-inputs">
+  <label class="radio">
+    <input type="radio" name="radio" checked="">
+    <span class="name">HTML</span>
+  </label>
+  <label class="radio">
+    <input type="radio" name="radio">
+    <span class="name">React</span>
+  </label>
+      
+  <label class="radio">
+    <input type="radio" name="radio">
+    <span class="name">Vue</span>
+  </label>
+</div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
@@ -269,7 +280,7 @@
       <br>
       <div class="flex justify-end button-div">
         <div class="flex items-center submit-watch">
-          <div class="hover-underline-animation" @click.stop="removeFromCart">Clear my input</div>
+          <div class="hover-underline-animation-r" @click.stop="removeFromCart">Clear my input</div>
         </div>
         <button class="th-p-btn w-44">Finish Submit</button>
       </div>
@@ -516,7 +527,7 @@ h3 {
   border-bottom: 2px solid #ffbd59; /* Add a bottom border for emphasis */
 }
 
-.hover-underline-animation::after {
+.hover-underline-animation-r::after {
     color: var(--secondary);
     content: '';
     position: absolute;
@@ -531,13 +542,19 @@ h3 {
     bottom: -2px;
 }
 
-.hover-underline-animation:hover::after {
+.hover-underline-animation-r:hover::after {
     color: red;
     width: 100%;
 }
 
-.hover-underline-animation:hover {
+.hover-underline-animation-r:hover {
     color: red;
+}
+
+.hover-underline-animation-r {
+  position: relative;
+  text-decoration: none;
+  color: var(--wait);
 }
 
 @media (max-width: 1024px) {
@@ -592,5 +609,43 @@ h3 {
 
 .submit-watch{
   width: 50%;
+}
+
+.radio-inputs {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  background-color: #EEE;
+  box-sizing: border-box;
+  box-shadow: 0 0 0px 1px rgba(0, 0, 0, 0.06);
+  padding: 0.25rem;
+  width: 300px;
+  font-size: 14px;
+}
+
+.radio-inputs .radio {
+  flex: 1 1 auto;
+  text-align: center;
+}
+
+.radio-inputs .radio input {
+  display: none;
+}
+
+.radio-inputs .radio .name {
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  padding: .5rem 0;
+  color: rgba(51, 65, 85, 1);
+  transition: all .15s ease-in-out;
+}
+
+.radio-inputs .radio input:checked + .name {
+  background-color: #fff;
+  font-weight: 600;
 }
 </style>

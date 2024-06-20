@@ -24,10 +24,6 @@
     />
   </div>
 
-  <div class="mt-8">
-    <input type="file" @change="handleFileUpload" />
-  </div>
-
   <div class="pagination:container flex justify-center items-center mt-10">
     <div class="pagination:number arrow">
       <svg width="18" height="18">
