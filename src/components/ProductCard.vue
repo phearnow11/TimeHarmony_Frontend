@@ -7,6 +7,7 @@
           :class="['fa-sharp', isBookmarked ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark', 'bookmark-icon', { 'active': isBookmarked }]"
           @click="toggleBookmark"
         ></i>
+        <div class="gradient-overlay"></div> <!-- Add the gradient overlay here -->
       </div>
       <div>
         <strong class="product-name">{{ productName }}</strong>
@@ -21,6 +22,7 @@
     </div>
   </router-link>
 </template>
+
 <script>
 export default {
   props: {
@@ -101,16 +103,20 @@ export default {
   box-sizing: border-box;
   position: relative;
 }
+
 .container .box.bookmarked {
   border: 3px solid var(--primary);
 }
+
 .container .box:hover {
   box-shadow: 0px 0px 20px 1px #ffbb763f;
   border: 1px solid rgba(255, 255, 255, 0.454);
 }
+
 .image-container {
   position: relative;
 }
+
 .container .box .watch-img {
   width: 100%;
   height: auto;
@@ -126,6 +132,17 @@ export default {
   filter: none;
 }
 
+.gradient-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.512) 15%, transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+
 .bookmark-icon {
   position: absolute;
   top: -40px;
@@ -133,6 +150,8 @@ export default {
   font-size: 1.5em;
   color: var(--primary);
   transition: top 0.3s ease, color 0.3s ease;
+  z-index: 2; /* Add this line */
+
 }
 
 .bookmark-icon.active {
@@ -160,34 +179,40 @@ export default {
   hyphens: auto;
   font-size: 1.2vw;
 }
+
 .container .box div p {
   margin: 0;
   font-size: 1.2vw;
   font-weight: 300;
   letter-spacing: 0.1em;
 }
+
 .container .box div span.price-tag {
   color: var(--secondary);
   font-size: 1vw;
   font-weight: 500;
   margin-right: 0.2rem;
 }
+
 .container .box div span.price {
   color: whitesmoke;
   font-size: 1vw;
   font-weight: bold;
 }
+
 .container .box .avatar {
   width: 2vw;
   height: 2vw;
   vertical-align: middle;
   border: 1px solid var(--primary);
 }
+
 .container .box .username {
   vertical-align: middle;
   margin-left: 0.5vw;
   font-size: 1vw;
 }
+
 .retailer {
   display: flex;
   justify-content: start;
@@ -199,24 +224,30 @@ export default {
   .container .box {
     width: calc(100% - 1em);
   }
+
   .container .box div strong.product-name {
     font-size: 3vw;
   }
+
   .container .box div p {
     font-size: 3vw;
   }
+
   .container .box div span.price-tag,
   .container .box div span.price {
     font-size: 2.5vw;
   }
+
   .container .box .avatar {
     width: 5vw;
     height: 5vw;
   }
+
   .container .box .username {
     font-size: 2.5vw;
     margin-left: 1vw;
   }
+
   .retailer {
     margin-bottom: 5vw;
   }
