@@ -33,7 +33,7 @@
           :key="index"
           class="uploaded-image w-full sm:w-1/5"
         >
-          <img :src="image.url" alt="Uploaded Image" />
+          <img :src="image" alt="Uploaded Image" />
           <div class="image-overlay"></div>
           <div
             v-if="image.loading"
@@ -520,6 +520,7 @@ async function uploadHandle() {
       name: watchData.name,
       price: watchData.price,
       description: watchData.description,
+      images: uploadedImages.value,
       brand: watchData.brand,
       series: watchData.series,
       model: watchData.model,
@@ -549,7 +550,7 @@ async function uploadHandle() {
 
     };
     useWatchStore().loadWatch(uploadData)
-    const response = await useWatchStore().uploadWatch(useUserStore().user_id);
+    const response = await useWatchStore().uploadWatch(useUserStore().user_id, useUserStore().username);
     console.log("Upload successful", response);
   } catch (error) {
     console.error("Upload error", error);
@@ -574,7 +575,7 @@ const handleFiles = async (files) => {
     reader.onload = () => {
       const localUrl = reader.result;
       const imageObject = { url: localUrl, loading: true };
-      uploadedImages.value.push(imageObject);
+      // uploadedImages.value.push(imageObject);
 
       // Upload to CDN
       uploadToCDN(file, imageObject);
@@ -588,7 +589,8 @@ const uploadToCDN = async (file, imageObject) => {
   try {
     const response = await useCloudinaryStore().uploadImage(file);
     // Update image URL and loading status after successful upload
-    imageObject.url = response.data.secure_url;
+    imageObject.url = response.secure_url;
+    uploadedImages.value.push(imageObject.url);
   } catch (error) {
     console.error("Error uploading file:", error);
     // Handle error as needed, e.g., show error message to user

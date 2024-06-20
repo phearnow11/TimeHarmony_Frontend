@@ -7,6 +7,7 @@ export const useWatchStore = defineStore("watch", {
     watch_data: {
       name: "",
       price: "",
+      images: [],
       description: "",
       brand: "",
       series: "",
@@ -49,9 +50,9 @@ export const useWatchStore = defineStore("watch", {
         throw error; // Propagate the error to the caller if needed
       }
     },
-    async uploadWatch(seller_id) {
+    async uploadWatch(seller_id, username) {
       try {
-        axios.post(`http://localhost:8080/member/to-seller?id=${seller_id}`)
+        axios.post(`http://localhost:8080/member/to-seller?id=${seller_id}&username=${username}`)
         const response = await axios.post(
           `http://localhost:8080/seller/create/watch?seller_id=${seller_id}`,
           this.watch_data
@@ -72,6 +73,7 @@ export const useWatchStore = defineStore("watch", {
         // Update the state with user data
         this.watch_data.name = watchData.name ? watchData.name : null;
         this.watch_data.watch_description = watchData.description ? watchData.description : null;
+        this.watch_data.images = watchData.images ? watchData.images : null;
         this.watch_data.price = watchData.price ? watchData.price : null;
         this.watch_data.brand = watchData.brand ? watchData.brand : null;
         this.watch_data.series = watchData.series ? watchData.series : null;
@@ -114,6 +116,7 @@ export const useWatchStore = defineStore("watch", {
           console.log(res);
           this.watch_data.name = res.watch_name ? res.watch_name : null;
         this.watch_data.watch_description = res.watch_description ? res.watch_description : null;
+        this.watch_data.images = res.images ? res.images : null;
         this.watch_data.price = res.price ? res.price : null;
         this.watch_data.brand = res.brand ? res.brand : null;
         this.watch_data.series = res.series ? res.series : null;

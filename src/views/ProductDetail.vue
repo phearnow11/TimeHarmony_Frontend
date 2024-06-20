@@ -7,7 +7,7 @@
 <script setup>
 import { useWatchStore } from '../stores/watch';
 
-useWatchStore().getDetailWatch("W04226883133")
+useWatchStore().getDetailWatch()
 
 </script>
 

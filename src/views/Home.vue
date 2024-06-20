@@ -17,7 +17,7 @@
     <product-card
       v-for="(watch, index) in watchStore.watches" :key="index"
       :productName="watch.watch_name"
-      productImage=""
+      :productImage="watch.image_url[0]"
       :retailerName="retailers[index]?.username || 'N/A'"
       :retailerAvatar="retailers[index]?.image || ''"
       :price="watch.price"
