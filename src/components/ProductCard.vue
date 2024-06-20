@@ -55,12 +55,15 @@ export default {
     };
   },
   methods: {
-    toggleBookmark() {
+    toggleBookmark(event) {
+      event.stopPropagation();  // Prevent event propagation
+      event.preventDefault();   // Prevent default behavior
       this.isBookmarked = !this.isBookmarked;
     }
   }
 }
 </script>
+
 <style scoped>
 .container {
   margin-top: 5em;
