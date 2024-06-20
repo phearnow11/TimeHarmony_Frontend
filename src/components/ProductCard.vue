@@ -16,7 +16,7 @@
             <span class="username hover-underline-animation">{{ retailerName }}</span>
           </router-link>
         </div>
-        <span class="price-tag">PRICE</span> <span class="price">{{ price }}</span>
+        <span class="price-tag">PRICE</span> <span class="price">{{ price }} VND</span>
       </div>
     </div>
   </div>

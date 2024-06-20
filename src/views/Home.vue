@@ -15,12 +15,12 @@
       <div class="border-t border-gray-99 flex-grow mt-1 h-1/6"></div>
     </div>
     <product-card
-      productName="Đồng hồ Rolex còn mới siêu đẹp"
-      productImage="https://alowatch.vn/wp-content/uploads/2021/04/moa10054.jpg"
-      retailerName="ThinhPhoenix"
-      retailerAvatar="https://files.catbox.moe/n1w3b0.png"
-      price="12.000.000.000 VND"
-      v-for="i in 30" :key="i"
+      v-for="(watch, index) in watchStore.watches" :key="index"
+      :productName="watch.watch_name"
+      productImage=""
+      :retailerName="retailers[index]?.username || 'N/A'"
+      :retailerAvatar="retailers[index]?.image || ''"
+      :price="watch.price"
     />
   </div>
 
@@ -55,16 +55,30 @@
   </svg>
 </template>
 
+
 <script setup>
+import { ref, onMounted } from 'vue';
 import carousel from '../components/Carousel.vue';
 import ProductCard from '../components/ProductCard.vue';
 import Brand from '../components/Brand.vue';
 import { useWatchStore } from '../stores/watch';
+import { useUserStore } from '../stores/user';
 
 const watchStore = useWatchStore();
+const userStore = useUserStore();
+const retailers = ref([]);
 
-watchStore.getWatchesOfPage(0);
+onMounted(async () => {
+  await watchStore.getWatchesOfPage(0);
+  await fetchRetailerInfo();
+});
+
+const fetchRetailerInfo = async () => {
+  const retailerPromises = watchStore.watches.map(watch => userStore.getUserInfo(watch.seller.member_id));
+  retailers.value = await Promise.all(retailerPromises);
+};
 </script>
+
 
 <style scoped>
 .popular-watch-text {

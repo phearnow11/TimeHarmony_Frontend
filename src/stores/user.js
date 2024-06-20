@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import axios from "axios";
+import { reactive } from "vue";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
@@ -47,6 +48,31 @@ export const useUserStore = defineStore("user", {
         this.user_id = res.data.member_id;
       } catch (err) {
         console.error("Error fetching member data:", err);
+      }
+    },
+
+    async getUserInfo(user_id) {
+      try {
+        const res = await axios.get(`http://localhost:8080/member/get/${user_id}`);
+        console.log("Member data:", res.data);
+
+        // Construct and return the user JSON
+        const userInfo = {
+          username: res.data.user_log_info.username,
+          email: res.data.email,
+          first_name: res.data.first_name,
+          last_name: res.data.last_name,
+          address: res.data.address,
+          phone: res.data.phone,
+          image: res.data.member_image,
+          active: res.data.active,
+          user_id: res.data.member_id,
+        };
+
+        return userInfo;
+      } catch (err) {
+        console.error("Error fetching member data:", err);
+        throw err;
       }
     },
   },
