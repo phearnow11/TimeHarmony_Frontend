@@ -51,8 +51,9 @@ export const useWatchStore = defineStore("watch", {
     },
     async uploadWatch(seller_id) {
       try {
+        axios.post(`http://localhost:8080/member/to-seller?id=${seller_id}`)
         const response = await axios.post(
-          `http://localhost:8080/seller/create/watch?seller_id=a75ea724-173e-4b1b-a8d6-aaa221782818`,
+          `http://localhost:8080/seller/create/watch?seller_id=${seller_id}`,
           this.watch_data
         );
         console.log("Upload successful", response);
