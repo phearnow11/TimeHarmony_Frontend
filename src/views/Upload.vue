@@ -60,218 +60,218 @@
       <h3 class=" text-3xl">Features</h3>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="calender" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Calender</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="feature" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Feature</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="movement" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Movement</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="functions" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Functions</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="engine" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Engine</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="water_resistant" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Water Resistant</label>
         </div>
       </div>
       <h3 class=" text-3xl">Dial</h3>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="dial_type" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Dial Type</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="dial_color" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Dial Color</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="crystal" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Crystal</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="hands" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Hands</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="second_makers" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Second Makers</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="dial_makers" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Dial Makers</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="luminescent" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Luminescent</label>
         </div>
       </div>
       <h3 class=" text-3xl">Band</h3>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="band_color" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Band Color</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="band_type" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Band Type</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="band_width" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Band Witdh</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="clasp" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Clasp</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="bracelet" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Bracelet</label>
         </div>
       </div>
       <h3 class=" text-3xl">Case</h3>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="bezel" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Bezel</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="bezel_material" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Bezel Material</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="bezel_color" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Bezel Color</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="case_back" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Case Back</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="case_material" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Case Material</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="case_shape" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Case Shape</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="crown" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Crown</label>
         </div>
       </div>
       <h3 class=" text-3xl">About</h3>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="brand" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Brand</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="series" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Series</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="model" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Model</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="gender" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Gender</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="style_type" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Style Type</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="sub_class" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Sub-Class</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="made_label" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Made Label</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="warranty" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">Warranty</label>
         </div>
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
-          <input v-model="price" type="text" class="form__field" placeholder="Price" />
+          <input v-model="upc" type="text" class="form__field" placeholder="Price" />
           <label for="price" class="form__label">UPC</label>
         </div>
       </div>
       <br>
       <div class="flex gap-10">
-        <div class="flex justify-end items-center">
+        <div class="flex items-center submit-watch">
           <div class="hover-underline-animation" @click.stop="removeFromCart">Clear my input</div>
         </div>
-        <button class="th-p-btn w-60">Finish</button>
+        <button class="th-p-btn">Finish Submit</button>
       </div>
     </div>
   </div>
@@ -504,7 +504,7 @@ h3 {
   text-align: left;
   width: 45rem;
   font-family: 'Arial', sans-serif; /* Use a clean and modern font */
-  font-size: 2rem; /* Increase the font size */
+  font-size: 1.5rem; /* Increase the font size */
   color: var(--secondary); /* Darker color for better readability */
   position: relative;
   margin-bottom: 1rem; /* Add some space below the heading */
@@ -584,5 +584,9 @@ h3 {
     width: 12px;
     height: 18px;
   }
+}
+
+.submit-watch{
+  width: 180%;
 }
 </style>
