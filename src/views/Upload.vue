@@ -463,6 +463,7 @@ import { reactive, ref, watch } from "vue";
 import { useContentDeliveryNetwork } from "../stores/cdn"; // Adjust path as necessary
 import { useWatchStore } from "../stores/watch";
 import { useUserStore } from "../stores/user";
+import { useCloudinaryStore } from "../stores/cloudinary";
 
 
 
@@ -585,7 +586,7 @@ const handleFiles = async (files) => {
 
 const uploadToCDN = async (file, imageObject) => {
   try {
-    const response = await useContentDeliveryNetwork().uploadFile(file);
+    const response = await useCloudinaryStore().uploadImage(file);
     // Update image URL and loading status after successful upload
     imageObject.url = response.data.secure_url;
   } catch (error) {
