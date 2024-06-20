@@ -89,7 +89,7 @@ const router = createRouter({
       }),
     },
     {
-      path: '/detail/:id',
+      path: '/detail/:watch_id',
       name: 'ProductDetail',
       component: () => import('../views/ProductDetail.vue').catch(err => {
         console.error(err);

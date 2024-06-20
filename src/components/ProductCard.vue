@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <router-link :to="link" class="container">
     <div class="box" :class="{ bookmarked: isBookmarked }">
       <div class="image-container">
         <img class="watch-img" :src="productImage" />
@@ -19,7 +19,7 @@
         <span class="price-tag">PRICE</span> <span class="price">{{ price }} VND</span>
       </div>
     </div>
-  </div>
+  </router-link>
 </template>
 <script>
 export default {
@@ -41,6 +41,10 @@ export default {
       required: true
     },
     price: {
+      type: String,
+      required: true
+    },
+    link:{
       type: String,
       required: true
     }

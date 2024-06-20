@@ -21,6 +21,7 @@
       :retailerName="retailers[index]?.username || 'N/A'"
       :retailerAvatar="retailers[index]?.image || ''"
       :price="watch.price"
+      :link="`/detail/${watch.watch_id}`"
     />
   </div>
 
