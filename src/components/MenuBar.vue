@@ -132,6 +132,7 @@ document.addEventListener('click', (e) => {
   background-color: rgba(20, 20, 20, 0.95); /* Increased opacity */
   backdrop-filter: blur(30px); /* Increased blur */
   -webkit-backdrop-filter: blur(30px); /* Increased blur */
+  box-shadow: rgba(153, 153, 153, 0.685) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
 }
 
 .menu-item {

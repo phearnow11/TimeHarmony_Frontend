@@ -96,7 +96,7 @@ const router = createRouter({
       }),
     },
     {
-      path: '/retailer',
+      path: '/retailer/:seller_id',
       name: 'Retailer',
       component: () => import('../views/Retailer.vue').catch(err => {
         console.error(err);

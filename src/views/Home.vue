@@ -22,6 +22,7 @@
       :retailerAvatar="retailers[index]?.image || ''"
       :price="watch.price"
       :link="`/detail/${watch.watch_id}`"
+      :seller_id="`/retailer/${watch.seller.member_id}`"
     />
   </div>
 

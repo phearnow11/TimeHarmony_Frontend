@@ -13,7 +13,7 @@
         <strong class="product-name">{{ productName }}</strong>
         <div class="retailer">
           <img class="avatar" :src="retailerAvatar" />
-          <router-link to="/retailer">
+          <router-link :to="seller_id">
             <span class="username hover-underline-animation">{{ retailerName }}</span>
           </router-link>
         </div>
@@ -50,6 +50,11 @@ export default {
       type: String,
       required: true
     }
+    ,seller_id:{
+      type: String,
+      required: true
+    }
+
   },
   data() {
     return {
