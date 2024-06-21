@@ -400,16 +400,16 @@
         <span class="text-[#9b9b9b] text-label">Gender</span>
         <div class="radio-inputs">
           <label class="radio">
-            <input default type="radio" name="radio" checked="" />
+            <input default type="radio" name="radio" checked @click="unisexGender"/>
             <span class="name">Unisex</span>
           </label>
           <label class="radio">
-            <input type="radio" name="radio" />
+            <input type="radio" name="radio" @click="maleGender"/>
             <span class="name">Male</span>
           </label>
 
           <label class="radio">
-            <input type="radio" name="radio" />
+            <input type="radio" name="radio" @click="femaleGender"/>
             <span class="name">Female</span>
           </label>
         </div>
@@ -476,7 +476,7 @@ const watchData = reactive({
   brand: "",
   series: "",
   model: "",
-  gender: "",
+  gender: "Unisex",
   style_type: "",
   sub_class: "",
   made_label: "",
@@ -504,16 +504,15 @@ const watchData = reactive({
 )
 const textareaHeight = ref("80"); // Initial height of textarea
 const isFocused = ref(false); // Flag to track textarea focus state
-const textareaRef = ref(null); // Reference to the textarea element
 const uploadedImages = ref([]); // Array to hold uploaded images
 const imageURLs = ref([])
 
 
 
-const adjustHeight = () => {
-  // Adjust textarea height dynamically based on content
-  textareaHeight.value = textareaRef.value.scrollHeight;
-};
+// const adjustHeight = () => {
+//   // Adjust textarea height dynamically based on content
+//   textareaHeight.value = textareaRef.value.scrollHeight;
+// };
 
 async function uploadHandle() {
    try {
@@ -607,6 +606,18 @@ const uploadToCDN = async (file, imageObject) => {
 const removeImage = (index) => {
   uploadedImages.value.splice(index, 1);
 };
+
+const unisexGender = () => {
+  watchData.gender = "Unisex"
+}
+
+const maleGender = () => {
+  watchData.gender = "Male"
+}
+
+const femaleGender = () => {
+  watchData.gender = "Female"
+}
 </script>
 
 <style scoped>
@@ -943,7 +954,6 @@ h3 {
 
 .radio-inputs .radio input:checked + .name {
   background-color: var(--primary);
-  font-weight: 600;
   color: black;
 }
 

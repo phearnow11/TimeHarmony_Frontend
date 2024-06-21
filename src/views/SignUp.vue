@@ -86,7 +86,7 @@
             class="form__field"
             placeholder="Phone"
             v-model="signUpForm.phone"
-            required
+          
           />
           <label for="phone" class="form__label">Phone</label>
         </div>
