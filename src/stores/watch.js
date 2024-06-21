@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 
+
 export const useWatchStore = defineStore("watch", {
   state: () => ({
     watches: [],
@@ -108,50 +109,50 @@ export const useWatchStore = defineStore("watch", {
         console.error("Error fetching member data:", err);
       }
     },
+    
     async getDetailWatch(watch_id) {
-      
       try {
-        axios.get(`http://localhost:8080/watch/get/${watch_id}`).then((response) => {
-          const res = response.data;
-          console.log(res);
-          this.watch_data.name = res.watch_name ? res.watch_name : null;
-        this.watch_data.watch_description = res.watch_description ? res.watch_description : null;
-        this.watch_data.images = res.images ? res.images : null;
-        this.watch_data.price = res.price ? res.price : null;
-        this.watch_data.brand = res.brand ? res.brand : null;
-        this.watch_data.series = res.series ? res.series : null;
-        this.watch_data.model = res.model ? res.model : null;
-        this.watch_data.gender = res.gender ? res.gender : null;
-        this.watch_data.style = res.style_type ? res.style_type : null;
-        this.watch_data.subclass = res.sub_class ? res.sub_class : null;
-        this.watch_data.madelabel = res.made_label ? res.made_label : null;
-        this.watch_data.calender = res.calender ? res.calender : null;
-        this.watch_data.feature = res.feature ? res.feature : null;
-        this.watch_data.movement = res.movement ? res.movement : null;
-        this.watch_data.functions = res.functions ? res.functions : null;
-        this.watch_data.engine = res.engine ? res.engine : null;
-        this.watch_data.waterresistant = res.water_resistant ? res.water_resistant : null;
-        this.watch_data.bandcolor = res.band_color ? res.band_color : null;
-        this.watch_data.bandtype = res.band_type ? res.band_type : null;
-        this.watch_data.clasp = res.clasp ? res.clasp : null;
-        this.watch_data.bracelet = res.bracelet ? res.bracelet : null;
-        this.watch_data.dialtype = res.dial_type ? res.dial_type : null;
-        this.watch_data.dialcolor = res.dial_color ? res.dial_color : null;
-        this.watch_data.crystal = res.crystal ? res.crystal : null;
-        this.watch_data.secondmaker = res.second_makers ? res.second_makers : null;
-        this.watch_data.bezel = res.bezel ? res.bezel : null;
-        this.watch_data.bezel_material = res.bezel_material ? res.bezel_material : null;
-        this.watch_data.caseback = res.case_back ? res.case_back : null;
-        this.watch_data.casedimension = res.case_dimension ? res.case_dimension : null;
-        this.watch_data.caseshape = res.case_shape ? res.case_shape : null;
-        }).catch((error) =>{})
-        // Update the state with user data
-        
-  
-  
-  
-      } catch (err) {
-        console.error("Error fetching member data:", err);
+        const response = await axios.get(`http://localhost:8080/watch/get/${watch_id}`);
+        const res = response.data;
+        console.log(res);
+    
+        this.watch_data = {
+          name: res.watch_name || null,
+          description: res.watch_description || null,
+          images: res.image_url ? (Array.isArray(res.image_url) ? res.image_url : [res.image_url]) : [],
+          price: res.price || null,
+          brand: res.brand || null,
+          series: res.series || null,
+          model: res.model || null,
+          gender: res.gender || null,
+          style: res.style_type || null,
+          subclass: res.sub_class || null,
+          madelabel: res.made_label || null,
+          calender: res.calender || null,
+          feature: res.feature || null,
+          movement: res.movement || null,
+          functions: res.functions || null,
+          engine: res.engine || null,
+          waterresistant: res.water_resistant || null,
+          bandcolor: res.band_color || null,
+          bandtype: res.band_type || null,
+          clasp: res.clasp || null,
+          bracelet: res.bracelet || null,
+          dialtype: res.dial_type || null,
+          dialcolor: res.dial_color || null,
+          crystal: res.crystal || null,
+          secondmaker: res.second_makers || null,
+          bezel: res.bezel || null,
+          bezel_material: res.bezel_material || null,
+          caseback: res.case_back || null,
+          casedimension: res.case_dimension || null,
+          caseshape: res.case_shape || null,
+        };
+    
+        return this.watch_data;
+      } catch (error) {
+        console.error("Error fetching watch data:", error);
+        throw error; // Re-throw the error so it can be handled by the caller
       }
     },
   },
