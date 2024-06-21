@@ -461,8 +461,7 @@
 </template>
 
 <script setup>
-import { reactive, ref, watch } from "vue";
-import { useContentDeliveryNetwork } from "../stores/cdn"; // Adjust path as necessary
+import { reactive, ref} from "vue";
 import { useWatchStore } from "../stores/watch";
 import { useUserStore } from "../stores/user";
 import { useCloudinaryStore } from "../stores/cloudinary";
@@ -503,13 +502,13 @@ const watchData = reactive({
 
 }
 )
-const description = ref("");
 const textareaHeight = ref("80"); // Initial height of textarea
 const isFocused = ref(false); // Flag to track textarea focus state
 const textareaRef = ref(null); // Reference to the textarea element
 const uploadedImages = ref([]); // Array to hold uploaded images
-const watchName = ref(""); // Watch's Name
-const price = ref(""); // Price
+const imageURLs = ref([])
+
+
 
 const adjustHeight = () => {
   // Adjust textarea height dynamically based on content
@@ -522,7 +521,7 @@ async function uploadHandle() {
       name: watchData.name,
       price: watchData.price,
       description: watchData.description,
-      images: uploadedImages.value,
+      images: imageURLs.value,
       brand: watchData.brand,
       series: watchData.series,
       model: watchData.model,
@@ -592,6 +591,7 @@ const uploadToCDN = async (file, imageObject) => {
     const response = await useCloudinaryStore().uploadImage(file);
     // Update image URL and loading status after successful upload
     imageObject.url = response.secure_url;
+    imageURLs.value.push(imageObject.url)
     imageObject.loading = false;
   } catch (error) {
     console.error("Error uploading file:", error);
