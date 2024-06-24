@@ -385,7 +385,7 @@
           <label for="price" class="form__label">Series</label>
         </div>
       </div>
-      <div class="form-content">
+      <div class="form-content ">
         <div class="form__group field w-96">
           <input
             v-model="watchData.model"
@@ -396,23 +396,29 @@
           <label for="price" class="form__label">Model</label>
         </div>
       </div>
-      <div class="form-content w-full menu-box pt-4">
-        <span class="text-[#9b9b9b] text-label">Gender</span>
-        <div class="radio-inputs">
-          <label class="radio">
-            <input default type="radio" name="radio" checked @click="unisexGender"/>
-            <span class="name">Unisex</span>
-          </label>
-          <label class="radio">
-            <input type="radio" name="radio" @click="maleGender"/>
-            <span class="name">Male</span>
-          </label>
+      <div class="form__group field flex flex-col w-96 justify-start">
+           
+        <div class="mydict">
+	<div class="form">
+	    <label class=" mb-3 text-[#9b9b9b] ">Gender</label>
+	    <div class="select pb-4">
+	    <label>
+			<input type="radio" name="radio" checked="" @click="unisexGender">
+			<span class="select-op">Unisex</span>
+		</label>
+		<label>
+			<input type="radio" name="radio" @click="maleGender">
+			<span class="select-op">Male</span>
+		</label>
+		<label>
+			<input type="radio" name="radio" @click="femaleGender">
+			<span class="select-op">Female</span>
+		</label>
+	    </div>
+	</div>
+</div>
 
-          <label class="radio">
-            <input type="radio" name="radio" @click="femaleGender"/>
-            <span class="name">Female</span>
-          </label>
-        </div>
+
       </div>
       <div class="form-content">
         <div class="form__group field w-96">
@@ -888,21 +894,57 @@ h3 {
   width: 50%;
 }
 
-.menu-box{
-  padding-left: 2.6rem;
-}
-.text-label{
-  padding-left: 1px;
-  padding-bottom: 5px;
-}
-.radio-inputs {
+/* :focus {
+  outline: 0;
+  border-color: #FFBD59;
+  box-shadow: 0 0 0 4px #FFBD59;
+} */
+
+.select{
   display: flex;
-  border: 1px solid var(--wait);
-  box-sizing: border-box;
-  box-shadow: 0 0 0px 1px rgba(0, 0, 0, 0.06);
-  padding: 0.25rem;
-  width: 300px;
-  font-size: 14px;
+  flex-direction: row;
+}
+
+.mydict:hover label{
+  color:var(--secondary)
+}
+
+.mydict .form{
+  color: #fff;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.mydict input[type="radio"]{
+  clip: rect(0 0 0 0);
+  clip-path: inset(100%);
+  height: 1px;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+.mydict input[type="radio"]:checked + span {
+  box-shadow: 0 0 0 0.0625em #FFBD59;
+  background-color: #5232003a;
+  z-index: 1;
+  color: #FFBD59;
+}
+
+label .select-op {
+  display: block;
+  cursor: pointer;
+  padding: 0.375em .75em;
+  position: relative;
+  margin-left: .0625em;
+  box-shadow: 0 0 0 0.0625em #b5bfd9;
+  letter-spacing: .05em;
+  color: #fff;
+  text-align: center;
+  transition: background-color .5s ease;
 }
 
 @media (max-width: 768px) {
