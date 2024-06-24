@@ -117,6 +117,7 @@ export const useWatchStore = defineStore("watch", {
         console.log(res);
     
         this.watch_data = {
+          seller: res.seller || null, // Make sure this is included in the API response
           name: res.watch_name || null,
           description: res.watch_description || null,
           images: res.image_url ? (Array.isArray(res.image_url) ? res.image_url : [res.image_url]) : [],

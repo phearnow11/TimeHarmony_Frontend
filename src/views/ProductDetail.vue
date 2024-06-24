@@ -1,28 +1,59 @@
 <template>
-  <div class="max-w-4xl mx-auto p-4">
+  <div class="max-w-4xl mx-auto my-5 p-4">
+    <!-- Modal -->
+    <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center" @click.self="closeModal">
+      <div class="absolute inset-0 modal" @click="closeModal"></div>
+      <div class="relative z-10 max-w-3xl max-h-[90vh] overflow-hidden" @click.stop>
+        <img :src="currentModalImage" :alt="watchStore.watch_data.name" class="max-w-full max-h-full object-contain">
+        
+        <!-- Navigation arrows -->
+        <button @click.stop="prevImage" class="bg-drop absolute left-2 top-1/2 transform -translate-y-1/2 text-secondary p-2">
+          &lt;
+        </button>
+        <button @click.stop="nextImage" class="bg-drop absolute right-2 top-1/2 transform -translate-y-1/2  text-secondary p-2">
+          &gt;
+        </button>
+        
+        <!-- Image counter -->
+        <div class="bg-drop absolute bottom-4 left-1/2 transform -translate-x-1/2 text-primary px-2 py-1">
+          {{ currentImageIndex + 1 }} / {{ watchStore.watch_data.images.length }}
+        </div>
+      </div>
+    </div>
     <!-- Product Display -->
     <div class="flex flex-col md:flex-row gap-6">
       <!-- Image Gallery -->
-      <div class="w-full md:w-1/2">
-        <div v-if="watchStore.watch_data.images">
-      <img 
-        v-for="(imageUrl, index) in watchStore.watch_data.images" 
-        :key="index" 
-        :src="imageUrl" 
-        :alt="`Product Image ${index + 1}`"
-      >
-    </div>
+      <div class="w-full md:w-1/2 flex flex-col gap-4">
+        <!-- Main Image Display Container -->
+        <div class="relative flex-grow w-full h-60 cursor-pointer" @click="openModal">
+          <img 
+            :src="currentImage" 
+            :alt="watchStore.watch_data.name"
+            class="w-full h-full object-contain main-image"
+          >
+        </div>
+        <!-- Thumbnails -->
+        <div class="flex gap-2 overflow-x-auto mt-2">
+          <img 
+            v-for="(imageUrl, index) in watchStore.watch_data.images" 
+            :key="index" 
+            :src="imageUrl" 
+            :alt="`Product Image ${index + 1}`"
+            class="w-20 h-20 object-cover cursor-pointer thumbnail"
+            @mouseenter="currentImage = imageUrl"
+            :class="{ 'border-2 border-primary': currentImage === imageUrl }"
+          >
+        </div>
       </div>
       
       <!-- Product Info -->
       <div class="w-full md:w-1/2">
         <h1 class="text-xl font-semibold mb-2">{{ watchStore.watch_data.name }}</h1>
         <div class="flex items-center mb-2">
-          <!-- Star rating component -->
-          <span class="text-2xl font-bold text-red-500">{{ watchStore.watch_data.description }}</span>
+          <span class="text-2xl font-bold">{{ watchStore.watch_data.description }}</span>
         </div>
         <div class="mb-4">
-          <span class="text-2xl font-bold text-red-500">₫{{ watchStore.watch_data.price }}</span>
+          <span class="text-xl font-thin text-secondary"> {{ formatPriceVND(watchStore.watch_data.price) }}</span>
         </div>
         
         <!-- Shipping, Quantity, etc. -->
@@ -30,64 +61,217 @@
           <!-- Add shipping and quantity selectors here -->
         </div>
         <div class="flex gap-4">
-          <button class="flex-1 bg-orange-500 text-white py-2 px-4 rounded-lg">Add To Cart</button>
-          <button class="flex-1 bg-red-500 text-white py-2 px-4 rounded-lg">Buy Now</button>
+          <button class="flex-1 th-p-btn py-2 px-4">Add To Cart</button>
+          <router-link to="/order" class="flex-1 th-p-btn py-2 px-4">Buy Now</router-link>
+        </div>
+      </div>
+    </div>
+
+    <!-- Seller Info -->
+    <div v-if="retailer" class="mt-8 border-t border-secondary pt-4">
+      <div class="mb-5">
+        <span class="font-semibold text-xl">
+          Retailer Information
+        </span>
+      </div>
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <img :src="retailer.image" alt="Seller" class="w-12 h-12 mr-4">
+          <div>
+            <h2 class="font-semibold">{{ retailer.username }}</h2>
+            <p class="text-gray-500 text-sm">{{ retailer.email }}</p>
+            <p class="text-gray-500 text-sm">{{ retailer.phone }}</p>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <router-link :to="`/chat/${retailer.user_id}`" class="border border-secondary py-2 px-4">Chat Now</router-link>
+          <router-link :to="`/retailer/${retailer.user_id}`" class="border border-secondary py-2 px-4">View Shop</router-link>
         </div>
       </div>
     </div>
     
-    <!-- Seller Info -->
-    <div class="mt-8 border-t pt-4">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center">
-          <img src="" alt="Seller" class="w-12 h-12 rounded-full mr-4">
-          <div>
-            <h2 class="font-semibold">{{ sellerName }}</h2>
-          </div>
-        </div>
-        <div class="flex gap-2">
-          <button class="bg-red-500 text-white py-2 px-4 rounded-lg">Chat Now</button>
-          <button class="border border-gray-300 py-2 px-4 rounded-lg">View Shop</button>
-        </div>
+    <div class="p-8 border-t border-secondary mt-6 max-w-4xl mx-auto">
+    <section class="mb-8">
+      <h1 class="text-2xl font-bold border-b border-secondary w-40 mb-4">DESCRIPTION</h1>
+      <div class="mb-5">
+        <span>
+          {{ watchStore.watch_data.description || "No Information"}}
+        </span>
       </div>
-      <!-- Seller stats -->
-      <div class="grid grid-cols-4 gap-4 mt-4 text-center">
-        <div>
-          <p class="font-semibold">{{ ratings }}</p>
-          <p class="text-gray-500 text-sm">Ratings</p>
-        </div>
-        <div>
-          <p class="font-semibold">{{ products }}</p>
-          <p class="text-gray-500 text-sm">Products</p>
-        </div>
-        <div>
-          <p class="font-semibold">{{ responseRate }}%</p>
-          <p class="text-gray-500 text-sm">Response Rate</p>
-        </div>
-        <div>
-          <p class="font-semibold">{{ followers }}</p>
-          <p class="text-gray-500 text-sm">Followers</p>
-        </div>
+    </section>
+
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div>
+        <h2 class="text-xl font-bold border-b border-secondary w-40 mb-4">FEATURES</h2>
+        <ul class="space-y-2">
+          <li><strong>Calendar:</strong> {{ watchStore.watch_data.calender || "No Information" }} </li>
+          <li><strong>Feature:</strong> {{ watchStore.watch_data.feature || "No Information" }}</li>
+          <li><strong>Movement:</strong> {{ watchStore.watch_data.movement || "No Information" }}</li>
+          <li><strong>Functions:</strong> {{ watchStore.watch_data.functions || "No Information" }}</li>
+          <li><strong>Engine:</strong> {{ watchStore.watch_data.engine || "No Information" }}</li>
+          <li><strong>Water Resistant:</strong> {{ watchStore.watch_data.waterresistant || "No Information" }}</li>
+        </ul>
       </div>
-    </div>
+
+      <div>
+        <h2 class="text-xl border-b border-secondary font-bold w-40 mb-4">DIAL</h2>
+        <ul class="space-y-2">
+          <li><strong>Dial Type:</strong> {{ watchStore.watch_data.dialtype || "No Information" }}</li>
+          <li><strong>Dial Color:</strong> {{ watchStore.watch_data.dialcolor || "No Information" }}</li>
+          <li><strong>Crystal:</strong> {{ watchStore.watch_data.crystal || "No Information" }}</li>
+          <li><strong>Second Markers:</strong> {{ watchStore.watch_data.secondmaker || "No Information"}}</li>
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="text-xl border-b border-secondary font-bold w-40 mb-4">BAND</h2>
+        <ul class="space-y-2">
+          <li><strong>Band Color:</strong> {{ watchStore.watch_data.bandcolor || "No Information"}}</li>
+          <li><strong>Band Type:</strong> {{ watchStore.watch_data.bandtype || "No Information"}}</li>
+          <li><strong>Clasp:</strong> {{ watchStore.watch_data.clasp || "No Information"}} </li>
+          <li><strong>Bracelet:</strong> {{ watchStore.watch_data.bracelet || "No Information"}}</li>
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="text-xl border-b border-secondary w-40 font-bold mb-4">CASE</h2>
+        <ul class="space-y-2">
+          <li><strong>Bezel:</strong> {{ watchStore.watch_data.bezel || "No Information"}}</li>
+          <li><strong>Bezel Material:</strong> {{ watchStore.watch_data.bezelmaterial || "No Information"}}</li>
+          <li><strong>Case Back:</strong> {{ watchStore.watch_data.caseback || "No Information"}}</li>
+          <li><strong>Case Dimension:</strong> {{ watchStore.watch_data.casedimension || "No Information"}}</li>
+          <li><strong>Case Shape:</strong> {{ watchStore.watch_data.caseshape || "No Information"}}</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="mt-8">
+      <h2 class="text-xl border-b border-secondary w-40 font-bold mb-4">ABOUT</h2>
+      <ul class="space-y-2">
+        <li><strong>Brand:</strong> {{ watchStore.watch_data.brand || "No Information"}}</li>
+        <li><strong>Series:</strong> {{ watchStore.watch_data.series || "No Information"}}</li>
+        <li><strong>Model:</strong> {{ watchStore.watch_data.model || "No Information"}}</li>
+        <li><strong>Gender:</strong> {{ watchStore.watch_data.gender || "No Information"}}</li>
+        <li><strong>Style Type:</strong> {{ watchStore.watch_data.style || "No Information"}}</li>
+        <li><strong>Sub-Class:</strong> {{ watchStore.watch_data.subclass || "No Information"}}</li>
+        <li><strong>Made Label:</strong> {{ watchStore.watch_data.madelabel || "No Information"}}</li>
+        
+      </ul>
+    </section>
+
+    <section class="mt-10">
+      <h2 class="text-xl border-b border-secondary font-bold w-40 mb-4">Warranty</h2>
+      <p>
+        TimeHarmony will service every brand name watch sold on our website (see chart for exceptions) for a period of 1 to 5 years after purchase. Watches that have symptoms of abnormally gaining time, losing time, or not keeping proper time will be serviced under our warranty program.
+      </p>
+      <br>
+      <p>
+        What's not covered: The watch case, bracelet, straps, crown/stem, crystal/glass, finishes, damage caused by excessive wear-and-tear and/or physical abuse and damage resulting from wear under conditions exceeding the watch manufacturer's water resistance limits. Consequential and incidental damages are not covered under this warranty or any implied warranties.      </p>
+      <br>
+        <p>
+        Please note: Damage that occurs due to having the watch serviced by a third party null and voids the warranty from TimeHarmony.      </p>
+    </section>
   </div>
+
+  </div>
+
 </template>
 
 <script setup>
 import { useRoute } from 'vue-router';
-import { onMounted } from 'vue';
+import { onMounted, ref, watch, computed } from 'vue';
 import { useWatchStore } from '../stores/watch';
+import { useUserStore } from '../stores/user';
+import { useAuthStore } from '../stores/auth';
 
+
+const auth = useAuthStore();
 const route = useRoute();
+const userStore = useUserStore();
 const watchId = route.params.watch_id;
 const watchStore = useWatchStore();
+const currentImage = ref('');
+const isModalOpen = ref(false);
+const retailer = ref(null);
 
-onMounted(() => {
-  watchStore.getDetailWatch(watchId);
-  console.log("These are the images:", watchStore.watch_data.images);
+const formatPriceVND = (price) => {
+  // Assuming price is in integer format (cents or full units depending on your setup)
+  // Example: if price is in cents, divide by 100
+  const formattedPrice = (price / 100).toLocaleString('vi-VN', {
+    style: 'currency',
+    currency: 'VND',
+  });
+  return formattedPrice;
+};
+
+
+onMounted(async () => {
+  await watchStore.getDetailWatch(watchId);
+  updateCurrentImage();
+  console.log("WatchID: " + watchId);
+  if (watchStore.watch_data.seller && watchStore.watch_data.seller.member_id) {
+    retailer.value = await userStore.getUserInfo(watchStore.watch_data.seller.member_id);
+  }
 });
+
+watch(() => watchStore.watch_data.images, updateCurrentImage);
+
+function updateCurrentImage() {
+  if (watchStore.watch_data.images && watchStore.watch_data.images.length > 0) {
+    currentImage.value = watchStore.watch_data.images[0];
+  }
+}
+
+
+const currentImageIndex = ref(0);
+const currentModalImage = computed(() => watchStore.watch_data.images[currentImageIndex.value]);
+
+function openModal() {
+  isModalOpen.value = true;
+  currentImageIndex.value = watchStore.watch_data.images.indexOf(currentImage.value);
+}
+
+function closeModal() {
+  isModalOpen.value = false;
+}
+
+function nextImage() {
+  currentImageIndex.value = (currentImageIndex.value + 1) % watchStore.watch_data.images.length;
+}
+
+function prevImage() {
+  currentImageIndex.value = (currentImageIndex.value - 1 + watchStore.watch_data.images.length) % watchStore.watch_data.images.length;
+}
+
+
 </script>
 
-<style>
-/* Add any necessary styles here */
+
+<style scoped>
+.thumbnail {
+  transition: border-color 0.2s;
+}
+
+.main-image {
+  transition: transform 0.2s;
+}
+
+.modal {
+  background-color: rgba(20, 20, 20, 0.836);
+  backdrop-filter: blur(10px); /* Apply a blur effect to the background */
+}
+
+.bg-drop{
+  background-color: rgba(20, 20, 20, 0.836);
+  backdrop-filter: blur(50px); /* Apply a blur effect to the background */
+}
+
+
+
+@media (min-width: 768px) {
+  .thumbnail {
+    width: 60px;
+    height: 60px;
+  }
+}
 </style>

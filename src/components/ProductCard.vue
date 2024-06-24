@@ -17,7 +17,7 @@
             <span class="username hover-underline-animation">{{ retailerName }}</span>
           </router-link>
         </div>
-        <span class="price-tag">PRICE</span> <span class="price">{{ price }} VND</span>
+        <span class="price"> {{ formatPriceVND(price) }}</span>
       </div>
     </div>
   </router-link>
@@ -66,8 +66,17 @@ export default {
       event.stopPropagation();
       event.preventDefault();
       this.isBookmarked = !this.isBookmarked;
+    },
+    formatPriceVND(price) {
+      // Assuming price is in full units (integer format)
+      // If your price is stored differently (e.g., in cents), adjust the calculation accordingly
+      return (price).toLocaleString('vi-VN', {
+        style: 'currency',
+        currency: 'VND'
+      });
     }
   }
+
 }
 </script>
 

@@ -1,8 +1,9 @@
 <template>
-  <nav
-  v-if="(auth.user_id) || (route.path !== '/login' && route.path !== '/signup' && route.path !== '/chat')"
+ <nav
+  v-if="(!auth.user_id && !['/login', '/signup', '/chat', '/upload', '/order'].includes(route.path)) || (auth.user_id && !['/chat', '/upload', '/order'].includes(route.path))"
+
   class="myheader grid grid-cols-6 gap-4 h-20 items-center sticky top-0 z-50 w-full pl-6 pr-6"
-  >
+>
     <div class="flex items-center justify-between col-span-1">
       <side-bar />
       <div class="flex justify-center items-center h-full">
@@ -60,7 +61,7 @@
       <router-link to="/chat">
         <span class="mdi mdi-message-text-outline hover-animation"></span>
       </router-link>
-      <router-link to="">
+      <router-link to="/favorite">
         <span class="mdi mdi-heart-outline hover-animation"></span>
       </router-link>
       <router-link to="/cart">

@@ -25,6 +25,10 @@
       <div class="p-4 shadow-md">
         <h3 class="font-bold mb-2">Chat response:</h3>
         <p class="text-secondary">Thinh thoang (Trong 5 gio)</p>
+        <h3 class="font-bold mb-2 mt-4">Phone Number:</h3>
+        <p class="text-secondary">{{ retailer.phone }}</p>
+        <h3 class="font-bold mb-2 mt-4">Email Address:</h3>
+        <p class="text-secondary">{{ retailer.email }}</p>
         <h3 class="font-bold mb-2 mt-4">Verified:</h3>
         <div class="flex items-center">
           <i class="fas fa-check-circle text-green-500 mr-2"></i>
@@ -40,7 +44,7 @@
       <div class="p-4 shadow-md mb-4">
         <h2 class="font-bold mb-2">Dang hien thi (1)</h2>
         <div class="flex items-center mb-4">
-          <cart-item />
+        
         </div>
       </div>
       <div class="p-4 shadow-md">
@@ -53,9 +57,10 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import CartItem from '../components/CartItem.vue';
 import { useUserStore } from '../stores/user';
+import { useWatchStore } from '../stores/watch';
 
+const watchStore = useWatchStore();
 const route = useRoute();
 const userStore = useUserStore();
 const retailer = ref({
@@ -80,5 +85,7 @@ onMounted(async () => {
     console.error('Error fetching retailer info:', error);
   }
 });
+
+
 
 </script>

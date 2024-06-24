@@ -24,6 +24,9 @@
       :link="`/detail/${watch.watch_id}`"
       :seller_id="`/retailer/${watch.seller.member_id}`"
     />
+
+    
+    
   </div>
 
   <div class="pagination:container flex justify-center items-center mt-10">
@@ -70,11 +73,13 @@ const watchStore = useWatchStore();
 const userStore = useUserStore();
 const retailers = ref([]);
 
+
+
 onMounted(async () => {
   await watchStore.getWatchesOfPage(0);
   await fetchRetailerInfo();
 });
-
+  
 const fetchRetailerInfo = async () => {
   const retailerPromises = watchStore.watches.map(watch => userStore.getUserInfo(watch.seller.member_id));
   retailers.value = await Promise.all(retailerPromises);

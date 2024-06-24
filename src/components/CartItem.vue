@@ -1,52 +1,69 @@
 <template>
     <div class="container flex items-center justify-center">
-        <div class="box" :class="{ 'checked': remember }" @click="toggleCheckbox">
-            <label class="checkbox-container">
-                <input type="checkbox" v-model="remember" @click.stop />
-                <svg viewBox="0 0 64 64" height="1em">
-                    <path
-                        d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
-                        class="path"
-                    ></path>
-                </svg>
-            </label>
-            <img class="watch-img" src="https://alowatch.vn/wp-content/uploads/2021/04/moa10054.jpg" />
-            <div class="info">
-                <strong class="product-name">Đồng hồ Rolex</strong>
-                <div class="retailer">
-                    <img class="avatar" src="https://files.catbox.moe/n1w3b0.png" />
-                    <span class="username">ThinhPhoenix</span>
-                </div>
-                <div class="action-buttons">
-                    <div class="hover-underline-animation" @click.stop="removeFromCart">Remove this watch from cart</div>
-                </div>
-                <div class="price-details">
-                    <span class="price-tag">PRICE</span>
-                    <span class="price">12.000.000.000 VND</span>
-                </div>
-            </div>
+      <div class="box" :class="{ 'checked': isSelected }" @click="toggleSelection">
+        <label class="checkbox-container">
+          <input type="checkbox" v-model="isSelected" @click.stop />
+          <svg viewBox="0 0 64 64" height="1em">
+            <path
+              d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+              class="path"
+            ></path>
+          </svg>
+        </label>
+        <img class="watch-img" :src="item.image" />
+        <div class="info">
+          <strong class="product-name">{{ item.name }}</strong>
+          <div class="retailer">
+            <img class="avatar" :src="item.retailerAvatar" />
+            <span class="username">{{ item.retailerName }}</span>
+          </div>
+          <div class="action-buttons">
+            <div class="hover-underline-animation" @click.stop="removeFromCart">Remove this watch from cart</div>
+          </div>
+          <div class="price-details">
+            <span class="price">{{ formatPrice(item.price) }} VND</span>
+          </div>
         </div>
+      </div>
     </div>
-</template>
-
-<script>
-export default {
+  </template>
+  
+  <script>
+  export default {
+    props: {
+      item: {
+        type: Object,
+        required: true
+      },
+      selected: {
+        type: Boolean,
+        default: false
+      }
+    },
     data() {
-        return {
-            remember: false
-        };
+      return {
+        isSelected: this.selected
+      };
+    },
+    watch: {
+      selected(newValue) {
+        this.isSelected = newValue;
+      }
     },
     methods: {
-        toggleCheckbox() {
-            this.remember = !this.remember;
-        },
-        removeFromCart() {
-            // Replace with your remove from cart logic
-            console.log("Remove from cart clicked");
-        }
+      toggleSelection() {
+        this.isSelected = !this.isSelected;
+        this.$emit('selection-changed', this.isSelected);
+      },
+      removeFromCart() {
+        this.$emit('remove-from-cart', this.item.id);
+      },
+      formatPrice(price) {
+        return price.toLocaleString('vi-VN');
+      }
     }
-};
-</script>
+  };
+  </script>
 
 <style scoped>
 .hover-underline-animation::after {

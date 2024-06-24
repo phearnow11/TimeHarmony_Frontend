@@ -102,6 +102,14 @@ const router = createRouter({
         console.error(err);
       }),
     },
+    
+    {
+      path: '/order',
+      name: 'Order',
+      component: () => import('../views/Order.vue').catch(err => {
+        console.error(err);
+      }),
+    },
     {
       path: '/:pathMatch(.*)*',
       name: 'Error',
