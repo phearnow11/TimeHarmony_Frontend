@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="link" class="container mt-12">
+  <router-link :to="link" class="container ">
     <div class="box" :class="{ bookmarked: isBookmarked }">
       <div class="image-container">
         <img class="watch-img" :src="productImage" />
