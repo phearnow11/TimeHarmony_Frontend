@@ -1,6 +1,6 @@
 <template>
  <nav
-  v-if="(!auth.user_id && !['/login', '/signup', '/chat', '/upload', '/order'].includes(route.path)) || (auth.user_id && !['/chat', '/upload', '/order'].includes(route.path))"
+  v-if="(!auth.user_id && !['/login', '/signup', '/chat', '/upload', '/order'].includes(route.path)) || (auth.user_id && !['/chat', '/order'].includes(route.path))"
 
   class="myheader grid grid-cols-6 gap-4 h-20 items-center sticky top-0 z-50 w-full pl-6 pr-6"
 >

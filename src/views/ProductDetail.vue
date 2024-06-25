@@ -61,7 +61,7 @@
           <!-- Add shipping and quantity selectors here -->
         </div>
         <div class="flex gap-4">
-          <button class="flex-1 th-p-btn py-2 px-4">Add To Cart</button>
+          <button @click="addToCart" class="flex-1 th-p-btn py-2 px-4">Add To Cart</button>
           <router-link to="/order" class="flex-1 th-p-btn py-2 px-4">Buy Now</router-link>
         </div>
       </div>
@@ -107,7 +107,7 @@
           <li><strong>Calendar:</strong> {{ watchStore.watch_data.calender || "No Information" }} </li>
           <li><strong>Feature:</strong> {{ watchStore.watch_data.feature || "No Information" }}</li>
           <li><strong>Movement:</strong> {{ watchStore.watch_data.movement || "No Information" }}</li>
-          <li><strong>Functions:</strong> {{ watchStore.watch_data.functions || "No Information" }}</li>
+          <li><strong>Functions:</strong> {{ watchStore.watch_data.function || "No Information" }}</li>
           <li><strong>Engine:</strong> {{ watchStore.watch_data.engine || "No Information" }}</li>
           <li><strong>Water Resistant:</strong> {{ watchStore.watch_data.waterresistant || "No Information" }}</li>
         </ul>
@@ -193,16 +193,29 @@ const watchStore = useWatchStore();
 const currentImage = ref('');
 const isModalOpen = ref(false);
 const retailer = ref(null);
-
 const formatPriceVND = (price) => {
   // Assuming price is in integer format (cents or full units depending on your setup)
   // Example: if price is in cents, divide by 100
-  const formattedPrice = (price / 100).toLocaleString('vi-VN', {
+  const formattedPrice = (price / 1).toLocaleString('vi-VN', {
     style: 'currency',
     currency: 'VND',
   });
   return formattedPrice;
 };
+
+async function addToCart() {
+  console.log("WatchID: " + watchId);
+  console.log("UserID: " + retailer.value.user_id);
+  try {
+    const response = await userStore.addToCart(retailer.value.user_id, watchId);
+    console.log("Item added to cart successfully", response);
+    // You can add some user feedback here, like a toast notification
+  } catch (error) {
+    console.error("Error adding item to cart", error);
+    // You can add some error feedback here
+  }
+}
+
 
 
 onMounted(async () => {

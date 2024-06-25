@@ -20,7 +20,7 @@ export const useWatchStore = defineStore("watch", {
       calender: "",
       feature: "",
       movement: "",
-      functions: "",
+      function: "",
       engine: "",
       waterresistant: "",
       bandcolor: "",
@@ -73,7 +73,7 @@ export const useWatchStore = defineStore("watch", {
       try {
         // Update the state with user data
         this.watch_data.name = watchData.name ? watchData.name : null;
-        this.watch_data.watch_description = watchData.description ? watchData.description : null;
+        this.watch_data.description = watchData.description ? watchData.description : null;
         this.watch_data.images = watchData.images ? watchData.images : null;
         this.watch_data.price = watchData.price ? watchData.price : null;
         this.watch_data.brand = watchData.brand ? watchData.brand : null;
@@ -86,7 +86,7 @@ export const useWatchStore = defineStore("watch", {
         this.watch_data.calender = watchData.calender ? watchData.calender : null;
         this.watch_data.feature = watchData.feature ? watchData.feature : null;
         this.watch_data.movement = watchData.movement ? watchData.movement : null;
-        this.watch_data.functions = watchData.functions ? watchData.functions : null;
+        this.watch_data.function = watchData.function ? watchData.function : null;
         this.watch_data.engine = watchData.engine ? watchData.engine : null;
         this.watch_data.waterresistant = watchData.waterresistant ? watchData.waterresistant : null;
         this.watch_data.bandcolor = watchData.bandcolor ? watchData.bandcolor : null;
@@ -98,7 +98,7 @@ export const useWatchStore = defineStore("watch", {
         this.watch_data.crystal = watchData.crystal ? watchData.crystal : null;
         this.watch_data.secondmaker = watchData.secondmaker ? watchData.secondmaker : null;
         this.watch_data.bezel = watchData.bezel ? watchData.bezel : null;
-        this.watch_data.bezel_material = watchData.bezelmaterial ? watchData.bezelmaterial : null;
+        this.watch_data.bezelmaterial = watchData.bezelmaterial ? watchData.bezelmaterial : null;
         this.watch_data.caseback = watchData.caseback ? watchData.caseback : null;
         this.watch_data.casedimension = watchData.casedimension ? watchData.casedimension : null;
         this.watch_data.caseshape = watchData.caseshape ? watchData.caseshape : null;
@@ -132,7 +132,7 @@ export const useWatchStore = defineStore("watch", {
           calender: res.calender || null,
           feature: res.feature || null,
           movement: res.movement || null,
-          functions: res.functions || null,
+          function: res.functions || null,
           engine: res.engine || null,
           waterresistant: res.water_resistant || null,
           bandcolor: res.band_color || null,
@@ -144,7 +144,7 @@ export const useWatchStore = defineStore("watch", {
           crystal: res.crystal || null,
           secondmaker: res.second_makers || null,
           bezel: res.bezel || null,
-          bezel_material: res.bezel_material || null,
+          bezelmaterial: res.bezel_material || null,
           caseback: res.case_back || null,
           casedimension: res.case_dimension || null,
           caseshape: res.case_shape || null,
@@ -156,6 +156,7 @@ export const useWatchStore = defineStore("watch", {
         throw error; // Re-throw the error so it can be handled by the caller
       }
     },
+    
   },
 
   

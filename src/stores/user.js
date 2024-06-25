@@ -14,6 +14,7 @@ export const useUserStore = defineStore("user", {
     image: "https://files.catbox.moe/n1w3b0.png",
     active: "",
     user_id: null,  // Add this to your state
+    cart: [],
   }),
 
   actions: {
@@ -27,6 +28,17 @@ export const useUserStore = defineStore("user", {
         return response;
       } catch (error) {
         console.error("Signup error", error);
+        throw error;
+      }
+    },
+
+    async addToCart(member_id, watch_id) {
+      try {
+        const response = await axios.post(`http://localhost:8080/member/add/to-cart/${member_id}?watch_id=${watch_id}`);
+        console.log("Cart addition successful", response.data);
+        return response.data;
+      } catch (error) {
+        console.error("Cart addition error", error);
         throw error;
       }
     },

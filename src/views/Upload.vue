@@ -130,7 +130,7 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="watchData.functions"
+            v-model="watchData.function"
             type="text"
             class="form__field"
             placeholder="Price"
@@ -342,12 +342,12 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="watchData.case_material"
+            v-model="watchData.casedimension"
             type="text"
             class="form__field"
             placeholder="Price"
           />
-          <label for="price" class="form__label">Case Material</label>
+          <label for="price" class="form__label">Case Dimension</label>
         </div>
       </div>
       <div class="form-content">
@@ -489,7 +489,7 @@ const watchData = reactive({
   calender: "",
   feature: "",
   movement: "",
-  functions: "",
+  function: "",
   engine: "",
   water_resistant: "",
   band_color: "",
@@ -503,7 +503,7 @@ const watchData = reactive({
   bezel: "",
   bezel_material: "",
   case_back: "",
-  case_dimension: "",
+  casedimension: "",
   case_shape: ""
 
 }
@@ -537,7 +537,7 @@ async function uploadHandle() {
       calender: watchData.calender,
       feature: watchData.feature,
       movement: watchData.movement,
-      functions: watchData.functions,
+      function: watchData.function,
       engine: watchData.engine,
       waterresistant: watchData.water_resistant,
       bandcolor: watchData.band_color,
@@ -551,7 +551,7 @@ async function uploadHandle() {
       bezel: watchData.bezel,
       bezelmaterial: watchData.bezel_material,
       caseback: watchData.case_back,
-      casedimension: watchData.case_dimension,
+      casedimension: watchData.casedimension,
       caseshape: watchData.case_shape
 
     };
