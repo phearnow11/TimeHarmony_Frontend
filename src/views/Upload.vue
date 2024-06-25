@@ -197,45 +197,12 @@
       <div class="form-content">
         <div class="form__group field w-96">
           <input
-            v-model="watchData.hands"
-            type="text"
-            class="form__field"
-            placeholder="Price"
-          />
-          <label for="price" class="form__label">Hands</label>
-        </div>
-      </div>
-      <div class="form-content">
-        <div class="form__group field w-96">
-          <input
             v-model="watchData.second_makers"
             type="text"
             class="form__field"
             placeholder="Price"
           />
           <label for="price" class="form__label">Second Makers</label>
-        </div>
-      </div>
-      <div class="form-content">
-        <div class="form__group field w-96">
-          <input
-            v-model="watchData.dial_makers"
-            type="text"
-            class="form__field"
-            placeholder="Price"
-          />
-          <label for="price" class="form__label">Dial Makers</label>
-        </div>
-      </div>
-      <div class="form-content">
-        <div class="form__group field w-96">
-          <input
-            v-model="watchData.luminescent"
-            type="text"
-            class="form__field"
-            placeholder="Price"
-          />
-          <label for="price" class="form__label">Luminescent</label>
         </div>
       </div>
       <h3 class="text-3xl">Band</h3>
@@ -259,17 +226,6 @@
             placeholder="Price"
           />
           <label for="price" class="form__label">Band Type</label>
-        </div>
-      </div>
-      <div class="form-content">
-        <div class="form__group field w-96">
-          <input
-            v-model="watchData.band_width"
-            type="text"
-            class="form__field"
-            placeholder="Price"
-          />
-          <label for="price" class="form__label">Band Witdh</label>
         </div>
       </div>
       <div class="form-content">
@@ -315,17 +271,6 @@
             placeholder="Price"
           />
           <label for="price" class="form__label">Bezel Material</label>
-        </div>
-      </div>
-      <div class="form-content">
-        <div class="form__group field w-96">
-          <input
-            v-model="watchData.bezel_color"
-            type="text"
-            class="form__field"
-            placeholder="Price"
-          />
-          <label for="price" class="form__label">Bezel Color</label>
         </div>
       </div>
       <div class="form-content">
