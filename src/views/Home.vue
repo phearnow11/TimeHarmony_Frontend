@@ -77,13 +77,13 @@ const retailers = ref([]);
 
 onMounted(async () => {
   await watchStore.getWatchesOfPage(0);
-  await fetchRetailerInfo();
+  // await fetchRetailerInfo();
 });
   
-const fetchRetailerInfo = async () => {
-  const retailerPromises = watchStore.watches.map(watch => userStore.getUserInfo(watch.seller.member_id));
-  retailers.value = await Promise.all(retailerPromises);
-};
+// const fetchRetailerInfo = async () => {
+//   const retailerPromises = watchStore.watches.map(watch => userStore.getUserInfo(watch.seller.member_id));
+//   retailers.value = await Promise.all(retailerPromises);
+// };
 </script>
 
 
