@@ -46,6 +46,36 @@
   color: var(--secondary);
 }
 
+.hover-underline-animation-r {
+  position: relative;
+  text-decoration: none;
+  color: var(--wait);
+}
+
+.hover-underline-animation-r::after {
+    color: var(--secondary);
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    display: block;
+    margin: 0 auto;
+    background: #ff402b;
+    transition: width 0.4s ease-in-out;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -2px;
+}
+
+.hover-underline-animation-r:hover::after {
+    color: rgb(255, 57, 57);
+    width: 100%;
+}
+
+.hover-underline-animation-r:hover {
+    color: rgb(255, 57, 57);
+}
+
 .th-p-btn {
   align-items: center;
   background-color: #ffbd59;

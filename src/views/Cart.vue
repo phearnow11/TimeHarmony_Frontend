@@ -12,7 +12,7 @@
             <input type="checkbox" :checked="allProductsSelected" class="mr-2">
             <span>Select All ({{ cartItems.length }})</span>
           </button>
-          <button @click="deleteSelected" class="hover-underline-animation">Delete</button>
+          <button @click="deleteSelected" class="hover-underline-animation-r">Delete all</button>
           <button class="hover-underline-animation">Move to My Likes</button>
         </div>
         <div class="flex items-center space-x-4">

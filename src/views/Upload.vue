@@ -346,17 +346,17 @@
         <div class="mydict">
 	<div class="form">
 	    <label class=" mb-3 text-[#9b9b9b] ">Gender</label>
-	    <div class="select pb-4">
+	    <div class="select pb-4 gender-select">
 	    <label>
-			<input type="radio" name="radio" checked="" @click="unisexGender">
+			<input type="radio" name="radio" checked @click="unisexGender" id="defaut-gender" value="Unisex">
 			<span class="select-op">Unisex</span>
 		</label>
 		<label>
-			<input type="radio" name="radio" @click="maleGender">
+			<input type="radio" name="radio" @click="maleGender" value="Male">
 			<span class="select-op">Male</span>
 		</label>
 		<label>
-			<input type="radio" name="radio" @click="femaleGender">
+			<input type="radio" name="radio" @click="femaleGender" value="Female">
 			<span class="select-op">Female</span>
 		</label>
 	    </div>
@@ -401,7 +401,7 @@
       <br />
       <div class="flex justify-end button-div">
         <div class="flex items-center submit-watch">
-          <div class="hover-underline-animation-r" @click.stop="removeFromCart">
+          <div class="hover-underline-animation-r" @click.stop="clear">
             Clear my input
           </div>
         </div>
@@ -420,7 +420,6 @@ import { useCloudinaryStore } from "../stores/cloudinary";
 
 
 const watchData = reactive({
-  
   name: "",
   price: "",
   description: "",
@@ -450,7 +449,6 @@ const watchData = reactive({
   case_back: "",
   casedimension: "",
   case_shape: ""
-
 }
 )
 const textareaHeight = ref("80"); // Initial height of textarea
@@ -535,6 +533,41 @@ const handleFiles = async (files) => {
     reader.readAsDataURL(file);
   }
 };
+
+const clear = () => {
+    watchData.name= "",
+    watchData.price= "",
+    watchData.description= "",
+    watchData.brand= "",
+    watchData.series= "",
+    watchData.model= "",
+    watchData.gender= "Unisex",
+    watchData.style_type= "",
+    watchData.sub_class= "",
+    watchData.made_label= "",
+    watchData.calender= "",
+    watchData.feature= "",
+    watchData.movement= "",
+    watchData.function= "",
+    watchData.engine= "",
+    watchData.water_resistant= "",
+    watchData.band_color= "",
+    watchData.band_type= "",
+    watchData.clasp= "",
+    watchData.bracelet= "",
+    watchData.dial_type= "",
+    watchData.dial_color= "",
+    watchData.crystal= "",
+    watchData.second_makers= "",
+    watchData.bezel= "",
+    watchData.bezel_material= "",
+    watchData.case_back= "",
+    watchData.casedimension= "",
+    watchData.case_shape= ""
+
+    const genderSelect = document.getElementById("gender-select");
+    genderSelect.value = "Unisex";
+}
 
 const uploadToCDN = async (file, imageObject) => {
   try {
@@ -753,36 +786,6 @@ h3 {
   margin-bottom: 1rem; /* Add some space below the heading */
   padding-bottom: 0.5rem; /* Add padding to the bottom */
   border-bottom: 2px solid #ffbd59; /* Add a bottom border for emphasis */
-}
-
-.hover-underline-animation-r::after {
-  color: var(--secondary);
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 2px;
-  display: block;
-  margin: 0 auto;
-  background: #ff402b;
-  transition: width 0.4s ease-in-out;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: -2px;
-}
-
-.hover-underline-animation-r:hover::after {
-  color: red;
-  width: 100%;
-}
-
-.hover-underline-animation-r:hover {
-  color: red;
-}
-
-.hover-underline-animation-r {
-  position: relative;
-  text-decoration: none;
-  color: var(--wait);
 }
 
 @media (max-width: 1024px) {

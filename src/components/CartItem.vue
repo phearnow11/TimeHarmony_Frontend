@@ -18,7 +18,7 @@
             <span class="username">{{ item.retailerName }}</span>
           </div>
           <div class="action-buttons">
-            <div class="hover-underline-animation" @click.stop="removeFromCart">Remove this watch from cart</div>
+            <div class="hover-underline-animation-r" @click.stop="removeFromCart">Remove this watch from cart</div>
           </div>
           <div class="price-details">
             <span class="price">{{ formatPrice(item.price) }} VND</span>
@@ -66,29 +66,6 @@
   </script>
 
 <style scoped>
-.hover-underline-animation::after {
-    color: var(--secondary);
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 2px;
-    display: block;
-    margin: 0 auto;
-    background: #ff402b;
-    transition: width 0.4s ease-in-out;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: -2px;
-}
-
-.hover-underline-animation:hover::after {
-    color: red;
-    width: 100%;
-}
-
-.hover-underline-animation:hover {
-    color: red;
-}
 
 .container {
     color: white;
