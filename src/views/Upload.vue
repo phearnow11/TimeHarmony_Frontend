@@ -535,38 +535,7 @@ const handleFiles = async (files) => {
 };
 
 const clear = () => {
-    watchData.name= "",
-    watchData.price= "",
-    watchData.description= "",
-    watchData.brand= "",
-    watchData.series= "",
-    watchData.model= "",
-    watchData.gender= "Unisex",
-    watchData.style_type= "",
-    watchData.sub_class= "",
-    watchData.made_label= "",
-    watchData.calender= "",
-    watchData.feature= "",
-    watchData.movement= "",
-    watchData.function= "",
-    watchData.engine= "",
-    watchData.water_resistant= "",
-    watchData.band_color= "",
-    watchData.band_type= "",
-    watchData.clasp= "",
-    watchData.bracelet= "",
-    watchData.dial_type= "",
-    watchData.dial_color= "",
-    watchData.crystal= "",
-    watchData.second_makers= "",
-    watchData.bezel= "",
-    watchData.bezel_material= "",
-    watchData.case_back= "",
-    watchData.casedimension= "",
-    watchData.case_shape= ""
-
-    const genderSelect = document.getElementById("gender-select");
-    genderSelect.value = "Unisex";
+    window.location.href="/upload"
 }
 
 const uploadToCDN = async (file, imageObject) => {
