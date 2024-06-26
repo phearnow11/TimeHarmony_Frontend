@@ -1,26 +1,30 @@
 <template>
     <div class="">
         <div class="flex justify-center items-center gap-6 text-center title">
-            <span>4</span>
+            <span class="text-border">4</span>
             <clock/>
-            <span>4</span>
+            <span class="text-border">4</span>
         </div>
         <div class="flex flex-col justify-center items-center gap-5">
-            <span>Oops, sorry we can not find page you are looking for!</span>
-            <router-link to="/">
-                <button class="th-p-btn">
-                    Back to home
-                </button>
-            </router-link>
+            <span>Oops, the page you're looking for could not be found! <router-link to="/" class="hover-underline-animation">Back to home</router-link></span>
         </div>
     </div>
 </template>
+
 <script setup>
 import Clock from '../components/Clock.vue'
 </script>
 
 <style scoped>
-.title{
+.title {
     font-size: 15rem;
+}
+
+.text-border {
+    font-family: "Fira Sans", sans-serif;
+    /* Apply border effect */
+    color: transparent; /* Make the text transparent */
+    -webkit-text-stroke: 1px var(--primary); /* WebKit/Blink browsers */
+    text-stroke: 1px var(--primary); /* Standard syntax */
 }
 </style>

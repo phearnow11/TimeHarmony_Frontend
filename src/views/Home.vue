@@ -11,23 +11,22 @@
 
   <div class="mt-8 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 sm:gap-3 md:gap-3 lg:gap-3 ml-20 mr-20 relative">
       <div class="popular-watch-text flex items-center w-full mb-10">
-
         <span class="text-primary text-2xl font-light mr-2">WATCHES FOR YOU</span>
         <div class="border-t border-gray-99 flex-grow mt-1 h-1/6"></div>
-    </div>
-    <div v-if="load" v-for="i in 40" :key="i">
-      <skeleton-card/>
-    </div>
-    <product-card v-else
-      v-for="(watch, index) in watchStore.watches" :key="index"
-      :productName="watch.watch_name"
-      :productImage="watch.image_url[0]"
-      :retailerName="watch.seller.user_log_info.username || 'N/A'"
-      :retailerAvatar="watch.seller.member_image || ''"
-      :price="watch.price"
-      :link="`/detail/${watch.watch_id}`"
-      :seller_id="`/retailer/${watch.seller.member_id}`"
-    />
+      </div>
+      <div v-if="load">
+        <skeleton-card v-for="i in 40" :key="i"/>
+      </div>
+      <product-card v-else
+        v-for="(watch, index) in watchStore.watches" :key="index"
+        :productName="watch.watch_name"
+        :productImage="watch.image_url[0]"
+        :retailerName="watch.seller.user_log_info.username || 'N/A'"
+        :retailerAvatar="watch.seller.member_image || ''"
+        :price="watch.price"
+        :link="`/detail/${watch.watch_id}`"
+        :seller_id="`/retailer/${watch.seller.member_id}`"
+      />
 
     
     
@@ -83,7 +82,7 @@ const retailers = ref([]);
 
 
 onMounted(async () => {
-  // await watchStore.getWatchesOfPage(0);
+  await watchStore.getWatchesOfPage(0);
   if(watchStore.watches.length !== 0){
     load.value = false;
   }
