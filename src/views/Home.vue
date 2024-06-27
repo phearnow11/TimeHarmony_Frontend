@@ -92,8 +92,12 @@ onMounted(async () => {
 
 const setPage = async (page) => {
   watchStore.currentPage = page;
+  load.value = true; // Set load to true while fetching data
   if (!watchStore.watches.has(page)) {
     await watchStore.getWatchesOfPage(page);
+  }
+  if (watchStore.watches.get(page)?.length > 0) {
+    load.value = false;
   }
 };
 
