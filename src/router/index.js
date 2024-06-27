@@ -102,7 +102,13 @@ const router = createRouter({
         console.error(err);
       }),
     },
-    
+    {
+      path: '/discover/:field',
+      name: 'Discover',
+      component: () => import('../views/Discover.vue').catch(err => {
+        console.error(err);
+      }),
+    },
     {
       path: '/order',
       name: 'Order',

@@ -10,7 +10,7 @@
   </div>
 
   <!-- Skeleton -->
-  <div v-if="load" class="mt-8 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 sm:gap-3 md:gap-3 lg:gap-3 ml-20 mr-20 relative">
+  <div v-if="isLoading" class="mt-8 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 sm:gap-3 md:gap-3 lg:gap-3 mx-20 relative">
     <div class="popular-watch-text flex items-center w-full mb-10">
       <span class="text-primary text-2xl font-light mr-2">WATCHES FOR YOU</span>
       <div class="border-t border-gray-99 flex-grow mt-1 h-1/6"></div>
@@ -19,13 +19,13 @@
   </div>
 
   <!-- Data real -->
-  <div v-else class="mt-8 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 sm:gap-3 md:gap-3 lg:gap-3 ml-20 mr-20 relative">
+  <div v-else class="mt-8 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 sm:gap-3 md:gap-3 lg:gap-3 mx-20 relative">
     <div class="popular-watch-text flex items-center w-full mb-10">
       <span class="text-primary text-2xl font-light mr-2">WATCHES FOR YOU</span>
       <div class="border-t border-gray-99 flex-grow mt-1 h-1/6"></div>
     </div>
     <product-card
-      v-for="(watch, index) in watchStore.watches.get(watchStore.currentPage)" :key="index"
+      v-for="watch in paginatedWatches" :key="watch.watch_id"
       :productName="watch.watch_name"
       :productImage="watch.image_url[0]"
       :retailerName="watch.seller.user_log_info.username || 'N/A'"
@@ -36,34 +36,9 @@
     />
   </div>
 
-  <div class="pagination-container flex justify-center items-center mt-10">
-    <div class="pagination-number arrow" @click="setPage(0)">
-      <svg width="18" height="18">
-        <use xlink:href="#left" />
-      </svg>
-      <span class="arrow-text">First Page</span>
-    </div>
-
-    <div v-for="page in visiblePages" :key="page" class="pagination-number" :class="{'pagination-active': page === watchStore.currentPage + 1}" @click="setPage(page - 1)">
-      {{ page }}
-    </div>
-
-    <div class="pagination-number arrow" @click="setPage(totalPages-1)">
-      <span class="arrow-text">Last Page</span>
-      <svg width="18" height="18">
-        <use xlink:href="#right" />
-      </svg>
-    </div>
+  <div v-if="!isLoading" class="pagination-container flex justify-center items-center mt-10">
+    <router-link class="hover-underline-animation" to="/discover/watches for you?page=0">Show more watches</router-link>
   </div>
-
-  <svg class="hide">
-    <symbol id="left" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-    </symbol>
-    <symbol id="right" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-    </symbol>
-  </svg>
 </template>
 
 <script setup>
@@ -71,56 +46,29 @@ import { ref, computed, onMounted } from 'vue';
 import Carousel from '../components/Carousel.vue';
 import ProductCard from '../components/ProductCard.vue';
 import Brand from '../components/Brand.vue';
-import { useWatchStore } from '../stores/watch';
 import SkeletonCard from '../components/SkeletonCard.vue';
+import axios from 'axios';
 
-const watchStore = useWatchStore();
-const load = ref(true);
+const isLoading = ref(true);
+const watches = ref([]);
+const currentPage = ref(0);
+const itemsPerPage = 30;
+
+const paginatedWatches = computed(() => {
+  const start = currentPage.value * itemsPerPage;
+  const end = start + itemsPerPage;
+  return watches.value.slice(start, end);
+});
 
 onMounted(async () => {
   try {
-    if (!watchStore.watches.has(watchStore.currentPage)) {
-      await watchStore.getWatchesOfPage(watchStore.currentPage);
-    }
-    if (watchStore.watches.size > 0) {
-      load.value = false;
-    }
+    const response = await axios.get('http://localhost:8080/watch/get/30-watches');
+    watches.value = response.data;
+    isLoading.value = false;
   } catch (error) {
-    console.error('Error during mounted hook execution:', error);
+    console.error('Error fetching watches:', error);
+    isLoading.value = false;
   }
-});
-
-const setPage = async (page) => {
-  watchStore.currentPage = page;
-  load.value = true; // Set load to true while fetching data
-  if (!watchStore.watches.has(page)) {
-    await watchStore.getWatchesOfPage(page);
-  }
-  if (watchStore.watches.get(page)?.length > 0) {
-    load.value = false;
-  }
-};
-
-const totalPages = 540;
-const visiblePages = computed(() => {
-  const currentPage = watchStore.currentPage + 1;
-  let startPage = Math.max(currentPage - 2, 1);
-  let endPage = Math.min(startPage + 4, totalPages);
-
-  if (endPage - startPage < 4) {
-    startPage = Math.max(endPage - 4, 1);
-  }
-
-  if (endPage === totalPages) {
-    startPage = Math.max(endPage - 4, 1);
-  }
-
-  const pages = [];
-  for (let i = startPage; i <= endPage; i++) {
-    pages.push(i);
-  }
-
-  return pages;
 });
 </script>
 
@@ -132,43 +80,9 @@ const visiblePages = computed(() => {
   margin-bottom: 5rem;
 }
 
-*:focus {
-  outline: none;
-}
-
-html, body, .full-width {
-  height: 100%;
-}
-
-body {
-  padding: 0 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  background: var(--bg-page);
-  color: var(--text-color);
-}
-
-body, body html {
-  margin: 0;
-  padding: 0;
-}
-
-.hide {
-  display: none;
-  visibility: hidden;
-  height: 0;
-}
-
 .pagination-container {
   display: flex;
   align-items: center;
-}
-
-.arrow-text {
-  display: block;
-  font-size: 13px;
 }
 
 .pagination-number {
@@ -186,10 +100,8 @@ body, body html {
   padding: 0 6px;
 }
 
-@media (hover: hover) {
-  .pagination-number:hover {
-    background: #4e4e4e;
-  }
+.pagination-number:hover {
+  background: #4e4e4e;
 }
 
 .pagination-number:active {
@@ -199,5 +111,19 @@ body, body html {
 .pagination-active {
   background: #282828;
   border: 1px solid var(--primary);
+}
+
+.arrow-text {
+  display: block;
+  font-size: 13px;
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.hide {
+  display: none;
 }
 </style>
