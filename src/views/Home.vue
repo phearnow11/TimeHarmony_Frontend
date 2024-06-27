@@ -36,22 +36,20 @@
     />
   </div>
 
-  <div class="pagination:container flex justify-center items-center mt-10">
-    <div class="pagination:number arrow" @click="previousPage">
+  <div class="pagination-container flex justify-center items-center mt-10">
+    <div class="pagination-number arrow" @click="previousPage">
       <svg width="18" height="18">
         <use xlink:href="#left" />
       </svg>
-      <span class="arrow:text">Previous</span>
+      <span class="arrow-text">Previous</span>
     </div>
 
-    <div class="pagination:number">1</div>
-    <div class="pagination:number">2</div>
-    <div class="pagination:number pagination:active">3</div>
-    <div class="pagination:number">4</div>
-    <div class="pagination:number">540</div>
+    <div v-for="page in visiblePages" :key="page" class="pagination-number" :class="{'pagination-active': page === watchStore.currentPage + 1}" @click="setPage(page - 1)">
+      {{ page }}
+    </div>
 
-    <div class="pagination:number arrow" @click="nextPage">
-      <span class="arrow:text">Next</span>
+    <div class="pagination-number arrow" @click="nextPage">
+      <span class="arrow-text">Next</span>
       <svg width="18" height="18">
         <use xlink:href="#right" />
       </svg>
@@ -69,7 +67,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import Carousel from '../components/Carousel.vue';
 import ProductCard from '../components/ProductCard.vue';
 import Brand from '../components/Brand.vue';
@@ -78,12 +76,11 @@ import SkeletonCard from '../components/SkeletonCard.vue';
 
 const watchStore = useWatchStore();
 const load = ref(true);
-const currentPage = ref(0);
 
 onMounted(async () => {
   try {
-    if (!watchStore.watches.has(currentPage.value)) {
-      await watchStore.getWatchesOfPage(currentPage.value);
+    if (!watchStore.watches.has(watchStore.currentPage)) {
+      await watchStore.getWatchesOfPage(watchStore.currentPage);
     }
     if (watchStore.watches.size > 0) {
       load.value = false;
@@ -94,20 +91,47 @@ onMounted(async () => {
 });
 
 const nextPage = async () => {
-  currentPage.value++;
-  if (!watchStore.watches.has(currentPage.value)) {
-    await watchStore.getWatchesOfPage(currentPage.value);
+  if (watchStore.currentPage < 539) {
+    watchStore.currentPage++;
+    if (!watchStore.watches.has(watchStore.currentPage)) {
+      await watchStore.getWatchesOfPage(watchStore.currentPage);
+    }
   }
 };
 
 const previousPage = async () => {
-  if (currentPage.value > 0) {
-    currentPage.value--;
-    if (!watchStore.watches.has(currentPage.value)) {
-      await watchStore.getWatchesOfPage(currentPage.value);
+  if (watchStore.currentPage > 0) {
+    watchStore.currentPage--;
+    if (!watchStore.watches.has(watchStore.currentPage)) {
+      await watchStore.getWatchesOfPage(watchStore.currentPage);
     }
   }
 };
+
+const setPage = async (page) => {
+  watchStore.currentPage = page;
+  if (!watchStore.watches.has(page)) {
+    await watchStore.getWatchesOfPage(page);
+  }
+};
+
+const visiblePages = computed(() => {
+  const totalPages = 540;
+  const currentPage = watchStore.currentPage + 1;
+  let startPage = Math.max(currentPage - 2, 1);
+  let endPage = Math.min(startPage + 4, totalPages);
+
+  if (endPage - startPage < 4) {
+    startPage = Math.max(endPage - 4, 1);
+  }
+
+  const pages = [];
+  for (let i = startPage; i <= endPage; i++) {
+    pages.push(i);
+  }
+
+  return pages;
+});
 </script>
 
 <style scoped>
@@ -147,17 +171,17 @@ body, body html {
   height: 0;
 }
 
-.pagination\:container {
+.pagination-container {
   display: flex;
   align-items: center;
 }
 
-.arrow\:text {
+.arrow-text {
   display: block;
   font-size: 13px;
 }
 
-.pagination\:number {
+.pagination-number {
   --size: 32px;
   --margin: 6px;
   margin: 0 var(--margin);
@@ -173,16 +197,16 @@ body, body html {
 }
 
 @media (hover: hover) {
-  .pagination\:number:hover {
+  .pagination-number:hover {
     background: #4e4e4e;
   }
 }
 
-.pagination\:number:active {
+.pagination-number:active {
   background: #282828;
 }
 
-.pagination\:active {
+.pagination-active {
   background: #282828;
   border: 1px solid var(--primary);
 }
