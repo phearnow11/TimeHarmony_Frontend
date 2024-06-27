@@ -4,7 +4,7 @@ import axios from "axios";
 
 export const useWatchStore = defineStore("watch", {
   state: () => ({
-    watches: [], // This will be an array of arrays, each inner array representing a page
+    watches: new Map(), // Changed to Map
     currentPage: 0,
     isLoading: false,
     error: null,
@@ -52,12 +52,12 @@ export const useWatchStore = defineStore("watch", {
         const response = await axios.get(`http://localhost:8080/watch/get/watch-page?pagenum=${page}`);
         console.log("Response:", response.data);
         if (response.data && response.data.length > 0) {
-          // If the page doesn't exist in our array, add it
-          if (!this.watches[page]) {
-            this.watches[page] = [];
+          // If the page doesn't exist in our map, add it
+          if (!this.watches.has(page)) {
+            this.watches.set(page, []);
           }
           // Add new watches to the existing page array
-          this.watches[page].push(...response.data);
+          this.watches.get(page).push(...response.data);
           this.currentPage = page;
           this.hasMore = response.data.length === 60; // Assuming 60 is the page size now
         } else {
@@ -70,6 +70,7 @@ export const useWatchStore = defineStore("watch", {
         this.isLoading = false;
       }
     },
+    
     async uploadWatch(seller_id, username) {
       try {
         axios.post(`http://localhost:8080/member/to-seller?id=${seller_id}&username=${username}`)

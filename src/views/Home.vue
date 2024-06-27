@@ -11,29 +11,29 @@
 
   <!-- Skeleton -->
   <div v-if="load" class="mt-8 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 sm:gap-3 md:gap-3 lg:gap-3 ml-20 mr-20 relative">
-      <div class="popular-watch-text flex items-center w-full mb-10">
-        <span class="text-primary text-2xl font-light mr-2">WATCHES FOR YOU</span>
-        <div class="border-t border-gray-99 flex-grow mt-1 h-1/6"></div>
-      </div>
-      <skeleton-card v-for="i in 30" :key="i"/>
+    <div class="popular-watch-text flex items-center w-full mb-10">
+      <span class="text-primary text-2xl font-light mr-2">WATCHES FOR YOU</span>
+      <div class="border-t border-gray-99 flex-grow mt-1 h-1/6"></div>
+    </div>
+    <skeleton-card v-for="i in 30" :key="i"/>
   </div>
 
   <!-- Data real -->
   <div v-else class="mt-8 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 sm:gap-3 md:gap-3 lg:gap-3 ml-20 mr-20 relative">
-      <div class="popular-watch-text flex items-center w-full mb-10">
-        <span class="text-primary text-2xl font-light mr-2">WATCHES FOR YOU</span>
-        <div class="border-t border-gray-99 flex-grow mt-1 h-1/6"></div>
-      </div>
-      <product-card
-        v-for="(watch, index) in watchStore.watches[watchStore.currentPage]" :key="index"
-        :productName="watch.watch_name"
-        :productImage="watch.image_url[0]"
-        :retailerName="watch.seller.user_log_info.username || 'N/A'"
-        :retailerAvatar="watch.seller.member_image || ''"
-        :price="watch.price"
-        :link="`/detail/${watch.watch_id}`"
-        :seller_id="`/retailer/${watch.seller.member_id}`"
-      />
+    <div class="popular-watch-text flex items-center w-full mb-10">
+      <span class="text-primary text-2xl font-light mr-2">WATCHES FOR YOU</span>
+      <div class="border-t border-gray-99 flex-grow mt-1 h-1/6"></div>
+    </div>
+    <product-card
+      v-for="(watch, index) in watchStore.watches.get(watchStore.currentPage)" :key="index"
+      :productName="watch.watch_name"
+      :productImage="watch.image_url[0]"
+      :retailerName="watch.seller.user_log_info.username || 'N/A'"
+      :retailerAvatar="watch.seller.member_image || ''"
+      :price="watch.price"
+      :link="`/detail/${watch.watch_id}`"
+      :seller_id="`/retailer/${watch.seller.member_id}`"
+    />
   </div>
 
   <div class="pagination:container flex justify-center items-center mt-10">
@@ -50,7 +50,7 @@
     <div class="pagination:number">4</div>
     <div class="pagination:number">540</div>
 
-    <div class="pagination:number arrow"  @click="nextPage">
+    <div class="pagination:number arrow" @click="nextPage">
       <span class="arrow:text">Next</span>
       <svg width="18" height="18">
         <use xlink:href="#right" />
@@ -68,7 +68,6 @@
   </svg>
 </template>
 
-
 <script setup>
 import { ref, onMounted } from 'vue';
 import Carousel from '../components/Carousel.vue';
@@ -83,13 +82,10 @@ const currentPage = ref(0);
 
 onMounted(async () => {
   try {
-    if (watchStore.watches.length === 0) {
+    if (!watchStore.watches.has(currentPage.value)) {
       await watchStore.getWatchesOfPage(currentPage.value);
     }
-    else if (watchStore.watches[currentPage.value].length === 0){
-      await watchStore.getWatchesOfPage(currentPage.value);
-    }
-    if (watchStore.watches.length !== 0) {
+    if (watchStore.watches.size > 0) {
       load.value = false;
     }
   } catch (error) {
@@ -97,20 +93,22 @@ onMounted(async () => {
   }
 });
 
-const nextPage = () => {
-  currentPage.value++
-  console.log(currentPage.value);
-}
-const previousPage = () => {
-  if(currentPage.value>0){
-    currentPage.value--
+const nextPage = async () => {
+  currentPage.value++;
+  if (!watchStore.watches.has(currentPage.value)) {
+    await watchStore.getWatchesOfPage(currentPage.value);
   }
-  console.log(currentPage.value);
-}
+};
 
-
+const previousPage = async () => {
+  if (currentPage.value > 0) {
+    currentPage.value--;
+    if (!watchStore.watches.has(currentPage.value)) {
+      await watchStore.getWatchesOfPage(currentPage.value);
+    }
+  }
+};
 </script>
-
 
 <style scoped>
 .popular-watch-text {
@@ -173,7 +171,6 @@ body, body html {
   cursor: pointer;
   padding: 0 6px;
 }
-
 
 @media (hover: hover) {
   .pagination\:number:hover {
