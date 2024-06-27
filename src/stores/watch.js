@@ -4,7 +4,11 @@ import axios from "axios";
 
 export const useWatchStore = defineStore("watch", {
   state: () => ({
-    watches: [],
+    watches: [], // This will be an array of arrays, each inner array representing a page
+    currentPage: 0,
+    isLoading: false,
+    error: null,
+    hasMore: true,
     watch_data: {
       name: "",
       price: "",
@@ -41,14 +45,29 @@ export const useWatchStore = defineStore("watch", {
 
   actions: {
     async getWatchesOfPage(page) {
+      this.isLoading = true;
+      this.error = null;
       try {
         console.log(`Fetching watches for page ${page}...`);
         const response = await axios.get(`http://localhost:8080/watch/get/watch-page?pagenum=${page}`);
         console.log("Response:", response.data);
-        this.watches = response.data;
+        if (response.data && response.data.length > 0) {
+          // If the page doesn't exist in our array, add it
+          if (!this.watches[page]) {
+            this.watches[page] = [];
+          }
+          // Add new watches to the existing page array
+          this.watches[page].push(...response.data);
+          this.currentPage = page;
+          this.hasMore = response.data.length === 60; // Assuming 60 is the page size now
+        } else {
+          this.hasMore = false;
+        }
       } catch (error) {
         console.error("Error fetching watches:", error.message);
-        throw error; // Propagate the error to the caller if needed
+        this.error = error.message;
+      } finally {
+        this.isLoading = false;
       }
     },
     async uploadWatch(seller_id, username) {

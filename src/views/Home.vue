@@ -25,7 +25,7 @@
         <div class="border-t border-gray-99 flex-grow mt-1 h-1/6"></div>
       </div>
       <product-card
-        v-for="(watch, index) in watchStore.watches" :key="index"
+        v-for="(watch, index) in watchStore.watches[watchStore.currentPage]" :key="index"
         :productName="watch.watch_name"
         :productImage="watch.image_url[0]"
         :retailerName="watch.seller.user_log_info.username || 'N/A'"
@@ -37,7 +37,7 @@
   </div>
 
   <div class="pagination:container flex justify-center items-center mt-10">
-    <div class="pagination:number arrow">
+    <div class="pagination:number arrow" @click="previousPage">
       <svg width="18" height="18">
         <use xlink:href="#left" />
       </svg>
@@ -50,7 +50,8 @@
     <div class="pagination:number">4</div>
     <div class="pagination:number">540</div>
 
-    <div class="pagination:number arrow">
+    <div class="pagination:number arrow"  @click="nextPage">
+      <span class="arrow:text">Next</span>
       <svg width="18" height="18">
         <use xlink:href="#right" />
       </svg>
@@ -70,34 +71,44 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import carousel from '../components/Carousel.vue';
+import Carousel from '../components/Carousel.vue';
 import ProductCard from '../components/ProductCard.vue';
 import Brand from '../components/Brand.vue';
 import { useWatchStore } from '../stores/watch';
-import { useUserStore } from '../stores/user';
 import SkeletonCard from '../components/SkeletonCard.vue';
 
-
 const watchStore = useWatchStore();
-const load=ref(true);
-const userStore = useUserStore();
-const retailers = ref([]);
-
-
+const load = ref(true);
+const currentPage = ref(0);
 
 onMounted(async () => {
-  await watchStore.getWatchesOfPage(0);
-  if(watchStore.watches.length !== 0){
-    load.value = false;
+  try {
+    if (watchStore.watches.length === 0) {
+      await watchStore.getWatchesOfPage(currentPage.value);
+    }
+    else if (watchStore.watches[currentPage.value].length === 0){
+      await watchStore.getWatchesOfPage(currentPage.value);
+    }
+    if (watchStore.watches.length !== 0) {
+      load.value = false;
+    }
+  } catch (error) {
+    console.error('Error during mounted hook execution:', error);
   }
-  
-  // await fetchRetailerInfo();
 });
-  
-// const fetchRetailerInfo = async () => {
-//   const retailerPromises = watchStore.watches.map(watch => userStore.getUserInfo(watch.seller.member_id));
-//   retailers.value = await Promise.all(retailerPromises);
-// };
+
+const nextPage = () => {
+  currentPage.value++
+  console.log(currentPage.value);
+}
+const previousPage = () => {
+  if(currentPage.value>0){
+    currentPage.value--
+  }
+  console.log(currentPage.value);
+}
+
+
 </script>
 
 
