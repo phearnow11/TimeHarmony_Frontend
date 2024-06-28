@@ -10,18 +10,18 @@
             ></path>
           </svg>
         </label>
-        <img class="watch-img" :src="item.image" />
+        <img class="watch-img" :src="productImage" />
         <div class="info">
-          <strong class="product-name">{{ item.name }}</strong>
+          <strong class="product-name">{{ productName }}</strong>
           <div class="retailer">
-            <img class="avatar" :src="item.retailerAvatar" />
-            <span class="username">{{ item.retailerName }}</span>
+            <img class="avatar" :src="retailerAvatar" />
+            <span class="username">{{ retailerName }}</span>
           </div>
           <div class="action-buttons">
             <div class="hover-underline-animation-r" @click.stop="removeFromCart">Remove this watch from cart</div>
           </div>
           <div class="price-details">
-            <span class="price">{{ formatPrice(item.price) }} VND</span>
+            <span class="price">{{ formatPrice(price) }} VND</span>
           </div>
         </div>
       </div>
@@ -31,10 +31,27 @@
   <script>
   export default {
     props: {
-      item: {
-        type: Object,
-        required: true
-      },
+    productName: {
+      type: String,
+      required: true
+    },
+    productImage: {
+      type: String,
+      required: true
+    },
+    retailerName: {
+      type: String,
+      required: true
+    },
+    retailerAvatar: {
+      type: String,
+      required: true
+    },
+    price: {
+      type: Number,
+      required: true
+    },
+    
       selected: {
         type: Boolean,
         default: false

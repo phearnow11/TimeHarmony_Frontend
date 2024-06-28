@@ -14,7 +14,6 @@ export const useUserStore = defineStore("user", {
     image: "https://files.catbox.moe/n1w3b0.png",
     active: "",
     user_id: null,  // Add this to your state
-    cart: [],
   }),
 
   actions: {
