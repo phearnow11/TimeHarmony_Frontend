@@ -60,7 +60,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import ProductCard from '../components/ProductCard.vue';
 import { useWatchStore } from '../stores/watch';
@@ -77,6 +77,8 @@ const page = computed(() => {
   const pageParam = route.query.page;
   return pageParam ? parseInt(pageParam, 10) : 0;
 });
+
+watchStore.currentPage = page
 
 onMounted(async () => {
   if (watchStore.watches.has(page.value)) {
