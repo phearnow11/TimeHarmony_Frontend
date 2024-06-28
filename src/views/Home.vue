@@ -13,7 +13,7 @@
   <div v-if="isLoading" class="mt-8 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 sm:gap-3 md:gap-3 lg:gap-3 mx-20 relative">
     <div class="popular-watch-text flex items-center w-full mb-10">
       <span class="text-primary text-2xl font-light mr-2">WATCHES FOR YOU</span>
-      <div class="border-t border-gray-99 flex-grow mt-1 h-1/6"></div>
+      <div class="border-t border-secondary flex-grow mt-1 h-1/6"></div>
     </div>
     <skeleton-card v-for="i in 30" :key="i"/>
   </div>
@@ -22,7 +22,7 @@
   <div v-else class="mt-8 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 sm:gap-3 md:gap-3 lg:gap-3 mx-20 relative">
     <div class="popular-watch-text flex items-center w-full mb-10">
       <span class="text-primary text-2xl font-light mr-2">WATCHES FOR YOU</span>
-      <div class="border-t border-gray-99 flex-grow mt-1 h-1/6"></div>
+      <div class="border-t border-secondary flex-grow mt-1 h-1/6"></div>
     </div>
     <product-card
       v-for="watch in paginatedWatches" :key="watch.watch_id"
@@ -67,7 +67,6 @@ onMounted(async () => {
     isLoading.value = false;
   } catch (error) {
     console.error('Error fetching watches:', error);
-    isLoading.value = false;
   }
 });
 </script>
