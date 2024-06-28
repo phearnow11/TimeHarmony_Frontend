@@ -14,15 +14,15 @@
     <div v-show="showMenu" class="dropdown-menu py-2 top-12 absolute z-10 w-48">
       <!-- Men -->
       <div class="menu-item relative" @mouseenter="showSubmenu('menWatch')" @mouseleave="hideSubmenu('menWatch')">
-        <div class="flex items-center justify-between hover-underline-animation w-full px-4 py-2">
+        <router-link to="/discover/men watches?page=0" class="flex items-center justify-between hover-underline-animation w-full px-4 py-2">
           <span>Men Watch</span>
-        </div>
+        </router-link>
       </div>
       <!-- Women -->
       <div class="menu-item relative" @mouseenter="showSubmenu('womenWatch')" @mouseleave="hideSubmenu('womenWatch')">
-        <div class="flex items-center justify-between hover-underline-animation w-full px-4 py-2">
+        <router-link to="/discover/women watches?page=0" class="flex items-center justify-between hover-underline-animation w-full px-4 py-2">
           <span>Women Watch</span>
-        </div>
+        </router-link>
       </div>
       <!-- Style -->
       <div class="menu-item relative" @mouseenter="showSubmenu('style')" @mouseleave="hideSubmenu('style')">
@@ -31,14 +31,14 @@
           <img src="../assets/arr.svg" class="w-3 arrow-icon" alt="Arrow Icon">
         </div>
         <div v-show="submenus.style" class="submenu absolute left-full top-0 text-white w-44">
-          <a href="#" class="submenu-item block px-4 py-2 hover-underline-animation">Dress Watches</a>
-          <a href="#" class="submenu-item block px-4 py-2 hover-underline-animation">Sport Watches</a>
-          <a href="#" class="submenu-item block px-4 py-2 hover-underline-animation">Diver Watches</a>
-          <a href="#" class="submenu-item block px-4 py-2 hover-underline-animation">Pilot Watches</a>
-          <a href="#" class="submenu-item block px-4 py-2 hover-underline-animation">Field Watches</a>
-          <a href="#" class="submenu-item block px-4 py-2 hover-underline-animation">Fashion Watches</a>
-          <a href="#" class="submenu-item block px-4 py-2 hover-underline-animation">Smart Watches</a>
-          <a href="#" class="submenu-item block px-4 py-2 hover-underline-animation">Luxury Watches</a>
+          <router-link to="/discover/dress watches?page=0" class="submenu-item block px-4 py-2 hover-underline-animation">Dress Watches</router-link>
+          <router-link to="/discover/sport watches?page=0" class="submenu-item block px-4 py-2 hover-underline-animation">Sport Watches</router-link>
+          <router-link to="/discover/diver watches?page=0" class="submenu-item block px-4 py-2 hover-underline-animation">Diver Watches</router-link>
+          <router-link to="/discover/pilot watches?page=0" class="submenu-item block px-4 py-2 hover-underline-animation">Pilot Watches</router-link>
+          <router-link to="/discover/field watches?page=0" class="submenu-item block px-4 py-2 hover-underline-animation">Field Watches</router-link>
+          <router-link to="/discover/fashion watches?page=0" class="submenu-item block px-4 py-2 hover-underline-animation">Fashion Watches</router-link>
+          <router-link to="/discover/smart watches?page=0" class="submenu-item block px-4 py-2 hover-underline-animation">Smart Watches</router-link>
+          <router-link to="/discover/luxury watches?page=0" class="submenu-item block px-4 py-2 hover-underline-animation">Luxury Watches</router-link>
         </div>
       </div>
       <!-- Collection -->
