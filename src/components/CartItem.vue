@@ -1,36 +1,36 @@
 <template>
-    <div class="container flex items-center justify-center">
-      <div class="box" :class="{ 'checked': isSelected }" @click="toggleSelection">
-        <label class="checkbox-container">
-          <input type="checkbox" v-model="isSelected" @click.stop />
-          <svg viewBox="0 0 64 64" height="1em">
-            <path
-              d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
-              class="path"
-            ></path>
-          </svg>
-        </label>
-        <img class="watch-img" :src="productImage" />
-        <div class="info">
-          <strong class="product-name">{{ productName }}</strong>
-          <div class="retailer">
-            <img class="avatar" :src="retailerAvatar" />
-            <span class="username">{{ retailerName }}</span>
-          </div>
-          <div class="action-buttons">
-            <div class="hover-underline-animation-r" @click.stop="removeFromCart">Remove this watch from cart</div>
-          </div>
-          <div class="price-details">
-            <span class="price">{{ formatPrice(price) }} VND</span>
-          </div>
+  <div class="container">
+    <div class="box" :class="{ 'checked': isSelected }" @click="toggleSelection">
+      <label class="checkbox-container">
+        <input type="checkbox" :checked="isSelected" @click.stop />
+        <svg viewBox="0 0 64 64" height="1em">
+          <path
+            d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+            class="path"
+          ></path>
+        </svg>
+      </label>
+      <img class="watch-img" :src="productImage" />
+      <div class="info">
+        <strong class="product-name">{{ productName }}</strong>
+        <div class="retailer">
+          <img class="avatar" :src="retailerAvatar" />
+          <span class="username">{{ retailerName }}</span>
+        </div>
+        <div class="action-buttons">
+          <div class="hover-underline-animation-r" @click.stop="removeFromCart">Remove this watch from cart</div>
+        </div>
+        <div class="price-details">
+          <span class="price">{{ formatPrice(price) }} VND</span>
         </div>
       </div>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    props: {
+  </div>
+</template>
+
+<script>
+export default {
+  props: {
     productName: {
       type: String,
       required: true
@@ -51,54 +51,42 @@
       type: Number,
       required: true
     },
-    
-      selected: {
-        type: Boolean,
-        default: false
-      }
-    },
-    data() {
-      return {
-        isSelected: this.selected
-      };
-    },
-    watch: {
-      selected(newValue) {
-        this.isSelected = newValue;
-      }
-    },
-    methods: {
-      toggleSelection() {
-        this.isSelected = !this.isSelected;
-        this.$emit('selection-changed', this.isSelected);
-      },
-      removeFromCart() {
-        this.$emit('remove-from-cart', this.item.id);
-      },
-      formatPrice(price) {
-        return price.toLocaleString('vi-VN');
-      }
+    isSelected: {
+      type: Boolean,
+      required: true
     }
-  };
-  </script>
+  },
+  emits: ['toggle-select', 'delete-item'],
+  methods: {
+    toggleSelection() {
+      this.$emit('toggle-select');
+    },
+    removeFromCart() {
+      this.$emit('delete-item');
+    },
+    formatPrice(price) {
+      return price.toLocaleString('vi-VN');
+    }
+  }
+};
+</script>
 
 <style scoped>
-
 .container {
     color: white;
     width: 100%;
     margin: 0;
-    padding: 0;
+    padding: 10;
     font-family: sans-serif;
     display: flex;
-    justify-content: center;
-    gap: 1em;
-    flex-wrap: wrap;
+    justify-content: flex-start; /* Aligns the container to the left */
+    margin-right: 7%;
+    z-index: 10;
 }
 
 .container .box {
-    width: 80%;
-    margin: 1em auto;
+    width: 70%;
+    margin: 1em 0;
     padding: 1rem;
     background-color: rgba(255, 255, 255, 0.074);
     border: 1px solid rgba(255, 255, 255, 0.222);
@@ -107,14 +95,14 @@
     display: flex;
     align-items: center;
     position: relative;
-    cursor: pointer; /* Add cursor pointer for clickable effect */
-    overflow: hidden; /* Ensure overflow hidden to hide expanded border */
-    box-sizing: border-box; /* Ensure padding doesn't increase width */
-    border-left: 4px solid transparent; /* Initial transparent border */
+    cursor: pointer;
+    overflow: hidden;
+    box-sizing: border-box;
+    border-left: 4px solid transparent;
 }
 
 .container .box.checked {
-    border-left-color: var(--primary); /* Border color when checked */
+    border-left-color: var(--primary);
 }
 
 .container .box:hover {
@@ -135,9 +123,9 @@
 }
 
 .container .box .watch-img {
-    width: 10rem; /* Set a fixed width for the image */
-    height: 10rem; /* Set a fixed height to make it square */
-    object-fit: cover; /* Maintain aspect ratio and cover container */
+    width: 10rem;
+    height: 10rem;
+    object-fit: cover;
     filter: grayscale(100%);
     transition: filter 0.3s ease;
 }

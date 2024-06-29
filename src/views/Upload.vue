@@ -11,7 +11,7 @@
             <div class="file-upload-design">
               <span class="mdi mdi-cloud-upload-outline text-xl"></span>
               <p>Drag and Drop</p>
-              <p>or</p>
+              <p>or</p>  
               <span class="hover-underline-animation" @click="handleFileUpload"
                 >Browse file</span
               >
