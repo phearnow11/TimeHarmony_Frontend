@@ -21,7 +21,7 @@
           <div class="hover-underline-animation-r" @click.stop="removeFromCart">Remove this watch from cart</div>
         </div>
         <div class="price-details">
-          <span class="price">{{ formatPrice(price) }} VND</span>
+          <span class="price">{{ formatPrice(price) }} ₫</span>
         </div>
       </div>
     </div>

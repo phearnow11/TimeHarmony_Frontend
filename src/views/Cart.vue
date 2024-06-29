@@ -1,11 +1,11 @@
 <template>
-  <div class="flex justify-center items-center flex-col">
+  <div v-if="auth.user_id" class="flex justify-center items-center flex-col mb-96">
     <section class="w-full pt-5 px-9">
       <div class="flex justify-between">
         <span class="text-2xl font-semibold">Watch Cart</span>
       </div>
     </section>
-    <div class="flex justify-center h-0 items-start w-full px-10 pt-5 pb-20 ">
+    <div class="flex justify-center h-0 items-start w-full px-10 pt-5 pb-20">
       <section class="w-8/12 flex items-center bg-zinc-900 p-4 mr-4">
         <div class="flex items-center flex-grow">
           <label class="flex items-center cursor-pointer checkbox-container">
@@ -21,7 +21,7 @@
                 class="path"
               ></path>
             </svg>
-            <span class="ml-2">{{ selectAll ? "DESELECT ALL" : "SELECT ALL" }} ({{ cartItems.length }} ITEM(S))</span>
+            <span class="ml-2">{{ selectAll ? "Deselect all" : "Select all" }} ( {{ cartItems.length }} Item(s) )</span>
           </label>
         </div>
         <div>
@@ -29,29 +29,33 @@
             @click="deleteSelected"
             class="hover-underline-animation-r text-gray-500"
           >
-            <i class="fas fa-trash-alt mr-1"></i> DELETE
+            <i class="fas fa-trash-alt mr-1"></i> Delete
           </button>
         </div>
         
       </section>
       
-      <section class="flex flex-col z-20 bg-zinc-900 p-6 rounded shadow w-4/12 space-y-4">
+      <section class="flex flex-col z-20 bg-zinc-900 p-6 shadow w-4/12 space-y-4">
         <div class="flex flex-col">
           <p><span class="mdi mdi-map-marker"></span> Ho Chi Minh City</p>
         </div>
         <div class="border-t border-secondary pt-4">
-          <span class="block font-bold ">Order Summary</span>
+          <span class="block font-bold text-xl pb-4">Order Summary</span>
           <div class="flex justify-between font-normal">
             <span>Subtotal ({{ selectedItemsCount }} items)</span>
-            <span class=" font-bold">₫{{ totalPrice.toLocaleString("vi-VN") }}</span>
+            <span class=" font-bold">{{ totalPrice.toLocaleString("vi-VN") }} ₫</span>
           </div>
           <div class="flex justify-between">
             <span>Shipping Fee</span>
-            <span class=" font-bold">₫0</span>
-
+            <span class=" font-bold">0 ₫</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Discount</span>
+            <span class=" font-bold">0 ₫</span>
           </div>
         </div>
-        <div class="form-content">
+        <div class="border-t border-secondary pt-5 form-content">
+          <span class="text-xl font-bold">Voucher</span>
           <div class="form__group field w-full">
             <input
               type="text"
@@ -65,8 +69,8 @@
           Apply
         </button>
         <div class="border-t border-secondary pt-5 flex justify-between items-center">
-          <span class="font-semibold">Total</span>
-          <span class="font-bold">₫{{ totalPrice.toLocaleString("vi-VN") }}</span>
+          <span class="font-semibold text-xl">Total</span>
+          <span class="font-bold">{{ totalPrice.toLocaleString("vi-VN") }} ₫</span>
         </div>
         <span class="text-xs">VAT included, where applicable</span>
         <router-link
@@ -91,6 +95,14 @@
       @toggle-select="toggleItemSelection(item.watch_id)"
       @delete-item="deleteItem(item.watch_id)"
       />
+  </div>
+  <div v-else class="h-screen flex flex-col items-center justify-center">
+    <div>
+      <p class="text-xl font-medium text-center">You need to login to use this function, <router-link class="hover-underline-animation" to="/login">Log in now</router-link></p>
+    </div>
+    <div class="mt-4">
+      <router-link to="/" class="hover-underline-animation">Go back to Home</router-link>
+    </div>
   </div>
 </template>
 
