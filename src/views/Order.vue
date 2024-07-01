@@ -1,4 +1,5 @@
 <template>
+  <div v-if="auth.user_id">
   <div class="flex justify-center items-center flex-col pb-40">
     <div class="flex max-w mx-auto mt-10 left-10 justify-center">
       <router-link to="/">
@@ -198,7 +199,7 @@
       @delete-item="deleteItem(item.watch_id)"
     />
   </div>
-  <div class="px-16 py-10">
+  <div class="px-16 pt-72 pb-5">
     <h2 class="text-xl font-semibold mb-4">Need help?</h2>
     <p class="mb-4">
       Check our <router-link to="/about" class="hover-underline-animation">Help pages</router-link> or 
@@ -228,6 +229,15 @@
         Continue shopping on the Time Harmony homepage
       </router-link>.
     </p>
+  </div>
+</div>
+  <div v-else class="h-screen flex flex-col items-center justify-center">
+    <div>
+      <p class="text-xl font-medium text-center">You need to login to use this function, <router-link class="hover-underline-animation" to="/login">Log in now</router-link></p>
+    </div>
+    <div class="mt-4">
+      <router-link to="/" class="hover-underline-animation">Go back to Home</router-link>
+    </div>
   </div>
 </template>
 

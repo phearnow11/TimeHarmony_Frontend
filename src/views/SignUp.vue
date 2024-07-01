@@ -101,7 +101,14 @@
           <label for="address" class="form__label">Address</label>
         </div>
 
-        <button type="submit" class="w-full th-p-btn mt-3">Sign up</button>
+        <button type="submit" class="w-full th-p-btn mt-3 relative">
+          <span :class="{ 'opacity-0': isSigningUp }">Sign up</span>
+          <div v-if="isSigningUp" class="loader-container">
+            <div class="loader">
+              <div class="loaderBar"></div>
+            </div>
+          </div>
+        </button>
 
         <div class="mt-1">
           <span>Already have an account? </span>
@@ -119,6 +126,7 @@ import { reactive, ref } from "vue";
 import { useUserStore } from "../stores/user";
 import router from "../router";
 
+const isSigningUp = ref(false);
 const signUpForm = reactive({
   username: "",
   password: "",
@@ -150,6 +158,7 @@ async function signupHandle() {
     console.log("Passwords do not match");
     return;
   }
+  isSigningUp.value = true;
   try {
     const userData = [
       {
@@ -166,9 +175,13 @@ async function signupHandle() {
     ];
     const response = await userStore.signUp(userData);
     console.log("Signup successful", response);
+    // Optionally, you can add a delay to show the animation for a bit longer
+    await new Promise(resolve => setTimeout(resolve, 2000));
     router.push("/login");
   } catch (error) {
     console.error("Signup error", error);
+  } finally {
+    isSigningUp.value = false;
   }
 }
 </script>
@@ -236,5 +249,63 @@ form {
 
 .shake {
   animation: shake 0.5s;
+}
+
+cssCopy.th-p-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.loader-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+  background: rgba(23, 23, 23, 0.5);
+}
+
+.loader {
+  width: 80px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  padding: 1px;
+}
+
+.loader .loaderBar {
+  position: absolute;
+  top: 0;
+  right: 100%;
+  bottom: 0;
+  left: 0;
+  background: var(--secondary);
+  width: 0;
+  animation: borealisBar 2s linear infinite;
+}
+
+.loader::after {
+  content: "";
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--secondary);
+  left: 0;
+  top: 0;
+  animation: rotation 2s ease-in-out infinite alternate;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

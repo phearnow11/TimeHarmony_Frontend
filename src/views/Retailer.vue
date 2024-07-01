@@ -35,7 +35,7 @@
       </div>
       <div class="flex gap-10 items-center">
         <button class="th-s-btn gap-2">Send message <span class="mdi mdi-message-text-outline"></span></button>
-        <router-link class="hover-underline-animation"><span class="mdi mdi-phone"></span> +84782268826</router-link>
+        <router-link class="hover-underline-animation"><span class="mdi mdi-phone"></span> {{ retailer.phone }}</router-link>
         <router-link class="hover-underline-animation-r">Report user</router-link>
       </div>
       <div class="flex items-center justify-center mt-6 mb-6">

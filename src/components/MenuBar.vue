@@ -24,6 +24,12 @@
           <span>Women Watch</span>
         </router-link>
       </div>
+      <!-- Unisex -->
+      <div class="menu-item relative" @mouseenter="showSubmenu('womenWatch')" @mouseleave="hideSubmenu('womenWatch')">
+        <router-link to="/discover/unisex watches?page=0" class="flex items-center justify-between hover-underline-animation w-full px-4 py-2">
+          <span>Unisex Watch</span>
+        </router-link>
+      </div>
       <!-- Style -->
       <div class="menu-item relative" @mouseenter="showSubmenu('style')" @mouseleave="hideSubmenu('style')">
         <div :class="{'hover-active': submenus.style}" class="flex items-center justify-between hover-underline-animation w-full px-4 py-2">

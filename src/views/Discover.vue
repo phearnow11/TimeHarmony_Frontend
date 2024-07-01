@@ -11,7 +11,8 @@
   </div>
 
   <!-- Data real -->
-  <div v-else class="mt-8 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 sm:gap-3 md:gap-3 lg:gap-3 mx-20 relative">
+   <!-- Data real -->
+  <div v-else-if="watchStore.watches.get(watchStore.currentPage)?.length > 0" class="mt-8 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 sm:gap-3 md:gap-3 lg:gap-3 mx-20 relative">
     <div class="popular-watch-text flex items-center w-full mb-10">
       <span class="text-primary text-2xl font-light mr-2 uppercase">{{ field }}</span>
       <div class="border-t border-secondary flex-grow mt-1 h-1/6"></div>
@@ -26,6 +27,14 @@
       :link="`/detail/${watch.watch_id}`"
       :seller_id="`/retailer/${watch.seller.member_id}`"
     />
+  </div>
+
+  <!-- No watches found -->
+  <div v-else class="mt-8 flex justify-center items-center mx-20">
+    <div class="text-center">
+      <h2 class="text-2xl font-bold mb-4">No Watches Found</h2>
+      <p class="text-lg">Sorry, we couldn't find any watches in this page.</p>
+    </div>
   </div>
 
   <!-- Pagination -->
@@ -60,7 +69,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch, onUnmounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import ProductCard from '../components/ProductCard.vue';
 import { useWatchStore } from '../stores/watch';
@@ -78,21 +87,33 @@ const page = computed(() => {
   return pageParam ? parseInt(pageParam, 10) : 0;
 });
 
-watchStore.currentPage = page
+watchStore.currentPage = page.value;
+
+const getGenderFromField = (field) => {
+  if (field === 'men watches') return 'male';
+  if (field === 'women watches') return 'female';
+  if (field === 'unisex watches') return 'unisex';
+};
+
+const fetchWatches = async () => {
+  const gender = getGenderFromField(field.value);
+  if (gender) {
+    console.log(gender);
+    await watchStore.getWatchesByGender(gender, page.value);
+  } else {
+    // Fallback to fetching all watches if gender is not specified
+    await watchStore.getWatchesOfPage(page.value);
+  }
+};
 
 onMounted(async () => {
-  if (watchStore.watches.has(page.value)) {
-    load.value = false;
-    return;
-  }
-
   try {
-    if (!watchStore.watches.has(page.value)) {
-      await watchStore.getWatchesOfPage(page.value);
-      load.value = false;
-    }
+    await fetchWatches();
+    console.log('nothing here');
   } catch (error) {
     console.error('Error during mounted hook execution:', error);
+  } finally {
+    load.value = false;
   }
 });
 
@@ -104,12 +125,15 @@ const setPage = async (newPage) => {
     query: { page: newPage }
   });
 
-  if (!watchStore.watches.has(newPage)) {
-    await watchStore.getWatchesOfPage(newPage);
-  }
-
   load.value = false;
 };
+
+watch(() => route.params.field, async () => {
+  load.value = true;
+  watchStore.watches.clear(); // Clear existing watches when field changes
+  await fetchWatches();
+  load.value = false;
+});
 
 watch(() => route.query.page, async (newPage) => {
   if (newPage !== undefined) {

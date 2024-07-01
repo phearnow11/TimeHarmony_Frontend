@@ -61,7 +61,14 @@
           <!-- Add shipping and quantity selectors here -->
         </div>
         <div class="flex gap-4">
-          <button @click="addToCart" class="flex-1 th-p-btn py-2 px-4">Add To Cart</button>
+          <button @click="addToCart" class="flex-1 th-p-btn py-2 px-4 relative">
+            <span :class="{ 'opacity-0': isLoading }">Add To Cart</span>
+            <div v-if="isLoading" class="loader-container">
+              <div class="loader">
+                <div class="loaderBar"></div>
+              </div>
+            </div>
+          </button>
           <router-link to="/order" class="flex-1 th-p-btn py-2 px-4">Buy Now</router-link>
         </div>
       </div>
@@ -193,6 +200,8 @@ const watchStore = useWatchStore();
 const currentImage = ref('');
 const isModalOpen = ref(false);
 const retailer = ref(null);
+const isLoading = ref(false);
+
 const formatPriceVND = (price) => {
   // Assuming price is in integer format (cents or full units depending on your setup)
   // Example: if price is in cents, divide by 100
@@ -206,13 +215,17 @@ const formatPriceVND = (price) => {
 async function addToCart() {
   console.log("WatchID: " + watchId);
   console.log("UserID: " + retailer.value.user_id);
+  isLoading.value = true;
   try {
     const response = await userStore.addToCart(retailer.value.user_id, watchId);
     console.log("Item added to cart successfully", response);
+    await new Promise(resolve => setTimeout(resolve, 2000));
     // You can add some user feedback here, like a toast notification
   } catch (error) {
     console.error("Error adding item to cart", error);
     // You can add some error feedback here
+  } finally {
+    isLoading.value = false;
   }
 }
 
@@ -287,4 +300,59 @@ function prevImage() {
     height: 60px;
   }
 }
+
+
+.loader-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+  background: rgba(23, 23, 23, 0.5);
+}
+
+.loader {
+  width: 80px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  padding: 1px;
+}
+
+.loader .loaderBar {
+  position: absolute;
+  top: 0;
+  right: 100%;
+  bottom: 0;
+  left: 0;
+  background: var(--secondary);
+  width: 0;
+  animation: borealisBar 2s linear infinite;
+}
+
+.loader::after {
+  content: "";
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--secondary);
+  left: 0;
+  top: 0;
+  animation: rotation 2s ease-in-out infinite alternate;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 </style>

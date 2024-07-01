@@ -1,5 +1,5 @@
 <template>
-  <div class="flex grid-cols-2 items-start justify-center w-full">
+  <div v-if="auth.user_id" class="flex grid-cols-2 items-start justify-center w-full">
     <div class="col-span-1 mt-8 mx-auto">
       <div class="flex items-start">
         <div
@@ -405,8 +405,23 @@
             Clear my input
           </div>
         </div>
-        <button @click="uploadHandle" class="th-p-btn w-44">Finish Submit</button>
+        <button @click="uploadHandle" class="th-p-btn w-44 relative">
+          <span :class="{ 'opacity-0': isLoading }">Finish Submit</span>
+          <div v-if="isLoading" class="loader-container">
+            <div class="loader">
+              <div class="loaderBar"></div>
+            </div>
+          </div>
+        </button>
       </div>
+    </div>
+  </div>
+  <div v-else class="h-screen flex flex-col items-center justify-center">
+    <div>
+      <p class="text-xl font-medium text-center">You need to login to use this function, <router-link class="hover-underline-animation" to="/login">Log in now</router-link></p>
+    </div>
+    <div class="mt-4">
+      <router-link to="/" class="hover-underline-animation">Go back to Home</router-link>
     </div>
   </div>
 </template>
@@ -417,8 +432,8 @@ import { useWatchStore } from "../stores/watch";
 import { useUserStore } from "../stores/user";
 import { useCloudinaryStore } from "../stores/cloudinary";
 
-
-
+const isLoading = ref(false);
+const auth = useUserStore()
 const watchData = reactive({
   name: "",
   price: "",
@@ -464,6 +479,7 @@ const imageURLs = ref([])
 // };
 
 async function uploadHandle() {
+  isLoading.value = true;
    try {
     const uploadData = {
       name: watchData.name,
@@ -501,8 +517,11 @@ async function uploadHandle() {
     useWatchStore().loadWatch(uploadData)
     const response = await useWatchStore().uploadWatch(useUserStore().user_id, useUserStore().username);
     console.log("Upload successful", response);
+    await new Promise(resolve => setTimeout(resolve, 2000));
   } catch (error) {
     console.error("Upload error", error);
+  } finally {
+    isLoading.value = false;
   }
 }
 
@@ -924,5 +943,59 @@ label .select-op {
   padding: 0.25rem;
   width: 300px;
   font-size: 14px;
+}
+
+.loader-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+  background: rgba(23, 23, 23, 0.5);
+}
+
+.loader {
+  width: 80px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  padding: 1px;
+}
+
+.loader .loaderBar {
+  position: absolute;
+  top: 0;
+  right: 100%;
+  bottom: 0;
+  left: 0;
+  background: var(--secondary);
+  width: 0;
+  animation: borealisBar 2s linear infinite;
+}
+
+.loader::after {
+  content: "";
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--secondary);
+  left: 0;
+  top: 0;
+  animation: rotation 2s ease-in-out infinite alternate;
+}
+
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

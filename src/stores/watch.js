@@ -86,9 +86,6 @@ export const useWatchStore = defineStore("watch", {
       }
     },
     
-    
-
-
     async loadWatch(watchData) {
       try {
         // Update the state with user data
@@ -176,8 +173,36 @@ export const useWatchStore = defineStore("watch", {
         throw error; // Re-throw the error so it can be handled by the caller
       }
     },
-    
-  },
+    async getWatchesByGender(gender, page) {
+      this.isLoading = true;
+      this.error = null;
+      try {
+        const response = await axios.get(`http://localhost:8080/watch/get/gender`, {
+          params: { gender, page }
+        });
+  
+        if (response.data && Array.isArray(response.data)) {
+          // Set the watches for the specific page
+          this.watches.set(page, response.data);
+          this.hasMore = response.data.length > 0;
+        } else {
+          this.watches.set(page, []);
+          this.hasMore = false;
+        }
+        this.currentPage = page;
+      } catch (error) {
+        console.error("Error fetching watches by gender:", error.message);
+        this.error = error.message;
+        this.watches.set(page, []);
+        this.hasMore = false;
+      } finally {
+        this.isLoading = false;
+      }
+    },
+    clearWatches() {
+      this.watches.clear();
+    }
+  }
 
   
 
