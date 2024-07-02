@@ -4,11 +4,12 @@ import axios from "axios";
 export const useWatchStore = defineStore("watch", {
   state: () => ({
     watches: new Map(),
+    totalPage: 0,
     currentPage: 0,
     isLoading: false,
     error: null,
     hasMore: true,
-    filters: {},
+    filters: [],
     watch_data: {
       name: "",
       price: "",
@@ -44,29 +45,26 @@ export const useWatchStore = defineStore("watch", {
   }),
 
   actions: {
-    async getWatchesOfPage(page, filters = {}) {
+    async getWatchesOfPage(page, filters = []) {
       this.isLoading = true;
       this.error = null;
-
+  
       // Check if filters have changed
       const filtersChanged = JSON.stringify(filters) !== JSON.stringify(this.filters);
-
+  
       if (filtersChanged) {
         // Reset watches map if filters have changed
         this.watches.clear();
         this.filters = filters;
       }
-
+  
+      // Construct the URL with filters
+      let url = `http://localhost:8080/watch/get/watch-page?page=${page}`;
+      if (filters.length > 0) {
+        url += `&${filters.join("&")}`;
+      }
+  
       try {
-        // Construct the URL with filters
-        let url = `http://localhost:8080/watch/get/watch-page?page=${page}`;
-        const queryParams = Object.entries(filters)
-          .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-          .join("&");
-        if (queryParams) {
-          url += `&${queryParams}`;
-        }
-
         const response = await axios.get(url);
         if (response.data && response.data.watches.length > 0) {
           if (!this.watches.has(page)) {
@@ -74,7 +72,13 @@ export const useWatchStore = defineStore("watch", {
           }
           this.watches.get(page).push(...response.data.watches);
           this.currentPage = page;
-          this.hasMore = response.data.watches.length === 60; // Assuming 60 is the page size
+  
+          // Calculate total pages
+          const totalPages = Math.ceil(response.data.watch_num / 60); // Assuming 60 is the page size
+          this.totalPage = totalPages;
+          this.hasMore = response.data.watches.length === totalPages * 60; // Check if there are more pages
+  
+          console.log("Total Pages:", this.totalPage);
         } else {
           this.hasMore = false;
         }

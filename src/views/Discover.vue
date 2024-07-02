@@ -49,7 +49,7 @@
       {{ page }}
     </div>
 
-    <div class="pagination-number arrow" @click="setPage(totalPages-1)">
+    <div class="pagination-number arrow" @click="setPage(watchStore.totalPage-1)">
       <span class="arrow-text">Last Page</span>
       <svg width="18" height="18">
         <use xlink:href="#right" />
@@ -91,7 +91,13 @@ const gender = computed(() => route.query.gender);
 watchStore.currentPage = page.value;
 
 const fetchWatches = async () => {
-  const filters = { field: field.value, gender: gender.value };
+  const filters = [];
+  if (field.value) {
+    filters.push(`field=${encodeURIComponent(field.value)}`);
+  }
+  if (gender.value) {
+    filters.push(`gender=${encodeURIComponent(gender.value)}`);
+  }
   await watchStore.getWatchesOfPage(page.value, filters);
 };
 
@@ -133,11 +139,13 @@ watch(() => route.query.page, async (newPage) => {
   }
 });
 
-const totalPages = 540;
+const totalPages = ref()
+totalPages.value = watchStore.totalPage
+
 const visiblePages = computed(() => {
   const currentPage = watchStore.currentPage + 1;
   let startPage = Math.max(currentPage - 2, 1);
-  let endPage = Math.min(startPage + 4, totalPages);
+  let endPage = Math.min(startPage + 4, totalPages.value);
 
   if (endPage - startPage < 4) {
     startPage = Math.max(endPage - 4, 1);
