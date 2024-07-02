@@ -37,7 +37,7 @@
   </div>
 
   <div v-if="!isLoading && watches.length <= 30" class="pagination-container flex justify-center items-center mt-10">
-    <router-link class="hover-underline-animation" to="/discover/watches for you?page=0">Show more watches</router-link>
+    <a class="hover-underline-animation" href="/discover/watches for you?page=0">Show more watches</a>
   </div>
 </template>
 

@@ -46,24 +46,28 @@ export const useWatchStore = defineStore("watch", {
 
   actions: {
     async getWatchesOfPage(page, filters = []) {
+      if (this.watches.has(page)) {
+        return; // Return if watches for the page are already fetched
+      }
+
       this.isLoading = true;
       this.error = null;
-  
+
       // Check if filters have changed
       const filtersChanged = JSON.stringify(filters) !== JSON.stringify(this.filters);
-  
+
       if (filtersChanged) {
         // Reset watches map if filters have changed
         this.watches.clear();
         this.filters = filters;
       }
-  
+
       // Construct the URL with filters
       let url = `http://localhost:8080/watch/get/watch-page?page=${page}`;
       if (filters.length > 0) {
         url += `&${filters.join("&")}`;
       }
-  
+
       try {
         const response = await axios.get(url);
         if (response.data && response.data.watches.length > 0) {
@@ -72,12 +76,12 @@ export const useWatchStore = defineStore("watch", {
           }
           this.watches.get(page).push(...response.data.watches);
           this.currentPage = page;
-  
+
           // Calculate total pages
           const totalPages = Math.ceil(response.data.watch_num / 60); // Assuming 60 is the page size
           this.totalPage = totalPages;
           this.hasMore = response.data.watches.length === totalPages * 60; // Check if there are more pages
-  
+
           console.log("Total Pages:", this.totalPage);
         } else {
           this.hasMore = false;

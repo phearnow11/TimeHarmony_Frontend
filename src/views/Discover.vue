@@ -139,8 +139,7 @@ watch(() => route.query.page, async (newPage) => {
   }
 });
 
-const totalPages = ref()
-totalPages.value = watchStore.totalPage
+const totalPages = computed(() => watchStore.totalPage);
 
 const visiblePages = computed(() => {
   const currentPage = watchStore.currentPage + 1;
@@ -151,7 +150,7 @@ const visiblePages = computed(() => {
     startPage = Math.max(endPage - 4, 1);
   }
 
-  if (endPage === totalPages) {
+  if (endPage === totalPages.value) {
     startPage = Math.max(endPage - 4, 1);
   }
 
