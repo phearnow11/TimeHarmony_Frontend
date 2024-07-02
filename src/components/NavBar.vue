@@ -90,11 +90,10 @@
             <img :src="useUserStore().image" class="img-responsive" alt="Image Description">
           </span>
           <span class="arrow-icon" :class="{ 'rotate-180': showMenu }">
-      <img src="../assets/arr.svg" class="w-3" alt="Arrow Icon">
-    </span>
+            <img src="../assets/arr.svg" class="w-3" alt="Arrow Icon">
+          </span>
         </div>
         <div v-show="showMenu">
-          
           <div class="submenu absolute top-10 right-0.5 text-white pt-1 w-48">
             <router-link to="/setting/profile" 
             class="submenu-item block px-4 py-2 hover-underline-animation"
@@ -102,12 +101,17 @@
             <router-link to="/appraiser" 
             class="submenu-item block px-4 py-2 hover-underline-animation"
             >Appraise</router-link>
+            <router-link to="/appraiser" 
+            class="submenu-item block px-4 py-2 hover-underline-animation"
+            >Customer Support</router-link>
+            <router-link to="/appraiser" 
+            class="submenu-item block px-4 py-2 hover-underline-animation"
+            >Admin</router-link>
             <a
               @click="logout"
               class="submenu-item block px-4 py-2 cursor-pointer hover-underline-animation"
               >Log Out</a
             >
-            
           </div>
         </div>
       </div>
