@@ -101,10 +101,10 @@
             <router-link to="/appraiser" 
             class="submenu-item block px-4 py-2 hover-underline-animation"
             >Appraise</router-link>
-            <router-link to="/appraiser" 
+            <router-link to="" 
             class="submenu-item block px-4 py-2 hover-underline-animation"
             >Customer Support</router-link>
-            <router-link to="/appraiser" 
+            <router-link to="/admin" 
             class="submenu-item block px-4 py-2 hover-underline-animation"
             >Admin</router-link>
             <a

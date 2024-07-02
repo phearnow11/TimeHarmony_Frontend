@@ -75,6 +75,13 @@ const router = createRouter({
       }),
     },
     {
+      path: '/admin',
+      name: 'Admin',
+      component: () => import('../views/Admin.vue').catch(err => {
+        console.error(err);
+      }),
+    },
+    {
       path: '/setting/profile',
       name: 'AccountSetting',
       component: () => import('../views/Setting/AccountSetting.vue').catch(err => {

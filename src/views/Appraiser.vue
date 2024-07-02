@@ -24,13 +24,13 @@
           v-model="column.tasks"
           :group="'tasks'"
           item-key="id"
-          :class="['flex-grow min-h-[200px] p-2 bg-gray-200', { 'list-none': viewMode === 'kanban' }]"
+          :class="['flex-grow min-h-[200px] p-2 bg-[#343432]', { 'list-none': viewMode === 'kanban' }]"
         >
           <template #item="{element}">
-            <div class="bg-white p-4  shadow-md cursor-move mb-2">
-              <h3 class="font-bold text-md">{{ element.title }}</h3>
-              <p class="text-sm text-gray-700">{{ element.description }}</p>
-              <p class="text-xs text-gray-500 mt-2">Due: {{ element.dueDate }}</p>
+            <div class="bg-[#1b1b1b] p-4 shadow-md cursor-move mb-2">
+              <h3 class="text-primary font-bold text-md">{{ element.title }}</h3>
+              <p class="text-sm text-secondary">{{ element.description }}</p>
+              <p class="text-xs text-secondary mt-2">Due: {{ element.dueDate }}</p>
               
             </div>
           </template>
@@ -104,10 +104,10 @@ const addTask = (columnIndex) => {
 
 
 .btn {
-  @apply bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4  inline-flex items-center;
+  @apply bg-primary hover:bg-primary text-black font-semibold py-2 px-4  inline-flex items-center;
 }
 
 .btn-active {
-  @apply bg-gray-300;
+  @apply bg-primary;
 }
 </style>

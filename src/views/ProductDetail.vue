@@ -222,10 +222,10 @@ const formatPriceVND = (price) => {
 
 async function addToCart() {
   console.log("WatchID: " + watchId);
-  console.log("UserID: " + retailer.value.user_id);
+  console.log("UserID: " + userStore.user_id);
   isLoading.value = true;
   try {
-    const response = await userStore.addToCart(retailer.value.user_id, watchId);
+    const response = await userStore.addToCart(userStore.user_id, watchId);
     console.log("Already in cart ", response);
     if (response==='Watch aready in cart!') {
       popupMessage.value = 'This item is already in your cart.';
