@@ -64,7 +64,7 @@
           />
       </div>
       <div class="flex justify-center items-center mt-10">
-        <router-link class="hover-underline-animation" :to="`/discover/${retailer.username}?page=0`">Show more watches</router-link>
+        <a class="hover-underline-animation" :href="`/discover/seller searching result?page=0&store=${retailer.username}`">Show more watches</a>
     </div>
     </div>
   </section>
