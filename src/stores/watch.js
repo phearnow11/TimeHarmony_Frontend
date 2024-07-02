@@ -8,6 +8,7 @@ export const useWatchStore = defineStore("watch", {
     isLoading: false,
     error: null,
     hasMore: true,
+    filters: {},
     watch_data: {
       name: "",
       price: "",
@@ -46,7 +47,18 @@ export const useWatchStore = defineStore("watch", {
     async getWatchesOfPage(page, filters = {}) {
       this.isLoading = true;
       this.error = null;
+
+      // Check if filters have changed
+      const filtersChanged = JSON.stringify(filters) !== JSON.stringify(this.filters);
+
+      if (filtersChanged) {
+        // Reset watches map if filters have changed
+        this.watches.clear();
+        this.filters = filters;
+      }
+
       try {
+        // Construct the URL with filters
         let url = `http://localhost:8080/watch/get/watch-page?page=${page}`;
         const queryParams = Object.entries(filters)
           .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
@@ -54,7 +66,7 @@ export const useWatchStore = defineStore("watch", {
         if (queryParams) {
           url += `&${queryParams}`;
         }
-        
+
         const response = await axios.get(url);
         if (response.data && response.data.watches.length > 0) {
           if (!this.watches.has(page)) {
@@ -62,7 +74,7 @@ export const useWatchStore = defineStore("watch", {
           }
           this.watches.get(page).push(...response.data.watches);
           this.currentPage = page;
-          this.hasMore = response.data.watches.length === 60;
+          this.hasMore = response.data.watches.length === 60; // Assuming 60 is the page size
         } else {
           this.hasMore = false;
         }
@@ -71,8 +83,8 @@ export const useWatchStore = defineStore("watch", {
       } finally {
         this.isLoading = false;
       }
-    },  
-    
+    },
+
     async uploadWatch(seller_id, username) {
       try {
         axios.post(`http://localhost:8080/member/to-seller?id=${seller_id}&username=${username}`);
@@ -87,21 +99,24 @@ export const useWatchStore = defineStore("watch", {
         throw error;
       }
     },
-    
+
     async loadWatch(watchData) {
       try {
-        this.watch_data = { ...this.watch_data, ...watchData };
+        this.watch_data = {
+          ...this.watch_data,
+          ...watchData
+        };
       } catch (err) {
         console.error("Error fetching member data:", err);
       }
     },
-    
+
     async getDetailWatch(watch_id) {
       try {
         const response = await axios.get(`http://localhost:8080/watch/get/${watch_id}`);
         const res = response.data;
         console.log(res);
-    
+
         this.watch_data = {
           seller: res.seller || null,
           name: res.watch_name || null,
@@ -135,7 +150,7 @@ export const useWatchStore = defineStore("watch", {
           casedimension: res.case_dimension || null,
           caseshape: res.case_shape || null,
         };
-    
+
         return this.watch_data;
       } catch (error) {
         console.error("Error fetching watch data:", error);

@@ -86,21 +86,13 @@ const page = computed(() => {
   return pageParam ? parseInt(pageParam, 10) : 0;
 });
 
+const gender = computed(() => route.query.gender);
+
 watchStore.currentPage = page.value;
 
-const getGenderFromField = (field) => {
-  if (field === 'men watches') return 'male';
-  if (field === 'women watches') return 'female';
-  if (field === 'unisex watches') return 'unisex';
-};
-
 const fetchWatches = async () => {
-  const gender = getGenderFromField(field.value);
-  if (gender) {
-    await watchStore.getWatchesByGender(gender, page.value);
-  } else {
-    await watchStore.getWatchesOfPage(page.value, field.value);
-  }
+  const filters = { field: field.value, gender: gender.value };
+  await watchStore.getWatchesOfPage(page.value, filters);
 };
 
 onMounted(async () => {
@@ -118,15 +110,15 @@ const setPage = async (newPage) => {
 
   await router.push({
     path: `/discover/${field.value}`,
-    query: { page: newPage }
+    query: { page: newPage, gender: gender.value }
   });
 
+  await fetchWatches();
   load.value = false;
 };
 
 watch(() => route.params.field, async () => {
   load.value = true;
-  watchStore.watches.clear(); // Clear existing watches when field changes
   await fetchWatches();
   load.value = false;
 });
