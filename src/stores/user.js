@@ -78,6 +78,7 @@ export const useUserStore = defineStore("user", {
           image: res.data.member_image,
           active: res.data.active,
           user_id: res.data.member_id,
+          watches: res.data.watches
         };
 
         return userInfo;

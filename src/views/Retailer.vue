@@ -10,7 +10,7 @@
           {{ retailer.first_name }} {{ retailer.last_name }}
         </strong>
         <div class="location hover-underline-animation">
-          <p><span class="mdi mdi-map-marker"></span> Ho Chi Minh City</p>
+          <p><span class="mdi mdi-map-marker"></span> {{ retailer.address?retailer.address:"N/A" }}</p>
         </div>
       </div>
       <div class="text-white">
@@ -35,7 +35,7 @@
       </div>
       <div class="flex gap-10 items-center">
         <button class="th-s-btn gap-2">Send message <span class="mdi mdi-message-text-outline"></span></button>
-        <router-link class="hover-underline-animation"><span class="mdi mdi-phone"></span> {{ retailer.phone }}</router-link>
+        <router-link class="hover-underline-animation"><span class="mdi mdi-phone"></span> {{ retailer.phone?retailer.phone:"N/A" }}</router-link>
         <router-link class="hover-underline-animation-r">Report user</router-link>
       </div>
       <div class="flex items-center justify-center mt-6 mb-6">
@@ -51,20 +51,20 @@
         </div>
         <div class="bg-secondary h-0.5 w-full"></div>
       </div>
-      <div class="grid grid-cols-5 gap-2">
+      <div class="grid grid-cols-4 gap-2">
           <product-card
-            v-for="i in 15" :key="i"
-            :productName="test"
-            :productImage="dsaada"
-            :retailerName="sadahjhhkjhkjd"
-            :retailerAvatar="adsaddada"
-            :price="123313"
-            :link="`/detail/asdad`"
-            :seller_id="`/retailer/asdadaadsd`"
+            v-for="i in retailer.watches" :key="i"
+            :productName="i.watch_name"
+            :productImage="i.image_url[0]"
+            :retailerName="retailer.username"
+            :retailerAvatar="retailer.image"
+            :price="i.price"
+            :link="`/detail/${i.watch_id}`"
+            :seller_id="`/retailer/${retailer.user_id}`"
           />
       </div>
       <div class="flex justify-center items-center mt-10">
-        <router-link class="hover-underline-animation" to="/discover/watches for you?page=0">Show more watches</router-link>
+        <router-link class="hover-underline-animation" :to="`/discover/${retailer.username}?page=0`">Show more watches</router-link>
     </div>
     </div>
   </section>
@@ -72,7 +72,7 @@
 
 <script setup>
 import ProductCard from '../components/ProductCard.vue';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useUserStore } from '../stores/user';
 
@@ -88,6 +88,7 @@ const retailer = ref({
   image: "",
   active: "",
   user_id: "",
+  watches: [],
 });
 
 const selectedRating = ref(0);
