@@ -74,6 +74,13 @@
       </div>
     </div>
 
+    <PopUp 
+      :show="isPopupVisible" 
+      :product="currentProduct" 
+      :message="popupMessage" 
+      :showDetails="showProductDetails"
+      @close="isPopupVisible = false"  />
+
     <!-- Seller Info -->
     <div v-if="retailer" class="mt-8 border-t border-secondary pt-4">
       <div class="mb-5">
@@ -185,26 +192,27 @@
 </template>
 
 <script setup>
+import { ref, onMounted, watch, computed } from 'vue';
 import { useRoute } from 'vue-router';
-import { onMounted, ref, watch, computed } from 'vue';
 import { useWatchStore } from '../stores/watch';
 import { useUserStore } from '../stores/user';
-import { useAuthStore } from '../stores/auth';
+import PopUp from '../components/PopUp.vue';
 
-
-const auth = useAuthStore();
 const route = useRoute();
-const userStore = useUserStore();
-const watchId = route.params.watch_id;
 const watchStore = useWatchStore();
+const userStore = useUserStore();
+
+const watchId = route.params.watch_id;
 const currentImage = ref('');
 const isModalOpen = ref(false);
+const isPopupVisible = ref(false);
 const retailer = ref(null);
 const isLoading = ref(false);
+const currentProduct = ref({});
+const popupMessage = ref('');
+const showProductDetails = ref(true);
 
 const formatPriceVND = (price) => {
-  // Assuming price is in integer format (cents or full units depending on your setup)
-  // Example: if price is in cents, divide by 100
   const formattedPrice = (price / 1).toLocaleString('vi-VN', {
     style: 'currency',
     currency: 'VND',
@@ -218,23 +226,30 @@ async function addToCart() {
   isLoading.value = true;
   try {
     const response = await userStore.addToCart(retailer.value.user_id, watchId);
-    console.log("Item added to cart successfully", response);
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    // You can add some user feedback here, like a toast notification
+    console.log("Already in cart ", response);
+    if (response==='Watch aready in cart!') {
+      popupMessage.value = 'This item is already in your cart.';
+      showProductDetails.value = false;
+    } else {
+      currentProduct.value = {
+        image: currentImage.value,
+        name: watchStore.watch_data.name,
+        price: watchStore.watch_data.price
+      };
+      popupMessage.value = 'Added to Cart Successfully';
+      showProductDetails.value = true;
+    }
+    isPopupVisible.value = true;
   } catch (error) {
     console.error("Error adding item to cart", error);
-    // You can add some error feedback here
   } finally {
     isLoading.value = false;
   }
 }
 
-
-
 onMounted(async () => {
   await watchStore.getDetailWatch(watchId);
   updateCurrentImage();
-  console.log("WatchID: " + watchId);
   if (watchStore.watch_data.seller && watchStore.watch_data.seller.member_id) {
     retailer.value = await userStore.getUserInfo(watchStore.watch_data.seller.member_id);
   }
@@ -248,7 +263,7 @@ function updateCurrentImage() {
   }
 }
 
-
+// Existing modal functions
 const currentImageIndex = ref(0);
 const currentModalImage = computed(() => watchStore.watch_data.images[currentImageIndex.value]);
 
@@ -268,7 +283,6 @@ function nextImage() {
 function prevImage() {
   currentImageIndex.value = (currentImageIndex.value - 1 + watchStore.watch_data.images.length) % watchStore.watch_data.images.length;
 }
-
 
 </script>
 
