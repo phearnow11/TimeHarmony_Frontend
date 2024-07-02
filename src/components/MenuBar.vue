@@ -14,19 +14,19 @@
     <div v-show="showMenu" class="dropdown-menu py-2 top-12 absolute z-10 w-48">
       <!-- Men -->
       <div class="menu-item relative" @mouseenter="showSubmenu('menWatch')" @mouseleave="hideSubmenu('menWatch')">
-        <router-link to="/discover/men watches?page=0" class="flex items-center justify-between hover-underline-animation w-full px-4 py-2">
+        <router-link to="/discover/men watches?page=0&gender=male" class="flex items-center justify-between hover-underline-animation w-full px-4 py-2">
           <span>Men Watch</span>
         </router-link>
       </div>
       <!-- Women -->
       <div class="menu-item relative" @mouseenter="showSubmenu('womenWatch')" @mouseleave="hideSubmenu('womenWatch')">
-        <router-link to="/discover/women watches?page=0" class="flex items-center justify-between hover-underline-animation w-full px-4 py-2">
+        <router-link to="/discover/women watches?page=0&gender=female" class="flex items-center justify-between hover-underline-animation w-full px-4 py-2">
           <span>Women Watch</span>
         </router-link>
       </div>
       <!-- Unisex -->
       <div class="menu-item relative" @mouseenter="showSubmenu('womenWatch')" @mouseleave="hideSubmenu('womenWatch')">
-        <router-link to="/discover/unisex watches?page=0" class="flex items-center justify-between hover-underline-animation w-full px-4 py-2">
+        <router-link to="/discover/unisex watches?page=0&gender=unisex" class="flex items-center justify-between hover-underline-animation w-full px-4 py-2">
           <span>Unisex Watch</span>
         </router-link>
       </div>

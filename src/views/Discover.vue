@@ -11,7 +11,6 @@
   </div>
 
   <!-- Data real -->
-   <!-- Data real -->
   <div v-else-if="watchStore.watches.get(watchStore.currentPage)?.length > 0" class="mt-8 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 sm:gap-3 md:gap-3 lg:gap-3 mx-20 relative">
     <div class="popular-watch-text flex items-center w-full mb-10">
       <span class="text-primary text-2xl font-light mr-2 uppercase">{{ field }}</span>
@@ -98,18 +97,15 @@ const getGenderFromField = (field) => {
 const fetchWatches = async () => {
   const gender = getGenderFromField(field.value);
   if (gender) {
-    console.log(gender);
     await watchStore.getWatchesByGender(gender, page.value);
   } else {
-    // Fallback to fetching all watches if gender is not specified
-    await watchStore.getWatchesOfPage(page.value);
+    await watchStore.getWatchesOfPage(page.value, field.value);
   }
 };
 
 onMounted(async () => {
   try {
     await fetchWatches();
-    console.log('nothing here');
   } catch (error) {
     console.error('Error during mounted hook execution:', error);
   } finally {
@@ -167,82 +163,81 @@ const visiblePages = computed(() => {
   return pages;
 });
 </script>
-  
-  <style scoped>
-  .popular-watch-text {
-    position: absolute;
-    top: -50px;
-    text-align: left;
-    margin-bottom: 5rem;
+
+<style scoped>
+.popular-watch-text {
+  position: absolute;
+  top: -50px;
+  text-align: left;
+  margin-bottom: 5rem;
+}
+
+*:focus {
+  outline: none;
+}
+
+html, body, .full-width {
+  height: 100%;
+}
+
+body {
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background: var(--bg-page);
+  color: var(--text-color);
+}
+
+body, body html {
+  margin: 0;
+  padding: 0;
+}
+
+.hide {
+  display: none;
+  visibility: hidden;
+  height: 0;
+}
+
+.pagination-container {
+  display: flex;
+  align-items: center;
+}
+
+.arrow-text {
+  display: block;
+  font-size: 13px;
+}
+
+.pagination-number {
+  --size: 32px;
+  --margin: 6px;
+  margin: 0 var(--margin);
+  background: #202020;
+  max-width: auto;
+  min-width: var(--size);
+  height: var(--size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0 6px;
+}
+
+@media (hover: hover) {
+  .pagination-number:hover {
+    background: #4e4e4e;
   }
-  
-  *:focus {
-    outline: none;
-  }
-  
-  html, body, .full-width {
-    height: 100%;
-  }
-  
-  body {
-    padding: 0 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    background: var(--bg-page);
-    color: var(--text-color);
-  }
-  
-  body, body html {
-    margin: 0;
-    padding: 0;
-  }
-  
-  .hide {
-    display: none;
-    visibility: hidden;
-    height: 0;
-  }
-  
-  .pagination-container {
-    display: flex;
-    align-items: center;
-  }
-  
-  .arrow-text {
-    display: block;
-    font-size: 13px;
-  }
-  
-  .pagination-number {
-    --size: 32px;
-    --margin: 6px;
-    margin: 0 var(--margin);
-    background: #202020;
-    max-width: auto;
-    min-width: var(--size);
-    height: var(--size);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    padding: 0 6px;
-  }
-  
-  @media (hover: hover) {
-    .pagination-number:hover {
-      background: #4e4e4e;
-    }
-  }
-  
-  .pagination-number:active {
-    background: #282828;
-  }
-  
-  .pagination-active {
-    background: #282828;
-    border: 1px solid var(--primary);
-  }
+}
+
+.pagination-number:active {
+  background: #282828;
+}
+
+.pagination-active {
+  background: #282828;
+  border: 1px solid var(--primary);
+}
 </style>
-  

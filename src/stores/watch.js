@@ -1,10 +1,9 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 
-
 export const useWatchStore = defineStore("watch", {
   state: () => ({
-    watches: new Map(), // Changed to Map
+    watches: new Map(),
     currentPage: 0,
     isLoading: false,
     error: null,
@@ -44,36 +43,39 @@ export const useWatchStore = defineStore("watch", {
   }),
 
   actions: {
-    async getWatchesOfPage(page) {
+    async getWatchesOfPage(page, filters = {}) {
       this.isLoading = true;
       this.error = null;
       try {
-        console.log(`Fetching watches for page ${page}...`);
-        const response = await axios.get(`http://localhost:8080/watch/get/watch-page?pagenum=${page}`);
-        console.log("Response:", response.data);
-        if (response.data && response.data.length > 0) {
-          // If the page doesn't exist in our map, add it
+        let url = `http://localhost:8080/watch/get/watch-page?page=${page}`;
+        const queryParams = Object.entries(filters)
+          .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+          .join("&");
+        if (queryParams) {
+          url += `&${queryParams}`;
+        }
+        
+        const response = await axios.get(url);
+        if (response.data && response.data.watches.length > 0) {
           if (!this.watches.has(page)) {
             this.watches.set(page, []);
           }
-          // Add new watches to the existing page array
-          this.watches.get(page).push(...response.data);
+          this.watches.get(page).push(...response.data.watches);
           this.currentPage = page;
-          this.hasMore = response.data.length === 60; // Assuming 60 is the page size now
+          this.hasMore = response.data.watches.length === 60;
         } else {
           this.hasMore = false;
         }
       } catch (error) {
-        console.error("Error fetching watches:", error.message);
         this.error = error.message;
       } finally {
         this.isLoading = false;
       }
-    },
+    },  
     
     async uploadWatch(seller_id, username) {
       try {
-        axios.post(`http://localhost:8080/member/to-seller?id=${seller_id}&username=${username}`)
+        axios.post(`http://localhost:8080/member/to-seller?id=${seller_id}&username=${username}`);
         const response = await axios.post(
           `http://localhost:8080/seller/create/watch?seller_id=${seller_id}`,
           this.watch_data
@@ -88,40 +90,7 @@ export const useWatchStore = defineStore("watch", {
     
     async loadWatch(watchData) {
       try {
-        // Update the state with user data
-        this.watch_data.name = watchData.name ? watchData.name : null;
-        this.watch_data.description = watchData.description ? watchData.description : null;
-        this.watch_data.images = watchData.images ? watchData.images : null;
-        this.watch_data.price = watchData.price ? watchData.price : null;
-        this.watch_data.brand = watchData.brand ? watchData.brand : null;
-        this.watch_data.series = watchData.series ? watchData.series : null;
-        this.watch_data.model = watchData.model ? watchData.model : null;
-        this.watch_data.gender = watchData.gender ? watchData.gender : null;
-        this.watch_data.style = watchData.style ? watchData.style : null;
-        this.watch_data.subclass = watchData.subclass ? watchData.subclass : null;
-        this.watch_data.madelabel = watchData.madelabel ? watchData.madelabel : null;
-        this.watch_data.calender = watchData.calender ? watchData.calender : null;
-        this.watch_data.feature = watchData.feature ? watchData.feature : null;
-        this.watch_data.movement = watchData.movement ? watchData.movement : null;
-        this.watch_data.function = watchData.function ? watchData.function : null;
-        this.watch_data.engine = watchData.engine ? watchData.engine : null;
-        this.watch_data.waterresistant = watchData.waterresistant ? watchData.waterresistant : null;
-        this.watch_data.bandcolor = watchData.bandcolor ? watchData.bandcolor : null;
-        this.watch_data.bandtype = watchData.bandtype ? watchData.bandtype : null;
-        this.watch_data.clasp = watchData.clasp ? watchData.clasp : null;
-        this.watch_data.bracelet = watchData.bracelet ? watchData.bracelet : null;
-        this.watch_data.dialtype = watchData.dialtype ? watchData.dialtype : null;
-        this.watch_data.dialcolor = watchData.dialcolor ? watchData.dialcolor : null;
-        this.watch_data.crystal = watchData.crystal ? watchData.crystal : null;
-        this.watch_data.secondmaker = watchData.secondmaker ? watchData.secondmaker : null;
-        this.watch_data.bezel = watchData.bezel ? watchData.bezel : null;
-        this.watch_data.bezelmaterial = watchData.bezelmaterial ? watchData.bezelmaterial : null;
-        this.watch_data.caseback = watchData.caseback ? watchData.caseback : null;
-        this.watch_data.casedimension = watchData.casedimension ? watchData.casedimension : null;
-        this.watch_data.caseshape = watchData.caseshape ? watchData.caseshape : null;
-
-
-
+        this.watch_data = { ...this.watch_data, ...watchData };
       } catch (err) {
         console.error("Error fetching member data:", err);
       }
@@ -134,7 +103,7 @@ export const useWatchStore = defineStore("watch", {
         console.log(res);
     
         this.watch_data = {
-          seller: res.seller || null, // Make sure this is included in the API response
+          seller: res.seller || null,
           name: res.watch_name || null,
           description: res.watch_description || null,
           images: res.image_url ? (Array.isArray(res.image_url) ? res.image_url : [res.image_url]) : [],
@@ -170,41 +139,8 @@ export const useWatchStore = defineStore("watch", {
         return this.watch_data;
       } catch (error) {
         console.error("Error fetching watch data:", error);
-        throw error; // Re-throw the error so it can be handled by the caller
+        throw error;
       }
     },
-    async getWatchesByGender(gender, page) {
-      this.isLoading = true;
-      this.error = null;
-      try {
-        const response = await axios.get(`http://localhost:8080/watch/get/gender`, {
-          params: { gender, page }
-        });
-  
-        if (response.data && Array.isArray(response.data)) {
-          // Set the watches for the specific page
-          this.watches.set(page, response.data);
-          this.hasMore = response.data.length > 0;
-        } else {
-          this.watches.set(page, []);
-          this.hasMore = false;
-        }
-        this.currentPage = page;
-      } catch (error) {
-        console.error("Error fetching watches by gender:", error.message);
-        this.error = error.message;
-        this.watches.set(page, []);
-        this.hasMore = false;
-      } finally {
-        this.isLoading = false;
-      }
-    },
-    clearWatches() {
-      this.watches.clear();
-    }
   }
-
-  
-
-
 });
