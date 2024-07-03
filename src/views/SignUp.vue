@@ -34,18 +34,22 @@
           <label for="username" class="form__label">Username*</label>
         </div>
 
-        <div class="form__group field w-96">
+        <div :class="['form__group', 'field', 'w-96', {'input-error': !isPasswordValid && signUpForm.password !== ''}]">
           <input
             type="password"
             class="form__field"
             placeholder="Password"
             v-model="signUpForm.password"
+            @input="checkPasswordFormat"
             required
           />
           <label for="password" class="form__label">Password*</label>
+          <p v-if="!isPasswordValid && signUpForm.password !== ''" class="error-message">
+            Password must be at least 8 characters, contain at least one uppercase letter, one number, and one special character.
+          </p>
         </div>
 
-        <div :class="['form__group', 'field', 'w-96', {'input-error': !passwordsMatch}]">
+        <div :class="['form__group', 'field', 'w-96', {'input-error': !passwordsMatch && signUpForm.repassword !== ''}]">
           <input
             type="password"
             class="form__field"
@@ -86,7 +90,6 @@
             class="form__field"
             placeholder="Phone"
             v-model="signUpForm.phone"
-          
           />
           <label for="phone" class="form__label">Phone</label>
         </div>
@@ -101,20 +104,11 @@
           <label for="address" class="form__label">Address</label>
         </div>
 
-        <button type="submit" class="w-full th-p-btn mt-3 relative">
-          <span :class="{ 'opacity-0': isSigningUp }">Sign up</span>
-          <div v-if="isSigningUp" class="loader-container">
-            <div class="loader">
-              <div class="loaderBar"></div>
-            </div>
-          </div>
-        </button>
+        <button type="submit" class="w-full th-p-btn mt-3">Sign up</button>
 
         <div class="mt-1">
           <span>Already have an account? </span>
-          <router-link to="/login" class="hover-underline-animation"
-            >Log in here</router-link
-          >
+          <router-link to="/login" class="hover-underline-animation">Log in here</router-link>
         </div>
       </form>
     </div>
@@ -126,7 +120,6 @@ import { reactive, ref } from "vue";
 import { useUserStore } from "../stores/user";
 import router from "../router";
 
-const isSigningUp = ref(false);
 const signUpForm = reactive({
   username: "",
   password: "",
@@ -139,12 +132,13 @@ const signUpForm = reactive({
 });
 
 const passwordsMatch = ref(true);
+const isPasswordValid = ref(true);
 
 const userStore = useUserStore();
 
 function checkPasswords() {
-  passwordsMatch.value = signUpForm.password === signUpForm.repassword;
-  if (!passwordsMatch.value) {
+  passwordsMatch.value = signUpForm.password === signUpForm.repassword || signUpForm.repassword === '';
+  if (!passwordsMatch.value && signUpForm.repassword !== '') {
     const label = document.querySelector('label[for="repassword"]');
     label.classList.add("shake");
     setTimeout(() => {
@@ -153,12 +147,21 @@ function checkPasswords() {
   }
 }
 
+function checkPasswordFormat() {
+  const password = signUpForm.password;
+  if (password === "") {
+    isPasswordValid.value = true; // Reset validation if password is empty
+  } else {
+    const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    isPasswordValid.value = regex.test(password);
+  }
+}
+
 async function signupHandle() {
-  if (!passwordsMatch.value) {
-    console.log("Passwords do not match");
+  if (!passwordsMatch.value || !isPasswordValid.value) {
+    console.log("Passwords do not match or invalid password format");
     return;
   }
-  isSigningUp.value = true;
   try {
     const userData = [
       {
@@ -175,13 +178,9 @@ async function signupHandle() {
     ];
     const response = await userStore.signUp(userData);
     console.log("Signup successful", response);
-    // Optionally, you can add a delay to show the animation for a bit longer
-    await new Promise(resolve => setTimeout(resolve, 2000));
     router.push("/login");
   } catch (error) {
     console.error("Signup error", error);
-  } finally {
-    isSigningUp.value = false;
   }
 }
 </script>
@@ -232,6 +231,12 @@ form {
   color: red;
 }
 
+.error-message {
+  color: red;
+  font-size: 0.875rem; /* Adjust font size as needed */
+  margin-top: 0.5rem;
+}
+
 @keyframes shake {
   0%, 100% {
     transform: translateX(0);
@@ -249,63 +254,5 @@ form {
 
 .shake {
   animation: shake 0.5s;
-}
-
-cssCopy.th-p-btn {
-  position: relative;
-  overflow: hidden;
-}
-
-.loader-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(5px);
-  background: rgba(23, 23, 23, 0.5);
-}
-
-.loader {
-  width: 80px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-  position: relative;
-  padding: 1px;
-}
-
-.loader .loaderBar {
-  position: absolute;
-  top: 0;
-  right: 100%;
-  bottom: 0;
-  left: 0;
-  background: var(--secondary);
-  width: 0;
-  animation: borealisBar 2s linear infinite;
-}
-
-.loader::after {
-  content: "";
-  box-sizing: border-box;
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--secondary);
-  left: 0;
-  top: 0;
-  animation: rotation 2s ease-in-out infinite alternate;
-}
-
-@keyframes rotation {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
 }
 </style>
