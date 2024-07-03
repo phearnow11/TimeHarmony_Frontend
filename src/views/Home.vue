@@ -1,12 +1,12 @@
 <template>
   <div class="pt-6">
-    <carousel
+    <Carousel
       :startAutoPlay="false"
       :timeout="3000"
       :showNavigation="true"
       :showPagination="true"
     />
-    <brand />
+    <Brand />
   </div>
 
   <!-- Skeleton -->
@@ -15,7 +15,7 @@
       <span class="text-primary text-2xl font-light mr-2">WATCHES FOR YOU</span>
       <div class="border-t border-secondary flex-grow mt-1 h-1/6"></div>
     </div>
-    <skeleton-card v-for="i in 30" :key="i"/>
+    <SkeletonCard v-for="i in 30" :key="i" />
   </div>
 
   <!-- Data real -->
@@ -24,14 +24,15 @@
       <span class="text-primary text-2xl font-light mr-2">WATCHES FOR YOU</span>
       <div class="border-t border-secondary flex-grow mt-1 h-1/6"></div>
     </div>
-    <product-card
-      v-for="watch in paginatedWatches" :key="watch.watch_id"
+    <ProductCard
+      v-for="watch in paginatedWatches"
+      :key="watch.watch_id"
       :productName="watch.watch_name"
       :productImage="watch.image_url[0]"
       :retailerName="watch.seller.user_log_info.username || 'N/A'"
       :retailerAvatar="watch.seller.member_image || ''"
       :price="watch.price"
-      :link="`/detail/${watch.watch_id}`"
+      :watch_id="watch.watch_id"
       :seller_id="`/retailer/${watch.seller.member_id}`"
     />
   </div>
@@ -42,12 +43,13 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
 import Carousel from '../components/Carousel.vue';
-import ProductCard from '../components/ProductCard.vue';
 import Brand from '../components/Brand.vue';
 import SkeletonCard from '../components/SkeletonCard.vue';
+import ProductCard from '../components/ProductCard.vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import axios from 'axios';
+import { useUserStore } from '../stores/user';
 
 const isLoading = ref(true);
 const watches = ref([]);
@@ -68,7 +70,32 @@ onMounted(async () => {
   } catch (error) {
     console.error('Error fetching watches:', error);
   }
+})
+
+// Save favorites when the tab is closed
+window.addEventListener('beforeunload', async () => {
+  try {
+    await useUserStore().saveFavoritesToServer(useUserStore().user_id);
+    console.log('Favorites saved successfully!');
+  } catch (error) {
+    console.error('Error saving favorites:', error);
+    // Handle error appropriately, possibly alerting the user
+  }
 });
+
+// Cleanup event listener on component unmount
+onBeforeUnmount(() => {
+  window.removeEventListener('beforeunload', async () => {
+    try {
+      await useUserStore().saveFavoritesToServer(useUserStore().user_id);
+      console.log('Favorites saved successfully!');
+    } catch (error) {
+      console.error('Error saving favorites:', error);
+      // Handle error appropriately, possibly alerting the user
+    }
+  });
+});
+
 </script>
 
 <style scoped>

@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="link" class="container ">
+  <router-link :to="`/detail/${watch_id}`" class="container ">
     <div class="box" :class="{ bookmarked: isBookmarked }">
       <div class="image-container">
         <img class="watch-img" :src="productImage" />
@@ -24,6 +24,7 @@
 </template>
 
 <script>
+import { useUserStore } from '../stores/user';
 export default {
   props: {
     productName: {
@@ -46,7 +47,7 @@ export default {
       type: Number,
       required: true
     },
-    link:{
+    watch_id:{
       type: String,
       required: true
     }
@@ -66,6 +67,16 @@ export default {
       event.stopPropagation();
       event.preventDefault();
       this.isBookmarked = !this.isBookmarked;
+      if(this.isBookmarked){
+        useUserStore().wait_fav.push(this.watch_id)
+      }
+      else{
+        const index = useUserStore().wait_fav.indexOf(this.watch_id);
+        if (index > -1) {
+          useUserStore().wait_fav.splice(index, 1);
+        }
+      }
+      console.log(useUserStore().wait_fav);
     },
     formatPriceVND(price) {
       // Assuming price is in full units (integer format)
@@ -74,9 +85,8 @@ export default {
         style: 'currency',
         currency: 'VND'
       });
-    }
+    },
   }
-
 }
 </script>
 

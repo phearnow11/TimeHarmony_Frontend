@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import axios from "axios";
-import { reactive } from "vue";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
@@ -14,9 +13,33 @@ export const useUserStore = defineStore("user", {
     image: "https://files.catbox.moe/n1w3b0.png",
     active: "",
     user_id: null,  // Add this to your state
+    cur_fav:[],
+    wait_fav:[],
   }),
 
   actions: {
+    getFavorites() {
+      this.wait_fav.add
+      return [...this.state.cur_fav, ...this.state.wait_fav];
+    },
+
+    async saveFavoritesToServer(user_id) {
+      try {
+        const response = await axios.post(`http://localhost:8080/member/add/favorites/${user_id}`, {
+          w_ids: this.wait_fav
+        });
+
+        console.log('Favorites saved successfully:', response.data);
+        
+        // Optionally clear wait_fav after successful save
+        this.wait_fav = [];
+      } catch (error) {
+        console.error('Error saving favorites:', error);
+        // Handle error appropriately
+        throw error; // Propagate error to handle in navigation guard
+      }
+    },
+
     async signUp(userData) {
       try {
         const response = await axios.post(
@@ -45,6 +68,7 @@ export const useUserStore = defineStore("user", {
     async loadUser(user_id) {
       try {
         const res = await axios.get(`http://localhost:8080/member/get/${user_id}`);
+        const fav = await axios.get(`http://localhost:8080/member/get/favorites/${user_id}`)
         console.log("Member data:", res.data);
 
         // Update the state with user data
@@ -57,6 +81,7 @@ export const useUserStore = defineStore("user", {
         this.image = res.data.member_image;
         this.active = res.data.active;
         this.user_id = res.data.member_id;
+        this.cur_fav = fav.data
       } catch (err) {
         console.error("Error fetching member data:", err);
       }
