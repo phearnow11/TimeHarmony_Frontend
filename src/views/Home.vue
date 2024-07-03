@@ -72,28 +72,14 @@ onMounted(async () => {
   }
 })
 
-// Save favorites when the tab is closed
-window.addEventListener('beforeunload', async () => {
-  try {
-    await useUserStore().saveFavoritesToServer(useUserStore().user_id);
-    console.log('Favorites saved successfully!');
-  } catch (error) {
-    console.error('Error saving favorites:', error);
-    // Handle error appropriately, possibly alerting the user
-  }
-});
-
-// Cleanup event listener on component unmount
+// Unmount
 onBeforeUnmount(() => {
-  window.removeEventListener('beforeunload', async () => {
-    try {
-      await useUserStore().saveFavoritesToServer(useUserStore().user_id);
-      console.log('Favorites saved successfully!');
-    } catch (error) {
-      console.error('Error saving favorites:', error);
-      // Handle error appropriately, possibly alerting the user
-    }
-  });
+      try {
+        useUserStore().saveFavoritesToServer(useUserStore().user_id);
+        console.log('Favorites saved successfully!');
+      } catch (error) {
+        console.error(error);
+      }
 });
 
 </script>

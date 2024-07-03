@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "../stores/auth";
 import { useUserStore } from "../stores/user";
+import { onBeforeUnmount } from "vue";
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -151,5 +152,17 @@ router.beforeEach(async (to, from, next) => {
   }
   next();
 });
+
+router.afterEach(()=>{
+  // Close
+  window.addEventListener('beforeunload', async () => {
+    try {
+      await useUserStore().saveFavoritesToServer(useUserStore().user_id);
+      console.log('Favorites saved successfully!');
+    } catch (error) {
+      console.error(error);
+    }
+  });
+})
 
 export default router;
