@@ -23,7 +23,7 @@
       :retailerName="watch.seller.user_log_info.username || 'N/A'"
       :retailerAvatar="watch.seller.member_image || ''"
       :price="watch.price"
-      :link="`/detail/${watch.watch_id}`"
+      :watch_id="watch.watch_id"
       :seller_id="`/retailer/${watch.seller.member_id}`"
     />
   </div>
