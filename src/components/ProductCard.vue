@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="`/detail/${watch_id}`" class="container ">
+  <router-link :to="`/detail/${watch_id}`" class="container">
     <div class="box" :class="{ bookmarked: isBookmarked }">
       <div class="image-container">
         <img class="watch-img" :src="productImage" />
@@ -17,77 +17,85 @@
             <span class="username hover-underline-animation">{{ retailerName }}</span>
           </router-link>
         </div>
-        <span class="price"> {{ formatPriceVND(price) }}</span>
+        <span class="price">{{ formattedPrice }}</span>
       </div>
     </div>
   </router-link>
 </template>
 
-<script>
+<script setup>
+import { ref, defineProps, computed, onMounted, onBeforeUnmount } from 'vue';
+import axios from 'axios';
 import { useUserStore } from '../stores/user';
-export default {
-  props: {
-    productName: {
-      type: String,
-      required: true
-    },
-    productImage: {
-      type: String,
-      required: true
-    },
-    retailerName: {
-      type: String,
-      required: true
-    },
-    retailerAvatar: {
-      type: String,
-      required: true
-    },
-    price: {
-      type: Number,
-      required: true
-    },
-    watch_id:{
-      type: String,
-      required: true
-    }
-    ,seller_id:{
-      type: String,
-      required: true
-    }
 
+const props = defineProps({
+  productName: {
+    type: String,
+    required: true
   },
-  data() {
-    return {
-      isBookmarked: false
-    };
+  productImage: {
+    type: String,
+    required: true
   },
-  methods: {
-    toggleBookmark(event) {
-      event.stopPropagation();
-      event.preventDefault();
-      this.isBookmarked = !this.isBookmarked;
-      if(this.isBookmarked){
-        useUserStore().wait_fav.push(this.watch_id)
-      }
-      else{
-        const index = useUserStore().wait_fav.indexOf(this.watch_id);
-        if (index > -1) {
-          useUserStore().wait_fav.splice(index, 1);
-        }
-      }
-      console.log(useUserStore().wait_fav);
-    },
-    formatPriceVND(price) {
-      // Assuming price is in full units (integer format)
-      // If your price is stored differently (e.g., in cents), adjust the calculation accordingly
-      return (price).toLocaleString('vi-VN', {
-        style: 'currency',
-        currency: 'VND'
-      });
-    },
+  retailerName: {
+    type: String,
+    required: true
+  },
+  retailerAvatar: {
+    type: String,
+    required: true
+  },
+  price: {
+    type: Number,
+    required: true
+  },
+  watch_id: {
+    type: String,
+    required: true
+  },
+  seller_id: {
+    type: String,
+    required: true
   }
-}
+});
+
+const userStore = useUserStore();
+const isBookmarked = ref(false);
+
+const updateBookmarkStatus = async () => {
+  try {
+    const favorites = await userStore.getFavoritesFromServer(userStore.user_id);
+    isBookmarked.value = favorites.some(fav => fav.watch_id === props.watch_id);
+  } catch (error) {
+    console.error('Error fetching favorites:', error);
+  }
+};
+
+onMounted(async () => {
+  await updateBookmarkStatus();
+});
+
+const toggleBookmark = (event) => {
+  event.stopPropagation();
+  event.preventDefault();
+  
+  if (isBookmarked.value) {
+    userStore.removeFromWaitFav(props.watch_id);
+  } else {
+    userStore.addToWaitFav(props.watch_id);
+  }
+  
+  isBookmarked.value = !isBookmarked.value;
+};
+
+const formatPriceVND = (price) => {
+  return price.toLocaleString('vi-VN', {
+    style: 'currency',
+    currency: 'VND'
+  });
+};
+
+const formattedPrice = computed(() => formatPriceVND(props.price));
 </script>
 
 <style scoped>

@@ -23,21 +23,72 @@ export const useUserStore = defineStore("user", {
       return [...this.state.cur_fav, ...this.state.wait_fav];
     },
 
-    async saveFavoritesToServer(user_id) {
+    async getFavoritesFromServer(user_id) {
       try {
+        console.log('Prepare');
+        const response = await axios.get(`http://localhost:8080/member/get/favorites/${user_id}`);
+        console.log('Get OK');
+        return response.data; // Assuming this returns an array of favorite watch objects
+      } catch (error) {
+        console.error('Error fetching favorites:', error);
+        throw error;
+      }
+    },
+
+    async saveFavoritesToServer(user_id) {
+      if (!user_id) {
+        console.error('No user ID provided');
+        return;
+      }
+    
+      try {
+        if (this.wait_fav.length === 0) {
+          console.log('No new favorites to save');
+          return;
+        }
+    
+        console.log('Preparing to save favorites:', this.wait_fav);
         const response = await axios.post(`http://localhost:8080/member/add/favorites/${user_id}`, {
           w_ids: this.wait_fav
         });
-
-        console.log('Favorites saved successfully:', response.data);
-        
-        // Optionally clear wait_fav after successful save
-        this.wait_fav = [];
+        console.log('aaaaaaaa: '+response.data);
+    
+        if (response.data && response.status === 200) {
+          console.log('Favorites saved successfully:', response.data);
+          
+          // Update cur_fav with newly saved favorites
+          this.cur_fav = [...new Set([...this.cur_fav, ...this.wait_fav])];
+          
+          // Clear wait_fav after successful save
+          this.wait_fav = [];
+        } else {
+          console.error('Unexpected response from server:', response);
+        }
       } catch (error) {
-        console.error('Error saving favorites:', error);
-        // Handle error appropriately
-        throw error; // Propagate error to handle in navigation guard
+        console.error('Error saving favorites:', error.response ? error.response.data : error.message);
+        throw error;
       }
+    },
+
+    addToWaitFav(watch_id) {
+      if (!this.wait_fav.includes(watch_id) && !this.cur_fav.includes(watch_id)) {
+        this.wait_fav.push(watch_id);
+      }
+    },
+
+    removeFromWaitFav(watch_id) {
+      const indexWait = this.wait_fav.indexOf(watch_id);
+      if (indexWait > -1) {
+        this.wait_fav.splice(indexWait, 1);
+      }
+      const indexCur = this.cur_fav.indexOf(watch_id);
+      if (indexCur > -1) {
+        this.cur_fav.splice(indexCur, 1);
+      }
+    },
+
+    isWatchFavorite(watch_id) {
+      return this.cur_fav.includes(watch_id) || this.wait_fav.includes(watch_id);
     },
 
     async signUp(userData) {

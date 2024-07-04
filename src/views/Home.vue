@@ -73,13 +73,18 @@ onMounted(async () => {
 })
 
 // Unmount
-onBeforeUnmount(() => {
-      try {
-        useUserStore().saveFavoritesToServer(useUserStore().user_id);
-        console.log('Favorites saved successfully!');
-      } catch (error) {
-        console.error(error);
-      }
+onBeforeUnmount(async () => {
+  const userStore = useUserStore();
+  if (userStore.user_id) {
+    try {
+      await userStore.saveFavoritesToServer(userStore.user_id);
+      console.log('Favorites saved successfully on unmount!');
+    } catch (error) {
+      console.error('Error saving favorites on unmount:', error);
+    }
+  } else {
+    console.log('No user logged in, skipping favorite save');
+  }
 });
 
 </script>
