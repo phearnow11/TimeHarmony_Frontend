@@ -187,9 +187,10 @@
           <!-- Place Order Button -->
           <button
             @click="createOrder"
+            :disabled="isProcessingPayment"
             class="th-p-btn text-white px-4 py-2 w-full text-center"
           >
-            Place an order
+            {{ isProcessingPayment ? 'Processing...' : 'Place an order' }}
           </button>
         </section>
       </div>
@@ -261,19 +262,19 @@ import { useUserStore } from '../stores/user';
 import { useAuthStore } from '../stores/auth';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-
 import OrderItem from '../components/OrderItem.vue';
+import { createVnPayPayment } from '../stores/payment';
 
 const cartStore = useCartStore();
 const userStore = useUserStore();
 const auth = useAuthStore();
 const router = useRouter();
-
 const selectedItems = ref([]);
 const totalPrice = ref(0);
 const shippingAddress = ref(null);
 const note = ref('');
 const selectedOption = ref('cod');
+const isProcessingPayment = ref(false);
 
 onMounted(() => {
   selectedItems.value = cartStore.getSelectedItems;
@@ -322,17 +323,75 @@ const createOrder = async () => {
         console.error('No recent order found');
         alert('Error creating order. Please try again.');
       }
+    } else if (selectedOption.value === 'card') {
+      isProcessingPayment.value = true;
+      // VNPay payment process
+      const paymentResponse = await createVnPayPayment(totalPrice.value);
+      if (paymentResponse.data && paymentResponse.data.paymentUrl) {
+        // Redirect to VNPay payment page
+        window.location.href = paymentResponse.data.paymentUrl;
+      } else {
+        throw new Error('Invalid payment response');
+      }
     } else {
-      // Handle other payment methods if needed
-      alert('VNPay will coming soon. Please try again with COD method.');
+      alert('Invalid payment method. Please try again.');
     }
-
-    cartStore.clearOrderDetails();
   } catch (error) {
-    console.error('Failed to create order:', error);
-    alert('Failed to create order. Please try again.');
+    console.error('Failed to process payment:', error);
+    alert('Failed to process payment. Please try again.');
+  } finally {
+    isProcessingPayment.value = false;
   }
 };
+
+// Add this method to handle the return from VNPay
+const handleVNPayReturn = async () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const vnpResponseCode = urlParams.get('vnp_ResponseCode');
+  
+  if (vnpResponseCode === '00') {
+    // Payment successful, create order
+    try {
+      const result = await userStore.addOrder(auth.user_id, {
+        wids: selectedItems.value.map(item => item.watch_id),
+        address: shippingAddress.value.id,
+        notice: note.value,
+        total_price: totalPrice.value,
+        payment_method: 'card'
+      });
+      console.log('Order created successfully: ', result);
+
+      // Get the most recent order
+      const mostRecentOrder = await userStore.getOrder(auth.user_id);
+      if (mostRecentOrder && mostRecentOrder.order_id) {
+        const orderDetails = await userStore.getOrderDetail(mostRecentOrder.order_id);
+        if (orderDetails && orderDetails.order_detail) {
+          userStore.setCurrentOrder(orderDetails);
+          router.push(`/testconfirm/${mostRecentOrder.order_id}`);
+        } else {
+          console.error('Invalid order details:', orderDetails);
+          alert('Error processing order. Please try again.');
+        }
+      } else {
+        console.error('No recent order found');
+        alert('Error creating order. Please try again.');
+      }
+    } catch (error) {
+      console.error('Failed to create order:', error);
+      alert('Failed to create order. Please try again.');
+    }
+  } else {
+    alert('Payment was not successful. Please try again.');
+    router.push('/cart');  // Redirect back to cart page
+  }
+};
+
+onMounted(() => {
+  // Check if we're returning from VNPay
+  if (window.location.search.includes('vnp_ResponseCode')) {
+    handleVNPayReturn();
+  }
+});
 //Tạo order
 
 </script>

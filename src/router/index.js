@@ -146,9 +146,9 @@ const router = createRouter({
       }),
     },
     {
-      path: '/favourite',
-      name: 'Favourite',
-      component: () => import('../views/Favourite.vue').catch(err => {
+      path: '/payment-handle',
+      name: 'PaymentHandle',
+      component: () => import('../views/PaymentHandle.vue').catch(err => {
         console.error(err);
       }),
     },
