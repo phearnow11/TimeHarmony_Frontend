@@ -10,6 +10,7 @@ export const useCartStore = defineStore("cart", {
     totalPrice: 0,
     shippingAddress: null,
     note: '',
+    
   }),
   actions: {
     async getCart(member_id) {

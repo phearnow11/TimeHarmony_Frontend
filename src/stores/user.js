@@ -18,10 +18,17 @@ export const useUserStore = defineStore("user", {
     selectedItems: [],
     totalPrice: 0,
     shippingAddress: null,
-    note: ''
+    note: '',
+    mostRecentOrderId: null,
   }),
 
   actions: {
+    setCurrentOrder(order) {
+      this.currentOrder = order;
+    },
+    clearCurrentOrder() {
+      this.currentOrder = null;
+    },
     setOrderDetails(items, price, address, note) {
       this.selectedItems = items;
       this.totalPrice = price;
@@ -199,9 +206,38 @@ export const useUserStore = defineStore("user", {
     async addOrder(user_id, orderData) {
       try {
         const response = await axios.post(`http://localhost:8080/member/add/order/${user_id}`, orderData);
+        this.mostRecentOrderId = response.data.order_id; // Assuming the API returns the order_id
         return response.data;
       } catch (error) {
         console.error('Error adding order:', error);
+        throw error;
+      }
+    },
+    async getOrder(user_id) {
+      try {
+        const response = await axios.get(`http://localhost:8080/member/get/order/${user_id}`);
+        console.log('Full getOrder response:', response.data);
+        
+        // Sort orders by create_time in descending order (most recent first)
+        const sortedOrders = response.data.orders.sort((a, b) => 
+          new Date(b.create_time) - new Date(a.create_time)
+        );
+        
+        // Return the most recent order (first in the sorted array)
+        return sortedOrders[0];
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+        throw error;
+      }
+    },
+    
+    async getOrderDetail(order_id) {
+      try {
+        const response = await axios.get(`http://localhost:8080/member/get/order/detail/${order_id}`);
+        console.log('Full getOrderDetail response:', response.data);
+        return response.data; // This will return the entire response object
+      } catch (error) {
+        console.error('Error fetching order details:', error);
         throw error;
       }
     },

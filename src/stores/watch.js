@@ -164,6 +164,6 @@ export const useWatchStore = defineStore("watch", {
         console.error("Error fetching watch data:", error);
         throw error;
       }
-    },
+    }, 
   }
 });

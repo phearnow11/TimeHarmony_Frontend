@@ -30,15 +30,13 @@
             <p><span class="mdi mdi-map-marker"></span> Shipping Address</p>
             <p class="mt-3">
               <span class="mr-5">{{ shippingAddress.name || "No information" }}</span>
+            </p>
+            <p>
               {{ shippingAddress.phone || "No information" }}
             </p>
             <p>{{ shippingAddress.address || "No information" }}</p>
           </div>
-          <div class="flex-none">
-            <button class="hover-underline-animation text-gray-500">
-              Edit
-            </button>
-          </div>
+          
         </section>
 
       <section
@@ -142,7 +140,7 @@
         </div>
 
         <!-- Order Summary -->
-          <div class="border-t border-secondary pt-4">
+          <div class="border-t border-secondary border-dashed pt-4">
             <span class="block text-xl font-bold pb-4">Order Summary</span>
             <div class="flex justify-between font-normal">
               <span>Subtotal ({{ selectedItems.length }} items)</span>
@@ -158,15 +156,15 @@
             </div>
           </div>
 
-          <div class="border-t border-secondary pt-5 form-content">
+          <div class="border-t border-secondary border-dashed pt-5 form-content">
             <span class="text-xl font-bold">Note from customer</span>
             <div class="form__group field w-full">
-              <p>{{ note }}</p>
+              <p>{{ note || "No Information"}}</p>
             </div>
           </div>
 
           <!-- Voucher Section -->
-          <div class="border-t border-secondary pt-5 form-content">
+          <div class="border-t border-secondary border-dashed pt-5 form-content">
             <span class="text-xl font-bold">Voucher</span>
             <div class="form__group field w-full">
               <input
@@ -180,7 +178,7 @@
           <button class="th-p-btn text-white px-4 py-2">Apply</button>
 
           <!-- Total -->
-          <div class="border-t border-secondary pt-5 flex justify-between items-center">
+          <div class="border-t border-secondary border-dashed  pt-5 flex justify-between items-center">
             <span class="font-bold text-xl">Total</span>
             <span class="font-bold">{{ totalPrice.toLocaleString("vi-VN") }} ₫</span>
           </div>
@@ -198,10 +196,17 @@
 
       <!-- Selected Items Summary -->
       <div class="w-full px-10">
-        <h2 class="text-xl font-bold mb-4">Order Items</h2>
-        <div v-for="item in selectedItems" :key="item.watch_id" class="mb-4 p-4 bg-zinc-900">
-          <h3>{{ item.name }}</h3>
-          <p>Price: {{ item.price.toLocaleString("vi-VN") }} ₫</p>
+        <h2 class="text-xl font-bold pt-10 pb-3">Order Items</h2>
+        <div>
+          <order-item
+          v-for="item in selectedItems" :key="item.watch_id"
+          :productName="item.name || 'Loading...'"
+          :productImage="item.image || ''"
+          :price="item.price || 0"
+          >
+          </order-item>
+          <!-- <h3>{{ item.name }}</h3>
+          <p>Price: {{ item.price.toLocaleString("vi-VN") }} ₫</p> -->
           <!-- Add more item details as needed -->
         </div>
       </div>
@@ -257,6 +262,8 @@ import { useAuthStore } from '../stores/auth';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
+import OrderItem from '../components/OrderItem.vue';
+
 const cartStore = useCartStore();
 const userStore = useUserStore();
 const auth = useAuthStore();
@@ -279,6 +286,8 @@ onMounted(() => {
   }
 });
 
+
+//Tạo order
 const createOrder = async () => {
   const orderData = {
     wids: selectedItems.value.map(item => item.watch_id),
@@ -289,15 +298,43 @@ const createOrder = async () => {
   };
 
   try {
-    const result = await userStore.addOrder(auth.user_id, orderData);
-    console.log('Order created successfully:', result);
+    if (selectedOption.value === 'cod') {
+      console.log('Sending order data:', orderData);
+      const result = await userStore.addOrder(auth.user_id, orderData);
+      console.log('Order created successfully: ', result);
+      // Get the most recent order
+      const mostRecentOrder = await userStore.getOrder(auth.user_id);
+      console.log('Most recent order:', mostRecentOrder);
+
+      if (mostRecentOrder && mostRecentOrder.order_id) {
+        console.log('Fetching order details for order ID:', mostRecentOrder.order_id);
+        const orderDetails = await userStore.getOrderDetail(mostRecentOrder.order_id);
+        console.log('Order details:', orderDetails);
+        
+        if (orderDetails && orderDetails.order_detail) {
+          userStore.setCurrentOrder(orderDetails);
+          router.push(`/testconfirm/${mostRecentOrder.order_id}`);
+        } else {
+          console.error('Invalid order details:', orderDetails);
+          alert('Error processing order. Please try again.');
+        }
+      } else {
+        console.error('No recent order found');
+        alert('Error creating order. Please try again.');
+      }
+    } else {
+      // Handle other payment methods if needed
+      alert('VNPay will coming soon. Please try again with COD method.');
+    }
+
     cartStore.clearOrderDetails();
-    router.push('/ConfirmOrder');
   } catch (error) {
     console.error('Failed to create order:', error);
     alert('Failed to create order. Please try again.');
   }
 };
+//Tạo order
+
 </script>
 
 

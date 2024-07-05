@@ -36,13 +36,16 @@
       </section>
       
       <section class="flex flex-col z-20 bg-zinc-900 p-6 shadow w-4/12 space-y-4">
-        <div class="flex flex-col">
-          <p v-if="defaultAddress">
-            <span class="mdi mdi-map-marker"></span> 
-            {{ defaultAddress.address }}
-          </p>
-          <p v-else>No default address set</p>
+        <div class="flex flex-row items-center justify-between w-full">
+          <div class="flex items-center">
+            <p v-if="defaultAddress" class="flex items-center">
+              <span class="mdi mdi-map-marker"></span>
+              {{ defaultAddress.address }}
+            </p>
+            <p v-else class="flex items-center">No default address set</p>
           </div>
+          <button class="hover-underline-animation flex items-center">Edit</button>
+        </div>
         <div class="border-t border-secondary pt-4">
           <span class="block font-bold text-xl pb-4">Order Summary</span>
           <div class="flex justify-between font-normal">

@@ -139,6 +139,20 @@ const router = createRouter({
       }),
     },
     {
+      path: '/testconfirm/:order_id',
+      name: 'Test',
+      component: () => import('../views/testconfirm.vue').catch(err => {
+        console.error(err);
+      }),
+    },
+    {
+      path: '/favourite',
+      name: 'Favourite',
+      component: () => import('../views/Favourite.vue').catch(err => {
+        console.error(err);
+      }),
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'Error',
       component: () => import('../views/Error.vue').catch(err => {
