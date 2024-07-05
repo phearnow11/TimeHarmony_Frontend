@@ -17,28 +17,29 @@
         class="border-b pt-5 flex align-middle justify-center items-center"
       ></div>
     </div>
-    <div class="flex justify-center h-0 items-start w-full px-10 pt-5 pb-32">
-      <section
-        class="w-8/12 flex items-start justify-between bg-zinc-900 p-4 mr-4"
-      >
-        <div class="flex flex-col items-start flex-grow">
-          <p><span class="mdi mdi-map-marker"></span> Shipping Address</p>
-          <p class="mt-3">
-            <span class="mr-5"
-              >{{ userStore.first_name }} {{ userStore.last_name }}</span
-            >{{ userStore.phone }}
-          </p>
-          <p>{{ userStore.address || "633/24/5" }}</p>
-        </div>
-        <div class="flex-none">
-          <button
-            @click="deleteSelected"
-            class="hover-underline-animation text-gray-500"
-          >
-            Edit
-          </button>
-        </div>
-      </section>
+
+    
+     <!-- Main content -->
+     <div class="flex justify-center h-0 items-start w-full px-10 pt-5 pb-32">
+        <!-- Shipping Address Section -->
+        <section
+          v-if="shippingAddress"
+          class="w-8/12 flex items-start justify-between bg-zinc-900 p-4 mr-4"
+        >
+          <div class="flex flex-col items-start flex-grow">
+            <p><span class="mdi mdi-map-marker"></span> Shipping Address</p>
+            <p class="mt-3">
+              <span class="mr-5">{{ shippingAddress.name || "No information" }}</span>
+              {{ shippingAddress.phone || "No information" }}
+            </p>
+            <p>{{ shippingAddress.address || "No information" }}</p>
+          </div>
+          <div class="flex-none">
+            <button class="hover-underline-animation text-gray-500">
+              Edit
+            </button>
+          </div>
+        </section>
 
       <section
         class="flex flex-col z-20 bg-zinc-900 p-6 shadow w-4/12 space-y-4 h-auto "
@@ -139,67 +140,75 @@
             </div>
           </div>
         </div>
-        <div class="border-t border-secondary pt-4">
-          <span class="block text-xl font-bold pb-4">Order Summary</span>
-          <div class="flex justify-between font-normal">
-            <span>Subtotal ({{ selectedItemsCount }} items)</span>
-            <span class="font-bold"
-              >{{ totalPrice.toLocaleString("vi-VN") }} ₫</span
-            >
+
+        <!-- Order Summary -->
+          <div class="border-t border-secondary pt-4">
+            <span class="block text-xl font-bold pb-4">Order Summary</span>
+            <div class="flex justify-between font-normal">
+              <span>Subtotal ({{ selectedItems.length }} items)</span>
+              <span class="font-bold">{{ totalPrice.toLocaleString("vi-VN") }} ₫</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Shipping Fee</span>
+              <span class="font-bold">0 ₫</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Discount</span>
+              <span class="font-bold">0 ₫</span>
+            </div>
           </div>
-          <div class="flex justify-between">
-            <span>Shipping Fee</span>
-            <span class="font-bold">0 ₫</span>
+
+          <div class="border-t border-secondary pt-5 form-content">
+            <span class="text-xl font-bold">Note from customer</span>
+            <div class="form__group field w-full">
+              <p>{{ note }}</p>
+            </div>
           </div>
-          <div class="flex justify-between">
-            <span>Discount</span>
-            <span class="font-bold">0 ₫</span>
+
+          <!-- Voucher Section -->
+          <div class="border-t border-secondary pt-5 form-content">
+            <span class="text-xl font-bold">Voucher</span>
+            <div class="form__group field w-full">
+              <input
+                type="text"
+                class="form__field"
+                placeholder="Enter a voucher"
+              />
+              <label for="voucher" class="form__label">Enter a voucher</label>
+            </div>
           </div>
-        </div>
-        <div class="border-t border-secondary pt-5 form-content">
-          <span class="text-xl font-bold">Voucher</span>
-          <div class="form__group field w-full">
-            <input
-              type="text"
-              class="form__field"
-              placeholder="Enter a voucher"
-            />
-            <label for="voucher" class="form__label">Enter a voucher</label>
+          <button class="th-p-btn text-white px-4 py-2">Apply</button>
+
+          <!-- Total -->
+          <div class="border-t border-secondary pt-5 flex justify-between items-center">
+            <span class="font-bold text-xl">Total</span>
+            <span class="font-bold">{{ totalPrice.toLocaleString("vi-VN") }} ₫</span>
           </div>
-        </div>
-        <button class="th-p-btn text-white px-4 py-2">Apply</button>
-        <div
-          class="border-t border-secondary pt-5 flex justify-between items-center"
-        >
-          <span class="font-bold text-xl">Total</span>
-          <span class="font-bold"
-            >{{ totalPrice.toLocaleString("vi-VN") }} ₫</span
+          <span class="text-xs">VAT included, where applicable</span>
+
+          <!-- Place Order Button -->
+          <button
+            @click="createOrder"
+            class="th-p-btn text-white px-4 py-2 w-full text-center"
           >
+            Place an order
+          </button>
+        </section>
+      </div>
+
+      <!-- Selected Items Summary -->
+      <div class="w-full px-10">
+        <h2 class="text-xl font-bold mb-4">Order Items</h2>
+        <div v-for="item in selectedItems" :key="item.watch_id" class="mb-4 p-4 bg-zinc-900">
+          <h3>{{ item.name }}</h3>
+          <p>Price: {{ item.price.toLocaleString("vi-VN") }} ₫</p>
+          <!-- Add more item details as needed -->
         </div>
-        <span class="text-xs">VAT included, where applicable</span>
-        <router-link
-          to="/order"
-          class="th-p-btn text-white px-4 py-2 w-full text-center"
-        >
-          Place an order
-        </router-link>
-      </section>
+      </div>
     </div>
 
-    <cart-item
-      v-for="item in cartItems"
-      :key="item.watch_id"
-      :productName="item.name || 'Loading...'"
-      :retailerName="item.sellerName || 'Loading...'"
-      :productImage="item.image || ''"
-      :price="item.price || 0"
-      :retailerAvatar="item.sellerAvatar || ''"
-      :isSelected="item.isSelected"
-      @toggle-select="toggleItemSelection(item.watch_id)"
-      @delete-item="deleteItem(item.watch_id)"
-    />
-  </div>
-  <div class="px-16 pt-72 pb-5">
+
+  <div class="px-16 pt-96 pb-5">
     <h2 class="text-xl font-semibold mb-4">Need help?</h2>
     <p class="mb-4">
       Check our <router-link to="/about" class="hover-underline-animation">Help pages</router-link> or 
@@ -242,127 +251,55 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from "vue";
-import { useCartStore } from "../stores/cart";
-import { useAuthStore } from "../stores/auth";
-import { useWatchStore } from "../stores/watch";
-import CartItem from "../components/CartItem.vue";
-import { useUserStore } from "../stores/user";
+import { useCartStore } from '../stores/cart';
+import { useUserStore } from '../stores/user';
+import { useAuthStore } from '../stores/auth';
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-const watchStore = useWatchStore();
+const cartStore = useCartStore();
 const userStore = useUserStore();
 const auth = useAuthStore();
-const cartStore = useCartStore();
-const watchDetails = ref({});
-const cartItems = ref([]);
-const selectAll = ref(false);
+const router = useRouter();
+
+const selectedItems = ref([]);
+const totalPrice = ref(0);
+const shippingAddress = ref(null);
+const note = ref('');
 const selectedOption = ref('cod');
 
-console.log("user:" + userStore.first_name);
+onMounted(() => {
+  selectedItems.value = cartStore.getSelectedItems;
+  totalPrice.value = cartStore.getTotalPrice;
+  shippingAddress.value = cartStore.getShippingAddress;
+  note.value = cartStore.getNote;
 
-const fetchWatchDetails = async (watchId) => {
-  try {
-    const details = await watchStore.getDetailWatch(watchId);
-    watchDetails.value[watchId] = details;
-    updateCartItem(watchId, details);
-  } catch (error) {
-    console.error(`Error fetching watch details for ${watchId}:`, error);
-  }
-};
-
-const updateCartItem = (watchId, details) => {
-  const index = cartItems.value.findIndex((item) => item.watch_id === watchId);
-  if (index !== -1) {
-    cartItems.value[index] = {
-      ...cartItems.value[index],
-      name: details.name,
-      price: parseFloat(details.price) || 0,
-      image: details.images?.[0] || "",
-      sellerName: details.seller?.user_log_info?.username || "",
-      sellerAvatar: details.seller?.member_image || "",
-    };
-  }
-};
-
-const fetchAllWatchDetails = async () => {
-  for (const item of cartStore.cart_info) {
-    await fetchWatchDetails(item.watch_id);
-  }
-};
-
-onMounted(async () => {
-  try {
-    await cartStore.getCart(auth.user_id);
-    cartItems.value = cartStore.cart_info.map((item) => ({
-      ...item,
-      isSelected: false,
-      name: "Loading...",
-      price: 0,
-      image: "",
-      sellerName: "Loading...",
-      sellerAvatar: "",
-    }));
-    await fetchAllWatchDetails();
-  } catch (error) {
-    console.error("Error fetching cart:", error);
+  if (selectedItems.value.length === 0) {
+    router.push('/cart');
   }
 });
 
-const selectedItemsCount = computed(
-  () => cartItems.value.filter((item) => item.isSelected).length
-);
+const createOrder = async () => {
+  const orderData = {
+    wids: selectedItems.value.map(item => item.watch_id),
+    address: shippingAddress.value.id,
+    notice: note.value,
+    total_price: totalPrice.value,
+    payment_method: selectedOption.value
+  };
 
-const totalPrice = computed(() => {
-  return cartItems.value.reduce((total, item) => {
-    return item.isSelected ? total + (item.price || 0) : total;
-  }, 0);
-});
-
-const toggleAllProducts = () => {
-  selectAll.value = !selectAll.value;
-  cartItems.value.forEach((item) => (item.isSelected = selectAll.value));
-};
-
-const toggleItemSelection = (watchId) => {
-  const item = cartItems.value.find((item) => item.watch_id === watchId);
-  if (item) {
-    item.isSelected = !item.isSelected;
-  }
-  updateSelectAllState();
-};
-
-const updateSelectAllState = () => {
-  selectAll.value =
-    cartItems.value.length > 0 &&
-    cartItems.value.every((item) => item.isSelected);
-};
-
-const deleteItem = async (watchId) => {
   try {
-    await cartStore.removeFromCart(auth.user_id, watchId);
-    cartItems.value = cartItems.value.filter(
-      (item) => item.watch_id !== watchId
-    );
-    updateSelectAllState();
+    const result = await userStore.addOrder(auth.user_id, orderData);
+    console.log('Order created successfully:', result);
+    cartStore.clearOrderDetails();
+    router.push('/ConfirmOrder');
   } catch (error) {
-    console.error("Error deleting item:", error);
+    console.error('Failed to create order:', error);
+    alert('Failed to create order. Please try again.');
   }
 };
-
-const deleteSelected = async () => {
-  try {
-    for (const item of cartItems.value.filter((item) => item.isSelected)) {
-      await cartStore.removeFromCart(auth.user_id, item.watch_id);
-    }
-    cartItems.value = cartItems.value.filter((item) => !item.isSelected);
-    selectAll.value = false;
-  } catch (error) {
-    console.error("Error deleting selected items:", error);
-  }
-};
-
-watch(cartItems, updateSelectAllState, { deep: true });
 </script>
+
 
 <style scoped>
 .checkbox-container {

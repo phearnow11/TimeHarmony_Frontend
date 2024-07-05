@@ -97,6 +97,13 @@ const router = createRouter({
       }),
     },
     {
+      path: '/setting/address',
+      name: 'AddressSetting',
+      component: () => import('../views/Setting/AddressSetting.vue').catch(err => {
+        console.error(err);
+      }),
+    },
+    {
       path: '/detail/:watch_id',
       name: 'ProductDetail',
       component: () => import('../views/ProductDetail.vue').catch(err => {
@@ -121,6 +128,13 @@ const router = createRouter({
       path: '/order',
       name: 'Order',
       component: () => import('../views/Order.vue').catch(err => {
+        console.error(err);
+      }),
+    },
+    {
+      path: '/orderconfirm',
+      name: 'ConfirmOrder',
+      component: () => import('../views/ConfirmOrder.vue').catch(err => {
         console.error(err);
       }),
     },

@@ -37,8 +37,12 @@
       
       <section class="flex flex-col z-20 bg-zinc-900 p-6 shadow w-4/12 space-y-4">
         <div class="flex flex-col">
-          <p><span class="mdi mdi-map-marker"></span> Ho Chi Minh City</p>
-        </div>
+          <p v-if="defaultAddress">
+            <span class="mdi mdi-map-marker"></span> 
+            {{ defaultAddress.address }}
+          </p>
+          <p v-else>No default address set</p>
+          </div>
         <div class="border-t border-secondary pt-4">
           <span class="block font-bold text-xl pb-4">Order Summary</span>
           <div class="flex justify-between font-normal">
@@ -52,6 +56,18 @@
           <div class="flex justify-between">
             <span>Discount</span>
             <span class=" font-bold">0 ₫</span>
+          </div>
+        </div>
+        <div class="border-t border-secondary pt-5 form-content">
+          <span class="text-xl font-bold">Note</span>
+          <div class="form__group field w-full">
+            <input
+              v-model="note"
+              type="text"
+              class="form__field"
+              placeholder="Enter a note"
+            />
+            <label for="note" class="form__label">Enter a note</label>
           </div>
         </div>
         <div class="border-t border-secondary pt-5 form-content">
@@ -73,12 +89,12 @@
           <span class="font-bold">{{ totalPrice.toLocaleString("vi-VN") }} ₫</span>
         </div>
         <span class="text-xs">VAT included, where applicable</span>
-        <router-link
-          to="/order"
+        <button
+          @click="createOrder"
           class="th-p-btn text-white px-4 py-2 w-full text-center"
         >
           Proceed to order
-        </router-link>
+        </button>
       </section>
     </div>
     
@@ -106,19 +122,36 @@
   </div>
 </template>
 
+
 <script setup>
 import { ref, computed, onMounted, watch } from "vue";
 import { useCartStore } from "../stores/cart";
 import { useAuthStore } from "../stores/auth";
 import { useWatchStore } from "../stores/watch";
+import { useUserStore } from "../stores/user";
 import CartItem from "../components/CartItem.vue";
+import { useRouter } from 'vue-router';
 
 const watchStore = useWatchStore();
 const auth = useAuthStore();
 const cartStore = useCartStore();
+const userStore = useUserStore();
 const watchDetails = ref({});
 const cartItems = ref([]);
 const selectAll = ref(false);
+const addresses = ref([]);
+const defaultAddress = ref(null);
+const note = ref('');
+const router = useRouter();
+
+const fetchAddresses = async () => {
+  try {
+    addresses.value = await userStore.getAddressDetails(auth.user_id);
+    defaultAddress.value = addresses.value.find(addr => addr.isDefault);
+  } catch (error) {
+    console.error("Error fetching addresses:", error);
+  }
+};
 
 const fetchWatchDetails = async (watchId) => {
   try {
@@ -162,6 +195,7 @@ onMounted(async () => {
       sellerName: "Loading...",
       sellerAvatar: "",
     }));
+    await fetchAddresses();
     await fetchAllWatchDetails();
   } catch (error) {
     console.error("Error fetching cart:", error);
@@ -222,6 +256,17 @@ const deleteSelected = async () => {
 };
 
 watch(cartItems, updateSelectAllState, { deep: true });
+
+const createOrder = async () => {
+  const selectedItems = cartItems.value.filter(item => item.isSelected);
+  cartStore.setSelectedItems(selectedItems);
+  cartStore.setTotalPrice(totalPrice.value);
+  cartStore.setShippingAddress(defaultAddress.value);
+  cartStore.setNote(note.value);
+  
+  router.push('/order');
+};
+
 </script>
 
 <style scoped>

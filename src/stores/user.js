@@ -8,16 +8,32 @@ export const useUserStore = defineStore("user", {
     email: "",
     first_name: "",
     last_name: "",
-    address: "",
+    address: [],
     phone: "",
     image: "https://files.catbox.moe/n1w3b0.png",
     active: "",
     user_id: null,  // Add this to your state
     cur_fav:[],
     wait_fav:[],
+    selectedItems: [],
+    totalPrice: 0,
+    shippingAddress: null,
+    note: ''
   }),
 
   actions: {
+    setOrderDetails(items, price, address, note) {
+      this.selectedItems = items;
+      this.totalPrice = price;
+      this.shippingAddress = address;
+      this.note = note;
+    },
+    clearOrderDetails() {
+      this.selectedItems = [];
+      this.totalPrice = 0;
+      this.shippingAddress = null;
+      this.note = '';
+    },
     getFavorites() {
       this.wait_fav.add
       return [...this.state.cur_fav, ...this.state.wait_fav];
@@ -163,6 +179,32 @@ export const useUserStore = defineStore("user", {
         throw err;
       }
     },
-    
+
+    // Add this to the actions in useUserStore
+    async getAddressDetails(user_id) {
+      try {
+        const response = await axios.get(`http://localhost:8080/member/get/address/${user_id}`);
+        return response.data.map(address => ({
+          id: address.address_id,
+          name: address.name,
+          phone: address.phone,
+          address: address.address_detail,
+          isDefault: address._default
+        }));
+      } catch (error) {
+        console.error('Error fetching address details:', error);
+        throw error;
+      }
+    },
+    async addOrder(user_id, orderData) {
+      try {
+        const response = await axios.post(`http://localhost:8080/member/add/order/${user_id}`, orderData);
+        return response.data;
+      } catch (error) {
+        console.error('Error adding order:', error);
+        throw error;
+      }
+    },
+        
   },
 });

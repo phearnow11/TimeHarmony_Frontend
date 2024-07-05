@@ -6,6 +6,7 @@
         <ul>
           <li class="mb-2 text-secondary">Account</li>
           <li class="mb-2"><router-link to="/setting/password" class="hover-underline-animation">Password</router-link></li>
+          <li class="mb-2"><router-link to="/setting/address" class="hover-underline-animation">Address</router-link></li>
           <li class="mb-2"><router-link to="#" class="hover-underline-animation">My Purchase</router-link></li>
           <li class="mb-2"><router-link to="#" class="hover-underline-animation">Delete account</router-link></li>
         </ul>
@@ -60,17 +61,7 @@
             <label for="last_name" class="form__label">Last Name</label>
           </div>
             </div>
-            <div class="form__group field w-96">
-            <input
-              type="text"
-              class="form__field w-full"
-              v-model="user.phone"
-              :placeholder="user.phone"
-              required
-            />
-            <label for="phone" class="form__label">Phone Number</label>
-          </div>
-            <div class="form__group field w-96">
+          <div class="form__group field w-96">
             <input
               type="text"
               class="form__field w-full"
@@ -80,16 +71,7 @@
             />
             <label for="email" class="form__label">Email</label>
           </div>
-          <div class="form__group field w-96">
-            <input
-              type="text"
-              class="form__field mb-4 w-full"
-              v-model="user.address"
-              :placeholder="user.address"
-              required
-            />
-            <label for="address" class="form__label">Address</label>
-          </div>
+          
             <button type="submit" class="th-p-btn">Save changes</button>
           </form>
         </div>

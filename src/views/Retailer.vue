@@ -83,7 +83,7 @@ const retailer = ref({
   email: "",
   first_name: "",
   last_name: "",
-  address: "",
+  address: [],
   phone: "",
   image: "",
   active: "",
