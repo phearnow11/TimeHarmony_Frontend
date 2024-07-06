@@ -304,7 +304,7 @@ const createOrder = async () => {
       const result = await userStore.addOrder(auth.user_id, orderData);
       console.log('Order created successfully: ', result);
       // Get the most recent order
-      const mostRecentOrder = await userStore.getOrder(auth.user_id);
+      const mostRecentOrder = await userStore.getNewestOrder(auth.user_id);
       console.log('Most recent order:', mostRecentOrder);
 
       if (mostRecentOrder && mostRecentOrder.order_id) {

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="box" :class="{ 'checked': isSelected }" @click="toggleSelection">
+    <div class="box">
       
       <img class="watch-img" :src="productImage" />
       <div class="info">

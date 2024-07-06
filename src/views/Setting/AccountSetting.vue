@@ -6,8 +6,8 @@
         <ul>
           <li class="mb-2 text-secondary">Account</li>
           <li class="mb-2"><router-link to="/setting/password" class="hover-underline-animation">Password</router-link></li>
-          <li class="mb-2"><router-link to="/setting/address" class="hover-underline-animation">Address</router-link></li>
-          <li class="mb-2"><router-link to="#" class="hover-underline-animation">My Purchase</router-link></li>
+          <li class="mb-2"><router-link to="/setting/address" class="hover-underline-animation">My Address</router-link></li>
+          <li class="mb-2"><router-link to="/setting/product" class="hover-underline-animation">My Watch Product</router-link></li>
           <li class="mb-2"><router-link to="#" class="hover-underline-animation">Delete account</router-link></li>
         </ul>
       </div>
@@ -64,7 +64,7 @@
           <div class="form__group field w-96">
             <input
               type="text"
-              class="form__field w-full"
+              class="form__field w-full mb-5"
               v-model="user.email"
               :placeholder="user.email"
               required
@@ -72,7 +72,7 @@
             <label for="email" class="form__label">Email</label>
           </div>
           
-            <button type="submit" class="th-p-btn">Save changes</button>
+            <button type="submit" class="th-p-btn pt-5">Save changes</button>
           </form>
         </div>
       </div>

@@ -188,6 +188,23 @@ export const useUserStore = defineStore("user", {
     },
 
     // Add this to the actions in useUserStore
+    async addAddress(user_id, addressData) {
+      try {
+        const response = await axios.post(
+          `http://localhost:8080/member/save/address/${user_id}`,
+          {
+            name: addressData.name,
+            phone: addressData.phone,
+            detail: addressData.detail,
+            default: addressData.default
+          },)
+          console.log('Address saved successfully:', response.data);
+          return response.data;
+        } catch (error) {
+          console.error('Error saving address:', error);
+          throw error;
+        }
+    },
     async getAddressDetails(user_id) {
       try {
         const response = await axios.get(`http://localhost:8080/member/get/address/${user_id}`);
@@ -213,7 +230,22 @@ export const useUserStore = defineStore("user", {
         throw error;
       }
     },
-    async getOrder(user_id) {
+
+    async getAllOrders(user_id) {
+      try {
+        const response = await axios.get(`http://localhost:8080/member/get/order/${user_id}`);
+        console.log('Full getAllOrders response:', response.data);
+        
+        // Return all orders, sorted by create_time in descending order
+        return response.data.orders.sort((a, b) => 
+          new Date(b.create_time) - new Date(a.create_time)
+        );
+      } catch (error) {
+        console.error('Error fetching all orders:', error);
+        throw error;
+      }
+    },
+    async getNewestOrder(user_id) {
       try {
         const response = await axios.get(`http://localhost:8080/member/get/order/${user_id}`);
         console.log('Full getOrder response:', response.data);

@@ -8,11 +8,10 @@
           <router-link to="/setting/profile" class="hover-underline-animation">Account</router-link>
         </li>
         <li class="mb-2 text-secondary">Password</li>
-        <li class="mb-2"><router-link to="/setting/address" class="hover-underline-animation">Address</router-link></li>
+        <li class="mb-2"><router-link to="/setting/address" class="hover-underline-animation">My Address</router-link></li>
 
-        <li class="mb-2">
-          <router-link to="#" class="hover-underline-animation">My Purchase</router-link>
-        </li>
+        <li class="mb-2"><router-link to="/setting/product" class="hover-underline-animation">My Watch Product</router-link></li>
+
         <li class="mb-2">
           <router-link to="#" class="hover-underline-animation">Delete account</router-link>
         </li>

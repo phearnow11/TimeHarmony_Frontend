@@ -38,13 +38,17 @@
       <section class="flex flex-col z-20 bg-zinc-900 p-6 shadow w-4/12 space-y-4">
         <div class="flex flex-row items-center justify-between w-full">
           <div class="flex items-center">
-            <p v-if="defaultAddress" class="flex items-center">
+            <p v-if="selectedAddress" class="flex items-center">
+              <span class="mdi mdi-map-marker"></span>
+              {{ selectedAddress.address }}
+            </p>
+            <p v-else-if="defaultAddress" class="flex items-center">
               <span class="mdi mdi-map-marker"></span>
               {{ defaultAddress.address }}
             </p>
-            <p v-else class="flex items-center">No default address set</p>
+            <p v-else class="flex items-center">No address selected</p>
           </div>
-          <button class="hover-underline-animation flex items-center">Edit</button>
+          <button @click="openAddressModal" class="hover-underline-animation flex items-center">Edit</button>
         </div>
         <div class="border-t border-secondary pt-4">
           <span class="block font-bold text-xl pb-4">Order Summary</span>
@@ -101,6 +105,7 @@
       </section>
     </div>
     
+    
       <cart-item
       
       v-for="item in cartItems"
@@ -114,6 +119,31 @@
       @toggle-select="toggleItemSelection(item.watch_id)"
       @delete-item="deleteItem(item.watch_id)"
       />
+
+      <div v-if="showAddressModal" class="modal-overlay">
+      <div class="modal-content">
+        <h2 class="text-xl font-bold mb-4">Select Shipping Address</h2>
+        <div v-for="address in addresses" :key="address.id" class="address-item mb-2">
+          <label class="flex items-center">
+            <input
+              type="radio"
+              :value="address"
+              v-model="tempSelectedAddress"
+              :checked="address.id === tempSelectedAddress?.id"
+              class="mr-2"
+            />
+            <span>
+              {{ address.name}} {{ address.phone }} <br>
+              {{ address.address }}
+            </span>
+          </label>
+        </div>
+        <div class="mt-4 flex justify-end">
+          <button @click="closeAddressModal" class="mr-2 px-4 py-2 border border-secondary">Cancel</button>
+          <button @click="confirmAddressSelection" class="th-p-btn px-4 py-2">Confirm</button>
+        </div>
+      </div>
+    </div>
   </div>
   <div v-else class="h-screen flex flex-col items-center justify-center">
     <div>
@@ -123,6 +153,7 @@
       <router-link to="/" class="hover-underline-animation">Go back to Home</router-link>
     </div>
   </div>
+  
 </template>
 
 
@@ -144,16 +175,39 @@ const cartItems = ref([]);
 const selectAll = ref(false);
 const addresses = ref([]);
 const defaultAddress = ref(null);
+const showAddressModal = ref(false);
+const selectedAddress = ref(null);
+const tempSelectedAddress = ref(null);
 const note = ref('');
 const router = useRouter();
 
 const fetchAddresses = async () => {
   try {
     addresses.value = await userStore.getAddressDetails(auth.user_id);
-    defaultAddress.value = addresses.value.find(addr => addr.isDefault);
+    console.log("Fetched addresses:", addresses.value);
+    selectedAddress.value = addresses.value.find(addr => addr.isDefault) || null;
+    console.log("Selected address:", selectedAddress.value);
   } catch (error) {
     console.error("Error fetching addresses:", error);
   }
+};
+
+const closeAddressModal = () => {
+  showAddressModal.value = false;
+  tempSelectedAddress.value = null;
+};
+
+const openAddressModal = () => {
+  tempSelectedAddress.value = selectedAddress.value;
+  showAddressModal.value = true;
+};
+
+const confirmAddressSelection = () => {
+  if (tempSelectedAddress.value) {
+    selectedAddress.value = tempSelectedAddress.value;
+    console.log("New selected address:", selectedAddress.value);
+  }
+  closeAddressModal();
 };
 
 const fetchWatchDetails = async (watchId) => {
@@ -264,7 +318,7 @@ const createOrder = async () => {
   const selectedItems = cartItems.value.filter(item => item.isSelected);
   cartStore.setSelectedItems(selectedItems);
   cartStore.setTotalPrice(totalPrice.value);
-  cartStore.setShippingAddress(defaultAddress.value);
+  cartStore.setShippingAddress(selectedAddress.value);
   cartStore.setNote(note.value);
   
   router.push('/order');
@@ -295,5 +349,32 @@ const createOrder = async () => {
   stroke-dasharray: 320;
   stroke-dashoffset: 320;
   transition: stroke-dashoffset 0.3s ease;
+}
+
+.modal-overlay {
+  padding: 5px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(20, 20, 20, 0.836);
+  backdrop-filter: blur(10px); /* Apply a blur effect to the background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #1a1a1a;
+  padding: 2rem;
+  max-width: 700px;
+  width: 100%;
+}
+
+.address-item {
+  padding: 0.5rem;
+  border: 1px solid #333;
 }
 </style>

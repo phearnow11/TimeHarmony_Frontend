@@ -104,6 +104,13 @@ const router = createRouter({
       }),
     },
     {
+      path: '/setting/product',
+      name: 'ProductSetting',
+      component: () => import('../views/Setting/ProductSetting.vue').catch(err => {
+        console.error(err);
+      }),
+    },
+    {
       path: '/detail/:watch_id',
       name: 'ProductDetail',
       component: () => import('../views/ProductDetail.vue').catch(err => {
@@ -142,6 +149,13 @@ const router = createRouter({
       path: '/testconfirm/:order_id',
       name: 'Test',
       component: () => import('../views/testconfirm.vue').catch(err => {
+        console.error(err);
+      }),
+    },
+    {
+      path: '/test',
+      name: 'Testaddress',
+      component: () => import('../views/testaddress.vue').catch(err => {
         console.error(err);
       }),
     },
