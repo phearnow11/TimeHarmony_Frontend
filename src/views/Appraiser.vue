@@ -24,21 +24,27 @@
           v-model="column.tasks"
           :group="'tasks'"
           item-key="id"
+          @end="onDragEnd(columnIndex)"
           :class="['flex-grow min-h-[200px] p-2 bg-[#343432]', { 'list-none': viewMode === 'kanban' }]"
         >
           <template #item="{element}">
-            <div class="bg-[#1b1b1b] p-4 shadow-md cursor-move mb-2">
+            <div class="bg-[#1b1b1b] p-4 shadow-md cursor-move mb-2" 
+            @dragend="
+            setDrag(element.id, column.name); 
+            useStaffStore().approveWatch(element.id); 
+            console.log(column.name)
+            ">
               <h3 class="text-primary font-bold text-md">{{ element.title }}</h3>
               <p class="text-sm text-secondary">{{ element.description }}</p>
+              <p class="text-sm text-secondary">{{ element.id }}</p>
               <p class="text-xs text-secondary mt-2">Due: {{ element.dueDate }}</p>
-              
             </div>
           </template>
         </draggable>
         <input 
           v-model="newTask[columnIndex]"
           @keyup.enter="addTask(columnIndex)"
-          class="w-full p-2  border mt-4"
+          class="w-full p-2 border mt-4"
           placeholder="Add new task"
         />
       </div>
@@ -47,64 +53,63 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import draggable from 'vuedraggable';
+import { useStaffStore } from '../stores/staff';
 
-const viewMode = ref('kanban'); // Assuming 'kanban' is the initial view mode
+const dragthing = ref('')
+const columnNameDrag = ref('');
+
+function setDrag(id, columnName) {
+  dragthing.value = id;
+  columnNameDrag.value = columnName;
+}
+
+const viewMode = ref('kanban');
+const columns = ref([
+  { 
+    name: 'Do not approve yet',
+    tasks: [],
+    columnName: 'Do not approve yet'
+  },
+  { 
+    name: 'Approved',
+    tasks: [],
+    columnName: 'Approved'
+  },
+  { 
+    name: 'Delete',
+    tasks: [],
+    columnName: 'Delete'
+  },
+]);
+const newTask = ref(Array(columns.value.length).fill(''));
+const staffStore = useStaffStore();
+
+onMounted(async () => {
+  await staffStore.getAllUnApproved();
+  columns.value[0].tasks = staffStore.unapprovedWatches.map(watch => ({
+    id: watch.watch_id,
+    title: watch.watch_name,
+    description: watch.watch_description,
+    dueDate: new Date(watch.watch_create_date).toLocaleDateString(),
+  }));
+});
 
 const toggleViewMode = () => {
   viewMode.value = viewMode.value === 'kanban' ? 'list' : 'kanban';
 };
 
-const columns = ref([
-  { 
-    name: 'Do not approve yet',
-    tasks: [
-      { id: 1, title: 'Design new logo', description: 'Create a modern logo for our brand', dueDate: '2024-07-15' },
-      { id: 2, title: 'Update website content', description: 'Refresh the copy on our homepage', dueDate: '2024-07-20' },
-    ]
-  },
-  { 
-    name: 'Approved',
-    tasks: [
-      { id: 3, title: 'Develop new feature', description: 'Implement user authentication system', dueDate: '2024-07-25' },
-    ]
-  },
-  { 
-    name: 'Delete',
-    tasks: [
-      { id: 4, title: 'Set up project repository', description: 'Initialize Git repo and set up branches', dueDate: '2024-07-05' },
-    ]
-  },
-
-]);
-
-const newTask = ref(Array(columns.value.length).fill(''));
-
-let nextId = 13; // Make sure this reflects the highest ID in your data
-
-const addTask = (columnIndex) => {
-  if (newTask.value[columnIndex].trim() !== '') {
-    columns.value[columnIndex].tasks.push({
-      id: nextId++,
-      title: newTask.value[columnIndex],
-      description: 'New task description',
-      dueDate: '2024-07-09'
-    });
-    newTask.value[columnIndex] = '';
-  }
+const onDragEnd = (targetColumnIndex) => {
+  console.log(`Dragged into column: ${columns.value[targetColumnIndex].name}`);
 };
 </script>
 
 <style scoped>
-
 @import 'https://fonts.googleapis.com/icon?family=Material+Icons';
 
-
-
-
 .btn {
-  @apply bg-primary hover:bg-primary text-black font-semibold py-2 px-4  inline-flex items-center;
+  @apply bg-primary hover:bg-primary text-black font-semibold py-2 px-4 inline-flex items-center;
 }
 
 .btn-active {
