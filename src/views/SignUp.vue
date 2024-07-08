@@ -84,25 +84,9 @@
           </div>
         </div>
 
-        <div class="form__group field w-96">
-          <input
-            type="text"
-            class="form__field"
-            placeholder="Phone"
-            v-model="signUpForm.phone"
-          />
-          <label for="phone" class="form__label">Phone</label>
-        </div>
+      
 
-        <div class="form__group field w-96">
-          <input
-            type="text"
-            class="form__field"
-            placeholder="Address"
-            v-model="signUpForm.address"
-          />
-          <label for="address" class="form__label">Address</label>
-        </div>
+        
 
         <button type="submit" class="w-full th-p-btn mt-3">Sign up</button>
 
