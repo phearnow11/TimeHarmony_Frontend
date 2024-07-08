@@ -42,22 +42,18 @@ onMounted(async () => {
     vnpCardType.value = paymentData.vnp_CardType;
 
     if(responseCode.value === "00"){
-        console.log('Day la court manager phone', currentClub.value.courtManagerPhone)
-        const bookingSchedule = paymentStore.bookingSchedule;
-        const paymentDetail = {
-            amount: amountString.value,
-            paymentTime: parseDateTimeString(payDate.value) ,
-            paymentMethod: vnpCardType.value,
-        };
-        const payload = {
-            bookingSchedule: bookingSchedule,
-            paymentDetail: paymentDetail,
-            courtManagerPhone: currentClub.value.courtManagerPhone,
-            clubId: currentClub.value.clubId,
-            clubName: currentClub.value.clubName
+        
+        const Payment = {
+            transaction_no: transationNo.value,
+            payment_amount: amountString.value,
+            bank_code: bankCode.value, 
+            payment_method: vnpCardType.value,
+            create_at : parseDateTimeString(payDate.value)
+            
         };
         
-            const response = await axios.post(`http://localhost:8080/courtmaster/booking/payment-handle`,payload);
+        
+            const response = await axios.post(`http://localhost:8080/payment/vn-pay`,Payment);
             console.log('Response from server:', response.data);
         } 
     }catch (error) {
