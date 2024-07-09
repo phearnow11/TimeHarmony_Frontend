@@ -10,9 +10,9 @@
       </div>
     </div>
     <div :class="{ 'flex align-middle justify-center space-x-4': viewMode === 'kanban' }">
-      <div v-for="(column, columnIndex) in columns" :key="column.name"
+      <div v-for="(column) in columns" :key="column.name"
         :class="[
-          viewMode === 'kanban' ? 'w-1/4' : 'mb-4',
+          viewMode === 'kanban' ? 'w-1/3' : 'mb-4',
           'frame flex flex-col'
         ]">
         <h2 class="font-bold text-lg mb-4">
@@ -35,12 +35,6 @@
             </div>
           </template>
         </draggable>
-        <input
-          v-model="newTask[columnIndex]"
-          @keyup.enter="addTask(columnIndex)"
-          class="w-full p-2 border mt-4"
-          placeholder="Add new task"
-        />
       </div>
     </div>
   </div>
@@ -56,25 +50,39 @@ const columns = ref([
   {
     name: 'Do not approve yet',
     tasks: [],
-    columnName: 'Do not approve yet'
+    columnName: 'Do not approve yet',
   },
   {
     name: 'Approved',
     tasks: [],
-    columnName: 'Approved'
+    columnName: 'Approved',
   },
   {
     name: 'Delete',
     tasks: [],
-    columnName: 'Delete'
+    columnName: 'Delete',
   },
 ]);
-const newTask = ref(Array(columns.value.length).fill(''));
 const staffStore = useStaffStore();
 
 onMounted(async () => {
-  await staffStore.getAllUnApproved();
+  await staffStore.getAllWatch(0);
+  await staffStore.getAllWatch(1);
+  await staffStore.getAllWatch(2);
+  
   columns.value[0].tasks = staffStore.unapprovedWatches.map(watch => ({
+    id: watch.watch_id,
+    title: watch.watch_name,
+    description: watch.watch_description,
+    dueDate: new Date(watch.watch_create_date).toLocaleDateString(),
+  }));
+  columns.value[1].tasks = staffStore.approvedWatches.map(watch => ({
+    id: watch.watch_id,
+    title: watch.watch_name,
+    description: watch.watch_description,
+    dueDate: new Date(watch.watch_create_date).toLocaleDateString(),
+  }));
+  columns.value[2].tasks = staffStore.deleteWatches.map(watch => ({
     id: watch.watch_id,
     title: watch.watch_name,
     description: watch.watch_description,
@@ -94,9 +102,13 @@ const onDragEnd = (event) => {
     // Get the dragged item
     const draggedItemId = event.item.querySelector('p:nth-child(3)').textContent.trim();
     
-    // Call approveWatch with the dragged item's ID and the target column name
-    if(targetColumnName==='Approved'){
-      staffStore.approveWatch(draggedItemId, targetColumnName);
+    // Call appropriate action based on the target column
+    if (targetColumnName === 'Approved') {
+      staffStore.approveWatch(draggedItemId);
+    } else if (targetColumnName === 'Delete') {
+      staffStore.deleteWatch(draggedItemId);
+    } else if (targetColumnName === 'Do not approve yet') {
+      staffStore.unapproveWatch(draggedItemId);
     }
   }
 };
