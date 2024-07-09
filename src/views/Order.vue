@@ -324,6 +324,8 @@ const createOrder = async () => {
         alert('Error creating order. Please try again.');
       }
     } else if (selectedOption.value === 'card') {
+      userStore.setPendingOrder(orderData);
+
       isProcessingPayment.value = true;
       // VNPay payment process
       const paymentResponse = await createVnPayPayment(totalPrice.value);

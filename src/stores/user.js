@@ -20,6 +20,8 @@ export const useUserStore = defineStore("user", {
     shippingAddress: null,
     note: '',
     mostRecentOrderId: null,
+    pendingOrder: null,
+
   }),
 
   actions: {
@@ -220,10 +222,29 @@ export const useUserStore = defineStore("user", {
         throw error;
       }
     },
+    setPendingOrder(orderData) {
+      localStorage.setItem('pendingOrder', JSON.stringify(orderData));
+    },
+
+    getPendingOrder() {
+      const pendingOrder = localStorage.getItem('pendingOrder');
+      return pendingOrder ? JSON.parse(pendingOrder) : null;
+    },
+
+    clearPendingOrder() {
+      localStorage.removeItem('pendingOrder');
+    },
+
     async addOrder(user_id, orderData) {
       try {
-        const response = await axios.post(`http://localhost:8080/member/add/order/${user_id}`, orderData);
-        this.mostRecentOrderId = response.data.order_id; // Assuming the API returns the order_id
+        const dataToUse = orderData || this.getPendingOrder();
+        if (!dataToUse) {
+          throw new Error('No order data available');
+        }
+
+        const response = await axios.post(`http://localhost:8080/member/add/order/${user_id}`, dataToUse);
+        this.mostRecentOrderId = response.data.order_id;
+        this.clearPendingOrder(); // Clear pending order after successful creation
         return response.data;
       } catch (error) {
         console.error('Error adding order:', error);
