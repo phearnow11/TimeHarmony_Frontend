@@ -364,6 +364,7 @@ const createOrder = async () => {
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  overflow-y: hidden;
 }
 
 .modal-content {
@@ -371,6 +372,9 @@ const createOrder = async () => {
   padding: 2rem;
   max-width: 700px;
   width: 100%;
+  height: 70%;
+  overflow-y: scroll;
+  
 }
 
 .address-item {

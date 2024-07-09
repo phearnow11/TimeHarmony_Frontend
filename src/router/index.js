@@ -160,6 +160,13 @@ const router = createRouter({
       }),
     },
     {
+      path: '/voucher',
+      name: 'Voucher',
+      component: () => import('../views/Voucher.vue').catch(err => {
+        console.error(err);
+      }),
+    },
+    {
       path: '/payment-handle',
       name: 'PaymentHandle',
       component: () => import('../views/PaymentHandle.vue').catch(err => {

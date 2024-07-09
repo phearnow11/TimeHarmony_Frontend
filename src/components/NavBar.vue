@@ -101,6 +101,9 @@
             <router-link to="/appraiser" 
             class="submenu-item block px-4 py-2 hover-underline-animation"
             >Appraise</router-link>
+            <router-link to="/voucher" 
+            class="submenu-item block px-4 py-2 hover-underline-animation"
+            >Voucher</router-link>
             <router-link to="" 
             class="submenu-item block px-4 py-2 hover-underline-animation"
             >Customer Support</router-link>

@@ -9,31 +9,25 @@
         </button>
       </div>
     </div>
-
     <div :class="{ 'flex align-middle justify-center space-x-4': viewMode === 'kanban' }">
-      <div v-for="(column, columnIndex) in columns" :key="column.name" 
-           :class="[
-             viewMode === 'kanban' ? 'w-1/4' : 'mb-4',
-             'frame flex flex-col'
-           ]">
+      <div v-for="(column, columnIndex) in columns" :key="column.name"
+        :class="[
+          viewMode === 'kanban' ? 'w-1/4' : 'mb-4',
+          'frame flex flex-col'
+        ]">
         <h2 class="font-bold text-lg mb-4">
           <i :class="['material-icons', column.iconColor]">{{ column.icon }}</i>
           {{ column.name }}
         </h2>
-        <draggable 
+        <draggable
           v-model="column.tasks"
           :group="'tasks'"
           item-key="id"
-          @end="onDragEnd(columnIndex)"
+          @end="onDragEnd"
           :class="['flex-grow min-h-[200px] p-2 bg-[#343432]', { 'list-none': viewMode === 'kanban' }]"
         >
           <template #item="{element}">
-            <div class="bg-[#1b1b1b] p-4 shadow-md cursor-move mb-2" 
-            @dragend="
-            setDrag(element.id, column.name); 
-            useStaffStore().approveWatch(element.id); 
-            console.log(column.name)
-            ">
+            <div class="bg-[#1b1b1b] p-4 shadow-md cursor-move mb-2">
               <h3 class="text-primary font-bold text-md">{{ element.title }}</h3>
               <p class="text-sm text-secondary">{{ element.description }}</p>
               <p class="text-sm text-secondary">{{ element.id }}</p>
@@ -41,7 +35,7 @@
             </div>
           </template>
         </draggable>
-        <input 
+        <input
           v-model="newTask[columnIndex]"
           @keyup.enter="addTask(columnIndex)"
           class="w-full p-2 border mt-4"
@@ -57,27 +51,19 @@ import { ref, onMounted } from 'vue';
 import draggable from 'vuedraggable';
 import { useStaffStore } from '../stores/staff';
 
-const dragthing = ref('')
-const columnNameDrag = ref('');
-
-function setDrag(id, columnName) {
-  dragthing.value = id;
-  columnNameDrag.value = columnName;
-}
-
 const viewMode = ref('kanban');
 const columns = ref([
-  { 
+  {
     name: 'Do not approve yet',
     tasks: [],
     columnName: 'Do not approve yet'
   },
-  { 
+  {
     name: 'Approved',
     tasks: [],
     columnName: 'Approved'
   },
-  { 
+  {
     name: 'Delete',
     tasks: [],
     columnName: 'Delete'
@@ -100,8 +86,19 @@ const toggleViewMode = () => {
   viewMode.value = viewMode.value === 'kanban' ? 'list' : 'kanban';
 };
 
-const onDragEnd = (targetColumnIndex) => {
-  console.log(`Dragged into column: ${columns.value[targetColumnIndex].name}`);
+const onDragEnd = (event) => {
+  if (event.to) {
+    const targetColumnName = event.to.parentElement.querySelector('h2').textContent.trim();
+    console.log(`Dragged into column: ${targetColumnName}`);
+    
+    // Get the dragged item
+    const draggedItemId = event.item.querySelector('p:nth-child(3)').textContent.trim();
+    
+    // Call approveWatch with the dragged item's ID and the target column name
+    if(targetColumnName==='Approved'){
+      staffStore.approveWatch(draggedItemId, targetColumnName);
+    }
+  }
 };
 </script>
 

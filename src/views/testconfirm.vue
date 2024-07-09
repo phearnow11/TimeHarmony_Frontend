@@ -116,6 +116,10 @@
             <div class="bg-black p-6 shadow">
               <h2 class="text-xl font-bold mb-4">Payment Summary</h2>
               <div class="flex justify-between font-bold text-lg mt-4 pt-4 border-t">
+                <span>Note</span>
+                <span>{{ orderDetails.order_detail.notice }}</span>
+              </div>
+              <div class="flex justify-between font-bold text-lg mt-4 pt-4 border-t">
                 <span>Payment Method</span>
                 <span>COD</span>
               </div>
