@@ -49,9 +49,7 @@
       <!-- Product Info -->
       <div class="w-full md:w-1/2">
         <h1 class="text-xl font-semibold mb-2">{{ watchStore.watch_data.name }}</h1>
-        <div class="flex items-center mb-2">
-          <span class="text-2xl font-bold">{{ watchStore.watch_data.description }}</span>
-        </div>
+        
         <div class="mb-4">
           <span class="text-xl font-thin text-secondary"> {{ formatPriceVND(watchStore.watch_data.price) }}</span>
         </div>

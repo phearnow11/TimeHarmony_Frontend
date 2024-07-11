@@ -27,6 +27,7 @@
 import { ref, defineProps, computed, onMounted, onBeforeUnmount } from 'vue';
 import axios from 'axios';
 import { useUserStore } from '../stores/user';
+import { useAuthStore } from '../stores/auth';
 
 const props = defineProps({
   productName: {
@@ -79,10 +80,10 @@ const toggleBookmark = (event) => {
   event.stopPropagation();
   event.preventDefault();
   
-  if (isBookmarked.value) {
-    userStore.removeFromWaitFav(props.watch_id);
+  if (!isBookmarked.value) {
+    userStore.saveFavoritesToServer(useAuthStore().user_id, props.watch_id)
   } else {
-    userStore.addToWaitFav(props.watch_id);
+    console.log('Unfavorited');
   }
   
   isBookmarked.value = !isBookmarked.value;

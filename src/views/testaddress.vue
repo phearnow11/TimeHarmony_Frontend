@@ -92,84 +92,87 @@ const selectedWardName = computed(() => {
   return wards.value.find(w => w.idCommune === selectedWard.value)?.name || '';
 });
 
+const selectedProvinceId = computed(() => selectedProvince.value || '');
+const selectedDistrictId = computed(() => selectedDistrict.value || '');
+const selectedWardId = computed(() => selectedWard.value || '');
+
 </script>
 
 <template>
-    <div class="address-form">
-      <div class="select-item">
-        <label for="province" class="select-label">Tỉnh/Thành Phố:</label><br>
-        <select class="custom-select w-96" id="province" v-model="selectedProvince">
-          <option value="">Chọn Tỉnh/Thành Phố...</option>
-          <option v-for="province in provinces" :key="province.idProvince" :value="province.idProvince">
-            {{ province.name }}
-          </option>
-        </select>
-        <span v-if="isLoadingProvinces">Loading...</span>
-      </div>
-  
-      <div class="select-item">
-        <label for="district" class="select-label">Quận/Huyện:</label> <br>
-        <select class="custom-select w-96" id="district" v-model="selectedDistrict" :disabled="!selectedProvince">
-          <option value="">Chọn Quận/Huyện...</option>
-          <option v-for="district in districts" :key="district.idDistrict" :value="district.idDistrict">
-            {{ district.name }}
-          </option>
-        </select>
-        <span v-if="isLoadingDistricts">Loading...</span>
-      </div>
-  
-      <div class="select-item">
-        <label for="ward" class="select-label">Phường/Xã:</label> <br>
-        <select class="custom-select w-96" id="ward" v-model="selectedWard" :disabled="!selectedDistrict">
-          <option value="">Chọn Phường/Xã...</option>
-          <option v-for="ward in wards" :key="ward.idCommune" :value="ward.idCommune">
-            {{ ward.name }}
-          </option>
-        </select>
-        <span v-if="isLoadingWards">Loading...</span>
-      </div>
+  <div class="address-form">
+    <div class="select-item">
+      <label for="province" class="select-label">Tỉnh/Thành Phố:</label><br>
+      <select class="custom-select w-96" id="province" v-model="selectedProvince">
+        <option value="">Chọn Tỉnh/Thành Phố...</option>
+        <option v-for="province in provinces" :key="province.idProvince" :value="province.idProvince">
+          {{ province.name }}
+        </option>
+      </select>
+      <span v-if="isLoadingProvinces">Loading...</span>
     </div>
-    <div>
-      <br>
-      <h2 v-if="selectedProvinceName || selectedDistrictName || selectedWardName">
-        {{ selectedProvinceName }}
-        {{ selectedDistrictName ? `- ${selectedDistrictName}` : '' }}
-        {{ selectedWardName ? `- ${selectedWardName}` : '' }}
-      </h2>
+
+    <div class="select-item">
+      <label for="district" class="select-label">Quận/Huyện:</label> <br>
+      <select class="custom-select w-96" id="district" v-model="selectedDistrict" :disabled="!selectedProvince">
+        <option value="">Chọn Quận/Huyện...</option>
+        <option v-for="district in districts" :key="district.idDistrict" :value="district.idDistrict">
+          {{ district.name }}
+        </option>
+      </select>
+      <span v-if="isLoadingDistricts">Loading...</span>
     </div>
-  </template>
-  
-  <style scoped>
-  .select-item {
-    margin-bottom: 1rem;
-  }
-  
-  .select-label {
-    display: block;
-    font-size: 1rem;
-    color: var(--secondary); /* Yellow text color */
-  }
-  
-  .custom-select {
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-    border: none;
-    border-bottom: 2px solid var(--secondary); /* Yellow bottom border */
-    background-color: transparent; /* Black background */
-    color: var(--secondary); /* Yellow text color */
-  }
-  
-  .custom-select option {
-    background-color: #141414da;
-    backdrop-filter: blur(40px); /* Apply a blur effect to the background */
-    color: var(--secondary); /* Yellow text color */
-  }
-  
-  span {
-    display: block;
-    margin-top: 0.5rem;
-    font-size: 0.875rem;
-    color: var(--secondary); /* Yellow text color */
-  }
-  </style>
-  
+
+    <div class="select-item">
+      <label for="ward" class="select-label">Phường/Xã:</label> <br>
+      <select class="custom-select w-96" id="ward" v-model="selectedWard" :disabled="!selectedDistrict">
+        <option value="">Chọn Phường/Xã...</option>
+        <option v-for="ward in wards" :key="ward.idCommune" :value="ward.idCommune">
+          {{ ward.name }}
+        </option>
+      </select>
+      <span v-if="isLoadingWards">Loading...</span>
+    </div>
+  </div>
+  <div>
+    <br>
+    <h2 v-if="selectedProvinceName || selectedDistrictName || selectedWardName">
+      Selected Province: {{ selectedProvinceName }} (ID: {{ selectedProvinceId }})<br>
+      Selected District: {{ selectedDistrictName }} (ID: {{ selectedDistrictId }})<br>
+      Selected Ward: {{ selectedWardName }} (ID: {{ selectedWardId }})
+    </h2>
+  </div>
+</template>
+
+<style scoped>
+.select-item {
+  margin-bottom: 1rem;
+}
+
+.select-label {
+  display: block;
+  font-size: 1rem;
+  color: var(--secondary); /* Yellow text color */
+}
+
+.custom-select {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: none;
+  border-bottom: 2px solid var(--secondary); /* Yellow bottom border */
+  background-color: transparent; /* Black background */
+  color: var(--secondary); /* Yellow text color */
+}
+
+.custom-select option {
+  background-color: #141414da;
+  backdrop-filter: blur(40px); /* Apply a blur effect to the background */
+  color: var(--secondary); /* Yellow text color */
+}
+
+span {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--secondary); /* Yellow text color */
+}
+</style>

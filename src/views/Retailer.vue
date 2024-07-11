@@ -59,7 +59,7 @@
             :retailerName="retailer.username"
             :retailerAvatar="retailer.image"
             :price="i.price"
-            :link="`/detail/${i.watch_id}`"
+            :watch_id="i.watch_id"
             :seller_id="`/retailer/${retailer.user_id}`"
           />
       </div>

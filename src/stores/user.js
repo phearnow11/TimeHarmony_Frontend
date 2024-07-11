@@ -13,8 +13,6 @@ export const useUserStore = defineStore("user", {
     image: "https://files.catbox.moe/n1w3b0.png",
     active: "",
     user_id: null,  // Add this to your state
-    cur_fav:[],
-    wait_fav:[],
     selectedItems: [],
     totalPrice: 0,
     shippingAddress: null,
@@ -61,32 +59,22 @@ export const useUserStore = defineStore("user", {
       }
     },
 
-    async saveFavoritesToServer(user_id) {
+    async saveFavoritesToServer(user_id, watch_id) {
       if (!user_id) {
         console.error('No user ID provided');
         return;
       }
     
       try {
-        if (this.wait_fav.length === 0) {
-          console.log('No new favorites to save');
-          return;
-        }
+        
     
-        console.log('Preparing to save favorites:', this.wait_fav);
-        const response = await axios.post(`http://localhost:8080/member/add/favorites/${user_id}`, {
-          w_ids: this.wait_fav
-        });
+        console.log('Preparing to save favorites:', watch_id);
+        const response = await axios.post(`http://localhost:8080/member/add/favorites/${user_id}-${watch_id}`);
         console.log('aaaaaaaa: '+response.data);
     
         if (response.data && response.status === 200) {
           console.log('Favorites saved successfully:', response.data);
           
-          // Update cur_fav with newly saved favorites
-          this.cur_fav = [...new Set([...this.cur_fav, ...this.wait_fav])];
-          
-          // Clear wait_fav after successful save
-          this.wait_fav = [];
         } else {
           console.error('Unexpected response from server:', response);
         }

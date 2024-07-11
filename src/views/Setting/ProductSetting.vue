@@ -83,7 +83,7 @@
   });
   
   const viewOrderDetails = (orderId) => {
-    router.push(`/testconfirm/${orderId}`);
+    router.push(`/order/${orderId}`);
     console.log('View order details:', orderId);
   };
   

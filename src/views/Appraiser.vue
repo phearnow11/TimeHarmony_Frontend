@@ -29,9 +29,11 @@
           <template #item="{element}">
             <div class="bg-[#1b1b1b] p-4 shadow-md cursor-move mb-2">
               <h3 class="text-primary font-bold text-md">{{ element.title }}</h3>
-              <p class="text-sm text-secondary">{{ element.description }}</p>
-              <p class="text-sm text-secondary">{{ element.id }}</p>
-              <p class="text-xs text-secondary mt-2">Due: {{ element.dueDate }}</p>
+              <p class="text-sm text-[whitesmoke]">{{ formatPriceVND(element.price) }}</p>
+              <p class="text-sm text-[whitesmoke]">{{ element.id }}</p>
+              <p class="text-xs text-[whitesmoke] mt-2 mb-2">Due: {{ element.dueDate }}</p>
+              <router-link :to="`/detail/${element.id}`" class="mt-2 hover-underline-animation">Go to Detail</router-link>
+
             </div>
           </template>
         </draggable>
@@ -73,19 +75,19 @@ onMounted(async () => {
   columns.value[0].tasks = staffStore.unapprovedWatches.map(watch => ({
     id: watch.watch_id,
     title: watch.watch_name,
-    description: watch.watch_description,
+    price: watch.price,
     dueDate: new Date(watch.watch_create_date).toLocaleDateString(),
   }));
   columns.value[1].tasks = staffStore.approvedWatches.map(watch => ({
     id: watch.watch_id,
     title: watch.watch_name,
-    description: watch.watch_description,
+    price: watch.price,
     dueDate: new Date(watch.watch_create_date).toLocaleDateString(),
   }));
   columns.value[2].tasks = staffStore.deleteWatches.map(watch => ({
     id: watch.watch_id,
     title: watch.watch_name,
-    description: watch.watch_description,
+    price: watch.price,
     dueDate: new Date(watch.watch_create_date).toLocaleDateString(),
   }));
 });
@@ -112,6 +114,14 @@ const onDragEnd = (event) => {
     }
   }
 };
+const formatPriceVND = (price) => {
+  const formattedPrice = (price / 1).toLocaleString('vi-VN', {
+    style: 'currency',
+    currency: 'VND',
+  });
+  return formattedPrice;
+};
+
 </script>
 
 <style scoped>

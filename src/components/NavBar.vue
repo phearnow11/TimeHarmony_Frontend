@@ -61,7 +61,7 @@
       <router-link to="/chat">
         <span class="mdi mdi-message-text-outline hover-animation"></span>
       </router-link>
-      <router-link to="/discover/favorites?page=0">
+      <router-link to="/favorite">
         <span class="mdi mdi-heart-outline hover-animation"></span>
       </router-link>
       <router-link to="/cart">

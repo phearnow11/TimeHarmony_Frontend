@@ -2,66 +2,6 @@
     <div class="min-h-screen flex items-center justify-center p-4">
       <div class="shadow-lg p-8 max-w-7xl w-full">
         <div class="mb-6">
-          <router-link to="/" class="hover-underline-animation flex w-40">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mt-1 mr-2" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
-            </svg>
-            <span>Back to Shopping</span>
-          </router-link>
-        </div>
-  
-        <div v-if="orderDetails">
-          <h1 class="text-3xl font-bold mb-4">Order Confirmation</h1>
-          <p class="mb-2">Order ID: {{ orderDetails.order_detail.order_id }}</p>
-          <p class="mb-2">Created at: {{ formatDate(orderDetails.order_detail.create_time) }}</p>
-          <p class="mb-2">Shipping Address: {{ orderDetails.order_detail.address }}</p>
-          <p class="mb-2">Recipient: {{ orderDetails.order_detail.receive_name }}</p>
-          <p class="mb-2">Phone: {{ orderDetails.order_detail.phone }}</p>
-          <p class="mb-2">Payment Method: COD</p>
-          <p class="mb-2">Total Price: {{ orderDetails.order_detail.total_price.toLocaleString('vi-VN') }} ₫</p>
-  
-          <h2 class="text-xl font-bold mt-6 mb-4">Ordered Items</h2>
-          <ul class="space-y-4">
-            <li v-for="watch in detailedWatches" :key="watch.id" class="flex items-start bg-sage-200 p-4 rounded">
-              <img :src="watch.images[0]" alt="Watch image" class="w-24 h-24 object-cover rounded mr-4" />
-              <div>
-                <h3 class="font-bold">{{ watch.name }}</h3>
-                <p class="text-xl font-bold mb-2">{{ watch.price.toLocaleString('vi-VN') }} ₫</p>
-                <!-- Add more watch details as needed -->
-              </div>
-            </li>
-          </ul>
-  
-          <div class="grid grid-cols-2 gap-4 mt-6">
-            <div>
-              <h3 class="font-bold mb-2">Shipping Address</h3>
-              <p>{{ orderDetails.order_detail.receive_name }}</p>
-              <p>{{ orderDetails.order_detail.address }}</p>
-            </div>
-            <div>
-              <h3 class="font-bold mb-2">Billing Address</h3>
-              <p>{{ orderDetails.order_detail.receive_name }}</p>
-              <p>{{ orderDetails.order_detail.address }}</p>
-            </div>
-          </div>
-  
-          <button class="bg-olive-700 text-white px-6 py-2 rounded hover:bg-olive-800 transition duration-300 mt-4">
-            TRACK ORDER STATUS
-          </button>
-  
-          <p class="mt-4 text-sm text-gray-600">
-            Pressed order too soon? <a href="#" class="underline">Contact us here</a> for help with ongoing orders
-          </p>
-        </div>
-        <div v-else>
-          <p>Loading order details...</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="min-h-screen flex items-center justify-center p-4">
-      <div class="shadow-lg p-8 max-w-7xl w-full">
-        <div class="mb-6">
             <router-link to="/" class="hover-underline-animation flex w-40 ">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mt-1 mr-2" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
@@ -93,14 +33,10 @@
             <div class="grid grid-cols-2 gap-4 mb-6">
                 <div>
                 <h3 class="font-bold mb-2">Shipping Address</h3>
-                <p>{{ orderDetails.order_detail.receive_name }}</p>
-                <p>{{ orderDetails.order_detail.address }}</p>
+                <p class="text-[whitesmoke]">{{ orderDetails.order_detail.receive_name }}</p>
+                <p class="text-[whitesmoke]">{{ orderDetails.order_detail.address }}</p>
                 </div>
-                <div>
-                <h3 class="font-bold mb-2">Billing Address</h3>
-                <p>{{ orderDetails.order_detail.receive_name }}</p>
-                <p>{{ orderDetails.order_detail.address }}</p>
-                </div>
+                
             </div>
   
             <button class="bg-olive-700 text-white px-6 py-2 rounded hover:bg-olive-800 transition duration-300">
@@ -128,12 +64,12 @@
                 <span>{{ orderDetails.order_detail.total_price.toLocaleString('vi-VN') }} ₫</span>
               </div>
               <div class="flex justify-between mb-2">
-                <span>Taxes</span>
-                <span>0 ₫</span>
+                <span class="text-[whitesmoke]">Voucher</span>
+                <span class="text-[whitesmoke]">0 ₫</span>
               </div>
               <div class="flex justify-between mb-2">
-                <span>Shipping</span>
-                <span>0 ₫</span>
+                <span class="text-[whitesmoke]">Shipping</span>
+                <span class="text-[whitesmoke]">0 ₫</span>
               </div>
               <div class="flex justify-between font-bold text-lg mt-4 pt-4 border-t">
                 <span>Total</span>
@@ -148,7 +84,6 @@
                   <span>Transaction Date</span>
                   <span>{{ formatDate(orderDetails.order_detail.create_time)}}</span>
                 </div>
-                
               </div>
             </div>
           </div>

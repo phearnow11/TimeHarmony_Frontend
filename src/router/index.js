@@ -48,6 +48,13 @@ const router = createRouter({
       }),
     },
     {
+      path: '/favorite',
+      name: 'Favorite',
+      component: () => import('../views/Favorite.vue').catch(err => {
+        console.error(err);
+      }),
+    },
+    {
       path: '/about',
       name: 'About',
       component: () => import('../views/About.vue').catch(err => {
@@ -139,16 +146,9 @@ const router = createRouter({
       }),
     },
     {
-      path: '/orderconfirm',
-      name: 'ConfirmOrder',
-      component: () => import('../views/ConfirmOrder.vue').catch(err => {
-        console.error(err);
-      }),
-    },
-    {
-      path: '/testconfirm/:order_id',
-      name: 'Test',
-      component: () => import('../views/testconfirm.vue').catch(err => {
+      path: '/order/:order_id',
+      name: 'OrderConfirm',
+      component: () => import('../views/OrderConfirm.vue').catch(err => {
         console.error(err);
       }),
     },
@@ -202,16 +202,16 @@ router.beforeEach(async (to, from, next) => {
   next();
 });
 
-router.afterEach(()=>{
-  // Close
-  window.addEventListener('beforeunload', async () => {
-    try {
-      await useUserStore().saveFavoritesToServer(useUserStore().user_id);
-      console.log('Favorites saved successfully!');
-    } catch (error) {
-      console.error(error);
-    }
-  });
-})
+// router.afterEach(()=>{
+//   // Close
+//   window.addEventListener('beforeunload', async () => {
+//     try {
+//       await useUserStore().saveFavoritesToServer(useUserStore().user_id);
+//       console.log('Favorites saved successfully!');
+//     } catch (error) {
+//       console.error(error);
+//     }
+//   });
+// })
 
 export default router;

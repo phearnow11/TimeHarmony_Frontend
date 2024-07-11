@@ -317,7 +317,7 @@ const createOrder = async () => {
         
         if (orderDetails && orderDetails.order_detail) {
           userStore.setCurrentOrder(orderDetails);
-          router.push(`/testconfirm/${mostRecentOrder}`);
+          router.push(`/order/${mostRecentOrder}`);
         } else {
           console.error('Invalid order details:', orderDetails);
           alert('Error processing order. Please try again.');
