@@ -1,34 +1,35 @@
 <template>
   <div v-if="auth.user_id" class="flex max-w-7xl mx-auto my-8 p-4">
-    <!-- Sidebar -->
+    <!-- Thanh bên -->
     <div class="w-1/4 mr-8">
-      <h2 class="text-2xl mb-4">Profile Settings</h2>
+      <h2 class="text-2xl mb-4">Cài đặt Hồ sơ</h2>
+      
       <ul>
         <li class="mb-2">
-          <router-link to="/setting/profile" class="hover-underline-animation">Account</router-link>
+          <router-link to="/setting/profile" class="hover-underline-animation">Thông tin cá nhân</router-link>
         </li>
         <li class="mb-2">
-          <router-link to="/setting/password" class="hover-underline-animation">Password</router-link>
+          <router-link to="/setting/password" class="hover-underline-animation">Mật khẩu</router-link>
         </li>
-        <li class="mb-2 text-secondary">My Address</li>
+        <li class="mb-2 text-secondary">Sổ địa chỉ</li>
         <li class="mb-2">
-          <router-link to="/setting/product" class="hover-underline-animation">My Watch Product</router-link>
+          <router-link to="/setting/product" class="hover-underline-animation">Đơn hàng của tôi</router-link>
         </li>
         <li class="mb-2">
-          <router-link to="#" class="hover-underline-animation">Delete account</router-link>
+          <router-link to="#" class="hover-underline-animation">Xóa tài khoản</router-link>
         </li>
       </ul>
     </div>
-    <!-- Content -->
+    <!-- Nội dung -->
     <div class="container mx-auto p-4">
       <div v-if="!showAddForm">
-        <h2 class="text-2xl relative bottom-4 mb-5">My Address</h2>
+        <h2 class="text-2xl relative bottom-4 mb-5">Địa chỉ của tôi</h2>
         <table class="w-full border-collapse">
           <thead>
             <tr class="text-left">
-              <th class="pb-2">Name</th>
-              <th class="pb-2 pl-2">Phone Number</th>
-              <th class="pb-2 pl-2">Address</th>
+              <th class="pb-2">Tên</th>
+              <th class="pb-2 pl-2">Số điện thoại</th>
+              <th class="pb-2 pl-2">Địa chỉ</th>
               <th class="pb-2"></th>
             </tr>
           </thead>
@@ -39,45 +40,45 @@
               <td class="py-5 px-2">{{ address.address }}</td>
               <td class="py-5 px-2 text-right">
                 <span v-if="address.isDefault" class="text-gray-500 text-sm px-2">
-                  Default Address
+                  Địa chỉ mặc định
                 </span>
-                <button class="hover-underline-animation" @click="editAddress(address)">Edit</button>
+                <button class="hover-underline-animation" @click="editAddress(address)">Chỉnh sửa</button>
               </td>
             </tr>
           </tbody>
         </table>
         <div class="flex justify-end">
-          <button class="mt-7 th-p-btn" @click="toggleAddForm">+ ADD NEW ADDRESS</button>
+          <button class="mt-7 th-p-btn" @click="toggleAddForm">+ THÊM ĐỊA CHỈ MỚI</button>
         </div>
       </div>
 
-      <!-- Add new address form -->
+      <!-- Biểu mẫu thêm địa chỉ mới -->
       <div v-else class="container mx-auto p-4">
-        <h2 class="text-2xl relative bottom-8">Add New Address</h2>
+        <h2 class="text-2xl relative bottom-8">Thêm Địa Chỉ Mới</h2>
         <form @submit.prevent="submitNewAddress">
           <div class="form__group field w-96">
             <input
               id="name"
               type="text"
               class="form__field w-full"
-              placeholder="Name"
+              placeholder="Tên"
               v-model="newAddress.name"
               required
             />
-            <label for="name" class="form__label">Name</label>
+            <label for="name" class="form__label">Tên</label>
           </div>
           <div class="form__group field w-96">
             <input
               id="phone"
               type="tel"
               class="form__field w-full"
-              placeholder="Phone"
+              placeholder="Số điện thoại"
               v-model="newAddress.phone"
               required
             />
-            <label for="phone" class="form__label">Phone Number</label>
+            <label for="phone" class="form__label">Số điện thoại</label>
           </div>
-          <!-- Address selection -->
+          <!-- Lựa chọn địa chỉ -->
           <div class="address-form mt-2">
             <div class="select-item">
               <label for="province" class="select-label">Tỉnh/Thành Phố:</label><br>
@@ -87,7 +88,7 @@
                   {{ province.name }}
                 </option>
               </select>
-              <span v-if="isLoadingProvinces">Loading...</span>
+              <span v-if="isLoadingProvinces">Đang tải...</span>
             </div>
         
             <div class="select-item">
@@ -98,7 +99,7 @@
                   {{ district.name }}
                 </option>
               </select>
-              <span v-if="isLoadingDistricts">Loading...</span>
+              <span v-if="isLoadingDistricts">Đang tải...</span>
             </div>
         
             <div class="select-item">
@@ -109,7 +110,7 @@
                   {{ ward.name }}
                 </option>
               </select>
-              <span v-if="isLoadingWards">Loading...</span>
+              <span v-if="isLoadingWards">Đang tải...</span>
             </div>
           </div>
 
@@ -118,11 +119,11 @@
               id="address"
               type="text"
               class="form__field w-full"
-              placeholder="Address"
+              placeholder="Địa chỉ"
               v-model="newAddress.detail"
               required
             />
-            <label for="address" class="form__label">Detail Address</label>
+            <label for="address" class="form__label">Địa chỉ chi tiết</label>
           </div>
           <div class="form__group button-like-field">
             <input
@@ -132,12 +133,12 @@
               v-model="newAddress.default"
             />
             <label for="default" :class="{'button-label': true, 'active': newAddress.default}">
-              {{ newAddress.default ? 'Default Address' : 'Set as Default' }}
+              {{ newAddress.default ? 'Địa chỉ mặc định' : 'Đặt làm mặc định' }}
             </label>
           </div>
           <div class="pt-10 flex justify-end">
-            <button type="button" @click="toggleAddForm" class="mr-2 px-4 py-2 border border-secondary">Cancel</button>
-            <button type="submit" class="th-p-btn">Save Address</button>
+            <button type="button" @click="toggleAddForm" class="mr-2 px-4 py-2 border border-secondary">Hủy</button>
+            <button type="submit" class="th-p-btn">Lưu Địa Chỉ</button>
           </div>
         </form>
       </div>

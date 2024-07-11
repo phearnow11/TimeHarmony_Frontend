@@ -7,7 +7,7 @@
         <div class="line middle"></div>
         <div class="line"></div>
       </div>
-      <span class="menu-label">Menu</span>
+      <span class="menu-label">Danh mục</span>
     </div>
 
     <!-- Dropdown Menu -->
@@ -15,25 +15,25 @@
       <!-- Men -->
       <div class="menu-item relative" @mouseenter="showSubmenu('menWatch')" @mouseleave="hideSubmenu('menWatch')">
         <a href="/discover/men watches?page=0&gender=male" class="flex items-center justify-between hover-underline-animation w-full px-4 py-2">
-          <span>Men Watch</span>
+          <span>Đồng hồ nam</span>
         </a>
       </div>
       <!-- Women -->
       <div class="menu-item relative" @mouseenter="showSubmenu('womenWatch')" @mouseleave="hideSubmenu('womenWatch')">
         <a href="/discover/women watches?page=0&gender=female" class="flex items-center justify-between hover-underline-animation w-full px-4 py-2">
-          <span>Women Watch</span>
+          <span>Đồng hồ nữ</span>
         </a>
       </div>
       <!-- Unisex -->
       <div class="menu-item relative" @mouseenter="showSubmenu('womenWatch')" @mouseleave="hideSubmenu('womenWatch')">
         <a href="/discover/unisex watches?page=0&gender=unisex" class="flex items-center justify-between hover-underline-animation w-full px-4 py-2">
-          <span>Unisex Watch</span>
+          <span>Đồng hồ unisex</span>
         </a>
       </div>
       <!-- Style -->
       <div class="menu-item relative" @mouseenter="showSubmenu('style')" @mouseleave="hideSubmenu('style')">
         <div :class="{'hover-active': submenus.style}" class="flex items-center justify-between hover-underline-animation w-full px-4 py-2">
-          <span>Watch Style</span>
+          <span>Phong cách</span>
           <img src="../assets/arr.svg" class="w-3 arrow-icon" alt="Arrow Icon">
         </div>
         <div v-show="submenus.style" class="submenu absolute left-full top-0 text-white w-44">

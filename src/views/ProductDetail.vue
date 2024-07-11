@@ -60,14 +60,14 @@
         </div>
         <div class="flex gap-4">
           <button @click="addToCart" class="flex-1 th-p-btn py-2 px-4 relative">
-            <span :class="{ 'opacity-0': isLoading }">Add To Cart</span>
+            <span :class="{ 'opacity-0': isLoading }">Thêm vào giỏ</span>
             <div v-if="isLoading" class="loader-container">
               <div class="loader">
                 <div class="loaderBar"></div>
               </div>
             </div>
           </button>
-          <router-link to="/order" class="flex-1 th-p-btn py-2 px-4">Buy Now</router-link>
+          <router-link to="/order" class="flex-1 th-p-btn py-2 px-4">Mua Ngay</router-link>
         </div>
       </div>
     </div>
@@ -83,7 +83,7 @@
     <div v-if="retailer" class="mt-8 border-t border-secondary pt-4">
       <div class="mb-5">
         <span class="font-semibold text-xl">
-          Retailer Information
+          Thông tin người bán
         </span>
       </div>
       <div class="flex items-center justify-between">
@@ -96,93 +96,101 @@
           </div>
         </div>
         <div class="flex gap-2">
-          <router-link :to="`/chat/${retailer.user_id}`" class="border border-secondary py-2 px-4">Chat Now</router-link>
-          <router-link :to="`/retailer/${retailer.user_id}`" class="border border-secondary py-2 px-4">View Shop</router-link>
+          <router-link :to="`/chat/${retailer.user_id}`" class="border border-secondary py-2 px-4">Nhắn tin</router-link>
+          <router-link :to="`/retailer/${retailer.user_id}`" class="border border-secondary py-2 px-4">Chi tiết</router-link>
         </div>
       </div>
     </div>
     
     <div class="p-8 border-t border-secondary mt-6 max-w-4xl mx-auto">
     <section class="mb-8">
-      <h1 class="text-2xl font-bold border-b border-secondary w-40 mb-4">DESCRIPTION</h1>
+      <h1 class="text-2xl font-bold border-b border-secondary w-48 mb-4">Mô tả sản phẩm</h1>
       <div class="mb-5">
         <span>
-          {{ watchStore.watch_data.description || "No Information"}}
+          {{ watchStore.watch_data.description || "Không có thông tin"}}
         </span>
       </div>
     </section>
 
     <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
       <div>
-        <h2 class="text-xl font-bold border-b border-secondary w-40 mb-4">FEATURES</h2>
+        <h2 class="text-xl font-bold border-b border-secondary w-40 mb-4">Chức năng</h2>
         <ul class="space-y-2">
-          <li><strong>Calendar:</strong> {{ watchStore.watch_data.calender || "No Information" }} </li>
-          <li><strong>Feature:</strong> {{ watchStore.watch_data.feature || "No Information" }}</li>
-          <li><strong>Movement:</strong> {{ watchStore.watch_data.movement || "No Information" }}</li>
-          <li><strong>Functions:</strong> {{ watchStore.watch_data.function || "No Information" }}</li>
-          <li><strong>Engine:</strong> {{ watchStore.watch_data.engine || "No Information" }}</li>
-          <li><strong>Water Resistant:</strong> {{ watchStore.watch_data.waterresistant || "No Information" }}</li>
+          <li><strong>Lịch:</strong> {{ watchStore.watch_data.calender || "Không có thông tin" }} </li>
+          <li><strong>Tính năng:</strong> {{ watchStore.watch_data.feature || "Không có thông tin" }}</li>
+          <li><strong>Bộ máy:</strong> {{ watchStore.watch_data.movement || "Không có thông tin" }}</li>
+          <li><strong>Chức năng:</strong> {{ watchStore.watch_data.function || "Không có thông tin" }}</li>
+          <li><strong>Động cơ:</strong> {{ watchStore.watch_data.engine || "Không có thông tin" }}</li>
+          <li><strong>Chống nước:</strong> {{ watchStore.watch_data.waterresistant || "Không có thông tin" }}</li>
         </ul>
       </div>
 
       <div>
-        <h2 class="text-xl border-b border-secondary font-bold w-40 mb-4">DIAL</h2>
+        <h2 class="text-xl border-b border-secondary font-bold w-40 mb-4">Mặt số</h2>
         <ul class="space-y-2">
-          <li><strong>Dial Type:</strong> {{ watchStore.watch_data.dialtype || "No Information" }}</li>
-          <li><strong>Dial Color:</strong> {{ watchStore.watch_data.dialcolor || "No Information" }}</li>
-          <li><strong>Crystal:</strong> {{ watchStore.watch_data.crystal || "No Information" }}</li>
-          <li><strong>Second Markers:</strong> {{ watchStore.watch_data.secondmaker || "No Information"}}</li>
+          <li><strong>Loại mặt số:</strong> {{ watchStore.watch_data.dialtype || "Không có thông tin" }}</li>
+          <li><strong>Màu mặt số:</strong> {{ watchStore.watch_data.dialcolor || "Không có thông tin" }}</li>
+          <li><strong>Mặt kính:</strong> {{ watchStore.watch_data.crystal || "Không có thông tin" }}</li>
+          <li><strong>Vạch chỉ giây:</strong> {{ watchStore.watch_data.secondmaker || "Không có thông tin"}}</li>
         </ul>
       </div>
 
       <div>
-        <h2 class="text-xl border-b border-secondary font-bold w-40 mb-4">BAND</h2>
+        <h2 class="text-xl border-b border-secondary font-bold w-40 mb-4">Dây đeo</h2>
         <ul class="space-y-2">
-          <li><strong>Band Color:</strong> {{ watchStore.watch_data.bandcolor || "No Information"}}</li>
-          <li><strong>Band Type:</strong> {{ watchStore.watch_data.bandtype || "No Information"}}</li>
-          <li><strong>Clasp:</strong> {{ watchStore.watch_data.clasp || "No Information"}} </li>
-          <li><strong>Bracelet:</strong> {{ watchStore.watch_data.bracelet || "No Information"}}</li>
+          <li><strong>Màu dây đeo:</strong> {{ watchStore.watch_data.bandcolor || "Không có thông tin"}}</li>
+          <li><strong>Loại dây đeo:</strong> {{ watchStore.watch_data.bandtype || "Không có thông tin"}}</li>
+          <li><strong>Khóa:</strong> {{ watchStore.watch_data.clasp || "Không có thông tin"}} </li>
+          <li><strong>Dây đeo kim loại:</strong> {{ watchStore.watch_data.bracelet || "Không có thông tin"}}</li>
         </ul>
       </div>
 
       <div>
-        <h2 class="text-xl border-b border-secondary w-40 font-bold mb-4">CASE</h2>
+        <h2 class="text-xl border-b border-secondary w-40 font-bold mb-4">Vỏ đồng hồ</h2>
         <ul class="space-y-2">
-          <li><strong>Bezel:</strong> {{ watchStore.watch_data.bezel || "No Information"}}</li>
-          <li><strong>Bezel Material:</strong> {{ watchStore.watch_data.bezelmaterial || "No Information"}}</li>
-          <li><strong>Case Back:</strong> {{ watchStore.watch_data.caseback || "No Information"}}</li>
-          <li><strong>Case Dimension:</strong> {{ watchStore.watch_data.casedimension || "No Information"}}</li>
-          <li><strong>Case Shape:</strong> {{ watchStore.watch_data.caseshape || "No Information"}}</li>
+          <li><strong>Vành đồng hồ:</strong> {{ watchStore.watch_data.bezel || "Không có thông tin"}}</li>
+          <li><strong>Chất liệu vành:</strong> {{ watchStore.watch_data.bezelmaterial || "Không có thông tin"}}</li>
+          <li><strong>Nắp lưng:</strong> {{ watchStore.watch_data.caseback || "Không có thông tin"}}</li>
+          <li><strong>Kích thước vỏ:</strong> {{ watchStore.watch_data.casedimension || "Không có thông tin"}}</li>
+          <li><strong>Hình dạng vỏ:</strong> {{ watchStore.watch_data.caseshape || "Không có thông tin"}}</li>
         </ul>
       </div>
     </section>
 
     <section class="mt-8">
-      <h2 class="text-xl border-b border-secondary w-40 font-bold mb-4">ABOUT</h2>
+      <h2 class="text-xl border-b border-secondary w-40 font-bold mb-4">Thông tin thêm</h2>
       <ul class="space-y-2">
-        <li><strong>Brand:</strong> {{ watchStore.watch_data.brand || "No Information"}}</li>
-        <li><strong>Series:</strong> {{ watchStore.watch_data.series || "No Information"}}</li>
-        <li><strong>Model:</strong> {{ watchStore.watch_data.model || "No Information"}}</li>
-        <li><strong>Gender:</strong> {{ watchStore.watch_data.gender || "No Information"}}</li>
-        <li><strong>Style Type:</strong> {{ watchStore.watch_data.style || "No Information"}}</li>
-        <li><strong>Sub-Class:</strong> {{ watchStore.watch_data.subclass || "No Information"}}</li>
-        <li><strong>Made Label:</strong> {{ watchStore.watch_data.madelabel || "No Information"}}</li>
+        <li><strong>Thương hiệu:</strong> {{ watchStore.watch_data.brand || "Không có thông tin"}}</li>
+        <li><strong>Dòng sản phẩm:</strong> {{ watchStore.watch_data.series || "Không có thông tin"}}</li>
+        <li><strong>Mẫu:</strong> {{ watchStore.watch_data.model || "Không có thông tin"}}</li>
+        <li><strong>Giới tính:</strong> {{ watchStore.watch_data.gender || "Không có thông tin"}}</li>
+        <li><strong>Loại phong cách:</strong> {{ watchStore.watch_data.style || "Không có thông tin"}}</li>
+        <li><strong>Phân lớp:</strong> {{ watchStore.watch_data.subclass || "Không có thông tin"}}</li>
+        <li><strong>Nhãn sản xuất:</strong> {{ watchStore.watch_data.madelabel || "Không có thông tin"}}</li>
         
       </ul>
     </section>
 
     <section class="mt-10">
-      <h2 class="text-xl border-b border-secondary font-bold w-40 mb-4">Warranty</h2>
-      <p>
-        TimeHarmony will service every brand name watch sold on our website (see chart for exceptions) for a period of 1 to 5 years after purchase. Watches that have symptoms of abnormally gaining time, losing time, or not keeping proper time will be serviced under our warranty program.
-      </p>
-      <br>
-      <p>
-        What's not covered: The watch case, bracelet, straps, crown/stem, crystal/glass, finishes, damage caused by excessive wear-and-tear and/or physical abuse and damage resulting from wear under conditions exceeding the watch manufacturer's water resistance limits. Consequential and incidental damages are not covered under this warranty or any implied warranties.      </p>
-      <br>
-        <p>
-        Please note: Damage that occurs due to having the watch serviced by a third party null and voids the warranty from TimeHarmony.      </p>
-    </section>
+  <h2 class="text-xl border-b border-secondary font-bold w-56 mb-4">Chính sách và bảo hành</h2>
+  <p>
+    Chúng tôi là nền tảng phân phối đồng hồ cũ, kết nối những người có nhu cầu bán và mua đồng hồ. TimeHarmony cam kết cung cấp dịch vụ bảo hành cho mọi chiếc đồng hồ được bán trên trang web của chúng tôi, trong thời gian từ 1 đến 5 năm kể từ ngày mua hàng.
+  </p>
+  <br>
+  <p>
+    Chương trình bảo hành bao gồm sửa chữa các đồng hồ có các dấu hiệu bất thường như tăng/giảm thời gian quá mức hoặc không giữ thời gian chính xác. Tuy nhiên, không bảo hành cho các phần như vỏ đồng hồ, dây đeo, dây đeo kim loại, núm/cành gạt, mặt kính, lớp hoàn thiện và hư hỏng do sử dụng dưới điều kiện vượt quá giới hạn chống nước của nhà sản xuất.
+  </p>
+  <br>
+  <p>
+    Chúng tôi không chịu trách nhiệm với những thiệt hại gián tiếp hoặc ngẫu nhiên không được bảo hành trong chương trình này. Bảo hành sẽ bị vô hiệu nếu đồng hồ được bảo dưỡng bởi một bên thứ ba.
+  </p>
+  <br>
+  <p>
+    Xin lưu ý: Chúng tôi khuyến khích quý khách hàng liên hệ trực tiếp với chúng tôi để biết thêm chi tiết về chính sách bảo hành và các điều khoản liên quan trước khi mua sản phẩm.
+  </p>
+</section>
+
+
   </div>
 
   </div>

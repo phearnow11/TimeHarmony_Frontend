@@ -5,7 +5,7 @@
         <router-link to="/">
           <img src="../assets/time-harmony.png" class="logo" />
         </router-link>
-        <span class="signup-text">- Sign Up -</span>
+        <span class="signup-text">- Đăng ký -</span>
       </div>
 
       <form
@@ -31,7 +31,7 @@
             v-model="signUpForm.username"
             required
           />
-          <label for="username" class="form__label">Username*</label>
+          <label for="username" class="form__label">Tên tài khoản*</label>
         </div>
 
         <div :class="['form__group', 'field', 'w-96', {'input-error': !isPasswordValid && signUpForm.password !== ''}]">
@@ -43,7 +43,7 @@
             @input="checkPasswordFormat"
             required
           />
-          <label for="password" class="form__label">Password*</label>
+          <label for="password" class="form__label">Mật khẩu*</label>
           <p v-if="!isPasswordValid && signUpForm.password !== ''" class="error-message">
             Password must be at least 8 characters, contain at least one uppercase letter, one number, and one special character.
           </p>
@@ -58,7 +58,7 @@
             @blur="checkPasswords"
             required
           />
-          <label for="repassword" class="form__label">Confirm password*</label>
+          <label for="repassword" class="form__label">Xác nhận mật khẩu*</label>
         </div>
 
         <div class="flex space-x-2 w-96">
@@ -70,7 +70,7 @@
               v-model="signUpForm.first_name"
               required
             />
-            <label for="firstname" class="form__label">First Name*</label>
+            <label for="firstname" class="form__label">Tên*</label>
           </div>
           <div class="form__group w-1/2">
             <input
@@ -80,7 +80,7 @@
               v-model="signUpForm.last_name"
               required
             />
-            <label for="lastname" class="form__label">Last Name*</label>
+            <label for="lastname" class="form__label">Họ*</label>
           </div>
         </div>
 
@@ -88,11 +88,11 @@
 
         
 
-        <button type="submit" class="w-full th-p-btn mt-3">Sign up</button>
+        <button type="submit" class="w-full th-p-btn mt-3">Đăng ký</button>
 
         <div class="mt-1">
-          <span>Already have an account? </span>
-          <router-link to="/login" class="hover-underline-animation">Log in here</router-link>
+          <span>Đã có tài khoản? </span>
+          <router-link to="/login" class="hover-underline-animation">Đăng nhập tại đây</router-link>
         </div>
       </form>
     </div>

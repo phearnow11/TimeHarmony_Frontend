@@ -15,6 +15,7 @@ export const useUserStore = defineStore("user", {
     user_id: null,  // Add this to your state
     selectedItems: [],
     totalPrice: 0,
+    shipFee: 0,
     shippingAddress: null,
     note: '',
     mostRecentOrderId: null,

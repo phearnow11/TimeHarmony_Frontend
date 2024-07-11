@@ -146,7 +146,7 @@ const router = createRouter({
       }),
     },
     {
-      path: '/order/:order_id',
+      path: '/orderconfirmation/:order_id',
       name: 'OrderConfirm',
       component: () => import('../views/OrderConfirm.vue').catch(err => {
         console.error(err);

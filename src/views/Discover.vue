@@ -31,8 +31,8 @@
   <!-- No watches found -->
   <div v-else class="mt-8 flex justify-center items-center mx-20">
     <div class="text-center">
-      <h2 class="text-2xl font-bold mb-4">No Watches Found</h2>
-      <p class="text-lg">Sorry, we couldn't find any watches in this page.</p>
+      <h2 class="text-2xl font-bold mb-4">Không tìm thấy đồng hồ</h2>
+      <p class="text-lg">Xin lỗi nhưng có vẻ ở đây khong có đồng hồ bạn cần tìm rồi.</p>
     </div>
   </div>
 
@@ -42,7 +42,7 @@
       <svg width="18" height="18">
         <use xlink:href="#left" />
       </svg>
-      <span class="arrow-text">First Page</span>
+      <span class="arrow-text">Đầu</span>
     </div>
 
     <div v-for="page in visiblePages" :key="page" class="pagination-number" :class="{'pagination-active': page === watchStore.currentPage + 1}" @click="setPage(page - 1)">
@@ -50,7 +50,7 @@
     </div>
 
     <div class="pagination-number arrow" @click="setPage(watchStore.totalPage-1)">
-      <span class="arrow-text">Last Page</span>
+      <span class="arrow-text">Cuối</span>
       <svg width="18" height="18">
         <use xlink:href="#right" />
       </svg>

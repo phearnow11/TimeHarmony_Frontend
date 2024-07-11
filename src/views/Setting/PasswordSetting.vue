@@ -2,49 +2,51 @@
   <div v-if="auth.user_id" class="flex max-w-7xl mx-auto my-8 p-4">
     <!-- Sidebar -->
     <div class="w-1/4 mr-8">
-      <h2 class="text-2xl mb-4">Profile Settings</h2>
+      <h2 class="text-2xl mb-4">Cài đặt Hồ sơ</h2>
       <ul>
         <li class="mb-2">
-          <router-link to="/setting/profile" class="hover-underline-animation">Account</router-link>
+          <router-link to="/setting/profile" class="hover-underline-animation">Thông tin cá nhân</router-link>
         </li>
-        <li class="mb-2 text-secondary">Password</li>
-        <li class="mb-2"><router-link to="/setting/address" class="hover-underline-animation">My Address</router-link></li>
-
-        <li class="mb-2"><router-link to="/setting/product" class="hover-underline-animation">My Watch Product</router-link></li>
-
+        <li class="mb-2 text-secondary">Mật khẩu</li>
         <li class="mb-2">
-          <router-link to="#" class="hover-underline-animation">Delete account</router-link>
+          <router-link to="/setting/address" class="hover-underline-animation">Sổ địa chỉ</router-link>
+        </li>
+        <li class="mb-2">
+          <router-link to="/setting/product" class="hover-underline-animation">Đơn hàng của tôi</router-link>
+        </li>
+        <li class="mb-2">
+          <router-link to="#" class="hover-underline-animation">Xóa tài khoản</router-link>
         </li>
       </ul>
     </div>
     <!-- Content -->
     <div class="flex-1">
-      <!-- Private Info -->
+      <!-- Reset Password -->
       <div class="p-4">
-        <h3 class="text-xl mb-10">Reset Password</h3>
+        <h3 class="text-xl mb-10">Đặt lại mật khẩu</h3>
         <form @submit.prevent="resetPasswordHandle">
           <div class="form__group field w-96">
             <input
               type="password"
               class="form__field w-full"
-              placeholder="New Password"
+              placeholder="Mật khẩu mới"
               v-model="resetForm.newPassword"
               required
             />
-            <label for="newpassword" class="form__label">New Password</label>
+            <label for="newpassword" class="form__label">Mật khẩu mới</label>
           </div>
           <div :class="['form__group', 'field', 'w-96', {'input-error': !passwordsMatch}]">
             <input
               type="password"
               class="form__field w-full"
-              placeholder="Confirm New Password"
+              placeholder="Xác nhận mật khẩu mới"
               v-model="resetForm.confirmPassword"
               @blur="checkPasswords"
               required
             />
-            <label for="repassword" class="form__label">Confirm New Password</label>
+            <label for="repassword" class="form__label">Xác nhận mật khẩu mới</label>
           </div>
-          <button type="submit" class="mt-5 th-p-btn">Reset Password</button>
+          <button type="submit" class="mt-5 th-p-btn">Đặt lại mật khẩu</button>
         </form>
       </div>
     </div>
@@ -66,8 +68,6 @@ const passwordsMatch = ref(true);
 
 onMounted(() => {
   if (!auth.user_id) {
-    // Handle user not logged in, e.g., redirect to login page
-    // For example, using Vue Router's push method:
     router.push('/login');
   }
 });
@@ -85,16 +85,15 @@ function checkPasswords() {
 
 async function resetPasswordHandle() {
   if (!passwordsMatch.value) {
-    console.log('Passwords do not match');
+    console.log('Mật khẩu không khớp');
     return;
   }
   try {
-    // Call your store action to update the password
     await auth.updatePassword(resetForm.value.newPassword);
-    console.log('Password reset successful');
+    console.log('Đặt lại mật khẩu thành công');
     router.push('/login');
   } catch (error) {
-    console.error('Password reset error', error);
+    console.error('Lỗi khi đặt lại mật khẩu', error);
   }
 }
 </script>

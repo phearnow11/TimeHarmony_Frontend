@@ -2,7 +2,7 @@
   <div v-if="auth.user_id" class="flex justify-center items-center flex-col mb-96">
     <section class="w-full pt-5 px-9">
       <div class="flex justify-between">
-        <span class="text-2xl font-semibold">Watch Cart</span>
+        <span class="text-2xl font-semibold">Giỏ hàng</span>
       </div>
     </section>
     <div class="flex justify-center h-0 items-start w-full px-10 pt-5 pb-20">
@@ -21,7 +21,7 @@
                 class="path"
               ></path>
             </svg>
-            <span class="ml-2">{{ selectAll ? "Deselect all" : "Select all" }} ( {{ cartItems.length }} Item(s) )</span>
+            <span class="ml-2">{{ selectAll ? "Bỏ chọn" : "Chọn tất cả" }} ( {{ cartItems.length }} sản phẩm )</span>
           </label>
         </div>
         <div>
@@ -29,44 +29,46 @@
             @click="deleteSelected"
             class="hover-underline-animation-r text-gray-500"
           >
-            <i class="fas fa-trash-alt mr-1"></i> Delete
+            <i class="fas fa-trash-alt mr-1"></i> Xoá
           </button>
         </div>
         
       </section>
       
-      <section class="flex flex-col z-20 bg-zinc-900 p-6 shadow w-4/12 space-y-4">
+      <section class="flex flex-col z-20 bg-zinc-900 p-5 shadow w-4/12 space-y-4">
         <div class="flex flex-row items-center justify-between w-full">
           <div class="flex items-center">
-            <p v-if="selectedAddress" class="flex items-center">
-              <span class="mdi mdi-map-marker"></span>
+            <p v-if="selectedAddress" class="flex pr-2 items-center">
+              <span class="mdi mdi-map-marker pr-2"></span>
               {{ selectedAddress.address }}
             </p>
-            <p v-else-if="defaultAddress" class="flex items-center">
-              <span class="mdi mdi-map-marker"></span>
+            <p v-else-if="defaultAddress" class="flex pr-2 items-center">
+              <span class="mdi mdi-map-marker pr-2"></span>
               {{ defaultAddress.address }}
             </p>
-            <p v-else class="flex items-center">No address selected</p>
+            <p v-else class="flex items-center">Địa chỉ chưa được chọn</p>
           </div>
-          <button @click="openAddressModal" class="hover-underline-animation flex items-center">Edit</button>
+          <button @click="openAddressModal" class="hover-underline-animation w-24 px-2 flex items-center">Thay đổi</button>
         </div>
-        <div class="border-t border-secondary pt-4">
-          <span class="block font-bold text-xl pb-4">Order Summary</span>
+        <div class="border-t border-secondary border-dashed pt-4">
+          <span class="block font-bold text-xl pb-4">Thông tin đơn hàng</span>
           <div class="flex justify-between font-normal">
-            <span>Subtotal ({{ selectedItemsCount }} items)</span>
-            <span class=" font-bold">{{ totalPrice.toLocaleString("vi-VN") }} ₫</span>
+            <span class="text-gray-99">Tạm tính ({{ selectedItemsCount }} sản phẩm)</span>
+            <span class="text-gray-99 font-bold">{{ totalPrice.toLocaleString("vi-VN") }} ₫</span>
           </div>
           <div class="flex justify-between">
-            <span>Shipping Fee</span>
-            <span class=" font-bold">0 ₫</span>
+            <span class="text-gray-99">Phí vận chuyển</span>
+            <span class="text-gray-99 font-bold">
+              {{ selectedItemsCount > 0 ? shipFee.toLocaleString("vi-VN") + ' ₫' : '0 ₫' }}
+            </span>
           </div>
           <div class="flex justify-between">
-            <span>Discount</span>
-            <span class=" font-bold">0 ₫</span>
+            <span class="text-gray-99">Giảm giá</span>
+            <span class="text-gray-99 font-bold">0 ₫</span>
           </div>
         </div>
-        <div class="border-t border-secondary pt-5 form-content">
-          <span class="text-xl font-bold">Note</span>
+        <div class="border-t border-secondary border-dashed pt-5 form-content">
+          <span class="text-xl font-bold">Ghi chú</span>
           <div class="form__group field w-full">
             <input
               v-model="note"
@@ -74,33 +76,35 @@
               class="form__field"
               placeholder="Enter a note"
             />
-            <label for="note" class="form__label">Enter a note</label>
+            <label for="note" class="form__label">Nhập ghi chú ở đây</label>
           </div>
         </div>
-        <div class="border-t border-secondary pt-5 form-content">
+        <div class="border-t border-secondary border-dashed pt-5 form-content">
           <span class="text-xl font-bold">Voucher</span>
-          <div class="form__group field w-full">
-            <input
-              type="text"
-              class="form__field"
-              placeholder="Enter a voucher"
-            />
-            <label for="voucher" class="form__label">Enter a voucher</label>
+          <div class="flex items-center w-full mt-1">
+            <div class="form__group field flex-grow relative">
+              <input
+                type="text"
+                class="form__field w-full"
+                placeholder="Enter a voucher"
+              />
+              <label for="voucher" class="form__label">Nhập mã voucher</label>
+            </div>
+            <button class="th-p-btn ml-2 mt-3">
+              Áp dụng
+            </button>
           </div>
         </div>
-        <button class="th-p-btn text-white px-4 py-2">
-          Apply
-        </button>
-        <div class="border-t border-secondary pt-5 flex justify-between items-center">
-          <span class="font-semibold text-xl">Total</span>
-          <span class="font-bold">{{ totalPrice.toLocaleString("vi-VN") }} ₫</span>
+
+        <div class="border-t border-secondary border-dashed pt-5 flex justify-between items-center">
+          <span class="font-semibold text-xl">Tổng tiền</span>
+          <span class="font-bold">{{ totalAll.toLocaleString("vi-VN") }} ₫</span>
         </div>
-        <span class="text-xs">VAT included, where applicable</span>
         <button
           @click="createOrder"
           class="th-p-btn text-white px-4 py-2 w-full text-center"
         >
-          Proceed to order
+          Xác nhận giỏ hàng ({{ selectedItemsCount }})
         </button>
       </section>
     </div>
@@ -122,7 +126,7 @@
 
       <div v-if="showAddressModal" class="modal-overlay">
       <div class="modal-content">
-        <h2 class="text-xl font-bold mb-4">Select Shipping Address</h2>
+        <h2 class="text-xl font-bold mb-4">Chọn địa chỉ giao hàng</h2>
         <div v-for="address in addresses" :key="address.id" class="address-item mb-2">
           <label class="flex items-center">
             <input
@@ -136,11 +140,12 @@
               {{ address.name}} {{ address.phone }} <br>
               {{ address.address }}
             </span>
+            <span v-if="address.default">{{ address.default }}</span>
           </label>
         </div>
         <div class="mt-4 flex justify-end">
-          <button @click="closeAddressModal" class="mr-2 px-4 py-2 border border-secondary">Cancel</button>
-          <button @click="confirmAddressSelection" class="th-p-btn px-4 py-2">Confirm</button>
+          <button @click="closeAddressModal" class="mr-2 px-4 py-2 border border-secondary">Huỷ</button>
+          <button @click="confirmAddressSelection" class="th-p-btn px-4 py-2">Xác nhận</button>
         </div>
       </div>
     </div>
@@ -180,6 +185,10 @@ const selectedAddress = ref(null);
 const tempSelectedAddress = ref(null);
 const note = ref('');
 const router = useRouter();
+
+const shipFee = computed(() => {
+  return selectedItemsCount.value > 0 ? 5000 : 0;
+});
 
 const fetchAddresses = async () => {
   try {
@@ -252,6 +261,7 @@ onMounted(async () => {
       sellerName: "Loading...",
       sellerAvatar: "",
     }));
+    console.log(cartItems.value.length);
     await fetchAddresses();
     await fetchAllWatchDetails();
   } catch (error) {
@@ -312,12 +322,19 @@ const deleteSelected = async () => {
   }
 };
 
+
+const totalAll = computed(() => {
+  cartStore.setShipFee(shipFee.value);
+  return totalPrice.value + shipFee.value;
+});
+
 watch(cartItems, updateSelectAllState, { deep: true });
+
 
 const createOrder = async () => {
   const selectedItems = cartItems.value.filter(item => item.isSelected);
   cartStore.setSelectedItems(selectedItems);
-  cartStore.setTotalPrice(totalPrice.value);
+  cartStore.setTotalPrice(totalPrice.value); // This now includes the shipping fee
   cartStore.setShippingAddress(selectedAddress.value);
   cartStore.setNote(note.value);
   
@@ -343,6 +360,12 @@ const createOrder = async () => {
 
 .checkbox-container input:checked + .checkbox-svg .path {
   stroke-dashoffset: 0;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end; /* Ensure the button is at the end */
+  
 }
 
 .checkbox-container .path {

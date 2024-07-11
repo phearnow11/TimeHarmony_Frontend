@@ -8,6 +8,7 @@ export const useCartStore = defineStore("cart", {
     cart_items: [],
     selectedItems: [],
     totalPrice: 0,
+    shipFee: 5000,
     shippingAddress: null,
     note: '',
     
@@ -31,6 +32,9 @@ export const useCartStore = defineStore("cart", {
     setTotalPrice(price) {
       this.totalPrice = price;
     },
+    setShipFee(fee) {
+      this.shipFee = fee;
+    },
     setShippingAddress(address) {
       this.shippingAddress = address;
     },
@@ -50,5 +54,7 @@ export const useCartStore = defineStore("cart", {
     getTotalPrice: (state) => state.totalPrice,
     getShippingAddress: (state) => state.shippingAddress,
     getNote: (state) => state.note,
+    getTotalWithShipping: (state) => state.totalPrice + state.shipFee,
+    getShipFee: (state) => state.shipFee,
   }
 });

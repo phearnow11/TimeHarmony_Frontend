@@ -5,7 +5,7 @@
         <router-link to="/">
           <img src="../assets/time-harmony.png" class="logo w-60" />
         </router-link>
-        <span class="login-text">- Login -</span>
+        <span class="login-text">- Đăng nhập -</span>
       </div>
 
       <form
@@ -21,7 +21,7 @@
               v-model="user.username"
               required
             />
-            <label for="username" class="form__label">Username</label>
+            <label for="username" class="form__label">Tên tài khoản</label>
           </div>
           <div class="form__group field w-96">
             <input
@@ -31,7 +31,7 @@
               v-model="user.password"
               required
             />
-            <label for="password" class="form__label">Password</label>
+            <label for="password" class="form__label">Mật khẩu</label>
           </div>
           <br />
         </div>
@@ -48,17 +48,17 @@
                 class="path"
               ></path>
             </svg>
-            <label>Remember me</label>
+            <label>Ghi nhớ tôi</label>
           </label>
           <div class="flex justify-end">
             <router-link to="/forgot" class="hover-underline-animation"
-              >Forgot password?</router-link
+              >Quên mật khẩu?</router-link
             >
           </div>
         </div>
         <div class="flex justify-center items-center w-full relative">
           <button class="th-p-btn w-96 relative" :disabled="isLoading">
-            <span :class="{ 'opacity-0': isLoading }">Login</span>
+            <span :class="{ 'opacity-0': isLoading }">Đăng nhập</span>
             <div v-if="isLoading" class="loader-container">
               <div class="loader">
                 <div class="loaderBar"></div>
@@ -68,15 +68,15 @@
         </div>
         <div class="flex items-center w-full my-4">
           <div class="border-t border-gray-99 flex-grow mr-3"></div>
-          <span>or</span>
+          <span class="text-gray-99">hoặc</span>
           <div class="border-t border-gray-99 flex-grow ml-3"></div>
         </div>
         <login-via-google />
         <login-via-facebook />
         <div>
-          <span>Don't have an account? </span>
+          <span>Bạn chưa có tài khoản? </span>
           <router-link to="/signup" class="hover-underline-animation"
-            >Sign up here</router-link
+            >Đăng kí tại đây</router-link
           >
         </div>
       </form>

@@ -11,7 +11,7 @@
       </router-link>
       <div class="border-l mr-5 border-primary"></div>
       <span class="font-bold mt-5 text-3xl text-primary">
-        Payment Checkout
+        Xác nhận đơn hàng
       </span>
       <div
         class="border-b pt-5 flex align-middle justify-center items-center"
@@ -27,7 +27,7 @@
           class="w-8/12 flex items-start justify-between bg-zinc-900 p-4 mr-4"
         >
           <div class="flex flex-col items-start flex-grow">
-            <p><span class="mdi mdi-map-marker"></span> Shipping Address</p>
+            <p><span class="mdi mdi-map-marker pr-2"></span>Địa chỉ giao hàng</p>
             <p class="mt-3">
               <span class="mr-5">{{ shippingAddress.name || "No information" }}</span>
             </p>
@@ -43,10 +43,8 @@
         class="flex flex-col z-20 bg-zinc-900 p-6 shadow w-4/12 space-y-4 h-auto "
       >
         <div class="flex justify-between items-center">
-          <span class="text-xl font-bold">Select payment method</span>
-          <button class="hover-underline-animation text-gray-500">
-            View all methods
-          </button>
+          <span class="text-xl font-bold">Chọn phương thức thanh toán</span>
+          
         </div>
         <div class="space-y-4">
           <div
@@ -67,8 +65,8 @@
                 />
               </svg>
               <div>
-                <h3 class="font-medium">Cash On Delivery</h3>
-                <p class="text-sm text-gray-500">Pay when you receive</p>
+                <h3 class="font-medium">Thanh toán khi nhận hàng</h3>
+                <p class="text-sm text-gray-500">Trả tiền khi bạn nhận hàng</p>
               </div>
             </div>
             <div
@@ -112,8 +110,8 @@
                 />
               </svg>
               <div>
-                <h3 class="font-medium">Credit/Debit Card</h3>
-                <p class="text-sm text-gray-500">Tap to add card</p>
+                <h3 class="font-medium">Thanh toán thẻ ATM/Internet Banking</h3>
+                <p class="text-sm text-gray-500">Chuyển khoản qua hệ thống VNPay</p>
               </div>
             </div>
             <div
@@ -141,48 +139,35 @@
 
         <!-- Order Summary -->
           <div class="border-t border-secondary border-dashed pt-4">
-            <span class="block text-xl font-bold pb-4">Order Summary</span>
+            <span class="block text-xl font-bold pb-4">Thông tin đơn hàng</span>
             <div class="flex justify-between font-normal">
-              <span>Subtotal ({{ selectedItems.length }} items)</span>
-              <span class="font-bold">{{ totalPrice.toLocaleString("vi-VN") }} ₫</span>
+              <span class="text-gray-99">Tạm tính ({{ selectedItems.length }} sản phẩm)</span>
+              <span class="text-[whitesmoke] font-bold">{{ totalPrice.toLocaleString("vi-VN") }} ₫</span>
             </div>
             <div class="flex justify-between">
-              <span>Shipping Fee</span>
-              <span class="font-bold">0 ₫</span>
+              <span class="text-gray-99">Phí vận chuyển</span>
+              <span class="text-[whitesmoke] font-bold">{{ shipFee.toLocaleString("vi-VN") }} ₫</span>
             </div>
             <div class="flex justify-between">
-              <span>Discount</span>
-              <span class="font-bold">0 ₫</span>
+              <span class="text-gray-99">Discount</span>
+              <span class=" text-[whitesmoke] font-bold">0 ₫</span>
             </div>
           </div>
 
           <div class="border-t border-secondary border-dashed pt-5 form-content">
-            <span class="text-xl font-bold">Note from customer</span>
+            <span class="text-xl font-bold">Ghi chú của bạn</span>
             <div class="form__group field w-full">
-              <p>{{ note || "No Information"}}</p>
+              <p>{{ note || "Không có thông tin"}}</p>
             </div>
           </div>
 
-          <!-- Voucher Section -->
-          <div class="border-t border-secondary border-dashed pt-5 form-content">
-            <span class="text-xl font-bold">Voucher</span>
-            <div class="form__group field w-full">
-              <input
-                type="text"
-                class="form__field"
-                placeholder="Enter a voucher"
-              />
-              <label for="voucher" class="form__label">Enter a voucher</label>
-            </div>
-          </div>
-          <button class="th-p-btn text-white px-4 py-2">Apply</button>
+          
 
           <!-- Total -->
           <div class="border-t border-secondary border-dashed  pt-5 flex justify-between items-center">
-            <span class="font-bold text-xl">Total</span>
-            <span class="font-bold">{{ totalPrice.toLocaleString("vi-VN") }} ₫</span>
+            <span class="font-bold text-xl">Tính tổng</span>
+            <span class="font-bold">{{ totalAll.toLocaleString("vi-VN") }} ₫</span>
           </div>
-          <span class="text-xs">VAT included, where applicable</span>
 
           <!-- Place Order Button -->
           <button
@@ -190,15 +175,15 @@
             :disabled="isProcessingPayment"
             class="th-p-btn text-white px-4 py-2 w-full text-center"
           >
-            {{ isProcessingPayment ? 'Processing...' : 'Place an order' }}
+            {{ isProcessingPayment ? 'Tiến hàng đặt hàng...' : 'Đặt hàng' }}
           </button>
         </section>
       </div>
 
       <!-- Selected Items Summary -->
       <div class="w-full px-10">
-        <h2 class="text-xl font-bold pt-10 pb-3">Order Items</h2>
-        <div>
+        <h2 class="text-xl font-bold pt-10 pb-3">Giỏ hàng của bạn ({{ selectedItems.length }} sản phẩm)</h2>
+        <div class="px-6">
           <order-item
           v-for="item in selectedItems" :key="item.watch_id"
           :productName="item.name || 'Loading...'"
@@ -260,7 +245,7 @@
 import { useCartStore } from '../stores/cart';
 import { useUserStore } from '../stores/user';
 import { useAuthStore } from '../stores/auth';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import OrderItem from '../components/OrderItem.vue';
 import { createVnPayPayment } from '../stores/payment';
@@ -270,15 +255,17 @@ const userStore = useUserStore();
 const auth = useAuthStore();
 const router = useRouter();
 const selectedItems = ref([]);
-const totalPrice = ref(0);
 const shippingAddress = ref(null);
 const note = ref('');
 const selectedOption = ref('cod');
 const isProcessingPayment = ref(false);
+const shipFee = computed(() => cartStore.getShipFee);
+const totalPrice = computed(() => cartStore.getTotalPrice);
+const totalAll = computed(() => cartStore.getTotalWithShipping);
 
 onMounted(() => {
   selectedItems.value = cartStore.getSelectedItems;
-  totalPrice.value = cartStore.getTotalPrice;
+  totalAll.value = cartStore.getTotalWithShipping;
   shippingAddress.value = cartStore.getShippingAddress;
   note.value = cartStore.getNote;
 
@@ -295,7 +282,7 @@ const createOrder = async () => {
     wids: selectedItems.value.map(item => item.watch_id),
     address: shippingAddress.value.id,
     notice: note.value,
-    total_price: totalPrice.value,
+    total_price: totalAll.value,
     payment_method: selectedOption.value,
     transaction_no: selectedOption.value === 'card' ? '123456' : '', // Replace '123456' with your actual logic for transaction_no
 
@@ -317,7 +304,7 @@ const createOrder = async () => {
         
         if (orderDetails && orderDetails.order_detail) {
           userStore.setCurrentOrder(orderDetails);
-          router.push(`/order/${mostRecentOrder}`);
+          router.push(`/orderconfirmation/${mostRecentOrder}`);
         } else {
           console.error('Invalid order details:', orderDetails);
           alert('Error processing order. Please try again.');
@@ -331,7 +318,7 @@ const createOrder = async () => {
 
       isProcessingPayment.value = true;
       // VNPay payment process
-      const paymentResponse = await createVnPayPayment(totalPrice.value);
+      const paymentResponse = await createVnPayPayment(totalAll.value);
       if (paymentResponse.data && paymentResponse.data.paymentUrl) {
         // Redirect to VNPay payment page
         window.location.href = paymentResponse.data.paymentUrl;
@@ -372,7 +359,7 @@ const handleVNPayReturn = async () => {
         const orderDetails = await userStore.getOrderDetail(mostRecentOrder.order_id);
         if (orderDetails && orderDetails.order_detail) {
           userStore.setCurrentOrder(orderDetails);
-          router.push(`/testconfirm/${mostRecentOrder.order_id}`);
+          router.push(`/orderconfirmation/${mostRecentOrder.order_id}`);
         } else {
           console.error('Invalid order details:', orderDetails);
           alert('Error processing order. Please try again.');

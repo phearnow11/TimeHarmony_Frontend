@@ -1,6 +1,6 @@
 <template>
  <nav
-  v-if="(!auth.user_id && !['/login', '/signup', '/chat', '/upload', '/order', '/cart'].includes(route.path)) || (auth.user_id && !['/chat', '/order'].includes(route.path))"
+  v-if="(!auth.user_id && !['/login', '/signup', '/chat', '/upload', '/order', '/cart'].includes(route.path)) || (auth.user_id && !['/chat', '/order', '/orderconfirmation/:order_id'].includes(route.path))"
 
   class="myheader grid grid-cols-6 gap-4 h-20 items-center sticky top-0 z-50 w-full pl-6 pr-6"
 >
@@ -8,14 +8,14 @@
       <side-bar />
       <div class="flex justify-center items-center h-full">
         <router-link to="/">
-          <img src="../assets/time-harmony.png" class="h-14 logo" />
+          <img src="../assets/time-harmony.png" class="h-12" />
         </router-link>
       </div>
     </div>
     <div class="ui-input-container col-span-3" @click="showHint = true">
       <input
         required
-        placeholder="Type something..."
+        placeholder="Tìm kiếm"
         class="ui-input"
         type="text"
         v-model="searchQuery"
@@ -40,7 +40,7 @@
         @mouseover="hovered = true"
         @mouseleave="hovered = false"
       >
-        Searching "{{ searchQuery }}..."
+        Tìm kiếm cho "{{ searchQuery }}..."
       </div>
     </div>
 
@@ -53,8 +53,8 @@
       > -->
       <router-link to="/upload" v-if="auth.user_id">
 
-        <button  class="th-p-btn upload-button pl-4 pr-4">
-          Upload <span class="mdi mdi-plus"></span>
+        <button  class="th-p-btn upload-button px-6">
+          Đăng bán<span class="mdi mdi-plus"></span>
         </button>
       </router-link>
       
@@ -65,7 +65,10 @@
         <span class="mdi mdi-heart-outline hover-animation"></span>
       </router-link>
       <router-link to="/cart">
-        <span class="mdi mdi-shopping-outline hover-animation"></span>
+        <div class="pr-2">
+          <span class="mdi mdi-shopping-outline hover-animation"></span>
+          <span class="absolute top-6">{{ cartItems.length }}</span>
+        </div>
       </router-link>
       <!-- Guest Page -->
       <div v-if="!auth.user_id" class="relative">
@@ -77,8 +80,8 @@
         </div>
         <div v-show="showMenu" class="submenu absolute top-10 right-0.5 pt-1 w-48">
           
-          <router-link to="/login" class="submenu-item block px-4 py-2 hover-underline-animation">Log in</router-link>
-          <router-link to="/signup" class="submenu-item block px-4 py-2 hover-underline-animation">Sign Up</router-link>
+          <router-link to="/login" class="submenu-item block px-4 py-2 hover-underline-animation">Đăng nhập</router-link>
+          <router-link to="/signup" class="submenu-item block px-4 py-2 hover-underline-animation">Đăng kí</router-link>
         </div>
       </div>
       <!-- Guest Page -->
@@ -97,23 +100,23 @@
           <div class="submenu absolute top-10 right-0.5 text-white pt-1 w-48">
             <router-link to="/setting/profile" 
             class="submenu-item block px-4 py-2 hover-underline-animation"
-            >Settings</router-link>
+            >Cài đặt</router-link>
             <router-link to="/appraiser" 
             class="submenu-item block px-4 py-2 hover-underline-animation"
-            >Appraise</router-link>
+            >Kiểm Duyệt</router-link>
             <router-link to="/voucher" 
             class="submenu-item block px-4 py-2 hover-underline-animation"
-            >Voucher</router-link>
+            >Khuyến mãi</router-link>
             <router-link to="" 
             class="submenu-item block px-4 py-2 hover-underline-animation"
-            >Customer Support</router-link>
+            >Hỗ trợ khách hàng</router-link>
             <router-link to="/admin" 
             class="submenu-item block px-4 py-2 hover-underline-animation"
             >Admin</router-link>
             <a
               @click="logout"
               class="submenu-item block px-4 py-2 cursor-pointer hover-underline-animation"
-              >Log Out</a
+              >Đăng xuất</a
             >
           </div>
         </div>
@@ -131,14 +134,18 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "../stores/user";
 import { onMounted } from "vue";
+import { useCartStore } from "../stores/cart";
 
-
+const cartStore = useCartStore();
+const cartItems = ref([])
 const searchQuery = ref("");
 const showHint = ref(false);
 const hovered = ref(false);
 const router = useRouter();
 const showMenu = ref(false);
 const greeting = ref("");
+const auth = useAuthStore();
+const route = useRoute();
 const submenus = ref({
   setting: false,
   logout: false,
@@ -193,22 +200,36 @@ function setGreeting() {
   const hour = now.getHours();
 
   if (hour >= 0 && hour < 5) {
-    greeting.value = "Good night";
+    greeting.value = "Chào buổi tối";
   } else if (hour >= 5 && hour < 12) {
-    greeting.value = "Good morning";
+    greeting.value = "Chào buổi sáng";
   } else if (hour >= 12 && hour < 18) {
-    greeting.value = "Good afternoon";
+    greeting.value = "Chào buổi chiều";
   } else{
-    greeting.value = "Good evening";
+    greeting.value = "Chào buổi tối";
   }
 }
 
-onMounted(() => {
-  setGreeting();
+
+onMounted(async () => {
+  try {
+    setGreeting();
+    await cartStore.getCart(auth.user_id);
+    cartItems.value = cartStore.cart_info.map((item) => ({
+      ...item,
+      isSelected: false,
+      name: "Loading...",
+      price: 0,
+      image: "",
+      sellerName: "Loading...",
+      sellerAvatar: "",
+    }));
+    console.log(cartItems.value.length);
+  } catch (error) {
+    console.error("Error fetching cart:", error);
+  }
 });
 
-const auth = useAuthStore();
-const route = useRoute();
 </script>
 
 <style scoped>
@@ -218,9 +239,9 @@ const route = useRoute();
 
 textarea:focus,
 .logo {
-  width: 100%;
-  max-width: 140px;
-  height: auto;
+  width: 50%;
+  max-width: 40px;
+  height: 50%;
 }
 
 body {
@@ -464,7 +485,6 @@ body {
 }
 
 .upload-button{
-  width: 6.8rem;
   height: 35px;
 }
 </style>

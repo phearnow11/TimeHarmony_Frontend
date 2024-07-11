@@ -10,10 +10,10 @@
           <label for="file" class="file-upload-label w-full">
             <div class="file-upload-design">
               <span class="mdi mdi-cloud-upload-outline text-xl"></span>
-              <p>Drag and Drop</p>
-              <p>or</p>  
+              <p>Kéo và thả</p>
+              <p>hoặc</p>  
               <span class="hover-underline-animation" @click="handleFileUpload"
-                >Browse file</span
+                >Thêm thư mục</span
               >
             </div>
           </label>
@@ -48,7 +48,7 @@
       </div>
     </div>
     <div class="col-span-1 mx-auto flex justify-start items-start">
-      <h3 class="text-3xl">Information</h3>
+      <h3 class="text-3xl">Thông tin sản phẩm đăng bán</h3>
       <div class="form-content">
         <div class="form__group field">
           <input
@@ -57,7 +57,7 @@
             class="form__field"
             placeholder="Watch's Name"
           />
-          <label for="watchname" class="form__label">Watch's Name</label>
+          <label for="watchname" class="form__label">Tên đồng hồ</label>
         </div>
       </div>
       <div class="form-content">
@@ -78,7 +78,7 @@
             for="description"
             class="desclabel"
             :class="{ active: isFocused }"
-            >Description</label
+            >Mô tả</label
           >
         </div>
       </div>
@@ -90,7 +90,7 @@
             class="form__field"
             placeholder="Price"
           />
-          <label for="price" class="form__label">Price</label>
+          <label for="price" class="form__label">Giá</label>
         </div>
       </div>
       <h3 class="text-3xl">Features</h3>
