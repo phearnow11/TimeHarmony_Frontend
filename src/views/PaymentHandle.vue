@@ -95,7 +95,7 @@
           if (orderDetails) {
             successMessage.value = 'Order created successfully. Redirecting to confirmation page...';
             setTimeout(() => {
-              router.push(`/order/${orderID}`);
+              router.push(`/orderconfirmation/${orderID}`);
             }, 10);
           } else {
             throw new Error('Invalid order details received');

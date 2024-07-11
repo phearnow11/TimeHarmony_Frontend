@@ -91,7 +91,7 @@ onMounted(async () => {
 });
 
 const viewOrderDetails = (orderId) => {
-  router.push(`/order/${orderId}`);
+  router.push(`/orderconfirmation/${orderId}`);
   console.log('Xem chi tiết đơn hàng:', orderId);
 };
 
