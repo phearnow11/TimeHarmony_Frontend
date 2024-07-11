@@ -21,7 +21,8 @@ export const useUserStore = defineStore("user", {
     note: '',
     mostRecentOrderId: null,
     pendingOrder: null,
-
+    transaction_no: null,
+    payment_method: null,
   }),
 
   actions: {
@@ -275,9 +276,9 @@ export const useUserStore = defineStore("user", {
         const sortedOrders = response.data.orders.sort((a, b) => 
           new Date(b.create_time) - new Date(a.create_time)
         );
-        
+        console.log(sortedOrders[0].order_id);
         // Return the most recent order (first in the sorted array)
-        return sortedOrders[0];
+        return sortedOrders[0].order_id;
       } catch (error) {
         console.error('Error fetching orders:', error);
         throw error;

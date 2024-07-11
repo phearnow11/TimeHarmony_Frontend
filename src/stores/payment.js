@@ -9,3 +9,13 @@ export const createVnPayPayment = async (amount) => {
     throw error;
   }
 };
+
+export const savePaymentDetail = async (data) => {
+  try {
+    const response = await axios.post('http://localhost:8080/payment/insert-payment-detail', data);
+    return response.data;
+  } catch (error) {
+    console.error('Error saving payment details:', error);
+    throw error;
+  }
+};

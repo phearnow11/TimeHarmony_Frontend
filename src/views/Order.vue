@@ -282,6 +282,7 @@ onMounted(() => {
   shippingAddress.value = cartStore.getShippingAddress;
   note.value = cartStore.getNote;
 
+
   if (selectedItems.value.length === 0) {
     router.push('/cart');
   }
@@ -295,7 +296,9 @@ const createOrder = async () => {
     address: shippingAddress.value.id,
     notice: note.value,
     total_price: totalPrice.value,
-    payment_method: selectedOption.value
+    payment_method: selectedOption.value,
+    transaction_no: selectedOption.value === 'card' ? '123456' : '', // Replace '123456' with your actual logic for transaction_no
+
   };
 
   try {
@@ -307,14 +310,14 @@ const createOrder = async () => {
       const mostRecentOrder = await userStore.getNewestOrder(auth.user_id);
       console.log('Most recent order:', mostRecentOrder);
 
-      if (mostRecentOrder && mostRecentOrder.order_id) {
-        console.log('Fetching order details for order ID:', mostRecentOrder.order_id);
-        const orderDetails = await userStore.getOrderDetail(mostRecentOrder.order_id);
+      if (mostRecentOrder) {
+        console.log('Fetching order details for order ID:', mostRecentOrder);
+        const orderDetails = await userStore.getOrderDetail(mostRecentOrder);
         console.log('Order details:', orderDetails);
         
         if (orderDetails && orderDetails.order_detail) {
           userStore.setCurrentOrder(orderDetails);
-          router.push(`/testconfirm/${mostRecentOrder.order_id}`);
+          router.push(`/testconfirm/${mostRecentOrder}`);
         } else {
           console.error('Invalid order details:', orderDetails);
           alert('Error processing order. Please try again.');

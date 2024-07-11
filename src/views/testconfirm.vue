@@ -121,7 +121,7 @@
               </div>
               <div class="flex justify-between font-bold text-lg mt-4 pt-4 border-t">
                 <span>Payment Method</span>
-                <span>COD</span>
+                <span>{{ paymentMethod ?? 'COD' }}</span>
               </div>
               <div class="flex justify-between font-bold text-lg mt-4 pt-4 border-t">
                 <span>Subtotal ({{ detailedWatches.length }} item(s))</span>
@@ -140,6 +140,10 @@
                 <span>{{ orderDetails.order_detail.total_price.toLocaleString('vi-VN') }} ₫</span>
               </div>
               <div class="mt-6">
+                <div class="flex justify-between text-sm text-gray-99">
+                  <span>Transaction No</span>
+                  <span>{{ transactionNo ?? '123456' }}</span>
+                </div>
                 <div class="flex justify-between text-sm text-gray-99">
                   <span>Transaction Date</span>
                   <span>{{ formatDate(orderDetails.order_detail.create_time)}}</span>
@@ -165,7 +169,11 @@
   const route = useRoute();
   const orderDetails = ref(null);
   const detailedWatches = ref([]);
-  
+  const paymentMethod = userStore.payment_method;
+  const transactionNo = userStore.transaction_no;
+  userStore.payment_method = null;
+  userStore.transaction_no = null;
+
   onMounted(async () => {
     const orderId = route.params.order_id;
     if (orderId) {
