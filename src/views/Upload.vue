@@ -13,7 +13,7 @@
               <p>Kéo và thả</p>
               <p>hoặc</p>  
               <span class="hover-underline-animation" @click="handleFileUpload"
-                >Thêm thư mục</span
+                >Tải tệp lên</span
               >
             </div>
           </label>
