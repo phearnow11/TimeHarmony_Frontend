@@ -90,6 +90,13 @@ const router = createRouter({
       }),
     },
     {
+      path: '/change-password',
+      name: 'ChangePassword',
+      component: () => import('../views/ChangePassword.vue').catch(err => {
+        console.error(err);
+      }),
+    },
+    {
       path: '/setting/profile',
       name: 'AccountSetting',
       component: () => import('../views/Setting/AccountSetting.vue').catch(err => {

@@ -88,6 +88,7 @@ function checkPasswords() {
   passwordsMatch.value = resetForm.value.newPassword === resetForm.value.confirmPassword;
   if (!passwordsMatch.value) {
     const label = document.querySelector('label[for="repassword"]');
+    console.log('The confirm password does not match');
     label.classList.add('shake');
     setTimeout(() => {
       label.classList.remove('shake');
@@ -96,13 +97,8 @@ function checkPasswords() {
 }
 
 async function resetPasswordHandle() {
-  if (!passwordsMatch.value) {
-    console.log('Mật khẩu không khớp');
-    return;
-  }
   try {
-    await auth.resetPass(useUserStore().username,resetForm.value.newPassword);
-    console.log('Đặt lại mật khẩu thành công');
+    await auth.resetPass(resetForm.value.oldPassword,useUserStore().username,resetForm.value.newPassword);
     // router.push('/login');
   } catch (error) {
     console.error('Lỗi khi đặt lại mật khẩu', error);

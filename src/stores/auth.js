@@ -51,9 +51,31 @@ export const useAuthStore = defineStore('auth', {
             Cookies.remove('user_id');
             router.push('/');
         },
-        resetPass(username,newpass){
-            const res = axios.patch(`http://localhost:8080/member/update/user/password/${username}?npwd=${newpass}`)
-            console.log(res.data);
+        
+        resetPass(oldpass,username,newpass){
+            const checkPass = axios.get(`http://localhost:8080/member/check/password/${username}?pwd=${oldpass}`)
+            if(checkPass.data === 'correct password'){
+                const res = axios.patch(`http://localhost:8080/member/update/user/password/${username}?npwd=${newpass}`)
+                console.log(res.data);
+
+            } else{
+                console.log('Error at old password');
+                return;
+            }
+        },
+        emailVerify(email, input){
+            const verify = axios.get(`http://localhost:8080/api/auth/verify/google/getcode?email=${email}`)
+            if(input === verify.data){
+                return true;
+            } else{
+                return false;
+            }
+        }, 
+        forgotPassword(email){
+            const verify = axios.get(`http://localhost:8080/api/auth/verify/password/getcode?email=${email}`)
+            return verify.data;
         }
+        
+
     }
 });
