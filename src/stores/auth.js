@@ -50,6 +50,10 @@ export const useAuthStore = defineStore('auth', {
             Cookies.remove('token');
             Cookies.remove('user_id');
             router.push('/');
+        },
+        resetPass(username,newpass){
+            const res = axios.patch(`http://localhost:8080/member/update/user/password/${username}?npwd=${newpass}`)
+            console.log(res.data);
         }
     }
 });

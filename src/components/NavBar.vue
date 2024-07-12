@@ -67,7 +67,7 @@
       <router-link to="/cart">
         <div class="pr-2">
           <span class="mdi mdi-shopping-outline hover-animation"></span>
-          <span class="absolute top-6">{{ cartItems.length }}</span>
+          <span class="absolute top-6">{{ useUserStore().cart_num }}</span>
         </div>
       </router-link>
       <!-- Guest Page -->
@@ -225,6 +225,7 @@ onMounted(async () => {
       sellerAvatar: "",
     }));
     console.log(cartItems.value.length);
+    useUserStore().cart_num = cartItems.value.length
   } catch (error) {
     console.error("Error fetching cart:", error);
   }

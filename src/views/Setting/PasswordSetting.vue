@@ -29,6 +29,16 @@
             <input
               type="password"
               class="form__field w-full"
+              placeholder="Mật khẩu cũ"
+              v-model="resetForm.oldPassword"
+              required
+            />
+            <label for="newpassword" class="form__label">Mật khẩu cũ</label>
+          </div>
+          <div class="form__group field w-96">
+            <input
+              type="password"
+              class="form__field w-full"
               placeholder="Mật khẩu mới"
               v-model="resetForm.newPassword"
               required
@@ -46,7 +56,7 @@
             />
             <label for="repassword" class="form__label">Xác nhận mật khẩu mới</label>
           </div>
-          <button type="submit" class="mt-5 th-p-btn">Đặt lại mật khẩu</button>
+          <button type="submit" class="mt-10 th-p-btn">Đặt lại mật khẩu</button>
         </form>
       </div>
     </div>
@@ -58,9 +68,11 @@ import { ref } from 'vue';
 import { useAuthStore } from '../../stores/auth';
 import { onMounted } from 'vue';
 import router from '../../router';
+import { useUserStore } from '../../stores/user';
 
 const auth = useAuthStore();
 const resetForm = ref({
+  oldPassword: '',
   newPassword: '',
   confirmPassword: ''
 });
@@ -89,9 +101,9 @@ async function resetPasswordHandle() {
     return;
   }
   try {
-    await auth.updatePassword(resetForm.value.newPassword);
+    await auth.resetPass(useUserStore().username,resetForm.value.newPassword);
     console.log('Đặt lại mật khẩu thành công');
-    router.push('/login');
+    // router.push('/login');
   } catch (error) {
     console.error('Lỗi khi đặt lại mật khẩu', error);
   }
