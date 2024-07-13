@@ -1,9 +1,10 @@
 <template>
   <div class="flex justify-center items-center min-h-screen">
-    <div class="login-container flex gap-8 items-center">
-      <div class="logo-container flex flex-col items-center pr-5">
-        <img src="../assets/test.jpg" class="w-80 h-full" alt="" />
-      </div>
+    <div class="login-background pr-16 shadow-lg">
+      <div class="login-container flex gap-8 items-center">
+        <div class="logo-container flex flex-col items-center pr-5">
+          <img src="../assets/test.jpg" class="w-80 h-full" alt="" />
+        </div>
       
       <form
       @submit.prevent="signupHandle"
@@ -94,13 +95,22 @@
             <label for="lastname" class="form__label">Họ*</label>
           </div>
         </div>
-        <button type="submit" class="w-full th-p-btn mt-3">Đăng ký</button>
+        <button class="th-p-btn w-full relative" :disabled="isLoading">
+          <span :class="{ 'opacity-0': isLoading }">Đăng ký</span>
+          <div v-if="isLoading" class="loader-container">
+            <div class="loader">
+              <div class="loaderBar"></div>
+            </div>
+          </div>
+        </button>
+        
         <div class="mt-1">
           <span>Đã có tài khoản? </span>
           <router-link to="/login" class="hover-underline-animation">Đăng nhập tại đây</router-link>
         </div>
       </form>
     </div>
+  </div>
   </div>
 </template>
 
@@ -122,7 +132,7 @@ const signUpForm = reactive({
 
 const passwordsMatch = ref(true);
 const isPasswordValid = ref(true);
-
+const isLoading = ref(false);
 const userStore = useUserStore();
 
 function checkPasswords() {
@@ -152,6 +162,7 @@ async function signupHandle() {
     return;
   }
   try {
+    isLoading.value = true;
     const userData = [
       {
         Fname: signUpForm.first_name,
@@ -166,10 +177,13 @@ async function signupHandle() {
       },
     ];
     const response = await userStore.signUp(userData);
+    await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate login delay
     console.log("Signup successful", response);
     router.push("/login");
   } catch (error) {
     console.error("Signup error", error);
+  } finally {
+    isLoading.value = false;
   }
 }
 </script>
@@ -180,8 +194,13 @@ async function signupHandle() {
   height: 100vh;
 }
 
+.login-background {
+  background-color: #131313; /* Dark, semi-transparent background */
+  backdrop-filter: blur(10px);
+  box-shadow: 0px 0px 20px 1px #ffbb763f;
+  border: 1px solid rgba(255, 255, 255, 0.454);
+}
 
-/* Style the signup text */
 .signup-text {
   color: var(--primary-color); /* Replace with your primary color variable */
   font-size: 1.5rem;

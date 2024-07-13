@@ -1,10 +1,10 @@
 <template>
   <div class="flex justify-center items-center h-screen">
-    <div class="login-container flex gap-8 items-center">
-      <div class="logo-container flex flex-col items-center pr-5">
-        <img src="../assets/test.jpg" class="w-80 h-full" alt="" />
-      </div>
-      
+    <div class="login-background pr-16 shadow-lg">
+      <div class="login-container flex gap-8 items-center">
+        <div class="logo-container flex flex-col items-center pr-5">
+          <img src="../assets/test.jpg" class="w-80 h-full" alt="" />
+        </div>
       <form
       @submit.prevent="onSubmit"
       class="flex w-96 flex-col justify-center items-center gap-3"
@@ -90,6 +90,7 @@
           <router-link to="/signup" class="hover-underline-animation">Đăng ký tại đây</router-link>
         </div>
       </form>
+      </div>
     </div>
   </div>
 </template>
@@ -126,6 +127,14 @@ async function onSubmit() {
 .thisForm {
   height: 100vh;
 }
+
+.login-background {
+  background-color: #131313; /* Dark, semi-transparent background */
+  backdrop-filter: blur(10px);
+  box-shadow: 0px 0px 20px 1px #ffbb763f;
+  border: 1px solid rgba(255, 255, 255, 0.454);
+}
+
 .login-text {
   color: var(--primary-color); /* Replace with your primary color variable */
   font-size: 1.5rem;
