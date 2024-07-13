@@ -1,7 +1,7 @@
 <template>
   <transition name="slide-in-out">
-    <div v-if="show" class="fixed inset-0 flex items-end justify-end">
-      <div class="bg-black-99 p-6 z-10 max-w-md w-full shadow-lg m-4">
+    <div v-if="show" class="fixed inset-0 flex items-end justify-end z-50">
+      <div class="color p-6 z-10 max-w-md w-full shadow-lg m-4">
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-xl font-semibold">{{ message }}</h2>
           <button @click="closePopup" class="text-gray-500 hover:text-gray-800">&times;</button>
@@ -14,8 +14,8 @@
           </div>
         </div>
         <div class="flex justify-end gap-4">
-          <button @click="closePopup" class="th-p-btn py-2 px-4">Continue Shopping</button>
-          <router-link to="/cart" class="th-p-btn py-2 px-4">View Cart</router-link>
+          <button @click="closePopup" class="border-2 border-secondary py-2 px-4">Tiếp tục</button>
+          <router-link to="/cart" class="th-p-btn py-2 px-4">Xem giỏ hàng</router-link>
         </div>
         <div class="relative mt-4 h-1 bg-black-99">
           <div :style="{ width: `${progress}%` }" class="absolute top-0 left-0 h-full bg-secondary"></div>
@@ -67,6 +67,11 @@ const formatPriceVND = (price) => {
 </script>
 
 <style scoped>
+.color{
+  background-color: hsla(200, 100%, 0%,.4);
+  backdrop-filter: blur(10px);
+}
+
 .slide-in-out-enter-active, .slide-in-out-leave-active {
   transition: transform 0.5s ease-in-out;
 }

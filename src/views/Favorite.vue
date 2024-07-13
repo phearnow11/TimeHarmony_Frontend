@@ -18,7 +18,7 @@
     <!-- Nếu không có dữ liệu -->
     <template v-else>
       <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 sm:gap-3 md:gap-3 lg:gap-3 relative pt-5 pb-10">
-        <ProductCard
+        <favorite-card
           v-for="(watch, index) in watches"
           :key="index"
           :productName="watch.watch_name"
@@ -30,6 +30,7 @@
           :seller_id="`/retailer/${watch.seller.member_id}`"
         />
       </div>
+      
     </template>
 
     <!-- Nếu không tìm thấy đồng hồ -->
@@ -48,6 +49,7 @@ import { useAuthStore } from '../stores/auth';
 import axios from 'axios';
 import ProductCard from '../components/ProductCard.vue';
 import SkeletonCard from '../components/SkeletonCard.vue';
+import FavoriteCard from '../components/FavoriteCard.vue';
 
 const watches = ref([]);
 const load = ref(true);

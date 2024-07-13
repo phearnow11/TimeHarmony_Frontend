@@ -234,7 +234,7 @@ async function addToCart() {
     const response = await userStore.addToCart(userStore.user_id, watchId);
     console.log("Already in cart ", response);
     if (response==='Watch aready in cart!') {
-      popupMessage.value = 'This item is already in your cart.';
+      popupMessage.value = 'Sản phẩm này đã được thêm vào giỏ hàng';
       showProductDetails.value = false;
     } else {
       currentProduct.value = {
@@ -242,7 +242,7 @@ async function addToCart() {
         name: watchStore.watch_data.name,
         price: watchStore.watch_data.price
       };
-      popupMessage.value = 'Added to Cart Successfully';
+      popupMessage.value = 'Thêm vào giỏ thành công';
       showProductDetails.value = true;
     }
     isPopupVisible.value = true;
