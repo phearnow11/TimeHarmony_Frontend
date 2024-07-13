@@ -2,6 +2,8 @@ import axios from "axios";
 import { defineStore } from "pinia";
 import router from "../router";
 import Cookies from "js-cookie";
+import { useUserStore } from "./user";
+import { useCartStore } from './cart';
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
@@ -36,6 +38,10 @@ export const useAuthStore = defineStore('auth', {
                     } else {
                         Cookies.remove('user_id');
                     }
+                    const cartStore = useCartStore();
+                    const userStore = useUserStore();
+                    cartStore.getCart(this.user_id);
+                    userStore.setCartNum(cartStore.cart_count);
                     router.push(this.returnURL || '/');
                 }
             })
@@ -49,6 +55,7 @@ export const useAuthStore = defineStore('auth', {
             this.token = null;
             Cookies.remove('token');
             Cookies.remove('user_id');
+            useUserStore().updateCartCount(0);
             router.push('/');
         },
         

@@ -130,13 +130,15 @@
 import { useAuthStore } from "../stores/auth";
 import SideBar from "./MenuBar.vue";
 import { useRoute } from "vue-router";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "../stores/user";
 import { onMounted } from "vue";
 import { useCartStore } from "../stores/cart";
 
+const authStore = useAuthStore();
 const cartStore = useCartStore();
+const userStore = useUserStore();
 const cartItems = ref([])
 const searchQuery = ref("");
 const showHint = ref(false);
@@ -214,23 +216,23 @@ function setGreeting() {
 onMounted(async () => {
   try {
     setGreeting();
-    await cartStore.getCart(auth.user_id);
-    cartItems.value = cartStore.cart_info.map((item) => ({
-      ...item,
-      isSelected: false,
-      name: "Loading...",
-      price: 0,
-      image: "",
-      sellerName: "Loading...",
-      sellerAvatar: "",
-    }));
-    console.log(cartItems.value.length);
-    useUserStore().cart_num = cartItems.value.length
+    if (authStore.user_id) {
+    await cartStore.getCart(authStore.user_id);
+    userStore.setCartNum(cartStore.cart_count);
+  }
   } catch (error) {
     console.error("Error fetching cart:", error);
   }
 });
 
+watch(() => authStore.user_id, async (newUserId) => {
+  if (newUserId) {
+    await cartStore.getCart(newUserId);
+    userStore.setCartNum(cartStore.cart_count);
+  } else {
+    userStore.setCartNum(0);
+  }
+});
 </script>
 
 <style scoped>

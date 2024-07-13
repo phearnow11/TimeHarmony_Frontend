@@ -51,6 +51,12 @@ export const useUserStore = defineStore("user", {
     setUsername(username) {
       this.username = username
     },
+    setCartNum(num) {
+      this.cart_num = num;
+    },
+    updateCartCount(count) {
+      this.cart_num = count;
+    },
 
     async getFavoritesFromServer(user_id) {
       try {
