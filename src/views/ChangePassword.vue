@@ -1,6 +1,5 @@
 <template>
     <div class="flex max-w-7xl mx-auto my-8 p-4">
-      
       <!-- Content -->
       <div class="flex-1">
         <!-- Reset Password -->
@@ -27,7 +26,7 @@
               />
               <label for="repassword" class="form__label">Xác nhận mật khẩu mới</label>
             </div>
-            <button type="submit" class="mt-10 th-p-btn">Đặt lại mật khẩu</button>
+            <button @click="resetPasswordHandle" type="submit" class="mt-10 th-p-btn">Đặt lại mật khẩu</button>
         </div>
       </div>
     </div>
@@ -35,35 +34,38 @@
   
   <script setup>
   import { ref } from 'vue';
-  import { onMounted } from 'vue';
   import { useUserStore } from '../stores/user';
-import { useAuthStore } from '../stores/auth';
-  
+  import { useAuthStore } from '../stores/auth';
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
   const auth = useAuthStore();
   const resetForm = ref({
-    oldPassword: '',
     newPassword: '',
     confirmPassword: ''
   });
   const passwordsMatch = ref(true);
-  
- 
+
   function checkPasswords() {
-    passwordsMatch.value = resetForm.value.newPassword === resetForm.value.confirmPassword;
-    if (!passwordsMatch.value) {
-      const label = document.querySelector('label[for="repassword"]');
-      console.log('The confirm password does not match');
-      label.classList.add('shake');
-      setTimeout(() => {
-        label.classList.remove('shake');
-      }, 500);
-    }
+  passwordsMatch.value = resetForm.value.newPassword === resetForm.value.confirmPassword;
+  if (!passwordsMatch.value) {
+    const label = document.querySelector('label[for="repassword"]');
+    console.log('The confirm password does not match');
+    label.classList.add('shake');
+    setTimeout(() => {
+      label.classList.remove('shake');
+    }, 500);
   }
-  
+}
   async function resetPasswordHandle() {
     try {
-      await auth.resetPass(resetForm.value.oldPassword,useUserStore().username,resetForm.value.newPassword);
-      // router.push('/login');
+      console.log('Username from store:', useUserStore().username)
+      if(passwordsMatch.value){
+      await auth.resetPassword(useUserStore().username,resetForm.value.newPassword);
+      router.push('/login');
+      } else{
+        console.log('No match password');
+      }
     } catch (error) {
       console.error('Lỗi khi đặt lại mật khẩu', error);
     }

@@ -48,6 +48,9 @@ export const useUserStore = defineStore("user", {
       this.wait_fav.add
       return [...this.state.cur_fav, ...this.state.wait_fav];
     },
+    setUsername(username) {
+      this.username = username
+    },
 
     async getFavoritesFromServer(user_id) {
       try {
@@ -285,6 +288,17 @@ export const useUserStore = defineStore("user", {
         throw error;
       }
     },
+    async getUserByEmail(email){
+      const response = await axios.get(`http://localhost:8080/member/getbyemail/${email}`)
+      if(response.data === ''){
+        console.log('No user found for email:', email);
+      }
+      else{
+        console.log(response.data);
+        this.setUsername(response.data.user_log_info.username)
+        return response.data;
+      }
+  }
         
   },
 });

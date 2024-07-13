@@ -57,10 +57,17 @@ export const useAuthStore = defineStore('auth', {
             if(checkPass.data === 'correct password'){
                 const res = axios.patch(`http://localhost:8080/member/update/user/password/${username}?npwd=${newpass}`)
                 console.log(res.data);
-
             } else{
                 console.log('Error at old password');
                 return;
+            }
+        },
+        async resetPassword(username,newpass){
+            try {
+                const res = await axios.patch(`http://localhost:8080/member/update/user/password/${username}?npwd=${newpass}`)
+                console.log(res.data);
+            } catch (error) {
+                console.log('Error');
             }
         },
         emailVerify(email, input){
@@ -71,10 +78,16 @@ export const useAuthStore = defineStore('auth', {
                 return false;
             }
         }, 
-        forgotPassword(email){
-            const verify = axios.get(`http://localhost:8080/api/auth/verify/password/getcode?email=${email}`)
-            return verify.data;
-        }
+        async forgotPassword(email) {
+            try {
+              const response = await axios.get(`http://localhost:8080/api/auth/verify/password/getcode?email=${email}`);
+              return response.data;
+            } catch (error) {
+              console.error('Error in forgotPassword:', error);
+              throw error;
+            }
+          },
+        
         
 
     }
