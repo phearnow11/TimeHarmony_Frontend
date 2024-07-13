@@ -18,12 +18,10 @@
         />
       </router-link>
       <div class="border-l mr-5 border-primary"></div>
-      <span class="font-bold mt-5 text-3xl text-primary">
+      <span class="font-bold mt-5 mr-5 text-3xl text-primary">
         Đăng nhập
       </span>
-      <div
-        class="border-b pt-5 flex align-middle justify-center items-center"
-      ></div>
+      
     </div>
         <div class="form-content">
           <div class="form__group field w-96">
