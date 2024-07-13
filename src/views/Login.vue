@@ -1,17 +1,30 @@
 <template>
-  <div class="flex justify-center items-center min-h-screen">
+  <div class="flex justify-center items-center h-screen">
     <div class="login-container flex gap-8 items-center">
-      <div class="logo-container flex flex-col items-center">
-        <router-link to="/">
-          <img src="../assets/time-harmony.png" class="logo w-60" />
-        </router-link>
-        <span class="login-text">- Đăng nhập -</span>
+      <div class="logo-container flex flex-col items-center pr-5">
+        <img src="../assets/test.jpg" class="w-80 h-full" alt="" />
       </div>
-
+      
       <form
-        @submit.prevent="onSubmit"
-        class="flex w-96 flex-col justify-center items-center gap-4"
+      @submit.prevent="onSubmit"
+      class="flex w-96 flex-col justify-center items-center gap-3"
       >
+      <div class="flex left-10 justify-center">
+      <router-link to="/">
+        <img
+          class="h-20 flex items-center"
+          src="../assets/time-harmony.png"
+          alt=""
+        />
+      </router-link>
+      <div class="border-l mr-5 border-primary"></div>
+      <span class="font-bold mt-5 text-3xl text-primary">
+        Đăng nhập
+      </span>
+      <div
+        class="border-b pt-5 flex align-middle justify-center items-center"
+      ></div>
+    </div>
         <div class="form-content">
           <div class="form__group field w-96">
             <input
@@ -33,7 +46,6 @@
             />
             <label for="password" class="form__label">Mật khẩu</label>
           </div>
-          <br />
         </div>
 
         <div class="row-remember w-96 grid grid-cols-2 gap-4">
@@ -56,34 +68,33 @@
             >
           </div>
         </div>
-        <div class="flex justify-center items-center w-full relative">
-          <button class="th-p-btn w-96 relative" :disabled="isLoading">
-            <span :class="{ 'opacity-0': isLoading }">Đăng nhập</span>
-            <div v-if="isLoading" class="loader-container">
-              <div class="loader">
-                <div class="loaderBar"></div>
-              </div>
+
+        <button class="th-p-btn w-full relative" :disabled="isLoading">
+          <span :class="{ 'opacity-0': isLoading }">Đăng nhập</span>
+          <div v-if="isLoading" class="loader-container">
+            <div class="loader">
+              <div class="loaderBar"></div>
             </div>
-          </button>
-        </div>
-        <div class="flex items-center w-full my-4">
+          </div>
+        </button>
+
+        <div class="flex items-center w-full my-2">
           <div class="border-t border-gray-99 flex-grow mr-3"></div>
           <span class="text-gray-99">hoặc</span>
           <div class="border-t border-gray-99 flex-grow ml-3"></div>
         </div>
+
         <login-via-google />
         <login-via-facebook />
-        <div>
+
+        <div class="mt-4">
           <span>Bạn chưa có tài khoản? </span>
-          <router-link to="/signup" class="hover-underline-animation"
-            >Đăng kí tại đây</router-link
-          >
+          <router-link to="/signup" class="hover-underline-animation">Đăng ký tại đây</router-link>
         </div>
       </form>
     </div>
   </div>
 </template>
-
 <script setup>
 import { reactive, ref } from "vue";
 import { useAuthStore } from "../stores/auth";
@@ -104,46 +115,23 @@ async function onSubmit() {
   if (user.username && user.password) {
     isLoading.value = true;
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate login delay
       await authStore.login(user.username, user.password, remember.value);
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate login delay
     } finally {
       isLoading.value = false;
     }
   }
 }
 </script>
-
 <style scoped>
 /* Ensure the parent container takes the full height */
 .thisForm {
   height: 100vh;
 }
-
-/* Add styles for the login container */
-.login-container {
-  display: flex;
-  align-items: center;
-  gap: 2rem; /* Adjust the gap between logo and form as needed */
-}
-
-/* Style the logo container */
-.logo-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* Style the login text */
 .login-text {
   color: var(--primary-color); /* Replace with your primary color variable */
   font-size: 1.5rem;
-  margin-top: 0.5rem;
 }
-/* Optional: Add margin to move the form slightly to the right */
-form {
-  margin-left: 20rem; /* Adjust the value as needed */
-}
-
 .loader-container {
   position: absolute;
   top: 0;
@@ -203,5 +191,6 @@ form {
     transform: rotate(360deg);
   }
 }
+
 
 </style>

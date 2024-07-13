@@ -1,17 +1,30 @@
 <template>
   <div class="flex justify-center items-center min-h-screen">
-    <div class="signup-container flex gap-8 items-center">
-      <div class="logo-container flex flex-col items-center">
-        <router-link to="/">
-          <img src="../assets/time-harmony.png" class="logo" />
-        </router-link>
-        <span class="signup-text">- Đăng ký -</span>
+    <div class="login-container flex gap-8 items-center">
+      <div class="logo-container flex flex-col items-center pr-5">
+        <img src="../assets/test.jpg" class="w-80 h-full" alt="" />
       </div>
-
+      
       <form
-        @submit.prevent="signupHandle"
-        class="flex w-96 flex-col items-center gap-2"
+      @submit.prevent="signupHandle"
+      class="flex w-96 flex-col justify-center items-center gap-3"
       >
+      <div class="flex left-10 justify-center">
+      <router-link to="/">
+        <img
+          class="h-20 flex items-center"
+          src="../assets/time-harmony.png"
+          alt=""
+        />
+      </router-link>
+      <div class="border-l mr-5 border-primary"></div>
+      <span class="font-bold mt-5 text-3xl text-primary">
+        Đăng ký
+      </span>
+      <div
+        class="border-b pt-5 flex align-middle justify-center items-center"
+      ></div>
+    </div>
         <div class="form__group field w-96">
           <input
             type="email"
@@ -83,13 +96,7 @@
             <label for="lastname" class="form__label">Họ*</label>
           </div>
         </div>
-
-      
-
-        
-
         <button type="submit" class="w-full th-p-btn mt-3">Đăng ký</button>
-
         <div class="mt-1">
           <span>Đã có tài khoản? </span>
           <router-link to="/login" class="hover-underline-animation">Đăng nhập tại đây</router-link>
@@ -175,36 +182,12 @@ async function signupHandle() {
   height: 100vh;
 }
 
-/* Add styles for the signup container */
-.signup-container {
-  display: flex;
-  align-items: center;
-  gap: 2rem; /* Adjust the gap between logo and form as needed */
-}
-
-/* Style the logo container */
-.logo-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
 
 /* Style the signup text */
 .signup-text {
   color: var(--primary-color); /* Replace with your primary color variable */
   font-size: 1.5rem;
   margin-top: 0.5rem;
-}
-
-/* Adjust the logo size */
-.logo {
-  width: 200px;
-  height: auto;
-}
-
-/* Optional: Add margin to move the form slightly to the right */
-form {
-  margin-left: 10rem; /* Adjust the value as needed */
 }
 
 .input-error .form__field {

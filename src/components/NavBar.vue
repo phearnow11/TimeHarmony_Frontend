@@ -81,7 +81,7 @@
         <div v-show="showMenu" class="submenu absolute top-10 right-0.5 pt-1 w-48">
           
           <router-link to="/login" class="submenu-item block px-4 py-2 hover-underline-animation">Đăng nhập</router-link>
-          <router-link to="/signup" class="submenu-item block px-4 py-2 hover-underline-animation">Đăng kí</router-link>
+          <router-link to="/signup" class="submenu-item block px-4 py-2 hover-underline-animation">Đăng ký</router-link>
         </div>
       </div>
       <!-- Guest Page -->
@@ -433,33 +433,6 @@ body {
   color: var(--secondary);
 }
 
-.hover-underline-animation {
-  position: relative;
-  text-decoration: none;
-  color: var(--wait);
-}
-
-.hover-underline-animation::after {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 2px;
-  display: block;
-  margin: 0 auto;
-  background: #ffbd59;
-  transition: width 0.4s ease-in-out;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: -2px;
-}
-
-.hover-underline-animation:hover::after {
-  width: 100%;
-}
-
-.hover-underline-animation:hover {
-  color: var(--secondary);
-}
 
 .hover-active {
   color: var(--secondary);

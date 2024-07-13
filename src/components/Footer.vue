@@ -1,6 +1,5 @@
 <template>
-  <footer v-if="(!auth.user_id && !['/login', '/signup', '/chat', '/upload', '/order'].includes(route.path)) || (auth.user_id && !['/chat', '/order'].includes(route.path))"
-  class="footer bg-[#212121] text-[#E6C591]">
+  <footer v-if="shouldShowFooter" class="footer bg-[#212121] text-[#E6C591]">
     <div class="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:py-16 lg:px-8">
       <div class="xl:grid xl:grid-cols-3 xl:gap-8">
         <div class="space-y-8 xl:col-span-1">
@@ -34,126 +33,50 @@
         <div class="mt-12 grid grid-cols-2 gap-8 xl:mt-0 xl:col-span-2">
           <div class="md:grid md:grid-cols-2 md:gap-8">
             <div>
-              <h3 class="text-sm font-semibold text-[#E6C591] tracking-wider uppercase">
-                Company
-              </h3>
-              <ul class="mt-4 space-y-4">
-                <li>
-                  <router-link to="/about" class="text-base text-[#9b9b9b] hover-underline-animation">
-                    About
-                  </router-link>
-                </li>
-                <li>
-                  <a href="#" class="text-base text-[#9b9b9b] hover-underline-animation">
-                    Blog
-                  </a>
-                </li>
-                <li>
-                  <a href="#" class="text-base text-[#9b9b9b] hover-underline-animation">
-                    Jobs
-                  </a>
-                </li>
-                <li>
-                  <a href="#" class="text-base text-[#9b9b9b] hover-underline-animation">
-                    Press
-                  </a>
-                </li>
+              <h3 class="text-sm font-semibold text-[#E6C591] tracking-wider uppercase">Solutions</h3>
+              <ul role="list" class="mt-4 space-y-4">
+                <li><router-link to="/features" class="text-[#9b9b9b] hover:text-[#E6C591]">Features</router-link></li>
+                <li><router-link to="/pricing" class="text-[#9b9b9b] hover:text-[#E6C591]">Pricing</router-link></li>
+                <li><router-link to="/faqs" class="text-[#9b9b9b] hover:text-[#E6C591]">FAQs</router-link></li>
+                <li><router-link to="/support" class="text-[#9b9b9b] hover:text-[#E6C591]">Support</router-link></li>
               </ul>
             </div>
             <div class="mt-12 md:mt-0">
-              <h3 class="text-sm font-semibold text-[#E6C591] tracking-wider uppercase">
-                Legal
-              </h3>
-              <ul class="mt-4 space-y-4">
-                <li>
-                  <a href="#" class="text-base text-[#9b9b9b] hover-underline-animation">
-                    Privacy
-                  </a>
-                </li>
-                <li>
-                  <a href="#" class="text-base text-[#9b9b9b] hover-underline-animation">
-                    Terms
-                  </a>
-                </li>
-                <li>
-                  <a href="#" class="text-base text-[#9b9b9b] hover-underline-animation">
-                    Cookie Policy
-                  </a>
-                </li>
-                <li>
-                  <a href="#" class="text-base text-[#9b9b9b] hover-underline-animation">
-                    Licensing
-                  </a>
-                </li>
+              <h3 class="text-sm font-semibold text-[#E6C591] tracking-wider uppercase">About Us</h3>
+              <ul role="list" class="mt-4 space-y-4">
+                <li><router-link to="/company" class="text-[#9b9b9b] hover:text-[#E6C591]">Company</router-link></li>
+                <li><router-link to="/team" class="text-[#9b9b9b] hover:text-[#E6C591]">Team</router-link></li>
+                <li><router-link to="/careers" class="text-[#9b9b9b] hover:text-[#E6C591]">Careers</router-link></li>
+                <li><router-link to="/contact" class="text-[#9b9b9b] hover:text-[#E6C591]">Contact</router-link></li>
               </ul>
             </div>
           </div>
           <div class="md:grid md:grid-cols-2 md:gap-8">
             <div>
-              <h3 class="text-sm font-semibold text-[#E6C591] tracking-wider uppercase">
-                Support
-              </h3>
-              <ul class="mt-4 space-y-4">
-                <li>
-                  <a href="#" class="text-base text-[#9b9b9b] hover-underline-animation">
-                    Pricing
-                  </a>
-                </li>
-                <li>
-                  <a href="#" class="text-base text-[#9b9b9b] hover-underline-animation">
-                    Documentation
-                  </a>
-                </li>
-                <li>
-                  <a href="#" class="text-base text-[#9b9b9b] hover-underline-animation">
-                    Guides
-                  </a>
-                </li>
-                <li>
-                  <a href="#" class="text-base text-[#9b9b9b] hover-underline-animation">
-                    API Status
-                  </a>
-                </li>
+              <h3 class="text-sm font-semibold text-[#E6C591] tracking-wider uppercase">Resources</h3>
+              <ul role="list" class="mt-4 space-y-4">
+                <li><router-link to="/blog" class="text-[#9b9b9b] hover:text-[#E6C591]">Blog</router-link></li>
+                <li><router-link to="/tutorials" class="text-[#9b9b9b] hover:text-[#E6C591]">Tutorials</router-link></li>
+                <li><router-link to="/guides" class="text-[#9b9b9b] hover:text-[#E6C591]">Guides</router-link></li>
+                <li><router-link to="/ebooks" class="text-[#9b9b9b] hover:text-[#E6C591]">eBooks</router-link></li>
               </ul>
             </div>
             <div class="mt-12 md:mt-0">
-              <h3 class="text-sm font-semibold text-[#E6C591] tracking-wider uppercase">
-                Contact
-              </h3>
-              <ul class="mt-4 space-y-4">
-                <li>
-                  <a href="#" class="text-base text-[#9b9b9b] hover-underline-animation">
-                    Contact Us
-                  </a>
-                </li>
-                <li>
-                  <a href="#" class="text-base text-[#9b9b9b] hover-underline-animation">
-                    Support
-                  </a>
-                </li>
-                <li>
-                  <a href="#" class="text-base text-[#9b9b9b] hover-underline-animation">
-                    Sales
-                  </a>
-                </li>
-                <li>
-                  <a href="#" class="text-base text-[#9b9b9b] hover-underline-animation">
-                    Advertise
-                  </a>
-                </li>
+              <h3 class="text-sm font-semibold text-[#E6C591] tracking-wider uppercase">Legal</h3>
+              <ul role="list" class="mt-4 space-y-4">
+                <li><router-link to="/privacy" class="text-[#9b9b9b] hover:text-[#E6C591]">Privacy Policy</router-link></li>
+                <li><router-link to="/terms" class="text-[#9b9b9b] hover:text-[#E6C591]">Terms of Service</router-link></li>
+                <li><router-link to="/cookie-policy" class="text-[#9b9b9b] hover:text-[#E6C591]">Cookie Policy</router-link></li>
+                <li><router-link to="/data-protection" class="text-[#9b9b9b] hover:text-[#E6C591]">Data Protection</router-link></li>
               </ul>
             </div>
           </div>
         </div>
       </div>
-      <div class="mt-12 border-t border-[#9b9b9b] pt-8">
-        <p class="text-base text-[#9b9b9b] xl:text-center">
-          &copy; {{ date }} TimeHarmony™. All rights reserved.
-        </p>
-      </div>
     </div>
   </footer>
 </template>
+
 
 <script setup>
 import { useRoute } from 'vue-router';
@@ -163,6 +86,21 @@ import { useUserStore } from '../stores/user';
 const auth = useUserStore();
 const route = useRoute();
 const date = computed(() => new Date().getFullYear());
+
+const shouldShowFooter = computed(() => {
+      const hiddenRoutesWithoutAuth = ['/login', '/signup', '/chat', '/upload', '/order', '/cart', '/forgot'];
+      const hiddenRoutesWithAuth = ['/chat', '/order', '/orderconfirmation/:order_id'];
+
+      if (!auth.user_id && hiddenRoutesWithoutAuth.includes(route.path)) {
+        return false;
+      }
+
+      if (auth.user_id && hiddenRoutesWithAuth.includes(route.path)) {
+        return false;
+      }
+
+      return true;
+    });
 </script>
 
 <style scoped>
