@@ -3,7 +3,7 @@
     <div class="login-background pr-16 shadow-lg">
       <div class="login-container flex gap-8 items-center">
         <div class="logo-container flex flex-col items-center pr-5">
-          <img src="../assets/test.jpg" class="w-80 h-full" alt="" />
+          <img src="../assets/test2.png" class="w-80 h-full" alt="" />
         </div>
       <form
       @submit.prevent="onSubmit"
@@ -129,7 +129,7 @@ async function onSubmit() {
 }
 
 .login-background {
-  background-color: #131313; /* Dark, semi-transparent background */
+  background-color: #6f6f6f22; /* Dark, semi-transparent background */
   backdrop-filter: blur(10px);
   box-shadow: 0px 0px 20px 1px #ffbb763f;
   border: 1px solid rgba(255, 255, 255, 0.454);
