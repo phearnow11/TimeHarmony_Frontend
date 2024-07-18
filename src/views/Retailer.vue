@@ -10,7 +10,12 @@
           {{ retailer.first_name }} {{ retailer.last_name }}
         </strong>
         <div class="location hover-underline-animation">
-          <p><span class="mdi mdi-map-marker"></span> {{ retailer.address?retailer.address:"N/A" }}</p>
+          <p v-if="defaultAddress">
+            <span class="mdi mdi-map-marker"></span> {{ defaultAddress }}
+          </p>
+          <p v-else>
+            <span class="mdi mdi-map-marker"></span> N/A
+          </p>
         </div>
       </div>
       <div class="text-white">
@@ -72,18 +77,18 @@
 
 <script setup>
 import ProductCard from '../components/ProductCard.vue';
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useUserStore } from '../stores/user';
 
 const route = useRoute();
 const userStore = useUserStore();
+const addresses = ref([]);
 const retailer = ref({
   username: "",
   email: "",
   first_name: "",
   last_name: "",
-  address: [],
   phone: "",
   image: "",
   active: "",
@@ -99,12 +104,26 @@ const updateRating = (star) => {
   rating.value = star; // For demonstration, you can implement average rating logic
 };
 
+const defaultAddress = computed(() => {
+  if (addresses.value && addresses.value.length > 0) {
+    const defaultAddr = addresses.value.find(addr => addr.isDefault === true);
+    console.log('Default address object:', defaultAddr);
+    return defaultAddr ? defaultAddr.address : addresses.value[0].detail;
+  }
+  return null;
+});
+
 onMounted(async () => {
   const userId = route.params.seller_id;
   try {
     const userInfo = await userStore.getUserInfo(userId);
     retailer.value = userInfo;
     console.log("Fetched retailer info:", userInfo);
+
+    // Fetch address information separately
+    const addressData = await userStore.getAddressDetails(userId);
+    addresses.value = addressData;
+    console.log("Fetched address info:", addresses.value);
   } catch (error) {
     console.error('Error fetching retailer info:', error);
   }

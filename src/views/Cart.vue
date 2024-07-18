@@ -5,17 +5,20 @@
         <span class="text-2xl font-semibold">Giỏ hàng</span>
       </div>
     </section>
+    
     <div class="flex justify-center h-0 items-start w-full px-10 pt-5 pb-20">
       <section class="w-8/12 flex items-center bg-zinc-900 p-4 mr-4">
         <div class="flex items-center flex-grow">
-          <label
-            class="container flex justify-start items-center text-center gap-2"
-          >
-            <input type="checkbox" :checked="selectAll" @change="toggleAllProducts"/>
-            <svg viewBox="0 0 64 64" height="1em">
+          <label class="flex items-center cursor-pointer checkbox-container">
+            <input
+              type="checkbox"
+              :checked="selectAll"
+              @change="toggleAllProducts"
+              class="hidden"
+            />
+            <svg viewBox="0 0 64 64" height="1em" class="checkbox-svg">
               <path
                 d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
-                pathLength="575.0541381835938"
                 class="path"
               ></path>
             </svg>
@@ -35,8 +38,8 @@
       
       <section class="flex flex-col z-20 bg-zinc-900 p-5 shadow w-4/12 space-y-4">
         <div class="flex flex-row items-center justify-between w-full">
-          <div class="flex items-center">
-            <p v-if="selectedAddress" class="flex pr-2 items-center">
+          <div class="w-80 flex items-center">
+            <p v-if="selectedAddress" class="flex items-center">
               <span class="mdi mdi-map-marker pr-2"></span>
               {{ selectedAddress.address }}
             </p>
@@ -46,7 +49,7 @@
             </p>
             <p v-else class="flex items-center">Địa chỉ chưa được chọn</p>
           </div>
-          <button @click="openAddressModal" class="hover-underline-animation w-24 px-2 flex items-center">Thay đổi</button>
+          <button @click="openAddressModal" class="hover-underline-animation flex items-center">Chỉnh sửa</button>
         </div>
         <div class="border-t border-secondary border-dashed pt-4">
           <span class="block font-bold text-xl pb-4">Thông tin đơn hàng</span>
@@ -109,7 +112,6 @@
     
     
       <cart-item
-      
       v-for="item in cartItems"
       :key="item.watch_id"
       :productName="item.name || 'Loading...'"
@@ -147,6 +149,12 @@
         </div>
       </div>
     </div>
+    <PopUp 
+      :show="isPopupVisible" 
+      :product="currentProduct" 
+      :message="popupMessage" 
+      :showDetails="showProductDetails"
+      @close="isPopupVisible = false"  />
   </div>
   <div v-else class="h-screen flex flex-col items-center justify-center">
     <div>
@@ -168,6 +176,7 @@ import { useWatchStore } from "../stores/watch";
 import { useUserStore } from "../stores/user";
 import CartItem from "../components/CartItem.vue";
 import { useRouter } from 'vue-router';
+import PopUp from "../components/PopUp.vue";
 
 const watchStore = useWatchStore();
 const auth = useAuthStore();
@@ -198,15 +207,23 @@ const fetchAddresses = async () => {
     console.error("Error fetching addresses:", error);
   }
 };
+const disableBodyScroll = () => {
+  document.body.style.overflow = 'hidden';
+};
+
+const enableBodyScroll = () => {
+  document.body.style.overflow = '';
+};
+const openAddressModal = () => {
+  tempSelectedAddress.value = selectedAddress.value;
+  showAddressModal.value = true;
+  disableBodyScroll();
+};
 
 const closeAddressModal = () => {
   showAddressModal.value = false;
   tempSelectedAddress.value = null;
-};
-
-const openAddressModal = () => {
-  tempSelectedAddress.value = selectedAddress.value;
-  showAddressModal.value = true;
+  enableBodyScroll();
 };
 
 const confirmAddressSelection = () => {
@@ -328,15 +345,24 @@ const totalAll = computed(() => {
 
 watch(cartItems, updateSelectAllState, { deep: true });
 
+const isPopupVisible = ref(false);
+const popupMessage = ref('');
+const showProductDetails = ref(true);
 
 const createOrder = async () => {
   const selectedItems = cartItems.value.filter(item => item.isSelected);
-  cartStore.setSelectedItems(selectedItems);
-  cartStore.setTotalPrice(totalPrice.value); // This now includes the shipping fee
-  cartStore.setShippingAddress(selectedAddress.value);
-  cartStore.setNote(note.value);
-  
-  router.push('/order');
+  if (selectedAddress.value !== null) {
+    cartStore.setSelectedItems(selectedItems);
+    cartStore.setTotalPrice(totalPrice.value);
+    cartStore.setShippingAddress(selectedAddress.value);
+    cartStore.setNote(note.value);
+    router.push('/order');
+  } else {
+    isPopupVisible.value = true;
+    popupMessage.value = 'Vui lòng chọn địa chỉ giao hàng trước khi xác nhận giỏ hàng';
+    showProductDetails.value = false;
+    console.log('Address must be chosen');
+  }
 };
 
 </script>

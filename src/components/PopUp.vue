@@ -1,12 +1,12 @@
 <template>
   <transition name="slide-in-out">
     <div v-if="show" class="fixed inset-0 flex items-end justify-end z-50">
-      <div class="color p-6 z-10 max-w-md w-full shadow-lg m-4">
+      <div v-if="showDetails" class="color p-6 z-10 max-w-md w-full shadow-lg m-4">
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-xl font-semibold">{{ message }}</h2>
           <button @click="closePopup" class="text-gray-500 hover:text-gray-800">&times;</button>
         </div>
-        <div v-if="showDetails" class="flex items-center mb-4">
+        <div  class="flex items-center mb-4">
           <img :src="product.image" alt="Product Image" class="w-16 h-16 object-cover mr-4">
           <div>
             <h3 class="text-lg">{{ product.name }}</h3>
@@ -16,6 +16,18 @@
         <div class="flex justify-end gap-4">
           <button @click="closePopup" class="border-2 border-secondary py-2 px-4">Tiếp tục</button>
           <router-link to="/cart" class="th-p-btn py-2 px-4">Xem giỏ hàng</router-link>
+        </div>
+        <div class="relative mt-4 h-1 bg-black-99">
+          <div :style="{ width: `${progress}%` }" class="absolute top-0 left-0 h-full bg-secondary"></div>
+        </div>
+      </div>
+      <div v-else class="color p-6 z-10 max-w-md w-full shadow-lg m-4">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-semibold">{{ message }}</h2>
+          <button @click="closePopup" class="text-gray-500 hover:text-gray-800">&times;</button>
+        </div>
+        <div class="flex justify-end gap-4">
+          <button @click="closePopup" class="border-2 border-secondary py-2 px-4">Tiếp tục</button>
         </div>
         <div class="relative mt-4 h-1 bg-black-99">
           <div :style="{ width: `${progress}%` }" class="absolute top-0 left-0 h-full bg-secondary"></div>

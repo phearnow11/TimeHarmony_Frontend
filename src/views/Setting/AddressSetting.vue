@@ -22,6 +22,7 @@
     </div>
     <!-- Nội dung -->
     <div class="container mx-auto p-4">
+      
       <div v-if="!showAddForm">
         <h2 class="text-2xl relative bottom-4 mb-5">Địa chỉ của tôi</h2>
         <table class="w-full border-collapse">
@@ -142,6 +143,12 @@
           </div>
         </form>
       </div>
+      <PopUp 
+        :show="showPopup"
+        :message="popupMessage"
+        :showDetails="false"
+        @close="closePopup"
+      />
     </div>
   </div>
 </template>
@@ -152,6 +159,7 @@ import { useUserStore } from '../../stores/user';
 import { onMounted, ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { fetchProvinces, fetchDistricts, fetchWards } from '../../stores/vnmap';
+import PopUp from '../../components/PopUp.vue';
 
 const user = useUserStore();
 const auth = useAuthStore();
@@ -258,7 +266,11 @@ const toggleAddForm = () => {
     selectedWard.value = '';
   }
 };
-
+const showPopup = ref(false);
+const closePopup = () => {
+  showPopup.value = false;
+};
+const popupMessage = ref('');
 const submitNewAddress = async () => {
   try {
     const fullAddress = `${selectedWardName.value}, ${selectedDistrictName.value}, ${selectedProvinceName.value}`;
@@ -269,6 +281,8 @@ const submitNewAddress = async () => {
     await user.addAddress(auth.user_id, newAddress.value);
     addresses.value = await user.getAddressDetails(auth.user_id);
     toggleAddForm();
+    popupMessage.value = 'Thêm địa chỉ thành công!';
+    showPopup.value = true;
   } catch (error) {
     console.error('Failed to save new address:', error);
     console.error('Error response:', error.response);  // Add this line to see more details
