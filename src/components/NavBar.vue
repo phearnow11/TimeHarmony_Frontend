@@ -135,9 +135,11 @@ import { useRouter } from "vue-router";
 import { useUserStore } from "../stores/user";
 import { onMounted } from "vue";
 import { useCartStore } from "../stores/cart";
+import { useWatchStore } from "../stores/watch";
 
 const authStore = useAuthStore();
 const cartStore = useCartStore();
+const watchStore = useWatchStore();
 const userStore = useUserStore();
 const cartItems = ref([])
 const searchQuery = ref("");
@@ -166,13 +168,17 @@ document.addEventListener("click", (e) => {
   }
 });
 
-const search = () => {
+const search = async () => {
   if (searchQuery.value.trim()) {
-    router.push({ name: "SearchResult", query: { q: searchQuery.value } });
-    showHint.value = false;
+    try {
+      await watchStore.searchWatches(searchQuery.value);
+      router.push({ name: "SearchResult", query: { q: searchQuery.value } });
+      showHint.value = false;
+    } catch (error) {
+      console.error("Error during search:", error);
+    }
   }
 };
-
 const updateHint = () => {
   showHint.value = true;
 };

@@ -10,6 +10,7 @@ export const useWatchStore = defineStore("watch", {
     error: null,
     hasMore: true,
     filters: [],
+    searchResults: [],
     watch_data: {
       name: "",
       price: "",
@@ -165,5 +166,16 @@ export const useWatchStore = defineStore("watch", {
         throw error;
       }
     }, 
+    async searchWatches(keyword) {
+      try {
+        const response = await axios.get(`http://localhost:8080/watch/search/keyword?keyword=${keyword}`);
+        this.searchResults = response.data;
+        console.log(response.data);
+        return this.searchResults;
+      } catch (error) {
+        console.error("Error searching watches:", error);
+        throw error;
+      }
+    },
   }
 });
