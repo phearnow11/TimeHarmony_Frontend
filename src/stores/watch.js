@@ -177,5 +177,81 @@ export const useWatchStore = defineStore("watch", {
         throw error;
       }
     },
+    async getWatchesByGender(gender) {
+      try {
+        const response = await axios.get(`http://localhost:8080/watch/get/gender?gender=${gender}`);
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching watches by gender:", error);
+        throw error;
+      }
+    },
+  
+    async getWatchesBySeries(series) {
+      try {
+        const response = await axios.get(`http://localhost:8080/watch/get/series?series=${series}`);
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching watches by series:", error);
+        throw error;
+      }
+    },
+  
+    async getWatchesByBrand(brand) {
+      try {
+        const response = await axios.get(`http://localhost:8080/watch/get/brand?brand=${brand}`);
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching watches by brand:", error);
+        throw error;
+      }
+    },
+  
+    async getWatchesByStyle(style) {
+      try {
+        const response = await axios.get(`http://localhost:8080/watch/get/style?style=${style}`);
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching watches by style:", error);
+        throw error;
+      }
+    },
+  
+    async getWatchesByPriceRange(leftLimit, rightLimit) {
+      try {
+        const response = await axios.get(`http://localhost:8080/watch/get/watch-in-range-price?leftlimit=${leftLimit}&rightlimit=${rightLimit}`);
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching watches by price range:", error);
+        throw error;
+      }
+    },
+  
+    // Add a new action to apply multiple filters
+    async applyFilters(filters) {
+      try {
+        let results = [];
+        if (filters.gender) {
+          results = await this.getWatchesByGender(filters.gender);
+        }
+        if (filters.brand) {
+          const brandResults = await this.getWatchesByBrand(filters.brand);
+          results = results.length ? results.filter(watch => brandResults.some(br => br.watch_id === watch.watch_id)) : brandResults;
+        }
+        if (filters.style) {
+          const styleResults = await this.getWatchesByStyle(filters.style);
+          results = results.length ? results.filter(watch => styleResults.some(sr => sr.watch_id === watch.watch_id)) : styleResults;
+        }
+        if (filters.priceRange) {
+          const priceResults = await this.getWatchesByPriceRange(filters.priceRange.min, filters.priceRange.max);
+          results = results.length ? results.filter(watch => priceResults.some(pr => pr.watch_id === watch.watch_id)) : priceResults;
+        }
+        this.searchResults = results;
+        return results;
+      } catch (error) {
+        console.error("Error applying filters:", error);
+        throw error;
+      }
+    },
   }
 });

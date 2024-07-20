@@ -1,14 +1,15 @@
 <template>
   <div id="app" class="relative">
-    <!-- Menu Button -->
-    <div @click="toggleMenu" class="menu-container">
-      <div class="menu-button">
-        <div class="line"></div>
-        <div class="line middle"></div>
-        <div class="line"></div>
+    <div class="menu-wrapper" @mouseenter="showMenu = true" @mouseleave="showMenu = false">
+      <!-- Menu Button -->
+      <div class="menu-container">
+        <div class="menu-button">
+          <div class="line"></div>
+          <div class="line middle"></div>
+          <div class="line"></div>
+        </div>
+        <span class="menu-label">Danh mục</span>
       </div>
-      <span class="menu-label">Danh mục</span>
-    </div>
 
     <!-- Dropdown Menu -->
     <div v-show="showMenu" class="dropdown-menu py-2 top-12 absolute z-10 w-48">
@@ -63,6 +64,7 @@
       <!-- END  -->
     </div>
   </div>
+  </div>
 </template>
 
 <script setup>
@@ -74,12 +76,7 @@ const submenus = ref({
   womenWatch: false,
   style: false,
   collection: false
-  // Add other submenus as needed
 });
-
-function toggleMenu() {
-  showMenu.value = !showMenu.value;
-}
 
 function showSubmenu(menu) {
   submenus.value[menu] = true;
@@ -88,15 +85,19 @@ function showSubmenu(menu) {
 function hideSubmenu(menu) {
   submenus.value[menu] = false;
 }
-
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.menu-container') && !e.target.closest('.dropdown-menu')) {
-    showMenu.value = false;
-  }
-});
 </script>
 
 <style scoped>
+.menu-wrapper {
+  position: relative;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+}
+
 .menu-container {
   display: flex;
   align-items: center;
@@ -138,7 +139,6 @@ document.addEventListener('click', (e) => {
   background-color: rgba(20, 20, 20, 0.95); /* Increased opacity */
   backdrop-filter: blur(30px); /* Increased blur */
   -webkit-backdrop-filter: blur(30px); /* Increased blur */
-  box-shadow: rgba(153, 153, 153, 0.685) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
 }
 
 .menu-item {
@@ -156,7 +156,6 @@ document.addEventListener('click', (e) => {
   background-color: rgba(20, 20, 20, 0.95); /* Increased opacity */
   backdrop-filter: blur(30px); /* Increased blur */
   -webkit-backdrop-filter: blur(30px); /* Increased blur */
-  box-shadow: rgba(153, 153, 153, 0.685) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
 }
 
 .submenu-item {

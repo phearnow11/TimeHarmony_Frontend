@@ -163,7 +163,7 @@
         <li><strong>Thương hiệu:</strong> {{ watchStore.watch_data.brand || "Không có thông tin"}}</li>
         <li><strong>Dòng sản phẩm:</strong> {{ watchStore.watch_data.series || "Không có thông tin"}}</li>
         <li><strong>Mẫu:</strong> {{ watchStore.watch_data.model || "Không có thông tin"}}</li>
-        <li><strong>Giới tính:</strong> {{ watchStore.watch_data.gender || "Không có thông tin"}}</li>
+        <li><strong>Giới tính:</strong> {{ translate() || "Không có thông tin"}}</li>
         <li><strong>Loại phong cách:</strong> {{ watchStore.watch_data.style || "Không có thông tin"}}</li>
         <li><strong>Phân lớp:</strong> {{ watchStore.watch_data.subclass || "Không có thông tin"}}</li>
         <li><strong>Nhãn sản xuất:</strong> {{ watchStore.watch_data.madelabel || "Không có thông tin"}}</li>
@@ -217,6 +217,12 @@ const isLoading = ref(false);
 const currentProduct = ref({});
 const popupMessage = ref('');
 const showProductDetails = ref(true);
+
+function translate() {
+  if(watchStore.watch_data.gender === 'Male') return 'Nam'
+  else if(watchStore.watch_data.gender === 'Female') return 'Nữ'
+  
+}
 
 const formatPriceVND = (price) => {
   const formattedPrice = (price / 1).toLocaleString('vi-VN', {

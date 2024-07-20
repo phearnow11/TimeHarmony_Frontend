@@ -196,13 +196,18 @@ document.addEventListener("click", (e) => {
   }
 });
 
-function toggleMenu() {
+const toggleMenu = () => {
   showMenu.value = !showMenu.value;
-}
+};
 
-function showSubmenu(menu) {
+const showSubmenu = (menu) => {
   submenus.value[menu] = true;
-}
+};
+
+const hideSubmenu = (menu) => {
+  submenus.value[menu] = false;
+};
+
 function setGreeting() {
   const now = new Date();
   const hour = now.getHours();
