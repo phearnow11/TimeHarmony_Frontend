@@ -73,7 +73,7 @@ onMounted(async () => {
 })
 
 
-
+console.log(process.env.PORT);
 </script>
 
 <style scoped>
