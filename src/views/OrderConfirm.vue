@@ -126,20 +126,29 @@
     const orderId = route.params.order_id;
     if (orderId) {
       try {
-        await fetchWatchDetails(orderDetails.value.watch);
         orderDetails.value = await userStore.getOrderDetail(orderId);
+        await fetchWatchDetails(orderDetails.value.watch);
+        
         const orderState = await userStore.getOrderState(orderId);
-        if(state.value = orderState === 'PENDING')
-           return 'Đơn hàng đã được gửi đến người bán'
-        else if (state.value = orderState === 'SHIPPING')
-            return 'Đơn hàng đang được vận chuyển'
-        else
-            return 'Đã huỷ đơn hàng'
+        state.value = mapOrderState(orderState);
       } catch (error) {
         console.error('Failed to fetch order details:', error);
       }
     }
   });
+
+  const mapOrderState = (state) => {
+  switch (state) {
+    case 'PENDING':
+      return 'Đơn hàng đã được gửi đến người bán';
+    case 'SHIPPING':
+      return 'Đơn hàng đang được vận chuyển';
+    case 'CANCELLED':
+      return 'Đã huỷ đơn hàng';
+    default:
+      return 'Trạng thái không xác định';
+  }
+};
 
   const cancelOrder = async (orderid) => {
     try {
