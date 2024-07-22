@@ -9,20 +9,18 @@
     <div class="flex justify-center h-0 items-start w-full px-10 pt-5 pb-20">
       <section class="w-8/12 flex items-center bg-zinc-900 p-4 mr-4">
         <div class="flex items-center flex-grow">
-          <label class="flex items-center cursor-pointer checkbox-container">
-            <input
-              type="checkbox"
-              :checked="selectAll"
-              @change="toggleAllProducts"
-              class="hidden"
-            />
-            <svg viewBox="0 0 64 64" height="1em" class="checkbox-svg">
+          <label
+            class="container flex justify-start items-center text-center gap-2"
+          >
+            <input type="checkbox" v-model="remember" :checked="selectAll" @change="toggleAllProducts"/>
+            <svg viewBox="0 0 64 64" height="1em">
               <path
                 d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                pathLength="575.0541381835938"
                 class="path"
               ></path>
             </svg>
-            <span class="ml-2">{{ selectAll ? "Bỏ chọn" : "Chọn tất cả" }} ( {{ cartItems.length }} sản phẩm )</span>
+            <label>{{ selectAll ? "Bỏ chọn" : "Chọn tất cả" }} ( {{ cartItems.length }} sản phẩm )</label>
           </label>
         </div>
         <div>
