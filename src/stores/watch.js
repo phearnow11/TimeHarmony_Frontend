@@ -47,37 +47,35 @@ export const useWatchStore = defineStore("watch", {
   }),
 
   actions: {
-    async getWatchesOfPage(page, keyword,filters = []) {
+    async getWatchesOfPage(page, keyword, filters = []) {
       this.isLoading = true;
       this.error = null;
-
+    
       const filtersChanged = JSON.stringify(filters) !== JSON.stringify(this.filters);
-
+    
       if (filtersChanged) {
         this.watches.clear();
         this.filters = filters;
       }
-
+    
       let url = `${api}/watch/get/watch-page?page=${page}&keyword=${keyword}`;
       if (filters.length > 0) {
         url += `&${filters.join("&")}`;
       }
       console.log(url);
-
+    
       try {
         const response = await axios.get(url);
         
         if (response.data && Array.isArray(response.data.watches) && response.data.watches.length > 0) {
-          if (!this.watches.has(page)) {
-            this.watches.set(page, []);
-          }
-          this.watches.get(page).push(...response.data.watches);
+          // Replace the watches array for the current page
+          this.watches.set(page, response.data.watches);
           this.currentPage = page;
-
+    
           const totalPages = Math.ceil(response.data.watch_num / 60);
           this.totalPage = totalPages;
           this.hasMore = page < totalPages - 1;
-
+    
           console.log("Fetched watches for page:", page);
           console.log("Total Pages:", this.totalPage);
           console.log(response);
@@ -91,7 +89,7 @@ export const useWatchStore = defineStore("watch", {
       } finally {
         this.isLoading = false;
       }
-    },
+    },    
 
     async uploadWatch(seller_id, username) {
       try {
