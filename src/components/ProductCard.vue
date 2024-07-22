@@ -82,7 +82,7 @@ const toggleBookmark = (event) => {
   if (!isBookmarked.value) {
     userStore.saveFavoritesToServer(useAuthStore().user_id, props.watch_id)
   } else {
-    console.log('Unfavorited');
+    userStore.deleteFavorite(useAuthStore().user_id, props.watch_id)
   }
   
   isBookmarked.value = !isBookmarked.value;
