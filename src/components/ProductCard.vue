@@ -24,8 +24,7 @@
 </template>
 
 <script setup>
-import { ref, defineProps, computed, onMounted, onBeforeUnmount } from 'vue';
-import axios from 'axios';
+import { ref, defineProps, computed, onMounted} from 'vue';
 import { useUserStore } from '../stores/user';
 import { useAuthStore } from '../stores/auth';
 

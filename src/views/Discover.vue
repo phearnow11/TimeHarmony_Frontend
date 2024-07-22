@@ -68,7 +68,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch, defineAsyncComponent } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useWatchStore } from '../stores/watch';
 const ProductCard = defineAsyncComponent(() => import('../components/ProductCard.vue'));

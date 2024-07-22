@@ -45,10 +45,11 @@
 <script setup>
 import Carousel from '../components/Carousel.vue';
 import Brand from '../components/Brand.vue';
-import SkeletonCard from '../components/SkeletonCard.vue';
-import ProductCard from '../components/ProductCard.vue';
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, defineAsyncComponent } from 'vue';
 import axios from 'axios';
+
+const ProductCard = defineAsyncComponent(() => import('../components/ProductCard.vue'));
+const SkeletonCard = defineAsyncComponent(() => import('../components/SkeletonCard.vue'));
 
 const isLoading = ref(true);
 const watches = ref([]);
