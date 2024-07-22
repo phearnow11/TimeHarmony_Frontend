@@ -112,7 +112,7 @@
             >Hỗ trợ khách hàng</router-link>
             <router-link to="/admin" 
             class="submenu-item block px-4 py-2 hover-underline-animation"
-            >Admin</router-link>
+            >Quản trị</router-link>
             <a
               @click="logout"
               class="submenu-item block px-4 py-2 cursor-pointer hover-underline-animation"

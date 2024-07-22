@@ -47,49 +47,46 @@ export const useWatchStore = defineStore("watch", {
   }),
 
   actions: {
-    async getWatchesOfPage(page, filters = []) {
-      if (this.watches.has(page)) {
-        return; // Return if watches for the page are already fetched
-      }
-
+    async getWatchesOfPage(page, keyword,filters = []) {
       this.isLoading = true;
       this.error = null;
 
-      // Check if filters have changed
       const filtersChanged = JSON.stringify(filters) !== JSON.stringify(this.filters);
 
       if (filtersChanged) {
-        // Reset watches map if filters have changed
         this.watches.clear();
         this.filters = filters;
       }
 
-      // Construct the URL with filters
-      let url = `${api}/watch/get/watch-page?page=${page}`;
+      let url = `${api}/watch/get/watch-page?page=${page}&keyword=${keyword}`;
       if (filters.length > 0) {
         url += `&${filters.join("&")}`;
       }
+      console.log(url);
 
       try {
         const response = await axios.get(url);
-        if (response.data && response.data.watches.length > 0) {
+        
+        if (response.data && Array.isArray(response.data.watches) && response.data.watches.length > 0) {
           if (!this.watches.has(page)) {
             this.watches.set(page, []);
           }
           this.watches.get(page).push(...response.data.watches);
           this.currentPage = page;
 
-          // Calculate total pages
-          const totalPages = Math.ceil(response.data.watch_num / 60); // Assuming 60 is the page size
+          const totalPages = Math.ceil(response.data.watch_num / 60);
           this.totalPage = totalPages;
-          this.hasMore = response.data.watches.length === totalPages * 60; // Check if there are more pages
+          this.hasMore = page < totalPages - 1;
 
+          console.log("Fetched watches for page:", page);
           console.log("Total Pages:", this.totalPage);
         } else {
+          console.log("No watches found for page:", page);
           this.hasMore = false;
         }
       } catch (error) {
-        this.error = error.message;
+        console.error("Error fetching watches:", error);
+        this.error = error.message || "Failed to fetch watches";
       } finally {
         this.isLoading = false;
       }
@@ -180,7 +177,7 @@ export const useWatchStore = defineStore("watch", {
     },
     async getWatchesByGender(gender) {
       try {
-        const response = await axios.get(`http://localhost:8080/watch/get/gender?gender=${gender}`);
+        const response = await axios.get(`${api}/watch/get/gender?gender=${gender}`);
         return response.data;
       } catch (error) {
         console.error("Error fetching watches by gender:", error);

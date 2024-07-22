@@ -1,155 +1,218 @@
 <template>
-  <div class="text-gray-200 min-h-screen">
-    <!-- Navbar -->
-    <nav class="sticky top-0 z-10 flex items-center justify-between p-4">
-      <a href="#" class="text-xl font-bold">
-        <img src="../assets/time-harmony.png" class="w-60 mr-2 " alt="">
-      </a>
-      <input type="text" placeholder="Search" class="bg-[#313D4F] px-4 py-2 flex-grow mx-4">
-      
-    </nav>
-
-    <div class="flex">
-      <!-- Sidebar -->
-      <nav class="w-64 min-h-screen hidden md:block">
-        <div class="p-4">
-          <ul class="space-y-2">
-            <li v-for="(item, index) in sidebarItems" :key="index">
-              <a :href="item.link" class="flex items-center p-2 hover:bg-[#313D4F] hover:text-white" :class="{ 'bg-[#313D4F] text-white': item.active }">
-                <i :class="item.icon" class="mr-2"></i>
-                {{ item.text }}
-              </a>
-            </li>
-          </ul>
-        </div>
-      </nav>
-
-      <!-- Main Content -->
-      <main class="flex-grow p-6">
-        <!-- Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-          <div v-for="(card, index) in cards" :key="index" :class="[' p-4 text-white', card.color]">
-            <h3 class="text-sm uppercase">{{ card.title }}</h3>
-            <div class="text-3xl font-bold my-2">{{ card.value }}</div>
-            <div class="text-sm">
-              <span class="font-bold">{{ card.change }}</span> {{ card.direction }}
-            </div>
-          </div>
-        </div>
-
-        <!-- Projects Table -->
-        <div class="bg-[#273142]  overflow-hidden mb-6">
-          <div class="flex justify-between items-center p-4 bg-[#313D4F] text-white">
-            <h2 class="text-xl font-bold">Ongoing Projects</h2>
-          </div>
-          <table class="w-full">
-            <thead class="bg-[#313D4F] text-white">
-              <tr>
-                <th class="p-3 text-left">Project</th>
-                <th class="p-3 text-left">Deadline</th>
-                <th class="p-3 text-left">Leader + Team</th>
-                <th class="p-3 text-left">Budget</th>
-                <th class="p-3 text-left">Status</th>
-                <th class="p-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(project, index) in projects" :key="index" class="border-b border-[#313D4F] hover:bg-[#2a3547]">
-                <td class="p-3">
-                  <p>{{ project.name }}</p>
-                  <p class="text-sm text-gray-400">{{ project.company }}</p>
-                </td>
-                <td class="p-3">
-                  <p>{{ project.deadline }}</p>
-                  <p :class="project.overdue ? 'text-red-500' : 'text-gray-400'">{{ project.overdue ? 'Overdue' : '' }}</p>
-                </td>
-                <td class="p-3 flex items-center">
-                  <img :src="project.leader.image" alt="Leader" class="w-8 h-8 rounded-full mr-2">
-                  <div>
-                    <p>{{ project.leader.name }}</p>
-                    <p class="text-sm text-gray-400">{{ project.leader.team }}</p>
-                  </div>
-                </td>
-                <td class="p-3">
-                  <p>{{ project.budget }}</p>
-                  <p class="text-sm text-gray-400">{{ project.paymentStatus }}</p>
-                </td>
-                <td class="p-3">
-                  <span :class="['px-2 py-1 rounded-full text-xs', project.status.color]">
-                    {{ project.status.text }}
-                  </span>
-                </td>
-                <td class="p-3 text-right">
-                  <select class="bg-[#313D4F] text-white rounded p-1">
-                    <option>Actions</option>
-                    <option>Start project</option>
-                    <option>Send for QA</option>
-                    <option>Send invoice</option>
-                  </select>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Charts -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div v-for="(chart, index) in charts" :key="index" class="bg-[#273142]  p-4">
-            <h3 class="text-xl font-bold mb-2">{{ chart.title }}</h3>
-            <p class="text-sm text-gray-400 mb-4">{{ chart.subtitle }}</p>
-            <!-- Placeholder for chart -->
-            <div class="h-64 bg-[#313D4F] "></div>
-          </div>
-        </div>
-      </main>
+  <div class="admin-page p-6 gap-6">
+    <h1 class="text-3xl font-bold mb-4">Bảng Điều Khiển Quản Trị</h1>
+    <div class="flex items-center gap-9">
+      <div class="form__group mb-3">
+        <input
+          type="text"
+          class="form__field"
+          placeholder="Nhập ID người dùng"
+          v-model="userId"
+          required
+        />
+        <label for="userid" class="form__label">ID người dùng</label>
+      </div>
+      <button @click="promoteToStaff" class="th-p-btn">Thêm làm nhân viên</button>
     </div>
+
+    <section class="mb-6">
+      <h2 class="text-2xl font-semibold mb-2">Danh Sách Thành Viên</h2>
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr class="bg-primary text-white">
+              <th class="p-2 border-b">ID</th>
+              <th class="p-2 border-b">Hình Ảnh</th>
+              <th class="p-2 border-b">Tên</th>
+              <th class="p-2 border-b">Email</th>
+              <th class="p-2 border-b">Username</th>
+              <th class="p-2 border-b">Số Điện Thoại</th>
+              <th class="p-2 border-b">Trạng Thái</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="member in members" :key="member.member_id">
+              <td class="p-2 border-b">{{ member.member_id }}</td>
+              <td class="p-2 border-b">
+                <img :src="member.member_image" alt="Member Image" class="w-12 h-12" />
+              </td>
+              <td class="p-2 border-b">{{ member.first_name }} {{ member.last_name }}</td>
+              <td class="p-2 border-b">{{ member.email }}</td>
+              <td class="p-2 border-b">{{ member.user_log_info.username }}</td>
+              <td class="p-2 border-b">{{ member.phone || 'N/A' }}</td>
+              <td class="p-2 border-b">{{ member.is_active ? 'Active' : 'Inactive' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="mb-6">
+      <h2 class="text-2xl font-semibold mb-2">Sản Phẩm</h2>
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr class="bg-primary text-white">
+              <th class="p-2 border-b">ID</th>
+              <th class="p-2 border-b">Tên</th>
+              <th class="p-2 border-b">Người Bán</th>
+              <th class="p-2 border-b">Giá</th>
+              <th class="p-2 border-b">Trạng Thái</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="product in products" :key="product.watch_id">
+              <td class="p-2 border-b">{{ product.watch_id }}</td>
+              <td class="p-2 border-b">{{ product.watch_name }}</td>
+              <td class="p-2 border-b">
+                <div class="flex items-center">
+                  <img :src="product.seller.member_image" alt="Seller Image" class="w-8 h-8 rounded-full mr-2" />
+                  <span>{{ product.seller.user_log_info.username }}</span>
+                </div>
+              </td>
+              <td class="p-2 border-b">{{ product.price | currency }}</td>
+              <td class="p-2 border-b">{{ product.state === 1 ? 'Active' : 'Inactive' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="mb-6">
+      <h2 class="text-2xl font-semibold mb-2">Đơn Hàng</h2>
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr class="bg-primary text-white">
+              <th class="p-2 border-b">ID Đơn Hàng</th>
+              <th class="p-2 border-b">Ngày Tạo</th>
+              <th class="p-2 border-b">Địa Chỉ</th>
+              <th class="p-2 border-b">Tên Nhận Hàng</th>
+              <th class="p-2 border-b">Số Điện Thoại</th>
+              <th class="p-2 border-b">Ghi Chú</th>
+              <th class="p-2 border-b">Tổng</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="order in orders" :key="order.order_id">
+              <td class="p-2 border-b">{{ order.order_id }}</td>
+              <td class="p-2 border-b">{{ new Date(order.create_time).toLocaleDateString() }}</td>
+              <td class="p-2 border-b">{{ order.address }}</td>
+              <td class="p-2 border-b">{{ order.receive_name }}</td>
+              <td class="p-2 border-b">{{ order.phone }}</td>
+              <td class="p-2 border-b">{{ order.notice || 'N/A' }}</td>
+              <td class="p-2 border-b">{{ order.total_price | currency }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="mb-6">
+  <h2 class="text-2xl font-semibold mb-2">Tổng Quan Lợi Nhuận</h2>
+  <div class="profit-container p-4 border border-secondary rounded mb-6">
+    <p class="text-xl font-medium">Doanh Thu Tổng: {{ totalRevenue | currency }}</p>
+    <p class="text-xl font-medium">Lợi Nhuận Tổng: {{ totalProfit | currency }}</p>
+  </div>
+  <ProfitChart :totalRevenue="totalRevenue" :totalCost="0" :totalProfit="totalProfit" />
+</section>
+
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useAdminStore } from '../stores/admin';
+import ProfitChart from '../components/ProfitChart.vue';
 
-const sidebarItems = ref([
-  { text: 'Dashboard', icon: 'zmdi zmdi-widgets', link: '#', active: true },
-  { text: 'Orders', icon: 'zmdi zmdi-file-text', link: '#' },
-  { text: 'Products', icon: 'zmdi zmdi-shopping-cart', link: '#' },
-  { text: 'Customers', icon: 'zmdi zmdi-accounts', link: '#' },
-  { text: 'Reports', icon: 'zmdi zmdi-chart', link: '#' },
-  { text: 'Integrations', icon: 'zmdi zmdi-layers', link: '#' },
-]);
+// Initialize the store
+const adminStore = useAdminStore();
 
-const cards = ref([
-  { title: 'All Product', value: '89', change: '13', direction: 'increase', color: 'bg-[#327c51]' },
-  { title: 'Website Customers', value: '5,990', change: '4', direction: 'increase', color: 'bg-[#327c51]' },
-  { title: 'Total Budget', value: '$80,990', change: '13', direction: 'decrease', color: 'bg-[#327c51]' },
-  { title: 'New Customers', value: '3', change: '13', direction: 'decrease', color: 'bg-[#327c51]' },
-]);
+// State variables
+const userId = ref('');
 
-const projects = ref([
-  {
-    name: 'New Dashboard',
-    company: 'Google',
-    deadline: '17th Oct, 15',
-    overdue: true,
-    leader: {
-      name: 'Myrtle Erickson',
-      team: 'UK Design Team',
-      image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/584938/people_8.png'
-    },
-    budget: '$4,670',
-    paymentStatus: 'Paid',
-    status: { text: 'In progress', color: 'bg-orange-500 text-white' },
-  },
-  // Add more projects here...
-]);
+// Fetch data from the store on component mount
+onMounted(async () => {
+  await adminStore.getMembers();
+  await adminStore.getWatches();
+  await adminStore.getOrders();
+});
 
-const charts = ref([
-  { title: 'Household Expenditure', subtitle: 'Yearly' },
-  { title: 'Monthly revenue', subtitle: '2015 (in thousands US$)' },
-  { title: 'Exports of Goods', subtitle: '2015 (in billion US$)' },
-]);
+// Define computed properties
+const members = computed(() => adminStore.members);
+const products = computed(() => adminStore.products);  // Use `products` for consistency
+const orders = computed(() => adminStore.orders);
+
+// Compute financial metrics
+const totalCost = computed(() => products.value.reduce((sum, product) => sum + (product.cost * product.stock), 0));
+
+const totalRevenue = computed(() => orders.value.reduce((sum, order) => sum + order.total_price, 0));
+const totalProfit = computed(() => totalRevenue.value * 0.05); // 5% profit from total revenue
+
+// Define a method to promote a user to staff
+const promoteToStaff = async () => {
+  try {
+    await adminStore.promoteToStaff(userId.value);
+    // Optionally refresh members data after promotion
+    await adminStore.getMembers();
+  } catch (error) {
+    console.error('Failed to promote user:', error);
+  }
+};
+
+// Format currency
+const currency = (value) => `$${value.toFixed(2)}`;
 </script>
 
 <style scoped>
-@import url('https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css');
+.admin-page {
+  background-color: #212121;
+  color: var(--secondary);
+}
+
+.table-container {
+  overflow-x: auto;
+  max-height: 400px; /* Adjust this value as needed */
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table thead {
+  background-color: var(--primary);
+  color: #fff;
+}
+
+.table th, .table td {
+  padding: 8px;
+  border: 1px solid var(--secondary);
+}
+
+.table th {
+  text-align: left;
+}
+
+.table tbody tr:nth-child(even) {
+  background-color: #333;
+}
+
+.table-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: #ffbd59;
+}
+
+.profit-container {
+  background-color: #333;
+  color: var(--secondary);
+}
 </style>

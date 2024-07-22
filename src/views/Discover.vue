@@ -32,7 +32,7 @@
   <div v-else class="mt-8 flex justify-center items-center mx-20">
     <div class="text-center">
       <h2 class="text-2xl font-bold mb-4">Không tìm thấy đồng hồ</h2>
-      <p class="text-lg">Xin lỗi nhưng có vẻ ở đây khong có đồng hồ bạn cần tìm rồi.</p>
+      <p class="text-lg">Xin lỗi nhưng có vẻ ở đây không có đồng hồ bạn cần tìm rồi.</p>
     </div>
   </div>
 
@@ -71,8 +71,10 @@
 import { ref, computed, onMounted, watch, defineAsyncComponent } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useWatchStore } from '../stores/watch';
-const ProductCard = defineAsyncComponent(() => import('../components/ProductCard.vue'));
-const SkeletonCard = defineAsyncComponent(() => import('../components/SkeletonCard.vue'));
+import ProductCard from '../components/ProductCard.vue';
+import SkeletonCard from '../components/SkeletonCard.vue';
+// const ProductCard = defineAsyncComponent(() => import('../components/ProductCard.vue'));
+// const SkeletonCard = defineAsyncComponent(() => import('../components/SkeletonCard.vue'));
 
 const watchStore = useWatchStore();
 const load = ref(true);
@@ -80,8 +82,8 @@ const route = useRoute();
 const router = useRouter();
 
 const field = computed(() => route.params.field);
+const keyword = ref('')
 
-// Translated field
 const translatedField = computed(() => {
   switch (field.value) {
     case 'men watches':
@@ -90,7 +92,6 @@ const translatedField = computed(() => {
       return 'Đồng hồ nữ';
     case 'unisex watches':
       return 'Đồng hồ unisex';
-    // Add other cases as needed
     default:
       return field.value;
   }
@@ -113,7 +114,7 @@ const fetchWatches = async () => {
   if (gender.value) {
     filters.push(`gender=${encodeURIComponent(gender.value)}`);
   }
-  await watchStore.getWatchesOfPage(page.value, filters);
+  await watchStore.getWatchesOfPage(page.value,keyword.value ,filters);
 };
 
 onMounted(async () => {

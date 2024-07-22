@@ -49,18 +49,6 @@
         </div>
       </div>
       <!-- Collection -->
-      <div class="menu-item relative" @mouseenter="showSubmenu('collection')" @mouseleave="hideSubmenu('collection')">
-        <div :class="{'hover-active': submenus.collection}" class="flex items-center justify-between hover-underline-animation w-full px-4 py-2">
-          <span>Collection</span>
-          <img src="../assets/arr.svg" class="w-3 arrow-icon" alt="Arrow Icon">
-        </div>
-        <div v-show="submenus.collection" class="submenu absolute left-full top-0 text-white pt-1 w-48">
-          <a href="#" class="submenu-item block px-4 py-2 hover-underline-animation">Starter Collection</a>
-          <a href="#" class="submenu-item block px-4 py-2 hover-underline-animation">Intermediate Collection</a>
-          <a href="#" class="submenu-item block px-4 py-2 hover-underline-animation">Advanced Collection</a>
-          <a href="#" class="submenu-item block px-4 py-2 hover-underline-animation">Specialized Collection</a>
-        </div>
-      </div>
       <!-- END  -->
     </div>
   </div>
