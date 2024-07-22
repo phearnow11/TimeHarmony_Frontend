@@ -70,7 +70,7 @@
                   <span>{{ product.seller.user_log_info.username }}</span>
                 </div>
               </td>
-              <td class="p-2 border-b">{{ product.price | currency }}</td>
+              <td class="p-2 border-b">{{ product.price }}</td>
               <td class="p-2 border-b">{{ product.state === 1 ? 'Active' : 'Inactive' }}</td>
             </tr>
           </tbody>
@@ -101,7 +101,7 @@
               <td class="p-2 border-b">{{ order.receive_name }}</td>
               <td class="p-2 border-b">{{ order.phone }}</td>
               <td class="p-2 border-b">{{ order.notice || 'N/A' }}</td>
-              <td class="p-2 border-b">{{ order.total_price | currency }}</td>
+              <td class="p-2 border-b">{{ order.total_price }}</td>
             </tr>
           </tbody>
         </table>
@@ -109,14 +109,14 @@
     </section>
 
     <section class="mb-6">
-  <h2 class="text-2xl font-semibold mb-2">Tổng Quan Lợi Nhuận</h2>
-  <div class="profit-container p-4 border border-secondary rounded mb-6">
-    <p class="text-xl font-medium">Doanh Thu Tổng: {{ totalRevenue | currency }}</p>
-    <p class="text-xl font-medium">Lợi Nhuận Tổng: {{ totalProfit | currency }}</p>
-  </div>
-  <ProfitChart :totalRevenue="totalRevenue" :totalCost="0" :totalProfit="totalProfit" />
-</section>
-
+      <h2 class="text-2xl font-semibold mb-2">Tổng Quan Lợi Nhuận</h2>
+      <div class="profit-container p-4 border border-secondary rounded mb-6">
+        <p class="text-xl font-medium">Doanh Thu Tổng: {{ totalRevenue.toLocaleString("vi-VN") + ' ₫' }}</p>
+        <p class="text-xl font-medium">Chi Phí Tổng: {{ totalCost.toLocaleString("vi-VN") + ' ₫' }}</p>
+        <p class="text-xl font-medium">Lợi Nhuận Tổng: {{ totalProfit.toLocaleString("vi-VN") + ' ₫' }}</p>
+      </div>
+      <ProfitChart :totalRevenue="totalRevenue" :totalCost="totalCost" :totalProfit="totalProfit" />
+    </section>
   </div>
 </template>
 
@@ -140,11 +140,11 @@ onMounted(async () => {
 
 // Define computed properties
 const members = computed(() => adminStore.members);
-const products = computed(() => adminStore.products);  // Use `products` for consistency
+const products = computed(() => adminStore.products);
 const orders = computed(() => adminStore.orders);
 
 // Compute financial metrics
-const totalCost = computed(() => products.value.reduce((sum, product) => sum + (product.cost * product.stock), 0));
+const totalCost = computed(() => products.value.reduce((sum, product) => sum + (product.price * 1), 0)); // Stock is always 1
 
 const totalRevenue = computed(() => orders.value.reduce((sum, order) => sum + order.total_price, 0));
 const totalProfit = computed(() => totalRevenue.value * 0.05); // 5% profit from total revenue
@@ -161,7 +161,7 @@ const promoteToStaff = async () => {
 };
 
 // Format currency
-const currency = (value) => `$${value.toFixed(2)}`;
+const currency = (value) => `${value.toLocaleString("vi-VN")} ₫`;
 </script>
 
 <style scoped>

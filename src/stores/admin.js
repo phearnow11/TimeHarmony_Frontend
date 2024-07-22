@@ -88,11 +88,20 @@ export const useAdminStore = defineStore("admin", {
       this.error = null;
 
       try {
+        // Fetch member details before promotion
+        const memberResponse = await axios.get(`${api}/member/get/${userId}`);
+        const member = memberResponse.data;
+
+        // Promote the member to staff
         await axios.post(`${api}/admin/role/upgrade/staff/${userId}`, {}, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+
+        // Log the member's name
+        console.log(`Successfully promoted ${member.first_name} ${member.last_name} to staff.`);
+
         // Optionally refresh members data after promotion
         await this.getMembers();
       } catch (error) {
