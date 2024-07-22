@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import axios from "axios";
-
+var api = import.meta.env.VITE_API_PORT
 export const useVoucherStore = defineStore("voucher", {
   state: () => ({
     vouchers: [],
@@ -24,7 +24,7 @@ export const useVoucherStore = defineStore("voucher", {
       };
 
       try {
-        const response = await axios.post(`http://localhost:8080/staff/create/voucher`, voucheri4);
+        const response = await axios.post(`${api}/staff/create/voucher`, voucheri4);
         console.log(response.data);
       } catch (error) {
         this.error = error.message;
@@ -39,7 +39,7 @@ export const useVoucherStore = defineStore("voucher", {
       this.error = null;
 
       try {
-        const response = await axios.get(`http://localhost:8080/staff/get/voucher/all`);
+        const response = await axios.get(`${api}/staff/get/voucher/all`);
         this.vouchers = response.data;
         console.log(response.data);
       } catch (error) {

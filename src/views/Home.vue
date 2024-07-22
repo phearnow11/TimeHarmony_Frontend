@@ -47,14 +47,15 @@ import Carousel from '../components/Carousel.vue';
 import Brand from '../components/Brand.vue';
 import SkeletonCard from '../components/SkeletonCard.vue';
 import ProductCard from '../components/ProductCard.vue';
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
-import { useUserStore } from '../stores/user';
 
 const isLoading = ref(true);
 const watches = ref([]);
 const currentPage = ref(0);
 const itemsPerPage = 30;
+
+var api = import.meta.env.VITE_API_PORT
 
 const paginatedWatches = computed(() => {
   const start = currentPage.value * itemsPerPage;
@@ -64,16 +65,14 @@ const paginatedWatches = computed(() => {
 
 onMounted(async () => {
   try {
-    const response = await axios.get('http://localhost:8080/watch/get/30-watches');
+    console.log(api)
+    const response = await axios.get(`${api}/watch/get/30-watches`);
     watches.value = response.data;
     isLoading.value = false;
   } catch (error) {
     console.error('Error fetching watches:', error);
   }
 })
-
-
-console.log(process.env.PORT);
 </script>
 
 <style scoped>

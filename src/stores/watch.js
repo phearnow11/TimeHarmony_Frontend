@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 
+var api = import.meta.env.VITE_API_PORT
 export const useWatchStore = defineStore("watch", {
   state: () => ({
     watches: new Map(),
@@ -64,7 +65,7 @@ export const useWatchStore = defineStore("watch", {
       }
 
       // Construct the URL with filters
-      let url = `http://localhost:8080/watch/get/watch-page?page=${page}`;
+      let url = `${api}/watch/get/watch-page?page=${page}`;
       if (filters.length > 0) {
         url += `&${filters.join("&")}`;
       }
@@ -96,9 +97,9 @@ export const useWatchStore = defineStore("watch", {
 
     async uploadWatch(seller_id, username) {
       try {
-        axios.post(`http://localhost:8080/member/to-seller?id=${seller_id}&username=${username}`);
+        axios.post(`${api}/member/to-seller?id=${seller_id}&username=${username}`);
         const response = await axios.post(
-          `http://localhost:8080/seller/create/watch?seller_id=${seller_id}`,
+          `${api}/seller/create/watch?seller_id=${seller_id}`,
           this.watch_data
         );
         console.log("Upload successful", response);
@@ -122,7 +123,7 @@ export const useWatchStore = defineStore("watch", {
 
     async getDetailWatch(watch_id) {
       try {
-        const response = await axios.get(`http://localhost:8080/watch/get/${watch_id}`);
+        const response = await axios.get(`${api}/watch/get/${watch_id}`);
         const res = response.data;
         console.log(res);
 
@@ -168,7 +169,7 @@ export const useWatchStore = defineStore("watch", {
     }, 
     async searchWatches(keyword) {
       try {
-        const response = await axios.get(`http://localhost:8080/watch/search/keyword?keyword=${keyword}`);
+        const response = await axios.get(`${api}/watch/search/keyword?keyword=${keyword}`);
         this.searchResults = response.data;
         console.log(response.data);
         return this.searchResults;
@@ -189,7 +190,7 @@ export const useWatchStore = defineStore("watch", {
   
     async getWatchesBySeries(series) {
       try {
-        const response = await axios.get(`http://localhost:8080/watch/get/series?series=${series}`);
+        const response = await axios.get(`${api}/watch/get/series?series=${series}`);
         return response.data;
       } catch (error) {
         console.error("Error fetching watches by series:", error);
@@ -199,7 +200,7 @@ export const useWatchStore = defineStore("watch", {
   
     async getWatchesByBrand(brand) {
       try {
-        const response = await axios.get(`http://localhost:8080/watch/get/brand?brand=${brand}`);
+        const response = await axios.get(`${api}/watch/get/brand?brand=${brand}`);
         return response.data;
       } catch (error) {
         console.error("Error fetching watches by brand:", error);
@@ -209,7 +210,7 @@ export const useWatchStore = defineStore("watch", {
   
     async getWatchesByStyle(style) {
       try {
-        const response = await axios.get(`http://localhost:8080/watch/get/style?style=${style}`);
+        const response = await axios.get(`${api}/watch/get/style?style=${style}`);
         return response.data;
       } catch (error) {
         console.error("Error fetching watches by style:", error);
@@ -219,7 +220,7 @@ export const useWatchStore = defineStore("watch", {
   
     async getWatchesByPriceRange(leftLimit, rightLimit) {
       try {
-        const response = await axios.get(`http://localhost:8080/watch/get/watch-in-range-price?leftlimit=${leftLimit}&rightlimit=${rightLimit}`);
+        const response = await axios.get(`${api}/watch/get/watch-in-range-price?leftlimit=${leftLimit}&rightlimit=${rightLimit}`);
         return response.data;
       } catch (error) {
         console.error("Error fetching watches by price range:", error);

@@ -5,6 +5,8 @@ import Cookies from "js-cookie";
 import { useUserStore } from "./user";
 import { useCartStore } from './cart';
 
+var api = import.meta.env.VITE_API_PORT
+
 export const useAuthStore = defineStore('auth', {
     state: () => ({
         user_id: Cookies.get('user_id') ? Cookies.get('user_id') : null,
@@ -14,7 +16,7 @@ export const useAuthStore = defineStore('auth', {
     actions: {
         login(username, password, remember) {
             axios.post(
-                'http://localhost:8080/api/auth/login',
+                `${api}/api/auth/login`,
                 {}, // Empty body
                 {
                     auth: {
@@ -50,7 +52,7 @@ export const useAuthStore = defineStore('auth', {
             });
         },
         logout() {
-            axios.post(`http://localhost:8080/api/auth/logout?member_id=${this.user_id}`)
+            axios.post(`${api}/api/auth/logout?member_id=${this.user_id}`)
             this.user_id = null;
             this.token = null;
             Cookies.remove('token');
@@ -60,9 +62,9 @@ export const useAuthStore = defineStore('auth', {
         },
         
         resetPass(oldpass,username,newpass){
-            const checkPass = axios.get(`http://localhost:8080/member/check/password/${username}?pwd=${oldpass}`)
+            const checkPass = axios.get(`${api}/member/check/password/${username}?pwd=${oldpass}`)
             if(checkPass.data === 'correct password'){
-                const res = axios.patch(`http://localhost:8080/member/update/user/password/${username}?npwd=${newpass}`)
+                const res = axios.patch(`${api}/member/update/user/password/${username}?npwd=${newpass}`)
                 console.log(res.data);
             } else{
                 console.log('Error at old password');
@@ -71,14 +73,14 @@ export const useAuthStore = defineStore('auth', {
         },
         async resetPassword(username,newpass){
             try {
-                const res = await axios.patch(`http://localhost:8080/member/update/user/password/${username}?npwd=${newpass}`)
+                const res = await axios.patch(`${api}/member/update/user/password/${username}?npwd=${newpass}`)
                 console.log(res.data);
             } catch (error) {
                 console.log('Error');
             }
         },
         emailVerify(email, input){
-            const verify = axios.get(`http://localhost:8080/api/auth/verify/google/getcode?email=${email}`)
+            const verify = axios.get(`h${api}/api/auth/verify/google/getcode?email=${email}`)
             if(input === verify.data){
                 return true;
             } else{
@@ -87,7 +89,7 @@ export const useAuthStore = defineStore('auth', {
         }, 
         async forgotPassword(email) {
             try {
-              const response = await axios.get(`http://localhost:8080/api/auth/verify/password/getcode?email=${email}`);
+              const response = await axios.get(`${api}/api/auth/verify/password/getcode?email=${email}`);
               return response.data;
             } catch (error) {
               console.error('Error in forgotPassword:', error);

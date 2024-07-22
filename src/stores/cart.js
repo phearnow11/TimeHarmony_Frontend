@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import axios from "axios";
 import { useUserStore } from "./user";
 
+var api = import.meta.env.VITE_API_PORT
 export const useCartStore = defineStore("cart", {
   state: () => ({
     cart_info: [],
@@ -18,7 +19,7 @@ export const useCartStore = defineStore("cart", {
   actions: {
     async getCart(member_id) {
       try {
-        const response = await axios.get(`http://localhost:8080/member/get/carts/${member_id}`);
+        const response = await axios.get(`${api}/member/get/carts/${member_id}`);
         this.cart_info = response.data.cart_info || [];
         this.cart_id = response.data.cart_id;
         this.cart_count = this.cart_info.length;

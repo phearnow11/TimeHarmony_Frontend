@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import axios from "axios";
-
+var api = import.meta.env.VITE_API_PORT
 export const useUserStore = defineStore("user", {
   state: () => ({
     username: "",
@@ -61,7 +61,7 @@ export const useUserStore = defineStore("user", {
     async getFavoritesFromServer(user_id) {
       try {
         console.log('Prepare');
-        const response = await axios.get(`http://localhost:8080/member/get/favorites/${user_id}`);
+        const response = await axios.get(`${api}/member/get/favorites/${user_id}`);
         console.log('Get OK');
         return response.data; // Assuming this returns an array of favorite watch objects
       } catch (error) {
@@ -80,7 +80,7 @@ export const useUserStore = defineStore("user", {
         
     
         console.log('Preparing to save favorites:', watch_id);
-        const response = await axios.post(`http://localhost:8080/member/add/favorites/${user_id}-${watch_id}`);
+        const response = await axios.post(`${api}/member/add/favorites/${user_id}-${watch_id}`);
         console.log('aaaaaaaa: '+response.data);
     
         if (response.data && response.status === 200) {
@@ -119,7 +119,7 @@ export const useUserStore = defineStore("user", {
     async signUp(userData) {
       try {
         const response = await axios.post(
-          "http://localhost:8080/guest/register/member",
+          `${api}/guest/register/member`,
           userData
         );
         console.log("Signup successful", response);
@@ -132,7 +132,7 @@ export const useUserStore = defineStore("user", {
 
     async addToCart(member_id, watch_id) {
       try {
-        const response = await axios.post(`http://localhost:8080/member/add/to-cart/${member_id}?watch_id=${watch_id}`);
+        const response = await axios.post(`${api}/member/add/to-cart/${member_id}?watch_id=${watch_id}`);
         
         return response.data;
       } catch (error) {
@@ -143,8 +143,8 @@ export const useUserStore = defineStore("user", {
 
     async loadUser(user_id) {
       try {
-        const res = await axios.get(`http://localhost:8080/member/get/${user_id}`);
-        const fav = await axios.get(`http://localhost:8080/member/get/favorites/${user_id}`)
+        const res = await axios.get(`${api}/member/get/${user_id}`);
+        const fav = await axios.get(`${api}/member/get/favorites/${user_id}`)
         console.log("Member data:", res.data);
 
         // Update the state with user data
@@ -165,7 +165,7 @@ export const useUserStore = defineStore("user", {
 
     async getUserInfo(user_id) {
       try {
-        const res = await axios.get(`http://localhost:8080/member/get/${user_id}`);
+        const res = await axios.get(`${api}/member/get/${user_id}`);
         console.log("Member data:", res.data);
 
         // Construct and return the user JSON
@@ -193,7 +193,7 @@ export const useUserStore = defineStore("user", {
     async addAddress(user_id, addressData) {
       try {
         const response = await axios.post(
-          `http://localhost:8080/member/save/address/${user_id}`,
+          `${api}/member/save/address/${user_id}`,
           {
             name: addressData.name,
             phone: addressData.phone,
@@ -209,7 +209,7 @@ export const useUserStore = defineStore("user", {
     },
     async getAddressDetails(user_id) {
       try {
-        const response = await axios.get(`http://localhost:8080/member/get/address/${user_id}`);
+        const response = await axios.get(`${api}/member/get/address/${user_id}`);
         return response.data.map(address => ({
           id: address.address_id,
           name: address.name,
@@ -242,7 +242,7 @@ export const useUserStore = defineStore("user", {
           throw new Error('No order data available');
         }
 
-        const response = await axios.post(`http://localhost:8080/member/add/order/${user_id}`, dataToUse);
+        const response = await axios.post(`${api}/member/add/order/${user_id}`, dataToUse);
         this.mostRecentOrderId = response.data.order_id;
         this.clearPendingOrder(); // Clear pending order after successful creation
         return response.data;
@@ -254,7 +254,7 @@ export const useUserStore = defineStore("user", {
 
     async getAllOrders(user_id) {
       try {
-        const response = await axios.get(`http://localhost:8080/member/get/order/${user_id}`);
+        const response = await axios.get(`${api}/member/get/order/${user_id}`);
         console.log('Full getAllOrders response:', response.data);
         
         // Return all orders, sorted by create_time in descending order
@@ -268,7 +268,7 @@ export const useUserStore = defineStore("user", {
     },
     async getNewestOrder(user_id) {
       try {
-        const response = await axios.get(`http://localhost:8080/member/get/order/${user_id}`);
+        const response = await axios.get(`${api}/member/get/order/${user_id}`);
         console.log('Full getOrder response:', response.data);
         
         // Sort orders by create_time in descending order (most recent first)
@@ -286,7 +286,7 @@ export const useUserStore = defineStore("user", {
     
     async getOrderDetail(order_id) {
       try {
-        const response = await axios.get(`http://localhost:8080/member/get/order/detail/${order_id}`);
+        const response = await axios.get(`${api}/member/get/order/detail/${order_id}`);
         console.log('Full getOrderDetail response:', response.data);
         return response.data; // This will return the entire response object
       } catch (error) {
@@ -295,7 +295,7 @@ export const useUserStore = defineStore("user", {
       }
     },
     async getUserByEmail(email){
-      const response = await axios.get(`http://localhost:8080/member/getbyemail/${email}`)
+      const response = await axios.get(`${api}/member/getbyemail/${email}`)
       if(response.data === ''){
         console.log('No user found for email:', email);
       }

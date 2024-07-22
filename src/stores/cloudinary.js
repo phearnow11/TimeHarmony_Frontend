@@ -2,8 +2,8 @@ import { defineStore } from 'pinia';
 import { Cloudinary } from '@cloudinary/url-gen';
 
 const cloudinaryConfig = {
-  cloudName: 'dpybpgncl',
-  uploadPreset: 'ugaejkgm',  // replace with your actual upload preset
+  cloudName: import.meta.env.VITE_CLOUD_NAME,
+  uploadPreset: import.meta.env.VITE_UPLOAD_PRESET,  // replace with your actual upload preset
 };
 
 export const useCloudinaryStore = defineStore('cloudinary', {
