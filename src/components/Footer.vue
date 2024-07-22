@@ -4,10 +4,10 @@
       <div class="xl:grid xl:grid-cols-3 xl:gap-8">
         <div class="space-y-8 xl:col-span-1">
           <router-link to="/" class="flex items-center">
-            <img src="../assets/time-harmony.png" class="h-14 w-auto mr-3" alt="TimeHarmony Logo" />
+            <img src="../assets/time-harmony.png" class="h-14 w-auto mr-3" alt="Logo TimeHarmony" />
           </router-link>
           <p class="text-[#9b9b9b] text-sm">
-            Bringing harmony to your timekeeping experience since {{ date }}.
+            Mang lại sự hài hòa cho trải nghiệm theo dõi thời gian của bạn từ năm {{ date }}.
           </p>
           <div class="flex space-x-6">
             <a href="https://www.facebook.com/profile.php" class="text-[#9b9b9b] hover-underline-animation">
@@ -33,50 +33,50 @@
         <div class="mt-12 grid grid-cols-2 gap-8 xl:mt-0 xl:col-span-2">
           <div class="md:grid md:grid-cols-2 md:gap-8">
             <div>
-              <h3 class="text-sm font-semibold text-[#E6C591] tracking-wider uppercase">Solutions</h3>
+              <h3 class="text-sm font-semibold text-[#E6C591] tracking-wider uppercase">Giải pháp</h3>
               <ul role="list" class="mt-4 space-y-4">
-                <li><router-link to="/features" class="text-[#9b9b9b] hover-underline-animation">Features</router-link></li>
-                <li><router-link to="/pricing" class="text-[#9b9b9b] hover-underline-animation">Pricing</router-link></li>
-                <li><router-link to="/faqs" class="text-[#9b9b9b] hover-underline-animation">FAQs</router-link></li>
-                <li><router-link to="/support" class="text-[#9b9b9b] hover-underline-animation">Support</router-link></li>
+                <li><router-link to="/features" class="text-[#9b9b9b] hover-underline-animation">Tính năng</router-link></li>
+                <li><router-link to="/pricing" class="text-[#9b9b9b] hover-underline-animation">Báo giá</router-link></li>
+                <li><router-link to="/contact" class="text-[#9b9b9b] hover-underline-animation">Liên hệ</router-link></li>
               </ul>
             </div>
             <div class="mt-12 md:mt-0">
-              <h3 class="text-sm font-semibold text-[#E6C591] tracking-wider uppercase">About Us</h3>
+              <h3 class="text-sm font-semibold text-[#E6C591] tracking-wider uppercase">Công ty</h3>
               <ul role="list" class="mt-4 space-y-4">
-                <li><router-link to="/company" class="text-[#9b9b9b] hover-underline-animation">Company</router-link></li>
-                <li><router-link to="/team" class="text-[#9b9b9b] hover-underline-animation">Team</router-link></li>
-                <li><router-link to="/careers" class="text-[#9b9b9b] hover-underline-animation">Careers</router-link></li>
-                <li><router-link to="/contact" class="text-[#9b9b9b] hover-underline-animation">Contact</router-link></li>
+                <li><router-link to="/about" class="text-[#9b9b9b] hover-underline-animation">Về chúng tôi</router-link></li>
+                <li><router-link to="/team" class="text-[#9b9b9b] hover-underline-animation">Nhóm</router-link></li>
+                <li><router-link to="/careers" class="text-[#9b9b9b] hover-underline-animation">Tuyển dụng</router-link></li>
               </ul>
             </div>
           </div>
           <div class="md:grid md:grid-cols-2 md:gap-8">
             <div>
-              <h3 class="text-sm font-semibold text-[#E6C591] tracking-wider uppercase">Resources</h3>
+              <h3 class="text-sm font-semibold text-[#E6C591] tracking-wider uppercase">Hỗ trợ</h3>
               <ul role="list" class="mt-4 space-y-4">
-                <li><router-link to="/blog" class="text-[#9b9b9b] hover-underline-animation">Blog</router-link></li>
-                <li><router-link to="/tutorials" class="text-[#9b9b9b] hover-underline-animation">Tutorials</router-link></li>
-                <li><router-link to="/guides" class="text-[#9b9b9b] hover-underline-animation">Guides</router-link></li>
-                <li><router-link to="/ebooks" class="text-[#9b9b9b] hover-underline-animation">eBooks</router-link></li>
+                <li><router-link to="/documentation" class="text-[#9b9b9b] hover-underline-animation">Tài liệu</router-link></li>
+                <li><router-link to="/faq" class="text-[#9b9b9b] hover-underline-animation">Câu hỏi thường gặp</router-link></li>
+                <li><router-link to="/support" class="text-[#9b9b9b] hover-underline-animation">Hỗ trợ khách hàng</router-link></li>
               </ul>
             </div>
             <div class="mt-12 md:mt-0">
-              <h3 class="text-sm font-semibold text-[#E6C591] tracking-wider uppercase">Legal</h3>
+              <h3 class="text-sm font-semibold text-[#E6C591] tracking-wider uppercase">Pháp lý</h3>
               <ul role="list" class="mt-4 space-y-4">
-                <li><router-link to="/privacy" class="text-[#9b9b9b] hover-underline-animation">Privacy Policy</router-link></li>
-                <li><router-link to="/terms" class="text-[#9b9b9b] hover-underline-animation">Terms of Service</router-link></li>
-                <li><router-link to="/cookie-policy" class="text-[#9b9b9b] hover-underline-animation">Cookie Policy</router-link></li>
-                <li><router-link to="/data-protection" class="text-[#9b9b9b] hover-underline-animation">Data Protection</router-link></li>
+                <li><router-link to="/privacy" class="text-[#9b9b9b] hover-underline-animation">Chính sách bảo mật</router-link></li>
+                <li><router-link to="/terms" class="text-[#9b9b9b] hover-underline-animation">Điều khoản sử dụng</router-link></li>
+                <li><router-link to="/cookies" class="text-[#9b9b9b] hover-underline-animation">Chính sách cookie</router-link></li>
               </ul>
             </div>
           </div>
         </div>
       </div>
+      <div class="mt-12 border-t border-gray-700 pt-8">
+        <p class="text-base text-gray-400 xl:text-center">
+          &copy; TimeHarmony, Inc. Đã đăng ký bản quyền.
+        </p>
+      </div>
     </div>
   </footer>
 </template>
-
 
 <script setup>
 import { useRoute } from 'vue-router';

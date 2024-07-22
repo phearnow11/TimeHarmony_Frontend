@@ -12,7 +12,7 @@
   <!-- Skeleton -->
   <div v-if="isLoading" class="mt-8 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 sm:gap-3 md:gap-3 lg:gap-3 mx-20 relative">
     <div class="popular-watch-text flex items-center w-full mb-10">
-      <span class="text-primary text-2xl font-light mr-2">Dành cho bạn</span>
+      <span class="text-primary text-2xl font-light mr-2 uppercase">Dành cho bạn</span>
       <div class="border-t border-secondary flex-grow mt-1 h-1/6"></div>
     </div>
     <SkeletonCard v-for="i in 30" :key="i" />
@@ -21,7 +21,7 @@
   <!-- Data real -->
   <div v-else class="mt-8 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 sm:gap-3 md:gap-3 lg:gap-3 mx-20 relative">
     <div class="popular-watch-text flex items-center w-full mb-10">
-      <span class="text-primary text-2xl font-light mr-2">Dành cho bạn</span>
+      <span class="text-primary text-2xl font-light mr-2 uppercase">Dành cho bạn</span>
       <div class="border-t border-secondary flex-grow mt-1 h-1/6"></div>
     </div>
     <ProductCard
@@ -38,7 +38,7 @@
   </div>
 
   <div v-if="!isLoading && watches.length <= 30" class="pagination-container flex justify-center items-center mt-10">
-    <a class="hover-underline-animation" href="/discover/watches for you?page=0">Nhiều sản phẩm hơn...</a>
+    <a class="hover-underline-animation" href="/discover/dành cho bạn?page=0">Nhiều sản phẩm hơn...</a>
   </div>
 </template>
 

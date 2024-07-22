@@ -58,7 +58,7 @@
         </button>
       </router-link>
       
-      <router-link to="/chat">
+      <router-link to="/chat" hidden>
         <span class="mdi mdi-message-text-outline hover-animation"></span>
       </router-link>
       <router-link to="/favorite">
