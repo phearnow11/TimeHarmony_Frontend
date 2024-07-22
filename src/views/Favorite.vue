@@ -28,9 +28,9 @@
           :price="watch.price"
           :watch_id="watch.watch_id"
           :seller_id="`/retailer/${watch.seller.member_id}`"
+          @favorite-removed="removeFavoriteFromList"
         />
       </div>
-      
     </template>
 
     <!-- Nếu không tìm thấy đồng hồ -->
@@ -75,6 +75,9 @@ const setPage = (page) => {
 
 const visiblePages = [1, 2, 3]; // Thay thế với logic phân trang của bạn
 
+const removeFavoriteFromList = (watchId) => {
+  watches.value = watches.value.filter(watch => watch.watch_id !== watchId);
+};
 </script>
 
 <style scoped>

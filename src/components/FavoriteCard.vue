@@ -30,49 +30,28 @@
       </div>
     </div>
   </div>
-  
 </template>
 
 <script setup>
-import { ref, defineProps, computed, onMounted, onBeforeUnmount } from 'vue';
-import axios from 'axios';
+import { ref, defineProps, defineEmits, computed } from 'vue';
 import { useUserStore } from '../stores/user';
 import { useAuthStore } from '../stores/auth';
 import PopUp from './PopUp.vue';
 
 const auth = useAuthStore();
+const userStore = useUserStore();
+
 const props = defineProps({
-  productName: {
-    type: String,
-    required: true
-  },
-  productImage: {
-    type: String,
-    required: true
-  },
-  retailerName: {
-    type: String,
-    required: true
-  },
-  retailerAvatar: {
-    type: String,
-    required: true
-  },
-  price: {
-    type: Number,
-    required: true
-  },
-  watch_id: {
-    type: String,
-    required: true
-  },
-  seller_id: {
-    type: String,
-    required: true
-  }
+  productName: { type: String, required: true },
+  productImage: { type: String, required: true },
+  retailerName: { type: String, required: true },
+  retailerAvatar: { type: String, required: true },
+  price: { type: Number, required: true },
+  watch_id: { type: String, required: true },
+  seller_id: { type: String, required: true }
 });
 
-const userStore = useUserStore();
+const emit = defineEmits(['favorite-removed']);
 const currentImage = ref('');
 const isPopupVisible = ref(false);
 const isLoading = ref(false);
@@ -87,7 +66,7 @@ async function addToCart() {
   try {
     const response = await userStore.addToCart(userStore.user_id, props.watch_id);
     console.log("Already in cart ", response);
-    if (response==='Watch aready in cart!') {
+    if (response === 'Watch aready in cart!') {
       popupMessage.value = 'Sản phẩm này đã tồn tại trong giỏ hàng';
       showProductDetails.value = false;
     } else {
@@ -111,13 +90,12 @@ async function addToCart() {
 const removeFavorite = async () => {
   try {
     await userStore.deleteFavorite(auth.user_id, props.watch_id);
-    // Trigger any other actions needed after removing the favorite
-    // E.g., update the list of favorites in the parent component
+    // Emit an event to notify the parent component
+    emit('favorite-removed', props.watch_id);
   } catch (error) {
     console.error('Error removing favorite:', error);
   }
 };
-
 
 const formatPriceVND = (price) => {
   return price.toLocaleString('vi-VN', {
