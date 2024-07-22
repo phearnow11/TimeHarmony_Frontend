@@ -108,10 +108,10 @@
             class="submenu-item block px-4 py-2 hover-underline-animation" v-if="useUserStore().role=='ROLE_STAFF'"
             >Kiểm Duyệt</router-link>
             <router-link to="/voucher" 
-            class="submenu-item block px-4 py-2 hover-underline-animation"
+            class="submenu-item block px-4 py-2 hover-underline-animation" v-if="useUserStore().role=='ROLE_STAFF'"
             >Khuyến mãi</router-link>
             <router-link to="/admin" 
-            class="submenu-item block px-4 py-2 hover-underline-animation"
+            class="submenu-item block px-4 py-2 hover-underline-animation" v-if="useUserStore().role=='ROLE_ADMIN'"
             >Quản trị</router-link>
             <a
               @click="logout"
