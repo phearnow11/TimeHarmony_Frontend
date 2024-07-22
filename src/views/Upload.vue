@@ -93,7 +93,7 @@
           <label for="price" class="form__label">Giá</label>
         </div>
       </div>
-      <h3 class="text-3xl">Features</h3>
+      <h3 class="text-3xl">Tính năng</h3>
       <div class="form-content">
         <div class="form__group field w-96">
           <input
@@ -102,7 +102,7 @@
             class="form__field"
             placeholder="Price"
           />
-          <label for="price" class="form__label">Calendar</label>
+          <label for="price" class="form__label">Lịch</label>
         </div>
       </div>
       <div class="form-content">
@@ -113,7 +113,7 @@
             class="form__field"
             placeholder="Price"
           />
-          <label for="price" class="form__label">Feature</label>
+          <label for="price" class="form__label">Tính năng</label>
         </div>
       </div>
       <div class="form-content">
@@ -124,7 +124,7 @@
             class="form__field"
             placeholder="Price"
           />
-          <label for="price" class="form__label">Movement</label>
+          <label for="price" class="form__label">Hoạt động</label>
         </div>
       </div>
       <div class="form-content">
@@ -135,7 +135,7 @@
             class="form__field"
             placeholder="Price"
           />
-          <label for="price" class="form__label">Functions</label>
+          <label for="price" class="form__label">Chức năng</label>
         </div>
       </div>
       <div class="form-content">
@@ -146,7 +146,7 @@
             class="form__field"
             placeholder="Price"
           />
-          <label for="price" class="form__label">Engine</label>
+          <label for="price" class="form__label">Động cơ</label>
         </div>
       </div>
       <div class="form-content">
@@ -157,10 +157,10 @@
             class="form__field"
             placeholder="Price"
           />
-          <label for="price" class="form__label">Water Resistant</label>
+          <label for="price" class="form__label">Kháng nước</label>
         </div>
       </div>
-      <h3 class="text-3xl">Dial</h3>
+      <h3 class="text-3xl">Quay số</h3>
       <div class="form-content">
         <div class="form__group field w-96">
           <input
@@ -169,7 +169,7 @@
             class="form__field"
             placeholder="Price"
           />
-          <label for="price" class="form__label">Dial Type</label>
+          <label for="price" class="form__label">Loại quay số</label>
         </div>
       </div>
       <div class="form-content">
@@ -180,7 +180,7 @@
             class="form__field"
             placeholder="Price"
           />
-          <label for="price" class="form__label">Dial Color</label>
+          <label for="price" class="form__label">Màu sắc</label>
         </div>
       </div>
       <div class="form-content">
@@ -191,7 +191,7 @@
             class="form__field"
             placeholder="Price"
           />
-          <label for="price" class="form__label">Crystal</label>
+          <label for="price" class="form__label">Pha lê</label>
         </div>
       </div>
       <div class="form-content">
@@ -202,10 +202,10 @@
             class="form__field"
             placeholder="Price"
           />
-          <label for="price" class="form__label">Second Makers</label>
+          <label for="price" class="form__label">Nhà sản xuất thứ hai</label>
         </div>
       </div>
-      <h3 class="text-3xl">Band</h3>
+      <h3 class="text-3xl">Dây đeo</h3>
       <div class="form-content">
         <div class="form__group field w-96">
           <input
@@ -214,7 +214,7 @@
             class="form__field"
             placeholder="Price"
           />
-          <label for="price" class="form__label">Band Color</label>
+          <label for="price" class="form__label">Màu sắc</label>
         </div>
       </div>
       <div class="form-content">
@@ -225,7 +225,7 @@
             class="form__field"
             placeholder="Price"
           />
-          <label for="price" class="form__label">Band Type</label>
+          <label for="price" class="form__label">Loại dây</label>
         </div>
       </div>
       <div class="form-content">
@@ -236,7 +236,7 @@
             class="form__field"
             placeholder="Price"
           />
-          <label for="price" class="form__label">Clasp</label>
+          <label for="price" class="form__label">Móc cài</label>
         </div>
       </div>
       <div class="form-content">
@@ -247,10 +247,10 @@
             class="form__field"
             placeholder="Price"
           />
-          <label for="price" class="form__label">Bracelet</label>
+          <label for="price" class="form__label">Vòng đeo</label>
         </div>
       </div>
-      <h3 class="text-3xl">Case</h3>
+      <h3 class="text-3xl">Vỏ</h3>
       <div class="form-content">
         <div class="form__group field w-96">
           <input
@@ -259,7 +259,7 @@
             class="form__field"
             placeholder="Price"
           />
-          <label for="price" class="form__label">Bezel</label>
+          <label for="price" class="form__label">Khung viền</label>
         </div>
       </div>
       <div class="form-content">
@@ -270,7 +270,7 @@
             class="form__field"
             placeholder="Price"
           />
-          <label for="price" class="form__label">Bezel Material</label>
+          <label for="price" class="form__label">Chất liệu khung viền</label>
         </div>
       </div>
       <div class="form-content">
@@ -281,7 +281,7 @@
             class="form__field"
             placeholder="Price"
           />
-          <label for="price" class="form__label">Case Back</label>
+          <label for="price" class="form__label">Mặt sau</label>
         </div>
       </div>
       <div class="form-content">
@@ -292,7 +292,7 @@
             class="form__field"
             placeholder="Price"
           />
-          <label for="price" class="form__label">Case Dimension</label>
+          <label for="price" class="form__label">Kích thước vỏ đồng hồ</label>
         </div>
       </div>
       <div class="form-content">
@@ -303,11 +303,11 @@
             class="form__field"
             placeholder="Price"
           />
-          <label for="price" class="form__label">Case Shape</label>
+          <label for="price" class="form__label">Hình dạng vỏ</label>
         </div>
       </div>
       
-      <h3 class="text-3xl">About</h3>
+      <h3 class="text-3xl">Thuộc tính</h3>
       <div class="form-content">
         <div class="form__group field w-96">
           <input
@@ -316,7 +316,7 @@
             class="form__field"
             placeholder="Price"
           />
-          <label for="price" class="form__label">Brand</label>
+          <label for="price" class="form__label">Thương hiệu</label>
         </div>
       </div>
       <div class="form-content">
@@ -338,26 +338,26 @@
             class="form__field"
             placeholder="Price"
           />
-          <label for="price" class="form__label">Model</label>
+          <label for="price" class="form__label">Mẫu</label>
         </div>
       </div>
       <div class="form__group field flex flex-col w-96 justify-start">
            
         <div class="mydict">
 	<div class="form">
-	    <label class=" mb-3 text-[#9b9b9b] ">Gender</label>
+	    <label class=" mb-3 text-[#9b9b9b] ">Giới tính</label>
 	    <div class="select pb-4 gender-select">
 	    <label>
 			<input type="radio" name="radio" checked @click="unisexGender" id="defaut-gender" value="Unisex">
-			<span class="select-op">Unisex</span>
+			<span class="select-op">Phi giới</span>
 		</label>
 		<label>
 			<input type="radio" name="radio" @click="maleGender" value="Male">
-			<span class="select-op">Male</span>
+			<span class="select-op">Nam</span>
 		</label>
 		<label>
 			<input type="radio" name="radio" @click="femaleGender" value="Female">
-			<span class="select-op">Female</span>
+			<span class="select-op">Nữ</span>
 		</label>
 	    </div>
 	</div>
@@ -373,7 +373,7 @@
             class="form__field"
             placeholder="Price"
           />
-          <label for="price" class="form__label">Style Type</label>
+          <label for="price" class="form__label">Phong cách</label>
         </div>
       </div>
       <div class="form-content">
@@ -384,7 +384,7 @@
             class="form__field"
             placeholder="Price"
           />
-          <label for="price" class="form__label">Sub-Class</label>
+          <label for="price" class="form__label">Lớp phụ</label>
         </div>
       </div>
       <div class="form-content">
@@ -395,18 +395,18 @@
             class="form__field"
             placeholder="Price"
           />
-          <label for="price" class="form__label">Made Label</label>
+          <label for="price" class="form__label">Nhãn thực hiện</label>
         </div>
       </div>
       <br />
       <div class="flex justify-end button-div">
         <div class="flex items-center submit-watch">
           <div class="hover-underline-animation-r" @click.stop="clear">
-            Clear my input
+            Xoá dữ liệu nhập
           </div>
         </div>
         <button @click="uploadHandle" class="th-p-btn w-44 relative">
-          <span :class="{ 'opacity-0': isLoading }">Finish Submit</span>
+          <span :class="{ 'opacity-0': isLoading }">Hoàn tất đăng tin</span>
           <div v-if="isLoading" class="loader-container">
             <div class="loader">
               <div class="loaderBar"></div>
@@ -554,7 +554,36 @@ const handleFiles = async (files) => {
 };
 
 const clear = () => {
-    window.location.href="/upload"
+ watchData.name = "",
+watchData.price= "",
+watchData.description= "",
+imageURLs.value= "",
+ watchData.brand= "",
+watchData.series= "",
+   watchData.model= "",
+    watchData.gender= "",
+   watchData.style_type= "",
+   watchData.sub_class= "",
+   watchData.made_label= "",
+   watchData.calender= "",
+     watchData.feature= "",
+    watchData.movement= "",
+ watchData.function= "",
+    watchData.engine= "",
+       watchData.water_resistant= "",
+   watchData.band_color= "",
+     watchData.band_type= "",
+    watchData.clasp= "",
+   watchData.bracelet= "",
+   watchData.dial_type= "",
+     watchData.dial_color= "",
+       watchData.crystal= "",
+    watchData.second_makers= "",
+   watchData.bezel= "",
+watchData.bezel_material= "",
+ watchData.case_back= "",
+watchData.casedimension= "",
+    watchData.case_shape= ""
 }
 
 const uploadToCDN = async (file, imageObject) => {
