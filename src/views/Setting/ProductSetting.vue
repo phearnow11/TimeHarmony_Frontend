@@ -16,7 +16,7 @@
       <!-- Navigation links -->
       <div class="mb-6">
         <a href="#orders" class="mr-4 hover-underline-animation" @click="activeSection = 'orders'">Đồng hồ đã mua</a>
-        <a href="#purchases" class="hover-underline-animation" @click="activeSection = 'purchases'">Đồng hồ đã bán</a>
+        <a href="#purchases" class="hover-underline-animation" @click="activeSection = 'purchases'">Đồng hồ đã đăng bán</a>
       </div>
 
       <!-- My Orders Section -->
@@ -39,7 +39,7 @@
               <td class="py-4">{{ order.order_id }}</td>
               <td class="py-4 pl-2">{{ formatDate(order.create_time) }}</td>
               <td class="py-4 pl-2">{{ formatPriceVND(order.total_price) }}</td>
-              <td class="py-4 pl-2">{{ order.status }}</td>
+              <td class="py-4 pl-2">{{ state }}</td>
               <td class="py-4 px-2 text-right">
                 <button class="hover-underline-animation" @click="viewOrderDetails(order.order_id)">Xem Chi Tiết</button>
               </td>
@@ -69,9 +69,9 @@
               <td class="py-4 pl-2">{{ list.watch_id }}</td>
               <td class="py-4 pl-2">{{ list.watch_name }}</td>
               <td class="py-4 pl-2">{{ formatPriceVND(list.price) }}</td>
-              <td class="py-4 pl-2">{{ list.state }}</td>
+              <td class="py-4 pl-2">{{ list.state === 3 ? 'Đang chờ duyệt đơn' : list.state }}</td>
               <td class="py-4 px-2 text-right">
-                <button class="hover-underline-animation" @click="viewOrderDetails(list.watch_id)">Xem Chi Tiết</button>
+                <button class="hover-underline-animation" @click="setShip(list.watch_id)">Giao hàng</button>
               </td>
             </tr>
           </tbody>
@@ -90,6 +90,7 @@ import { useRouter } from 'vue-router';
 const user = useUserStore();
 const auth = useAuthStore();
 const router = useRouter();
+const state = ref(null);
 const orders = ref([]);
 const wlists = ref([]);
 const activeSection = ref('orders'); // Mặc định là phần 'Đơn hàng của tôi'
@@ -99,21 +100,34 @@ onMounted(async () => {
     console.log('Người dùng chưa đăng nhập. Đang chuyển hướng đến trang đăng nhập...');
     router.push('/login');
   } else {
-    try {
-      orders.value = await user.getAllOrders(auth.user_id);
-      wlists.value = await user.getOrderWaiting(auth.user_id);
-    } catch (error) {
-      console.error('Lỗi khi tải danh sách đơn hàng:', error);
-      // Xử lý lỗi (ví dụ: hiển thị thông báo lỗi cho người dùng)
-    }
+    await loadOrders();
+    const orderState = await user.getOrderState(orders.order_id);
+          state.value = orderState === 'PENDING' 
+            ? 'Đơn hàng đã được gửi đến người bán'
+            : 'Đơn hàng đang được vận chuyển';
   }
 });
 
-const viewOrderDetails = (orderId) => {
-  router.push(`/orderconfirmation/${orderId}`);
-  console.log('Xem chi tiết đơn hàng:', orderId);
+const loadOrders = async () => {
+  try {
+    orders.value = await user.getAllOrders(auth.user_id);
+    
+    wlists.value = await user.getOrderWaiting(auth.user_id);
+  } catch (error) {
+    console.error('Lỗi khi tải danh sách đơn hàng:', error);
+    // Xử lý lỗi (ví dụ: hiển thị thông báo lỗi cho người dùng)
+  }
 };
 
+const setShip = async (watchid) => {
+  try {
+    await user.setShipping(watchid);
+    await loadOrders(); // Reload the orders and wlists after shipping
+  } catch (error) {
+    console.error('Lỗi khi cập nhật trạng thái giao hàng:', error);
+    // Xử lý lỗi (ví dụ: hiển thị thông báo lỗi cho người dùng)
+  }
+};
 const formatPriceVND = (price) => {
   return price.toLocaleString('vi-VN', {
     style: 'currency',

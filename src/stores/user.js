@@ -359,7 +359,18 @@ export const useUserStore = defineStore("user", {
         this.setUsername(response.data.user_log_info.username)
         return response.data;
       }
-  }
+  },  
+  async setShipping(watch_id){
+    try {
+      const response = await axios.put(`${api}/seller/ship/${watch_id}`)
+      console.log('Full shipping response:', response.data);
+      return response.data; // This will return the entire response object
+    } catch (error) {
+      console.error('Error fetching order details:', error);
+      throw error;
+    }
+        
+  },
         
   },
 });

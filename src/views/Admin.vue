@@ -20,7 +20,7 @@
       <div class="table-container">
         <table class="table">
           <thead>
-            <tr class="bg-primary text-white">
+            <tr class="bg-primary text-black">
               <th class="p-2 border-b">ID</th>
               <th class="p-2 border-b">Hình Ảnh</th>
               <th class="p-2 border-b">Tên</th>
@@ -52,7 +52,7 @@
       <div class="table-container">
         <table class="table">
           <thead>
-            <tr class="bg-primary text-white">
+            <tr class="bg-primary text-black">
               <th class="p-2 border-b">ID</th>
               <th class="p-2 border-b">Tên</th>
               <th class="p-2 border-b">Người Bán</th>
@@ -83,7 +83,7 @@
       <div class="table-container">
         <table class="table">
           <thead>
-            <tr class="bg-primary text-white">
+            <tr class="bg-primary text-black">
               <th class="p-2 border-b">ID Đơn Hàng</th>
               <th class="p-2 border-b">Ngày Tạo</th>
               <th class="p-2 border-b">Địa Chỉ</th>
