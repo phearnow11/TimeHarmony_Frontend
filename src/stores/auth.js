@@ -80,16 +80,30 @@ export const useAuthStore = defineStore('auth', {
             router.push('/');
         },
         
-        resetPass(oldpass,username,newpass){
-            const checkPass = axios.get(`${api}/member/check/password/${username}?pwd=${oldpass}`)
-            if(checkPass.data === 'correct password'){
-                const res = axios.patch(`${api}/member/update/user/password/${username}?npwd=${newpass}`)
-                console.log(res.data);
-            } else{
-                console.log('Error at old password');
-                return;
+        async resetPass(oldpass, username, newpass) {
+            try {
+                // Check the old password
+                const checkPassResponse = await axios.get(`${api}/member/check/password/${username}?pwd=${oldpass}`);
+                console.log('Check password response:', checkPassResponse.data);
+        
+                if (checkPassResponse.data === 'correct password') {
+                    // If the old password is correct, update the password
+                    const updateResponse = await axios.patch(`${api}/member/update/user/password/${username}?npwd=${newpass}`);
+                    console.log('Update password response:', updateResponse.data);
+        
+                    // Return a success message or true
+                    return 'Đổi mật khẩu thành công!';
+                } else {
+                    // Return an error message for incorrect old password
+                    return 'Sai mật khẩu cũ!';
+                }
+            } catch (error) {
+                // Handle any errors from the requests
+                console.error('An error occurred:', error);
+                return 'Có lỗi xảy ra khi đặt lại mật khẩu.';
             }
         },
+        
         async resetPassword(username,newpass){
             try {
                 const res = await axios.patch(`${api}/member/update/user/password/${username}?npwd=${newpass}`)

@@ -51,7 +51,13 @@
           <button type="submit" class="mt-10 th-p-btn">Đặt lại mật khẩu</button>
         </form>
       </div>
-    </div>
+      <PopUp 
+        :show="showPopup"
+        :message="popupMessage"
+        :showDetails="false"
+        @close="closePopup"
+      />
+    </div>  
   </div>
 </template>
 
@@ -61,6 +67,7 @@ import { useAuthStore } from '../../stores/auth';
 import { onMounted } from 'vue';
 import router from '../../router';
 import { useUserStore } from '../../stores/user';
+import PopUp from '../../components/PopUp.vue';
 
 const auth = useAuthStore();
 const resetForm = ref({
@@ -88,14 +95,37 @@ function checkPasswords() {
   }
 }
 
+const showPopup = ref(false);
+const closePopup = () => {
+  showPopup.value = false;
+};
+const popupMessage = ref('');
+
+
 async function resetPasswordHandle() {
-  try {
-    await auth.resetPass(resetForm.value.oldPassword,useUserStore().username,resetForm.value.newPassword);
-    // router.push('/login');
-  } catch (error) {
-    console.error('Lỗi khi đặt lại mật khẩu', error);
-  }
+    try {
+        // Get the result from resetPass
+        const resultMessage = await auth.resetPass(
+            resetForm.value.oldPassword,
+            useUserStore().username,
+            resetForm.value.newPassword
+        );
+
+        // Set the popup message based on the result
+        popupMessage.value = resultMessage;
+        showPopup.value = true;
+
+        // Optionally, redirect the user after a successful password change
+        if (resultMessage === 'Đổi mật khẩu thành công!') {
+            // router.push('/login');
+        }
+    } catch (error) {
+        console.error('Lỗi khi đặt lại mật khẩu', error);
+        popupMessage.value = 'Có lỗi xảy ra khi đặt lại mật khẩu.';
+        showPopup.value = true;
+    }
 }
+
 </script>
 
 <style scoped>
