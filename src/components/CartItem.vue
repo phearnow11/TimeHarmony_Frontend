@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div :id="`cart-item-${watch_id}`" class="container">
     <div class="box" :class="{ 'checked': isSelected }" @click="toggleSelection">
       <label class="checkbox-container">
         <input type="checkbox" :checked="isSelected" @click.stop />

@@ -60,14 +60,21 @@
         </div>
         <div class="flex gap-4">
           <button @click="addToCart" class="flex-1 th-p-btn py-2 px-4 relative">
-            <span :class="{ 'opacity-0': isLoading }">Thêm vào giỏ</span>
+            <span :class="{ 'opacity-0': isLoadingCart }">Thêm vào giỏ</span>
+            <div v-if="isLoadingCart" class="loader-container">
+              <div class="loader">
+                <div class="loaderBar"></div>
+              </div>
+            </div>
+          </button>
+          <button @click="buyNow" class="flex-1 th-p-btn py-2 px-4 relative">
+            <span :class="{ 'opacity-0': isLoading }">Mua Ngay</span>
             <div v-if="isLoading" class="loader-container">
               <div class="loader">
                 <div class="loaderBar"></div>
               </div>
             </div>
           </button>
-          <router-link to="/order" class="flex-1 th-p-btn py-2 px-4">Mua Ngay</router-link>
         </div>
       </div>
     </div>
@@ -202,18 +209,22 @@ import { ref, onMounted, watch, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useWatchStore } from '../stores/watch';
 import { useUserStore } from '../stores/user';
+import { useRouter } from 'vue-router';
+import { useCartStore } from '../stores/cart';
 import PopUp from '../components/PopUp.vue';
 
 const route = useRoute();
 const watchStore = useWatchStore();
 const userStore = useUserStore();
-
+const router = useRouter();
+const cartStore = useCartStore();
 const watchId = route.params.watch_id;
 const currentImage = ref('');
 const isModalOpen = ref(false);
 const isPopupVisible = ref(false);
 const retailer = ref(null);
 const isLoading = ref(false);
+const isLoadingCart = ref(false);
 const currentProduct = ref({});
 const popupMessage = ref('');
 const showProductDetails = ref(true);
@@ -232,10 +243,12 @@ const formatPriceVND = (price) => {
   return formattedPrice;
 };
 
+
+
 async function addToCart() {
   console.log("WatchID: " + watchId);
   console.log("UserID: " + userStore.user_id);
-  isLoading.value = true;
+  isLoadingCart.value = true;
   try {
     const response = await userStore.addToCart(userStore.user_id, watchId);
     console.log("Already in cart ", response);
@@ -255,6 +268,25 @@ async function addToCart() {
     isPopupVisible.value = true;
   } catch (error) {
     console.error("Error adding item to cart", error);
+  } finally {
+    isLoadingCart.value = false;
+  }
+}
+
+async function buyNow() {
+  isLoading.value = true;
+  try {
+    // First, add the item to the cart
+    await userStore.addToCart(userStore.user_id, watchId);
+    // Then, set this item as selected in the cart
+    await cartStore.setItemSelected(watchId, true);
+    // Finally, navigate to the cart page
+    router.push('/cart');
+  } catch (error) {
+    console.error("Error during buy now process", error);
+    popupMessage.value = 'Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng';
+    showProductDetails.value = false;
+    isPopupVisible.value = true;
   } finally {
     isLoading.value = false;
   }

@@ -31,6 +31,13 @@ export const useCartStore = defineStore("cart", {
       }
     },
 
+    async setItemSelected(watchId, selected) {
+      const index = this.cart_info.findIndex(item => item.watch_id === watchId);
+      if (index !== -1) {
+        this.cart_info[index].isSelected = selected;
+      }
+    },
+
     setSelectedItems(items) {
       this.selectedItems = items;
     },

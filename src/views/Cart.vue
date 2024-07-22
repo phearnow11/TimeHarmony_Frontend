@@ -492,17 +492,27 @@ onMounted(async () => {
     await cartStore.getCart(auth.user_id);
     cartItems.value = cartStore.cart_info.map((item) => ({
       ...item,
-      isSelected: false,
+      isSelected: item.isSelected || false, // Use the isSelected property from the store
       name: "Loading...",
       price: 0,
       image: "",
       sellerName: "Loading...",
       sellerAvatar: "",
     }));
-    console.log(cartItems.value.length);
     await fetchAddresses();
     await fetchAllWatchDetails();
-    await loadProvinces();
+    
+    // Check if there's a newly added item and scroll to it
+    const newlyAddedItem = cartItems.value.find(item => item.isSelected);
+    if (newlyAddedItem) {
+      // You might need to use nextTick to ensure the DOM has updated
+      Vue.nextTick(() => {
+        const element = document.getElementById(`cart-item-${newlyAddedItem.watch_id}`);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      });
+    }
   } catch (error) {
     console.error("Error fetching cart:", error);
   }

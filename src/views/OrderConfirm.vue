@@ -46,15 +46,18 @@
                 <p class="text-[whitesmoke]">{{ orderDetails.order_detail.receive_name }}</p>
                 <p class="text-[whitesmoke]">{{ orderDetails.order_detail.address }}</p>
                 </div>
-                
+                <div>
+                  <h3 class="font-bold mb-2">Trạng thái giao hàng</h3>
+                  <span class="text-[whitesmoke]">
+                    {{ state }} 
+                  </span>
+                </div>
             </div>
   
             <button class="bg-olive-700 text-white px-6 py-2 rounded hover:bg-olive-800 transition duration-300">
               Huỷ đơn hàng
             </button>
-            <span>
-              Đang ship nè ông bà già
-            </span>
+            
   
             <p class="mt-4 text-sm text-gray-600">
               Pressed order too soon? <a href="#" class="underline">Contact us here</a> for help with ongoing orders
@@ -70,7 +73,7 @@
               </div>
               <div class="flex justify-between font-bold text-lg mt-4 pt-4 border-t">
                 <span>Phương thức thanh toán</span>
-                <span>{{ paymentMethod ?? 'COD' }}</span>
+                <span>{{ paymentMethod || 'COD' }}</span>
               </div>
               <div class="flex justify-between font-bold text-lg mt-4 pt-4 border-t">
                 <span>Tạm tính ({{ detailedWatches.length }} sản phẩm)</span>
@@ -116,6 +119,7 @@
   const watchStore = useWatchStore();
   const route = useRoute();
   const orderDetails = ref(null);
+  const state = ref(null); 
   const detailedWatches = ref([]);
   const paymentMethod = localStorage.getItem(`pay_method`)
   const transactionNo = localStorage.getItem(`trans_no`)
@@ -127,12 +131,18 @@
     if (orderId) {
       try {
         orderDetails.value = await userStore.getOrderDetail(orderId);
+        const orderState = await userStore.getOrderState(orderId);
+          state.value = orderState === 'PENDING' 
+            ? 'Đơn hàng đã được gửi đến người bán'
+            : 'Đơn hàng đang được vận chuyển';
         await fetchWatchDetails(orderDetails.value.watch);
       } catch (error) {
         console.error('Failed to fetch order details:', error);
       }
     }
   });
+
+  
   
   const fetchWatchDetails = async (watchIds) => {
     try {

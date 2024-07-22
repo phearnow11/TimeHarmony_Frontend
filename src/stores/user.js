@@ -317,7 +317,26 @@ export const useUserStore = defineStore("user", {
         throw error;
       }
     },
-    
+    async getOrderState(order_id) {
+      try {
+        const response = await axios.get(`${api}/member/get/order/state/${order_id}`);
+        console.log('Full state response:', response.data);
+        return response.data; // This will return the entire response object
+      } catch (error) {
+        console.error('Error fetching order details:', error);
+        throw error;
+      }
+    },
+    async getOrderWaiting(seller_id) {
+      try {
+        const response = await axios.get(`${api}/seller/get/waiting/${seller_id}`);
+        console.log('Full list response:', response.data);
+        return response.data; // This will return the entire response object
+      } catch (error) {
+        console.error('Error fetching order details:', error);
+        throw error;
+      }
+    },
     async getOrderDetail(order_id) {
       try {
         const response = await axios.get(`${api}/member/get/order/detail/${order_id}`);
