@@ -22,9 +22,10 @@
       <!-- My Orders Section -->
       <div v-if="activeSection === 'orders'" id="orders">
         <h2 class="text-2xl mb-4 text-secondary">Đơn hàng mua</h2>
-        <table class="w-full border-collapse">
-          <thead>
-            <tr class="text-left">
+        <div class="table-container">
+        <table class="w-full border-collapse table">
+          <thead class="table-header">
+            <tr class="bg-[#494949] text-primary">
               <th class="pb-2">Số Thứ Tự</th>
               <th class="pb-2">Mã Đơn Hàng</th>
               <th class="pb-2 pl-2">Ngày Đặt</th>
@@ -40,26 +41,30 @@
               <td class="py-4 pl-2">{{ formatDate(order.create_time) }}</td>
               <td class="py-4 pl-2">{{ formatPriceVND(order.total_price) }}</td>
               <td class="py-4 pl-2">{{ getOrderStatusText(order.order_id) }}</td>
-              <td class="py-4 px-2 text-right">
-                <button class="hover-underline-animation" @click="viewOrderDetails(order.order_id)">Xem Chi Tiết</button>
+              <td class="py-4 px-2">
+                <button v-if="orderStates[order.order_id] !== 'DELETED'" class="hover-underline-animation" @click="viewOrderDetails(order.order_id)">Xem Chi Tiết</button>
               </td>
             </tr>
           </tbody>
         </table>
+        </div>
       </div>
 
       <!-- My Purchased Watches Section -->
       <div v-if="activeSection === 'purchases'" id="purchases">
         <h2 class="text-2xl mb-4">Các đơn hàng đồng hồ đã đăng bán</h2>
-        <table class="w-full border-collapse">
-          <thead>
-            <tr class="text-left">
+        <div class="table-container">
+        <table class="w-full border-collapse table">
+          <thead class="table-header">
+            <tr class="bg-[#494949] text-primary">
               <th class="pb-2">Số Thứ Tự</th>
               <th class="pb-2">Ảnh</th>
               <th class="pb-2 pl-2">Mã đồng hồ</th>
               <th class="pb-2 pl-2">Tên</th>
               <th class="pb-2 pl-2">Giá</th>
               <th class="pb-2">Trạng thái</th>
+              <th class="pb-2">Hành động</th>
+
             </tr>
           </thead>
           <tbody>
@@ -70,12 +75,13 @@
               <td class="py-4 pl-2">{{ list.watch_name }}</td>
               <td class="py-4 pl-2">{{ formatPriceVND(list.price) }}</td>
               <td class="py-4 pl-2">{{ list.state === 3 ? 'Đang chờ duyệt đơn' : list.state }}</td>
-              <td class="py-4 px-2 text-right">
+              <td class="py-4 px-2">
                 <button class="hover-underline-animation" @click="setShip(list.watch_id)">Giao hàng</button>
               </td>
             </tr>
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   </div>
@@ -96,9 +102,15 @@ const wlists = ref([]);
 const activeSection = ref('orders'); // Mặc định là phần 'Đơn hàng của tôi'
 
 const viewOrderDetails = (orderId) => {
-  router.push(`/orderconfirmation/${orderId}`);
-  console.log('Xem chi tiết đơn hàng:', orderId);
+  const state = orderStates.value[orderId];
+  if (state !== 'DELETED') {
+    router.push(`/orderconfirmation/${orderId}`);
+    console.log('Xem chi tiết đơn hàng:', orderId);
+  } else {
+    console.log('Đơn hàng đã bị xóa, không thể xem chi tiết.');
+  }
 };
+
 
 onMounted(async () => {
   if (!auth.user_id) {
@@ -125,7 +137,12 @@ const loadOrderStates = async () => {
 
 const getOrderStatusText = (orderId) => {
   const state = orderStates.value[orderId];
-  return state === 'PENDING' ? 'Đơn hàng đang chờ duyệt' : 'Đơn hàng đang được vận chuyển';
+  if(state === 'PENDING')
+           return 'Đơn hàng đã được gửi đến người bán'
+        else if (state === 'SHIPPING')
+            return 'Đơn hàng đang được vận chuyển'
+        else
+            return 'Đã huỷ đơn hàng'
 };
 
 const loadOrders = async () => {
@@ -160,5 +177,50 @@ const formatDate = (dateString) => {
 </script>
 
 <style scoped>
-/* Add your styles here */
+
+.table-container {
+  overflow-x: auto;
+  max-height: 400px; /* Adjust this value as needed */
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table thead {
+  background-color: var(--primary);
+  color: #fff;
+}
+
+.table th, .table td {
+  padding: 8px;
+  border: 1px solid var(--secondary);
+}
+
+.table-header th {
+  position: sticky;
+  top: 0;
+  background-color: #494949; /* Matches your background color */
+  z-index: 1; /* Keeps the header above the table rows */
+}
+
+.table tbody tr:nth-child(even) {
+  background-color: #333;
+}
+
+.table-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: #ffbd59;
+}
+
+
 </style>

@@ -54,7 +54,7 @@
                 </div>
             </div>
   
-            <button class="bg-olive-700 text-white px-6 py-2 rounded hover:bg-olive-800 transition duration-300">
+            <button @click="cancelOrder(orderDetails.order_detail.order_id)" class="bg-olive-700 text-white px-6 py-2 rounded hover:bg-olive-800 transition duration-300">
               Huỷ đơn hàng
             </button>
             
@@ -81,10 +81,6 @@
               </div>
               <div class="flex justify-between mb-2">
                 <span class="text-[whitesmoke]">Voucher</span>
-                <span class="text-[whitesmoke]">0 ₫</span>
-              </div>
-              <div class="flex justify-between mb-2">
-                <span class="text-[whitesmoke]">Phí vận chuyển</span>
                 <span class="text-[whitesmoke]">0 ₫</span>
               </div>
               <div class="flex justify-between font-bold text-lg mt-4 pt-4 border-t">
@@ -130,19 +126,30 @@
     const orderId = route.params.order_id;
     if (orderId) {
       try {
+        await fetchWatchDetails(orderDetails.value.watch);
         orderDetails.value = await userStore.getOrderDetail(orderId);
         const orderState = await userStore.getOrderState(orderId);
-          state.value = orderState === 'PENDING' 
-            ? 'Đơn hàng đã được gửi đến người bán'
-            : 'Đơn hàng đang được vận chuyển';
-        await fetchWatchDetails(orderDetails.value.watch);
+        if(state.value = orderState === 'PENDING')
+           return 'Đơn hàng đã được gửi đến người bán'
+        else if (state.value = orderState === 'SHIPPING')
+            return 'Đơn hàng đang được vận chuyển'
+        else
+            return 'Đã huỷ đơn hàng'
       } catch (error) {
         console.error('Failed to fetch order details:', error);
       }
     }
   });
 
-  
+  const cancelOrder = async (orderid) => {
+    try {
+      console.log('cancelling order');
+      await userStore.cancelOrder(orderid);
+      console.log('cancer');
+    } catch (error) {
+      console.log('Lỗi canceled order:', error);
+    }
+  }
   
   const fetchWatchDetails = async (watchIds) => {
     try {

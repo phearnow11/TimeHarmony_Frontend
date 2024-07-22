@@ -406,29 +406,35 @@ const fetchAllWatchDetails = async () => {
 };
 
 const loadProvinces = async () => {
+  isLoadingProvinces.value = true;
   try {
     provinces.value = await fetchProvinces();
   } catch (error) {
     console.error('Error loading provinces:', error);
   }
+  isLoadingProvinces.value = false;
 };
 
 const loadDistricts = async () => {
   if (!selectedProvince.value) return;
+  isLoadingDistricts.value = true;
   try {
     districts.value = await fetchDistricts(selectedProvince.value);
   } catch (error) {
     console.error('Error loading districts:', error);
   }
+  isLoadingDistricts.value = false;
 };
 
 const loadWards = async () => {
   if (!selectedDistrict.value) return;
+  isLoadingWards.value = true;
   try {
     wards.value = await fetchWards(selectedDistrict.value);
   } catch (error) {
     console.error('Error loading wards:', error);
   }
+  isLoadingWards.value = false;
 };
 
 watch(selectedProvince, () => {
@@ -507,6 +513,7 @@ onMounted(async () => {
       sellerName: "Loading...",
       sellerAvatar: "",
     }));
+    await loadProvinces();
     await fetchAddresses();
     await fetchAllWatchDetails();
     checkSelectedItems();

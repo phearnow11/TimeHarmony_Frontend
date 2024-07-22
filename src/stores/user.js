@@ -259,6 +259,16 @@ export const useUserStore = defineStore("user", {
         throw error;
       }
     },
+    async deleteAddress(id, addressid) {
+      try {
+        const response = await axios.delete(`${api}/member/delete/address/${id}?a_id=${addressid}`);
+        console.log('Full list response:', response.data);
+        return response.data; // This will return the entire response object
+      } catch (error) {
+        console.error('Error fetching order details:', error);
+        throw error;
+      }
+    },
     setPendingOrder(orderData) {
       localStorage.setItem('pendingOrder', JSON.stringify(orderData));
     },
@@ -350,6 +360,17 @@ export const useUserStore = defineStore("user", {
         throw error;
       }
     },
+    async cancelOrder(order_id) {
+      try {
+        const response = await axios.put(`${api}/member/cancel/order/${order_id}`);
+        console.log('Full Cancel Order response:', response.data);
+        return response.data; // This will return the entire response object
+      } catch (error) {
+        console.error('Error fetching order details:', error);
+        throw error;
+      }
+    },
+
 
     async uploadAvatar(imageFile) {
       try {

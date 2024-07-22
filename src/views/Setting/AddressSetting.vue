@@ -15,10 +15,16 @@
     <div class="container mx-auto p-4">
       
       <div v-if="!showAddForm">
-        <h2 class="text-2xl relative bottom-4 mb-5">Địa chỉ của tôi</h2>
-        <table class="w-full border-collapse">
-          <thead>
-            <tr class="text-left">
+        <div class=" justify-between flex items-center">
+          <h2 class="text-2xl relative bottom-4 mb-5">Địa chỉ của tôi</h2>
+          <div class="flex justify-end">
+            <button class="mb-10 th-p-btn" @click="toggleAddForm">+ THÊM ĐỊA CHỈ MỚI</button>
+          </div>
+        </div>
+        <div class="table-container">
+        <table class="w-full border-collapse table">
+          <thead class="table-header">
+            <tr class="bg-[#494949] text-primary">
               <th class="pb-2">Tên</th>
               <th class="pb-2 pl-2">Số điện thoại</th>
               <th class="pb-2 pl-2">Địa chỉ</th>
@@ -31,17 +37,16 @@
               <td class="py-5 px-2">{{ address.phone }}</td>
               <td class="py-5 px-2">{{ address.address }}</td>
               <td class="py-5 px-2 text-right">
-                <span v-if="address.isDefault" class="text-gray-500 text-sm px-2">
+                <span v-if="address.isDefault" class="text-gray-500 text-sm">
                   Địa chỉ mặc định
                 </span>
-                <button class="hover-underline-animation" @click="editAddress(address)">Chỉnh sửa</button>
+                <button class="hover-underline-animation" @click="editAddress(address)">Xoá</button>
               </td>
             </tr>
           </tbody>
         </table>
-        <div class="flex justify-end">
-          <button class="mt-7 th-p-btn" @click="toggleAddForm">+ THÊM ĐỊA CHỈ MỚI</button>
         </div>
+        
       </div>
 
       <!-- Biểu mẫu thêm địa chỉ mới -->
@@ -244,8 +249,21 @@ watch(selectedDistrict, () => {
   }
 });
 
-const editAddress = (address) => {
-  console.log('Edit address:', address);
+const editAddress = async (address) => {
+  try {
+    // Confirm deletion with the user
+    const confirmDelete = window.confirm('Bạn có chắc chắn muốn xoá địa chỉ này?');
+    if (confirmDelete) {
+      await user.deleteAddress(auth.user_id, address.id);
+      addresses.value = await user.getAddressDetails(auth.user_id); // Refresh the address list
+      popupMessage.value = 'Địa chỉ đã được xoá thành công!';
+      showPopup.value = true;
+    }
+  } catch (error) {
+    console.error('Failed to delete address:', error);
+    popupMessage.value = 'Xoá địa chỉ thất bại!';
+    showPopup.value = true;
+  }
 };
 
 const toggleAddForm = () => {
@@ -353,4 +371,50 @@ label {
     backdrop-filter: blur(40px); /* Apply a blur effect to the background */
     color: var(--secondary); /* Yellow text color */
   }
+  
+.table-container {
+  overflow-x: auto;
+  max-height: 400px; /* Adjust this value as needed */
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table thead {
+  background-color: var(--primary);
+  color: #fff;
+}
+
+.table th, .table td {
+  padding: 8px;
+  border: 1px solid var(--secondary);
+}
+
+.table-header th {
+  position: sticky;
+  top: 0;
+  background-color: #494949; /* Matches your background color */
+  z-index: 1; /* Keeps the header above the table rows */
+}
+
+.table tbody tr:nth-child(even) {
+  background-color: #333;
+}
+
+.table-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: #ffbd59;
+}
+
+
 </style>

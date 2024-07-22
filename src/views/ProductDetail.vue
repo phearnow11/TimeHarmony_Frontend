@@ -48,8 +48,13 @@
       
       <!-- Product Info -->
       <div class="w-full md:w-1/2">
-        <h1 class="text-xl font-semibold mb-2">{{ watchStore.watch_data.name }}</h1>
-        
+        <div class="justify-between flex items-center">
+          <h1 class="text-xl font-semibold mb-2">{{ watchStore.watch_data.name }}</h1>
+          <i
+          :class="['fa-sharp', isBookmarked ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark', 'bookmark-icon', { 'active': isBookmarked }]"
+          @click="toggleBookmark"
+          ></i>
+        </div>
         <div class="mb-4">
           <span class="text-xl font-thin text-secondary"> {{ formatPriceVND(watchStore.watch_data.price) }}</span>
         </div>
@@ -237,6 +242,7 @@ import { useUserStore } from '../stores/user';
 import { useRouter } from 'vue-router';
 import { useCartStore } from '../stores/cart';
 import PopUp from '../components/PopUp.vue';
+import { useAuthStore } from '../stores/auth';
 
 const route = useRoute();
 const watchStore = useWatchStore();
@@ -274,7 +280,29 @@ const formatPriceVND = (price) => {
   return formattedPrice;
 };
 
+const isBookmarked = ref(false);
 
+const updateBookmarkStatus = async () => {
+  try {
+    const favorites = await userStore.getFavoritesFromServer(userStore.user_id);
+    isBookmarked.value = favorites.some(fav => fav.watch_id === watchId);
+  } catch (error) {
+    console.error('Error fetching favorites:', error);
+  }
+};
+
+const toggleBookmark = (event) => {
+  event.stopPropagation();
+  event.preventDefault();
+  
+  if (!isBookmarked.value) {
+    userStore.saveFavoritesToServer(useAuthStore().user_id, watchId)
+  } else {
+    userStore.deleteFavorite(useAuthStore().user_id, watchId)
+  }
+  
+  isBookmarked.value = !isBookmarked.value;
+};
 
 async function addToCart() {
   console.log("WatchID: " + watchId);
@@ -341,6 +369,7 @@ async function buyNow() {
   }
 }
 onMounted(async () => {
+  await updateBookmarkStatus();
   await watchStore.getDetailWatch(watchId);
   updateCurrentImage();
   if (watchStore.watch_data.seller && watchStore.watch_data.seller.member_id) {

@@ -1,10 +1,5 @@
 <template>
-  <PopUp 
-      :show="isPopupVisible" 
-      :product="currentProduct" 
-      :message="popupMessage" 
-      :showDetails="showProductDetails"
-      @close="isPopupVisible = false"  />
+  
 
   <div class="container">
     <div class="box">
@@ -28,6 +23,12 @@
         <button @click="removeFavorite" type="submit" class="border-2 border-secondary mt-5 flex-1">Huỷ thích</button>
         <button @click="addToCart()" type="submit" class="th-p-btn mt-5 flex-1">Thêm vào giỏ</button>
       </div>
+      <PopUp 
+      :show="isPopupVisible" 
+      :product="currentProduct" 
+      :message="popupMessage" 
+      :showDetails="showProductDetails"
+      @close="isPopupVisible = false"  />
     </div>
   </div>
 </template>
@@ -94,12 +95,20 @@ async function addToCart() {
 const removeFavorite = async () => {
   try {
     await userStore.deleteFavorite(auth.user_id, props.watch_id);
+    
+    // Update popup message and visibility
+    popupMessage.value = 'Huỷ thích thành công';
+    isPopupVisible.value = true;
+    
     // Emit an event to notify the parent component
     emit('favorite-removed', props.watch_id);
   } catch (error) {
     console.error('Error removing favorite:', error);
+    popupMessage.value = 'Có lỗi xảy ra khi huỷ thích';
+    isPopupVisible.value = true;
   }
 };
+
 
 const formatPriceVND = (price) => {
   return price.toLocaleString('vi-VN', {
