@@ -172,7 +172,7 @@ const search = async () => {
   if (searchQuery.value.trim()) {
     try {
       await watchStore.searchWatches(searchQuery.value);
-      router.push({ name: "SearchResult", query: { q: searchQuery.value } });
+      window.location.replace(`/search?q=${searchQuery.value}`);
       showHint.value = false;
     } catch (error) {
       console.error("Error during search:", error);
@@ -185,7 +185,7 @@ const updateHint = () => {
 
 const navigateToSearchResult = () => {
   if (searchQuery.value.trim()) {
-    window.location.href(`/search?q=${searchQuery.value}`);
+    window.location.replace(`/search?q=${searchQuery.value}`);
     showHint.value = false;
   }
 };
