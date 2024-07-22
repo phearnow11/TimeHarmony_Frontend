@@ -194,7 +194,6 @@ export const useUserStore = defineStore("user", {
         this.user_id = res.data.member_id;
         this.cur_fav = fav.data
         this.role = res.data.user_log_info.authorities.authority;
-        console.log("ROLE"+this.role);
       } catch (err) {
         console.error("Error fetching member data:", err);
       }
