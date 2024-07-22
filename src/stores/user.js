@@ -350,6 +350,44 @@ export const useUserStore = defineStore("user", {
         throw error;
       }
     },
+
+    async uploadAvatar(imageFile) {
+      try {
+        const formData = new FormData();
+        formData.append("file", imageFile);
+        formData.append("upload_preset", import.meta.env.VITE_UPLOAD_PRESET);
+
+        const response = await fetch(`https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUD_NAME}/image/upload`, {
+          method: "POST",
+          body: formData
+        });
+
+        if (!response.ok) {
+          throw new Error("Image upload failed");
+        }
+
+        const data = await response.json();
+        const imageUrl = data.secure_url;
+
+        await this.updateImage(imageUrl);
+        this.image = imageUrl; // Update the store state with the new image URL
+        console.log("Avatar updated successfully");
+      } catch (error) {
+        console.error("Error uploading avatar:", error);
+        throw error;
+      }
+    },
+
+    async updateImage(imageUrl) {
+      try {
+        const response = await axios.patch(`${api}/member/update/user/image/${this.user_id}?url=${imageUrl}`);
+        console.log("Image updated successfully:", response.data);
+      } catch (error) {
+        console.error("Error updating image:", error);
+        throw error;
+      }
+    },
+
     async getUserByEmail(email){
       const response = await axios.get(`${api}/member/getbyemail/${email}`)
       if(response.data === ''){
