@@ -74,6 +74,16 @@
             />
             <label for="phone" class="form__label">Phone</label>
           </div>
+          <div class="form__group field ">
+            <input
+              type="text"
+              class="form__field"
+              placeholder="Phone"
+              v-model="user.email"
+              required
+            />
+            <label for="phone" class="form__label">Email</label>
+          </div>
           <button type="submit" class="th-p-btn mt-8">Lưu thay đổi</button>
         </form>
       </section>
