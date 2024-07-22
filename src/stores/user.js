@@ -23,6 +23,7 @@ export const useUserStore = defineStore("user", {
     transaction_no: null,
     payment_method: null,
     cart_num: 0,
+    role: null,
   }),
 
   actions: {
@@ -192,6 +193,8 @@ export const useUserStore = defineStore("user", {
         this.active = res.data.active;
         this.user_id = res.data.member_id;
         this.cur_fav = fav.data
+        this.role = res.data.user_log_info.authorities.authority;
+        console.log("ROLE"+this.role);
       } catch (err) {
         console.error("Error fetching member data:", err);
       }
