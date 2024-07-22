@@ -6,7 +6,7 @@
             <span class="text-border">4</span>
         </div>
         <div class="flex flex-col justify-center items-center gap-5">
-            <span>Oops, the page you're looking for could not be found! <router-link to="/" class="hover-underline-animation">Back to home</router-link></span>
+            <span>Oops, không có gì ở đây hết quay về <router-link to="/" class="hover-underline-animation">Trang chủ</router-link> đi !</span>
         </div>
     </div>
 </template>

@@ -51,7 +51,7 @@
         <div class="justify-between flex items-center">
           <h1 class="text-xl font-semibold mb-2">{{ watchStore.watch_data.name }}</h1>
           <i
-          :class="['fa-sharp', isBookmarked ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark', 'bookmark-icon', { 'active': isBookmarked }]"
+          :class="['fa-sharp cursor-pointer', isBookmarked ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark', 'bookmark-icon', { 'active': isBookmarked }]"
           @click="toggleBookmark"
           ></i>
         </div>
@@ -438,6 +438,7 @@ function prevImage() {
 }
 
 
+
 .loader-container {
   position: absolute;
   top: 0;
@@ -508,6 +509,18 @@ function prevImage() {
 
 .arrow-up {
   transform: rotate(180deg);
+}
+
+
+.bookmark-icon {
+  font-size: 1.5em;
+  color: var(--primary);
+  transition: top 0.3s ease, color 0.3s ease;
+}
+
+.bookmark-icon.active {
+  top: 10px;
+  color: var(--primary);
 }
 
 @keyframes rotation {
