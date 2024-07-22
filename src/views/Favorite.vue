@@ -51,13 +51,15 @@ import ProductCard from '../components/ProductCard.vue';
 import SkeletonCard from '../components/SkeletonCard.vue';
 import FavoriteCard from '../components/FavoriteCard.vue';
 
+var api = import.meta.env.VITE_API_PORT
+
 const watches = ref([]);
 const load = ref(true);
 const auth = useAuthStore();
 
 onMounted(async () => {
   try {
-    const response = await axios.get(`http://localhost:8080/member/get/favorites/${auth.user_id}`);
+    const response = await axios.get(`${api}/member/get/favorites/${auth.user_id}`);
     watches.value = response.data;
     console.log(watches.value);
   } catch (error) {
