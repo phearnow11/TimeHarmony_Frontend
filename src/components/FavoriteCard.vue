@@ -25,7 +25,7 @@
       </div>
     </router-link>
       <div class="flex gap-1 justify-between w-full">
-        <button @click="unfavorite" type="submit" class="border-2 border-secondary mt-5 flex-1">Huỷ thích</button>
+        <button @click="removeFavorite" type="submit" class="border-2 border-secondary mt-5 flex-1">Huỷ thích</button>
         <button @click="addToCart()" type="submit" class="th-p-btn mt-5 flex-1">Thêm vào giỏ</button>
       </div>
     </div>
@@ -40,6 +40,7 @@ import { useUserStore } from '../stores/user';
 import { useAuthStore } from '../stores/auth';
 import PopUp from './PopUp.vue';
 
+const auth = useAuthStore();
 const props = defineProps({
   productName: {
     type: String,
@@ -106,6 +107,16 @@ async function addToCart() {
     isLoading.value = false;
   }
 }
+
+const removeFavorite = async () => {
+  try {
+    await userStore.deleteFavorite(auth.user_id, props.watch_id);
+    // Trigger any other actions needed after removing the favorite
+    // E.g., update the list of favorites in the parent component
+  } catch (error) {
+    console.error('Error removing favorite:', error);
+  }
+};
 
 
 const formatPriceVND = (price) => {

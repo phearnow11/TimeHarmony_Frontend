@@ -75,10 +75,7 @@ export const useUserStore = defineStore("user", {
         console.error('No user ID provided');
         return;
       }
-    
       try {
-        
-    
         console.log('Preparing to save favorites:', watch_id);
         const response = await axios.post(`${api}/member/add/favorites/${user_id}-${watch_id}`);
         console.log('aaaaaaaa: '+response.data);
@@ -94,6 +91,19 @@ export const useUserStore = defineStore("user", {
         throw error;
       }
     },
+
+    async deleteFavorite(user_id, watch_id) {
+      try {
+        const response = await axios.delete(`${api}/member/delete/favorites/${user_id}?wid=${watch_id}`);
+        console.log('Favorite deleted successfully:', response.data);
+        return response.data;
+      } catch (error) {
+        console.error('Error deleting favorite:', error);
+        throw error;
+      }
+    },
+
+
 
     addToWaitFav(watch_id) {
       if (!this.wait_fav.includes(watch_id) && !this.cur_fav.includes(watch_id)) {
