@@ -1,24 +1,16 @@
 <template>
-  <div v-if="auth.user_id" class="flex max-w-7xl mx-auto my-8 p-4">
+  <div v-if="auth.user_id" class="mx-auto p-6 flex flex-col lg:flex-row">
     <!-- Sidebar -->
-    <div class="w-1/4 mr-8">
+    <aside class="w-1/4 lg:mr-8 p-4">
       <h2 class="text-2xl mb-4">Cài đặt Hồ sơ</h2>
-      <ul>
-        <li class="mb-2">
-          <router-link to="/setting/profile" class="hover-underline-animation">Thông tin cá nhân</router-link>
-        </li>
-        <li class="mb-2">
-          <router-link to="/setting/password" class="hover-underline-animation">Mật khẩu</router-link>
-        </li>
-        <li class="mb-2">
-          <router-link to="/setting/address" class="hover-underline-animation">Sổ địa chỉ</router-link>
-        </li>
-        <li class="mb-2 text-secondary">Đơn hàng của tôi </li>
-        <li class="mb-2">
-          <router-link to="#" class="hover-underline-animation">Xóa tài khoản</router-link>
-        </li>
+      <ul class="space-y-2">
+        <li><router-link to="/setting/profile" class="hover-underline-animation">Thông tin cá nhân</router-link></li>
+        <li><router-link to="/setting/password" class="hover-underline-animation">Mật khẩu</router-link></li>
+        <li><router-link to="/setting/address" class="hover-underline-animation">Sổ địa chỉ</router-link></li>
+        <li class="text-secondary">Đơn hàng của tôi</li>
+        <li><router-link to="#" class="hover-underline-animation-r">Xoá tài khoản</router-link></li>
       </ul>
-    </div>
+    </aside>
     <!-- Content -->
     <div class="container mx-auto p-4 w-3/4">
       <!-- Navigation links -->
