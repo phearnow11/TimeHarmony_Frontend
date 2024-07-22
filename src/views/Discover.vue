@@ -70,9 +70,9 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import ProductCard from '../components/ProductCard.vue';
 import { useWatchStore } from '../stores/watch';
-import SkeletonCard from '../components/SkeletonCard.vue';
+const ProductCard = defineAsyncComponent(() => import('../components/ProductCard.vue'));
+const SkeletonCard = defineAsyncComponent(() => import('../components/SkeletonCard.vue'));
 
 const watchStore = useWatchStore();
 const load = ref(true);
