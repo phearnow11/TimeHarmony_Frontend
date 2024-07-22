@@ -145,8 +145,8 @@
               <span class="text-[whitesmoke] font-bold">{{ totalPrice.toLocaleString("vi-VN") }} ₫</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-gray-99">Phí vận chuyển</span>
-              <span class="text-[whitesmoke] font-bold">{{ shipFee.toLocaleString("vi-VN") }} ₫</span>
+              <span class="text-gray-99">Phí dịch vụ (2%)</span>
+              <span class="text-[whitesmoke] font-bold">{{ Math.round(shipFee).toLocaleString("vi-VN") }} ₫</span>
             </div>
             <div class="flex justify-between">
               <span class="text-gray-99">Discount</span>
@@ -166,7 +166,7 @@
           <!-- Total -->
           <div class="border-t border-secondary border-dashed  pt-5 flex justify-between items-center">
             <span class="font-bold text-xl">Tính tổng</span>
-            <span class="font-bold">{{ totalAll.toLocaleString("vi-VN") }} ₫</span>
+            <span class="font-bold">{{ Math.round(totalAll).toLocaleString("vi-VN") }} ₫</span>
           </div>
 
           <!-- Place Order Button -->

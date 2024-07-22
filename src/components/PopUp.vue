@@ -10,7 +10,7 @@
           <img :src="product.image" alt="Product Image" class="w-16 h-16 object-cover mr-4">
           <div>
             <h3 class="text-lg">{{ product.name }}</h3>
-            <p class="text-gray-600">{{ formatPriceVND(product.price) }}</p>
+            <p class="text-[whitesmoke]">{{ formatPriceVND(product.price) }}</p>
           </div>
         </div>
         <div class="flex justify-end gap-4">

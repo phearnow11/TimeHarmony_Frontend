@@ -37,6 +37,8 @@ import { ref, defineProps, defineEmits, computed } from 'vue';
 import { useUserStore } from '../stores/user';
 import { useAuthStore } from '../stores/auth';
 import PopUp from './PopUp.vue';
+import { useWatchStore } from '../stores/watch';
+import { useCartStore } from '../stores/cart';
 
 const auth = useAuthStore();
 const userStore = useUserStore();
@@ -58,6 +60,8 @@ const isLoading = ref(false);
 const currentProduct = ref({});
 const popupMessage = ref('');
 const showProductDetails = ref(true);
+const watchStore = useWatchStore()
+const cartStore = useCartStore()
 
 async function addToCart() {
   console.log("WatchID: " + props.watch_id);
@@ -66,12 +70,12 @@ async function addToCart() {
   try {
     const response = await userStore.addToCart(userStore.user_id, props.watch_id);
     console.log("Already in cart ", response);
-    if (response === 'Watch aready in cart!') {
-      popupMessage.value = 'Sản phẩm này đã tồn tại trong giỏ hàng';
+    if (response==='Watch state changed!') {
+      popupMessage.value = 'Sản phẩm này đã được thêm vào giỏ hàng';
       showProductDetails.value = false;
     } else {
       currentProduct.value = {
-        image: currentImage.value,
+        image: watchStore.watch_data.images,
         name: watchStore.watch_data.name,
         price: watchStore.watch_data.price
       };

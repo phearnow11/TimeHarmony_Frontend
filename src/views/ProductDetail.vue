@@ -283,7 +283,7 @@ async function addToCart() {
   try {
     const response = await userStore.addToCart(userStore.user_id, watchId);
     console.log("Already in cart ", response);
-    if (response==='Watch aready in cart!') {
+    if (response==='Watch state changed!') {
       popupMessage.value = 'Sản phẩm này đã tồn tại trong giỏ hàng';
       showProductDetails.value = false;
     } else {
@@ -309,10 +309,28 @@ async function buyNow() {
   try {
     // First, add the item to the cart
     await userStore.addToCart(userStore.user_id, watchId);
-    // Then, set this item as selected in the cart
-    await cartStore.setItemSelected(watchId, true);
-    // Finally, navigate to the cart page
-    router.push('/cart');
+    
+    // Fetch the updated cart to ensure we have the latest data
+    await cartStore.getCart(userStore.user_id);
+    
+    // Find the newly added item in the cart
+    const addedItem = cartStore.cart_info.find(item => item.watch_id === watchId);
+    
+    if (addedItem) {
+      // Set only this item as selected, deselecting others
+      cartStore.cart_info.forEach(item => {
+        cartStore.setItemSelected(item.watch_id, item.watch_id === watchId);
+      });
+      
+      // Update the cart store with the selected item
+      cartStore.setSelectedItems([addedItem]);
+      cartStore.setTotalPrice(addedItem.price);
+      
+      // Navigate to the cart page
+      router.push('/cart');
+    } else {
+      throw new Error('Item not found in cart after adding');
+    }
   } catch (error) {
     console.error("Error during buy now process", error);
     popupMessage.value = 'Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng';
@@ -322,7 +340,6 @@ async function buyNow() {
     isLoading.value = false;
   }
 }
-
 onMounted(async () => {
   await watchStore.getDetailWatch(watchId);
   updateCurrentImage();

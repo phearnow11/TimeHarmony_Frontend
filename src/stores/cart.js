@@ -10,7 +10,6 @@ export const useCartStore = defineStore("cart", {
     cart_items: [],
     selectedItems: [],
     totalPrice: 0,
-    shipFee: 5000,
     shippingAddress: null,
     note: '',
     cart_count: 0,
@@ -31,13 +30,12 @@ export const useCartStore = defineStore("cart", {
       }
     },
 
-    async setItemSelected(watchId, selected) {
+    setItemSelected(watchId, selected) {
       const index = this.cart_info.findIndex(item => item.watch_id === watchId);
       if (index !== -1) {
         this.cart_info[index].isSelected = selected;
       }
     },
-
     setSelectedItems(items) {
       this.selectedItems = items;
     },
@@ -67,7 +65,7 @@ export const useCartStore = defineStore("cart", {
     getShippingAddress: (state) => state.shippingAddress,
     getNote: (state) => state.note,
     getTotalWithShipping: (state) => state.totalPrice + state.shipFee,
-    getShipFee: (state) => state.shipFee,
+    getShipFee: (state) => state.totalPrice * 0.02,
     getCartCount: (state) => state.cart_count,
 
   }

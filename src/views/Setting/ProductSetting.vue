@@ -39,7 +39,7 @@
               <td class="py-4">{{ order.order_id }}</td>
               <td class="py-4 pl-2">{{ formatDate(order.create_time) }}</td>
               <td class="py-4 pl-2">{{ formatPriceVND(order.total_price) }}</td>
-              <td class="py-4 pl-2">{{ state }}</td>
+              <td class="py-4 pl-2">{{ getOrderStatusText(order.order_id) }}</td>
               <td class="py-4 px-2 text-right">
                 <button class="hover-underline-animation" @click="viewOrderDetails(order.order_id)">Xem Chi Tiết</button>
               </td>
@@ -90,7 +90,7 @@ import { useRouter } from 'vue-router';
 const user = useUserStore();
 const auth = useAuthStore();
 const router = useRouter();
-const state = ref(null);
+const orderStates = ref({}); // Store order states
 const orders = ref([]);
 const wlists = ref([]);
 const activeSection = ref('orders'); // Mặc định là phần 'Đơn hàng của tôi'
@@ -106,17 +106,31 @@ onMounted(async () => {
     router.push('/login');
   } else {
     await loadOrders();
-    const orderState = await user.getOrderState(orders.order_id);
-          state.value = orderState === 'PENDING' 
-            ? 'Đơn hàng đã được gửi đến người bán'
-            : 'Đơn hàng đang được vận chuyển';
+    await loadOrderStates();
+
   }
 });
+
+const loadOrderStates = async () => {
+  try {
+    const ordersList = orders.value; // Assuming orders are already loaded
+    for (const order of ordersList) {
+      const state = await user.getOrderState(order.order_id);
+      orderStates.value[order.order_id] = state;
+    }
+  } catch (error) {
+    console.error('Lỗi khi tải trạng thái đơn hàng:', error);
+  }
+};
+
+const getOrderStatusText = (orderId) => {
+  const state = orderStates.value[orderId];
+  return state === 'PENDING' ? 'Đơn hàng đang chờ duyệt' : 'Đơn hàng đang được vận chuyển';
+};
 
 const loadOrders = async () => {
   try {
     orders.value = await user.getAllOrders(auth.user_id);
-    
     wlists.value = await user.getOrderWaiting(auth.user_id);
   } catch (error) {
     console.error('Lỗi khi tải danh sách đơn hàng:', error);

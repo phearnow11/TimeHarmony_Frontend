@@ -56,9 +56,9 @@
             <span class="text-gray-99 font-bold">{{ totalPrice.toLocaleString("vi-VN") }} ₫</span>
           </div>
           <div class="flex justify-between">
-            <span class="text-gray-99">Phí vận chuyển</span>
+            <span class="text-gray-99">Phí dịch vụ (2%)</span>
             <span class="text-gray-99 font-bold">
-              {{ selectedItemsCount > 0 ? shipFee.toLocaleString("vi-VN") + ' ₫' : '0 ₫' }}
+              {{ selectedItemsCount > 0 ? Math.round(shipFee).toLocaleString("vi-VN") + ' ₫' : '0 ₫' }}
             </span>
           </div>
           <div class="flex justify-between">
@@ -97,7 +97,7 @@
 
         <div class="border-t border-secondary border-dashed pt-5 flex justify-between items-center">
           <span class="font-semibold text-xl">Tổng tiền</span>
-          <span class="font-bold">{{ totalAll.toLocaleString("vi-VN") }} ₫</span>
+          <span class="font-bold">{{ Math.round(totalAll).toLocaleString("vi-VN") }} ₫</span>
         </div>
         <button
           @click="createOrder"
@@ -109,17 +109,17 @@
     </div>
     
     
-      <cart-item
-      v-for="item in cartItems"
-      :key="item.watch_id"
-      :productName="item.name || 'Loading...'"
-      :retailerName="item.sellerName || 'Loading...'"
-      :productImage="item.image || ''"
-      :price="item.price || 0"
-      :retailerAvatar="item.sellerAvatar || ''"
-      :isSelected="item.isSelected"
-      @toggle-select="toggleItemSelection(item.watch_id)"
-      @delete-item="removeItem(item.watch_id)"
+    <cart-item
+        v-for="item in cartItems"
+        :key="item.watch_id"
+        :productName="item.name || 'Loading...'"
+        :retailerName="item.sellerName || 'Loading...'"
+        :productImage="item.image || ''"
+        :price="item.price || 0"
+        :retailerAvatar="item.sellerAvatar || ''"
+        :isSelected="item.isSelected"
+        @toggle-select="toggleItemSelection(item.watch_id)"
+        @delete-item="removeItem(item.watch_id)"
       />
 
       <div v-if="showAddressModal" class="modal-overlay">
@@ -323,7 +323,7 @@ const closePopup = () => {
 };
 
 const shipFee = computed(() => {
-  return selectedItemsCount.value > 0 ? 5000 : 0;
+  return selectedItemsCount.value > 0 ? totalPrice.value * 0.02 : 0;
 });
 
 const fetchAddresses = async () => {
@@ -485,6 +485,16 @@ const submitNewAddress = async () => {
   }
 };
 
+watch(() => cartStore.cart_info, checkSelectedItems, { deep: true });
+
+function checkSelectedItems() {
+  const selectedItems = cartStore.cart_info.filter(item => item.isSelected);
+  if (selectedItems.length > 0) {
+    // Scroll to the selected item or perform any other necessary actions
+    // ...
+  }
+}
+
 onMounted(async () => {
   try {
     await cartStore.getCart(auth.user_id);
@@ -499,7 +509,7 @@ onMounted(async () => {
     }));
     await fetchAddresses();
     await fetchAllWatchDetails();
-    
+    checkSelectedItems();
     // Check if there's a newly added item and scroll to it
     const newlyAddedItem = cartItems.value.find(item => item.isSelected);
     if (newlyAddedItem) {
@@ -571,6 +581,8 @@ const deleteSelected = async () => {
     console.error("Error deleting selected items:", error);
   }
 };
+
+
 
 const totalAll = computed(() => {
   cartStore.setShipFee(shipFee.value);
