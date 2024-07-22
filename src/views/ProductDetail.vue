@@ -103,8 +103,7 @@
           </div>
         </div>
         <div class="flex gap-2">
-          <router-link :to="`/chat/${retailer.user_id}`" class="border border-secondary py-2 px-4">Nhắn tin</router-link>
-          <router-link :to="`/retailer/${retailer.user_id}`" class="border border-secondary py-2 px-4">Chi tiết</router-link>
+          <router-link :to="`/retailer/${retailer.user_id}`" class="th-p-btn py-2 px-4">Chi tiết</router-link>
         </div>
       </div>
     </div>
@@ -196,7 +195,33 @@
     Xin lưu ý: Chúng tôi khuyến khích quý khách hàng liên hệ trực tiếp với chúng tôi để biết thêm chi tiết về chính sách bảo hành và các điều khoản liên quan trước khi mua sản phẩm.
   </p>
 </section>
-
+<section class="mt-10">
+    <h2 class="text-xl border-b border-secondary font-bold w-56 mb-4 cursor-pointer" @click="toggleSection('delivery')">
+      Giao Hàng & Hỗ trợ
+      <i :class="{'fa-solid fa-chevron-up': activeSection === 'delivery', 'fa-solid fa-chevron-down': activeSection !== 'delivery'}"></i>
+    </h2>
+    <div v-show="activeSection === 'delivery'" class="mb-6">
+      <h3 class="text-xl mb-2">Giao Hàng Tiêu Chuẩn (Dự kiến 1-3 Ngày) - Miễn Phí</h3>
+      <p>
+        Dịch vụ giao hàng bảo mật của chúng tôi hoạt động từ Thứ Hai đến Thứ Bảy, từ 8:00 sáng đến 6:00 tối. Vì lý do an ninh, mọi giao hàng đều yêu cầu chữ ký của người lớn; Time Harmony không giao hàng đến hộp thư P.O. hoặc dịch vụ chuyển tiếp của bên thứ ba. Để biết thêm thông tin về giao hàng, nhấp vào đây. Thông tin theo dõi có sẵn theo yêu cầu.
+      </p>
+      <div class="my-6">
+        <h3 class="text-xl mb-2">Hỗ Trợ Khách Hàng</h3>
+        <p>
+          Nếu bạn có bất kỳ câu hỏi hoặc lo ngại nào liên quan đến đơn hàng của bạn, Đội Ngũ Time Harmony có thể được liên hệ qua số 0782268826 (Sếp Thịnh):
+        </p>
+        <ul class="list-disc ml-5">
+          <li>Thứ Hai - Thứ Bảy: 9:00 sáng – 7:00 tối</li>
+          <li>Chủ Nhật: 9:00 sáng – 5:00 tối</li>
+          <li>Đóng cửa vào Chủ Nhật Phục Sinh, Ngày Lễ Tạ Ơn và Ngày Giáng Sinh</li>
+        </ul>
+        <p>
+          Ngoài ra, bạn có thể gửi email cho đội ngũ Time Harmony tại <a href="mailto:timeharmony.ecom@gmail.com" class="hover-underline-animation">timeharmony.ecom@gmail.com</a>.
+        </p>
+      </div>
+    </div>
+    
+  </section>
 
   </div>
 
@@ -228,6 +253,12 @@ const isLoadingCart = ref(false);
 const currentProduct = ref({});
 const popupMessage = ref('');
 const showProductDetails = ref(true);
+
+const activeSection = ref(''); // Biến điều khiển phần nội dung hiển thị
+
+const toggleSection = (section) => {
+  activeSection.value = activeSection.value === section ? '' : section;
+};
 
 function translate() {
   if(watchStore.watch_data.gender === 'Male') return 'Nam'
@@ -403,6 +434,34 @@ function prevImage() {
   left: 0;
   top: 0;
   animation: rotation 2s ease-in-out infinite alternate;
+}
+
+.arrow-down {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #333; /* Adjust color as needed */
+  transition: transform 0.3s ease;
+}
+
+.arrow-up {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid #333; /* Adjust color as needed */
+  transition: transform 0.3s ease;
+}
+
+.arrow-down {
+  transform: rotate(0deg);
+}
+
+.arrow-up {
+  transform: rotate(180deg);
 }
 
 @keyframes rotation {

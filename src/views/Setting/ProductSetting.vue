@@ -95,6 +95,11 @@ const orders = ref([]);
 const wlists = ref([]);
 const activeSection = ref('orders'); // Mặc định là phần 'Đơn hàng của tôi'
 
+const viewOrderDetails = (orderId) => {
+  router.push(`/orderconfirmation/${orderId}`);
+  console.log('Xem chi tiết đơn hàng:', orderId);
+};
+
 onMounted(async () => {
   if (!auth.user_id) {
     console.log('Người dùng chưa đăng nhập. Đang chuyển hướng đến trang đăng nhập...');
