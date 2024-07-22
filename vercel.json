@@ -3,19 +3,19 @@
     "routes": [
       {
         "src": "/",
-        "dest": "/index.html"
+        "dest": "/"
       },
       {
         "src": "/search",
-        "dest": "/index.html"
+        "dest": "/"
       },
       {
         "src": "/login",
-        "dest": "/index.html"
+        "dest": "/"
       },
       {
         "src": "/forgot",
-        "dest": "/index.html"
+        "dest": "/"
       },
       {
         "src": "/signup",
@@ -23,11 +23,11 @@
       },
       {
         "src": "/upload",
-        "dest": "/index.html"
+        "dest": "/"
       },
       {
         "src": "/favorite",
-        "dest": "/index.html"
+        "dest": "/"
       },
       {
         "src": "/about",
@@ -35,75 +35,75 @@
       },
       {
         "src": "/cart",
-        "dest": "/index.html"
+        "dest": "/"
       },
       {
         "src": "/chat",
-        "dest": "/index.html"
+        "dest": "/"
       },
       {
         "src": "/appraiser",
-        "dest": "/index.html"
+        "dest": "/"
       },
       {
         "src": "/admin",
-        "dest": "/index.html"
+        "dest": "/"
       },
       {
         "src": "/change-password",
-        "dest": "/index.html"
+        "dest": "/"
       },
       {
         "src": "/setting/profile",
-        "dest": "/index.html"
+        "dest": "/"
       },
       {
         "src": "/setting/password",
-        "dest": "/index.html"
+        "dest": "/"
       },
       {
         "src": "/setting/address",
-        "dest": "/index.html"
+        "dest": "/"
       },
       {
         "src": "/setting/product",
-        "dest": "/index.html"
+        "dest": "/"
       },
       {
         "src": "/detail/:watch_id",
-        "dest": "/index.html"
+        "dest": "/"
       },
       {
         "src": "/retailer/:seller_id",
-        "dest": "/index.html"
+        "dest": "/"
       },
       {
         "src": "/discover/:field",
-        "dest": "/index.html"
+        "dest": "/"
       },
       {
         "src": "/order",
-        "dest": "/index.html"
+        "dest": "/"
       },
       {
         "src": "/orderconfirmation/:order_id",
-        "dest": "/index.html"
+        "dest": "/"
       },
       {
         "src": "/test",
-        "dest": "/index.html"
+        "dest": "/"
       },
       {
         "src": "/voucher",
-        "dest": "/index.html"
+        "dest": "/"
       },
       {
         "src": "/payment-handle",
-        "dest": "/index.html"
+        "dest": "/"
       },
       {
         "src": "/:pathMatch(.*)*",
-        "dest": "/index.html"
+        "dest": "/"
       }
     ]
   }
