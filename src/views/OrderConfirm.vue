@@ -117,8 +117,8 @@
   const route = useRoute();
   const orderDetails = ref(null);
   const detailedWatches = ref([]);
-  const paymentMethod = userStore.payment_method;
-  const transactionNo = userStore.transaction_no;
+  const paymentMethod = localStorage.getItem(`pay_method`)
+  const transactionNo = localStorage.getItem(`trans_no`)
   userStore.payment_method = null;
   userStore.transaction_no = null;
 

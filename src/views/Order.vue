@@ -284,10 +284,12 @@ const createOrder = async () => {
     notice: note.value,
     total_price: totalAll.value,
     payment_method: selectedOption.value,
-    transaction_no: selectedOption.value === 'card' ? '123456' : '', // Replace '123456' with your actual logic for transaction_no
+    transaction_no: selectedOption.value === 'card' ? '123456' : '123456', // Replace '123456' with your actual logic for transaction_no
 
   };
 
+  localStorage.setItem(`pay_method`,orderData.payment_method)
+  localStorage.setItem(`trans_no`,orderData.transaction_no)
   try {
     if (selectedOption.value === 'cod') {
       console.log('Sending order data:', orderData);

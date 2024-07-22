@@ -32,22 +32,6 @@
         </a>
       </div>
       <!-- Style -->
-      <div class="menu-item relative" @mouseenter="showSubmenu('style')" @mouseleave="hideSubmenu('style')">
-        <div :class="{'hover-active': submenus.style}" class="flex items-center justify-between hover-underline-animation w-full px-4 py-2">
-          <span>Phong cách</span>
-          <img src="../assets/arr.svg" class="w-3 arrow-icon" alt="Arrow Icon">
-        </div>
-        <div v-show="submenus.style" class="submenu absolute left-full top-0 text-white w-44">
-          <a href="/discover/dress watches?page=0&style=dress" class="submenu-item block px-4 py-2 hover-underline-animation">Dress Watches</a>
-          <a href="/discover/sport watches?page=0&style=sport" class="submenu-item block px-4 py-2 hover-underline-animation">Sport Watches</a>
-          <a href="/discover/diver watches?page=0&style=diver" class="submenu-item block px-4 py-2 hover-underline-animation">Diver Watches</a>
-          <a href="/discover/pilot watches?page=0&style=pilot" class="submenu-item block px-4 py-2 hover-underline-animation">Pilot Watches</a>
-          <a href="/discover/field watches?page=0&style=field" class="submenu-item block px-4 py-2 hover-underline-animation">Field Watches</a>
-          <a href="/discover/fashion watches?page=0&style=fashion" class="submenu-item block px-4 py-2 hover-underline-animation">Fashion Watches</a>
-          <a href="/discover/smart watches?page=0&style=smart" class="submenu-item block px-4 py-2 hover-underline-animation">Smart Watches</a>
-          <a href="/discover/luxury watches?page=0&style=luxury" class="submenu-item block px-4 py-2 hover-underline-animation">Luxury Watches</a>
-        </div>
-      </div>
       <!-- Collection -->
       <!-- END  -->
     </div>

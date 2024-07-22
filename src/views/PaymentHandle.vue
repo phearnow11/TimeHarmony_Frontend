@@ -68,6 +68,8 @@
           bank_code: bankCode.value,
           payment_method: vnpCardType.value,
         };
+
+        
   
         const savedPayment = await savePaymentDetail(paymentDataToSave);
         console.log('Saved payment details:', savedPayment);
