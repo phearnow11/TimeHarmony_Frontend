@@ -160,7 +160,7 @@ const applyFilter = async () => {
     ['Đồng hồ cao cấp', 'Đồng hồ thể thao', 'Đồng hồ thông minh'].includes(cat)
   );
   if (style) filters.push(`style=${style}`);
-  if (minPrice.value && maxPrice.value) filters.push(`priceRange[min]=${minPrice.value}&priceRange[max]=${maxPrice.value}`);
+  if (minPrice.value && maxPrice.value) filters.push(`lprice=${minPrice.value}&hprice=${maxPrice.value}`);
 
   try {
     // Clear the watches map and fetch filtered results
