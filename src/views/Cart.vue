@@ -126,7 +126,10 @@
 
       <div v-if="showAddressModal" class="modal-overlay">
       <div class="modal-content">
-        <h2 class="text-xl font-bold mb-4">Chọn địa chỉ giao hàng</h2>
+        <div class="flex justify-between items-center pb-5">
+          <span class="text-xl font-bold">Chọn địa chỉ giao hàng</span>
+          <span @click="openAddAddressModal" class="hover-underline-animation cursor-pointer">+ Thêm địa chỉ</span>
+        </div>
         <div v-for="address in addresses" :key="address.id" class="address-item mb-2">
           <label class="flex items-center">
             <input
@@ -147,6 +150,105 @@
           <button @click="closeAddressModal" class="mr-2 px-4 py-2 border border-secondary">Huỷ</button>
           <button @click="confirmAddressSelection" class="th-p-btn px-4 py-2">Xác nhận</button>
         </div>
+      </div>
+      <PopUp 
+      :show="isPopupVisible" 
+      :product="currentProduct" 
+      :message="popupMessage" 
+      :showDetails="showProductDetails"
+      @close="isPopupVisible = false"  />
+    </div>
+     <!-- New Add Address Modal -->
+     <div v-if="showAddAddressModal" class="modal-overlay">
+      <div class="modal-content">
+        <h2 class="text-2xl relative bottom-8 pt-10">Thêm Địa Chỉ Mới</h2>
+        <form @submit.prevent="submitNewAddress">
+          <div class="form__group field w-96">
+            <input
+              id="name"
+              type="text"
+              class="form__field w-full"
+              placeholder="Tên"
+              v-model="newAddress.name"
+              required
+            />
+            <label for="name" class="form__label">Tên</label>
+          </div>
+          <div class="form__group field w-96">
+            <input
+              id="phone"
+              type="tel"
+              class="form__field w-full"
+              placeholder="Số điện thoại"
+              v-model="newAddress.phone"
+              required
+            />
+            <label for="phone" class="form__label">Số điện thoại</label>
+          </div>
+          <!-- Lựa chọn địa chỉ -->
+          <div class="address-form mt-2">
+            <div class="select-item">
+              <label for="province" class="select-label">Tỉnh/Thành Phố:</label><br>
+              <select class="custom-select w-96" id="province" v-model="selectedProvince">
+                <option value="">Chọn Tỉnh/Thành Phố...</option>
+                <option v-for="province in provinces" :key="province.idProvince" :value="province.idProvince">
+                  {{ province.name }}
+                </option>
+              </select>
+              <span v-if="isLoadingProvinces">Đang tải...</span>
+            </div>
+        
+            <div class="select-item">
+              <label for="district" class="select-label">Quận/Huyện:</label> <br>
+              <select class="custom-select w-96" id="district" v-model="selectedDistrict" :disabled="!selectedProvince">
+                <option value="">Chọn Quận/Huyện...</option>
+                <option v-for="district in districts" :key="district.idDistrict" :value="district.idDistrict">
+                  {{ district.name }}
+                </option>
+              </select>
+              <span v-if="isLoadingDistricts">Đang tải...</span>
+            </div>
+        
+            <div class="select-item">
+              <label for="ward" class="select-label">Phường/Xã:</label> <br>
+              <select class="custom-select w-96" id="ward" v-model="selectedWard" :disabled="!selectedDistrict">
+                <option value="">Chọn Phường/Xã...</option>
+                <option v-for="ward in wards" :key="ward.idCommune" :value="ward.idCommune">
+                  {{ ward.name }}
+                </option>
+              </select>
+              <span v-if="isLoadingWards">Đang tải...</span>
+            </div>
+          </div>
+
+          <div class="form__group field w-96">
+            <input
+              id="address"
+              type="text"
+              class="form__field w-full"
+              placeholder="Địa chỉ"
+              v-model="newAddress.detail"
+              required
+            />
+            <label for="address" class="form__label">Địa chỉ chi tiết</label>
+          </div>
+          <div class="form__group button-like-field">
+            <input
+              id="default"
+              type="checkbox"
+              class="form__field"
+              v-model="newAddress.default"
+            />
+            <label for="default" :class="{'button-label': true, 'active': newAddress.default}">
+              {{ newAddress.default ? 'Địa chỉ mặc định' : 'Đặt làm mặc định' }}
+            </label>
+          </div>
+          <div class="pt-10 flex justify-end">
+            <button type="button" @click="closeAddAddressModal" class="mr-2 px-4 py-2 border border-secondary">Hủy</button>
+            <button type="submit" class="th-p-btn">Lưu Địa Chỉ</button>
+          </div>
+        </form>
+        
       </div>
     </div>
     <PopUp 
@@ -177,21 +279,50 @@ import { useUserStore } from "../stores/user";
 import CartItem from "../components/CartItem.vue";
 import { useRouter } from 'vue-router';
 import PopUp from "../components/PopUp.vue";
+import { fetchProvinces, fetchDistricts, fetchWards } from '../stores/vnmap';
 
 const watchStore = useWatchStore();
 const auth = useAuthStore();
 const cartStore = useCartStore();
 const userStore = useUserStore();
+const router = useRouter();
+
 const watchDetails = ref({});
 const cartItems = ref([]);
 const selectAll = ref(false);
 const addresses = ref([]);
 const defaultAddress = ref(null);
 const showAddressModal = ref(false);
+const showAddAddressModal = ref(false);
 const selectedAddress = ref(null);
 const tempSelectedAddress = ref(null);
 const note = ref('');
-const router = useRouter();
+
+const newAddress = ref({
+  name: '',
+  phone: '',
+  detail: '',
+  default: false
+});
+
+const provinces = ref([]);
+const districts = ref([]);
+const wards = ref([]);
+
+const selectedProvince = ref('');
+const selectedDistrict = ref('');
+const selectedWard = ref('');
+
+const isLoadingProvinces = ref(false);
+const isLoadingDistricts = ref(false);
+const isLoadingWards = ref(false);
+const isPopupVisible = ref(false);
+const popupMessage = ref('');
+const showProductDetails = ref(true);
+
+const closePopup = () => {
+  isPopupVisible.value = false;
+};
 
 const shipFee = computed(() => {
   return selectedItemsCount.value > 0 ? 5000 : 0;
@@ -207,6 +338,7 @@ const fetchAddresses = async () => {
     console.error("Error fetching addresses:", error);
   }
 };
+
 const disableBodyScroll = () => {
   document.body.style.overflow = 'hidden';
 };
@@ -214,6 +346,7 @@ const disableBodyScroll = () => {
 const enableBodyScroll = () => {
   document.body.style.overflow = '';
 };
+
 const openAddressModal = () => {
   tempSelectedAddress.value = selectedAddress.value;
   showAddressModal.value = true;
@@ -223,6 +356,16 @@ const openAddressModal = () => {
 const closeAddressModal = () => {
   showAddressModal.value = false;
   tempSelectedAddress.value = null;
+  enableBodyScroll();
+};
+
+const openAddAddressModal = () => {
+  showAddAddressModal.value = true;
+  disableBodyScroll();
+};
+
+const closeAddAddressModal = () => {
+  showAddAddressModal.value = false;
   enableBodyScroll();
 };
 
@@ -264,6 +407,86 @@ const fetchAllWatchDetails = async () => {
   }
 };
 
+const loadProvinces = async () => {
+  try {
+    provinces.value = await fetchProvinces();
+  } catch (error) {
+    console.error('Error loading provinces:', error);
+  }
+};
+
+const loadDistricts = async () => {
+  if (!selectedProvince.value) return;
+  try {
+    districts.value = await fetchDistricts(selectedProvince.value);
+  } catch (error) {
+    console.error('Error loading districts:', error);
+  }
+};
+
+const loadWards = async () => {
+  if (!selectedDistrict.value) return;
+  try {
+    wards.value = await fetchWards(selectedDistrict.value);
+  } catch (error) {
+    console.error('Error loading wards:', error);
+  }
+};
+
+watch(selectedProvince, () => {
+  selectedDistrict.value = '';
+  selectedWard.value = '';
+  districts.value = [];
+  wards.value = [];
+  if (selectedProvince.value) {
+    loadDistricts();
+  }
+});
+
+watch(selectedDistrict, () => {
+  selectedWard.value = '';
+  wards.value = [];
+  if (selectedDistrict.value) {
+    loadWards();
+  }
+});
+
+const selectedProvinceName = computed(() => {
+  return provinces.value.find(p => p.idProvince === selectedProvince.value)?.name || '';
+});
+
+const selectedDistrictName = computed(() => {
+  return districts.value.find(d => d.idDistrict === selectedDistrict.value)?.name || '';
+});
+
+const selectedWardName = computed(() => {
+  return wards.value.find(w => w.idCommune === selectedWard.value)?.name || '';
+});
+
+const submitNewAddress = async () => {
+  try {
+    const fullAddress = `${selectedWardName.value}, ${selectedDistrictName.value}, ${selectedProvinceName.value}`;
+    newAddress.value.detail = `${newAddress.value.detail}, ${fullAddress}`;
+    console.log('Sending address data:', newAddress.value);
+    await userStore.addAddress(auth.user_id, newAddress.value);
+    addresses.value = await userStore.getAddressDetails(auth.user_id);
+    closeAddAddressModal();
+    
+    // Show success popup
+    popupMessage.value = 'Thêm địa chỉ thành công!';
+    isPopupVisible.value = true;
+    showProductDetails.value = false;
+  } catch (error) {
+    console.error('Failed to save new address:', error);
+    console.error('Error response:', error.response);
+    
+    // Show error popup
+    popupMessage.value = 'Có lỗi xảy ra khi thêm địa chỉ. Vui lòng thử lại.';
+    isPopupVisible.value = true;
+    showProductDetails.value = false;
+  }
+};
+
 onMounted(async () => {
   try {
     await cartStore.getCart(auth.user_id);
@@ -279,6 +502,7 @@ onMounted(async () => {
     console.log(cartItems.value.length);
     await fetchAddresses();
     await fetchAllWatchDetails();
+    await loadProvinces();
   } catch (error) {
     console.error("Error fetching cart:", error);
   }
@@ -345,9 +569,7 @@ const totalAll = computed(() => {
 
 watch(cartItems, updateSelectAllState, { deep: true });
 
-const isPopupVisible = ref(false);
-const popupMessage = ref('');
-const showProductDetails = ref(true);
+
 
 const createOrder = async () => {
   const selectedItems = cartItems.value.filter(item => item.isSelected);
@@ -368,6 +590,8 @@ const createOrder = async () => {
 </script>
 
 <style scoped>
+
+
 .checkbox-container {
   display: inline-flex;
   align-items: center;
@@ -428,4 +652,54 @@ const createOrder = async () => {
   padding: 0.5rem;
   border: 1px solid #333;
 }
+
+.button-like-field {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 1rem;
+}
+
+.button-like-field input[type="checkbox"] {
+  display: none;
+}
+
+.button-like-field .button-label {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  background-color: #9b9b9b15;
+  transition: background-color 0.3s ease;
+}
+
+.button-like-field .button-label:hover {
+  background-color: #131212;
+}
+
+.button-like-field .button-label.active {
+  background-color: #131212;
+}
+
+.select-item{
+  padding-top: 5px; 
+}
+
+.select-label {
+    font-size: 1rem;
+    color: #9b9b9b; /* Yellow text color */
+  }
+  
+  .custom-select {
+    font-size: 1rem;
+    border: none;
+    border-bottom: 2px solid var(--secondary); /* Yellow bottom border */
+    background-color: transparent; /* Black background */
+    color: var(--secondary); /* Yellow text color */
+  }
+  
+  .custom-select option {
+    background-color: #141414da;
+    backdrop-filter: blur(40px); /* Apply a blur effect to the background */
+    color: var(--secondary); /* Yellow text color */
+  }
 </style>
