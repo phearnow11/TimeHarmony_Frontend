@@ -110,9 +110,6 @@
             <router-link to="/voucher" 
             class="submenu-item block px-4 py-2 hover-underline-animation"
             >Khuyến mãi</router-link>
-            <router-link to="" 
-            class="submenu-item block px-4 py-2 hover-underline-animation"
-            >Hỗ trợ khách hàng</router-link>
             <router-link to="/admin" 
             class="submenu-item block px-4 py-2 hover-underline-animation"
             >Quản trị</router-link>
