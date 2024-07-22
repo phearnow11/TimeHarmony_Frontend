@@ -59,9 +59,8 @@
             </button>
             
   
-            <p class="mt-4 text-sm text-gray-600">
-              Pressed order too soon? <a href="#" class="underline">Contact us here</a> for help with ongoing orders
-            </p>
+           
+          
           </div>
   
           <div class="flex-1">
