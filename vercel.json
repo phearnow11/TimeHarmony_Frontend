@@ -1,17 +1,108 @@
 {
     "version": 2,
-    "builds": [
-      {
-        "src": "package.json",
-        "use": "@vercel/static-build",
-        "config": {
-          "distDir": "dist"
-        }
-      }
-    ],
     "routes": [
       {
-        "src": "/(.*)",
+        "src": "/",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/search",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/login",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/forgot",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/signup",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/upload",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/favorite",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/about",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/cart",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/chat",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/appraiser",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/admin",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/change-password",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/setting/profile",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/setting/password",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/setting/address",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/setting/product",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/detail/:watch_id",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/retailer/:seller_id",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/discover/:field",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/order",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/orderconfirmation/:order_id",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/test",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/voucher",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/payment-handle",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/:pathMatch(.*)*",
         "dest": "/index.html"
       }
     ]
