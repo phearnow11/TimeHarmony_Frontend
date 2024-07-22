@@ -14,7 +14,7 @@ export const useAuthStore = defineStore('auth', {
         returnURL: '/',
     }),
     actions: {
-        login(username, password, remember) {
+        login(username, password) {
             axios.post(
                 `${api}/api/auth/login`,
                 {}, // Empty body
@@ -35,11 +35,7 @@ export const useAuthStore = defineStore('auth', {
                     this.token = res.data.token;
                     // Save token and user_id in cookies
                     Cookies.set('token', this.token, { expires: 7 }); // Expires in 7 days
-                    if (remember) {
-                        Cookies.set('user_id', this.user_id, { expires: 7 });
-                    } else {
-                        Cookies.remove('user_id');
-                    }
+                    Cookies.set('user_id', this.user_id, { expires: 7 });
                     const cartStore = useCartStore();
                     const userStore = useUserStore();
                     cartStore.getCart(this.user_id);

@@ -103,18 +103,30 @@ import LoginViaFacebook from "../components/LoginViaFacebook.vue";
 const isLoading = ref(false);
 
 const user = reactive({
-  username: "",
-  password: "",
+  username: localStorage.getItem(`username`)||"",
+  password:  localStorage.getItem(`password`)||"",
 });
 
 const remember = ref(false);
 
+if(localStorage.getItem(`username`)!=null){
+  remember.value = true
+}
+
 async function onSubmit() {
+  if(remember.value){
+    localStorage.setItem(`username`,user.username)
+    localStorage.setItem(`password`,user.password)
+  }
+  else{
+    localStorage.removeItem(`username`)
+    localStorage.removeItem(`password`)
+  }
   const authStore = useAuthStore();
   if (user.username && user.password) {
     isLoading.value = true;
     try {
-      await authStore.login(user.username, user.password, remember.value);
+      await authStore.login(user.username, user.password);
       await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate login delay
     } finally {
       isLoading.value = false;
