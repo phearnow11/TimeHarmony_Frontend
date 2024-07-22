@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import axios from "axios";
+import { useAuthStore } from "./auth";
 var api = import.meta.env.VITE_API_PORT
 export const useUserStore = defineStore("user", {
   state: () => ({

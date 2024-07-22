@@ -76,7 +76,7 @@ export default {
           // Cookies.set('user', JSON.stringify(user), { expires: 7 });
 
           console.log(user.email);
-          router.push('/');
+          useAuthStore().loginGoogle(accessToken)
         } else {
           console.error("Failed to fetch user details.");
         }

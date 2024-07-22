@@ -14,6 +14,29 @@ export const useAuthStore = defineStore('auth', {
         returnURL: '/',
     }),
     actions: {
+        async loginGoogle(token) {
+            try {
+                const res = await axios.post(`${api}/api/auth/login/google`, {}, {
+                    params: { token }
+                });
+
+                if (res.status === 200) {
+                    this.user_id = res.data.user;
+                    this.token = res.data.token;
+                    Cookies.set('token', this.token, { expires: 7 }); // Expires in 7 days
+                    Cookies.set('user_id', this.user_id, { expires: 7 });
+                    const cartStore = useCartStore();
+                    const userStore = useUserStore();
+                    await cartStore.getCart(this.user_id);
+                    userStore.setCartNum(cartStore.cart_count);
+                    router.push(this.returnURL || '/');
+                }
+            } catch (error) {
+                console.error('Error logging in with Google:', error);
+                throw error;
+            }
+        },
+
         login(username, password) {
             axios.post(
                 `${api}/api/auth/login`,
