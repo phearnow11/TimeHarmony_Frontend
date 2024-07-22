@@ -101,6 +101,9 @@
             <router-link to="/setting/profile" 
             class="submenu-item block px-4 py-2 hover-underline-animation"
             >Cài đặt</router-link>
+            <router-link to="/myself" 
+            class="submenu-item block px-4 py-2 hover-underline-animation"
+            >Quản lý trang cá nhân</router-link>
             <router-link to="/appraiser" 
             class="submenu-item block px-4 py-2 hover-underline-animation"
             >Kiểm Duyệt</router-link>

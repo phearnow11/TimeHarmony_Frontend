@@ -34,6 +34,13 @@ const router = createRouter({
       }),
     },
     {
+      path: '/myself',
+      name: 'MySelf',
+      component: () => import('../views/MySelf.vue').catch(err => {
+        console.error(err);
+      }),
+    },
+    {
       path: '/signup',
       name: 'SignUp',
       component: () => import('../views/SignUp.vue').catch(err => {
