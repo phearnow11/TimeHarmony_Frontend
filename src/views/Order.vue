@@ -320,7 +320,7 @@ const createOrder = async () => {
 
       isProcessingPayment.value = true;
       // VNPay payment process
-      const paymentResponse = await createVnPayPayment(totalAll.value);
+      const paymentResponse = await createVnPayPayment(Math.round(totalAll.value));
       if (paymentResponse.data && paymentResponse.data.paymentUrl) {
         // Redirect to VNPay payment page
         window.location.href = paymentResponse.data.paymentUrl;

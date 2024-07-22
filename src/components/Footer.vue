@@ -6,9 +6,11 @@
           <router-link to="/" class="flex items-center">
             <img src="../assets/time-harmony.png" class="h-14 w-auto mr-3" alt="Logo TimeHarmony" />
           </router-link>
-          <p class="text-[#9b9b9b] text-sm">
-            Mang lại sự hài hòa cho trải nghiệm theo dõi thời gian của bạn từ năm {{ date }}.
+          <p class="text-[#9b9b9b] mt-0">
+            Khám Phá Di Sản, Nâng Tầm Đẳng Cấp
           </p>
+        
+            
           <div class="flex space-x-6">
             <a href="https://www.facebook.com/profile.php" class="text-[#9b9b9b] hover-underline-animation">
               <span class="sr-only">Facebook</span>

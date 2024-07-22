@@ -19,8 +19,8 @@
       <h2 class="text-2xl font-semibold mb-2">Danh Sách Thành Viên</h2>
       <div class="table-container">
         <table class="table">
-          <thead>
-            <tr class="bg-primary text-black">
+          <thead class="table-header">
+            <tr class="text-primary">
               <th class="p-2 border-b">ID</th>
               <th class="p-2 border-b">Hình Ảnh</th>
               <th class="p-2 border-b">Tên</th>
@@ -51,8 +51,8 @@
       <h2 class="text-2xl font-semibold mb-2">Sản Phẩm</h2>
       <div class="table-container">
         <table class="table">
-          <thead>
-            <tr class="bg-primary text-black">
+          <thead class="table-header">
+            <tr class="text-primary">
               <th class="p-2 border-b">ID</th>
               <th class="p-2 border-b">Tên</th>
               <th class="p-2 border-b">Người Bán</th>
@@ -82,8 +82,8 @@
       <h2 class="text-2xl font-semibold mb-2">Đơn Hàng</h2>
       <div class="table-container">
         <table class="table">
-          <thead>
-            <tr class="bg-primary text-black">
+          <thead class="table-header">
+            <tr class="text-primary">
               <th class="p-2 border-b">ID Đơn Hàng</th>
               <th class="p-2 border-b">Ngày Tạo</th>
               <th class="p-2 border-b">Địa Chỉ</th>
@@ -190,8 +190,11 @@ const currency = (value) => `${value.toLocaleString("vi-VN")} ₫`;
   border: 1px solid var(--secondary);
 }
 
-.table th {
-  text-align: left;
+.table-header th {
+  position: sticky;
+  top: 0;
+  background-color: #494949; /* Matches your background color */
+  z-index: 1; /* Keeps the header above the table rows */
 }
 
 .table tbody tr:nth-child(even) {
