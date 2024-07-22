@@ -50,8 +50,11 @@
             </div>
   
             <button class="bg-olive-700 text-white px-6 py-2 rounded hover:bg-olive-800 transition duration-300">
-              Theo dõi kiện hàng
+              Huỷ đơn hàng
             </button>
+            <span>
+              Đang ship nè ông bà già
+            </span>
   
             <p class="mt-4 text-sm text-gray-600">
               Pressed order too soon? <a href="#" class="underline">Contact us here</a> for help with ongoing orders

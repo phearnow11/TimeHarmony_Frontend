@@ -18,7 +18,7 @@
           <span class="username">{{ retailerName }}</span>
         </div>
         <div class="action-buttons">
-          <div class="hover-underline-animation-r" @click.stop="removeFromCart">Remove this watch from cart</div>
+          <div class="hover-underline-animation-r" @click.stop="removeFromCart">Xoá khỏi giỏ hàng</div>
         </div>
         <div class="price-details">
           <span class="price">{{ formatPrice(price) }} ₫</span>

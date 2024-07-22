@@ -121,7 +121,7 @@
       :retailerAvatar="item.sellerAvatar || ''"
       :isSelected="item.isSelected"
       @toggle-select="toggleItemSelection(item.watch_id)"
-      @delete-item="deleteItem(item.watch_id)"
+      @delete-item="removeItem(item.watch_id)"
       />
 
       <div v-if="showAddressModal" class="modal-overlay">
@@ -537,30 +537,32 @@ const updateSelectAllState = () => {
     cartItems.value.every((item) => item.isSelected);
 };
 
-const deleteItem = async (watchId) => {
+const removeItem = async (watchId) => {
   try {
-    await cartStore.removeFromCart(auth.user_id, watchId);
-    cartItems.value = cartItems.value.filter(
-      (item) => item.watch_id !== watchId
-    );
-    updateSelectAllState();
+    await userStore.deleteWatchCart(auth.user_id, [watchId]);
+    cartItems.value = cartItems.value.filter(item => item.watch_id !== watchId);
+    // Update cart count
+    userStore.setCartNum(cartItems.value.length);
   } catch (error) {
-    console.error("Error deleting item:", error);
+    console.error('Failed to remove item from cart:', error);
   }
 };
 
 const deleteSelected = async () => {
   try {
-    for (const item of cartItems.value.filter((item) => item.isSelected)) {
-      await cartStore.removeFromCart(auth.user_id, item.watch_id);
-    }
+    const selectedWatchIds = cartItems.value
+      .filter((item) => item.isSelected)
+      .map((item) => item.watch_id);
+    
+    await userStore.deleteWatchCart(auth.user_id, selectedWatchIds);
     cartItems.value = cartItems.value.filter((item) => !item.isSelected);
     selectAll.value = false;
+    // Update cart count
+    userStore.setCartNum(cartItems.value.length);
   } catch (error) {
     console.error("Error deleting selected items:", error);
   }
 };
-
 
 const totalAll = computed(() => {
   cartStore.setShipFee(shipFee.value);

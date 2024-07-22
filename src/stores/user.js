@@ -151,6 +151,30 @@ export const useUserStore = defineStore("user", {
       }
     },
 
+    async deleteWatchCart(member_id, watch_ids) {
+      try {
+        const url = `${api}/member/delete/carts/${member_id}`;
+        const data = { wids: watch_ids };
+        console.log('Deleting cart items with URL:', url);
+        console.log('Data being sent:', data);
+        const response = await axios.delete(url, { data });
+        console.log('Watch cart deleted successfully:', response.data);
+        return response.data;
+      } catch (error) {
+        console.error('Error deleting watch cart:', error);
+        if (error.response) {
+          console.error('Error response:', error.response.data);
+          console.error('Error status:', error.response.status);
+          console.error('Error headers:', error.response.headers);
+        } else if (error.request) {
+          console.error('Error request:', error.request);
+        } else {
+          console.error('Error message:', error.message);
+        }
+        throw error;
+      }
+    },
+
     async loadUser(user_id) {
       try {
         const res = await axios.get(`${api}/member/get/${user_id}`);
