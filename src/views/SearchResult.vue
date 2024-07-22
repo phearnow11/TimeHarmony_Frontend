@@ -72,7 +72,6 @@
             </div>
           </div>
         </div>
-        
       </div>
       <div class="search-results w-3/4 p-4">
         <div class="search-header">
@@ -104,91 +103,100 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch } from "vue";
-import { useRoute } from "vue-router";
-import { useWatchStore } from "../stores/watch";
-import ProductCard from "../components/ProductCard.vue";
+import { ref, computed, watch, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import { useWatchStore } from '../stores/watch';
+import ProductCard from '../components/ProductCard.vue';
 
 const route = useRoute();
 const watchStore = useWatchStore();
 
-const searchQuery = computed(() => route.query.q || "");
-const searchResults = computed(() => watchStore.searchResults);
+const searchQuery = computed(() => route.query.q || '');
 
 const categories = ref([
-  "Đồng hồ nam",
-  "Đồng hồ nữ",
-  "Đồng hồ Unisex",
+  'Đồng hồ nam',
+  'Đồng hồ nữ',
+  'Đồng hồ Unisex',
 ]);
 
 const brands = ref([
-  "Rolex",
-  "Omega",
-  "Cartier",
-  "Tag Heuer",
-  "Seiko",
-  "Casio",
-  "Apple",
-  "Fossil",
+  'Rolex',
+  'Omega',
+  'Cartier',
+  'Tag Heuer',
+  'Seiko',
+  'Casio',
+  'Apple',
+  'Fossil',
 ]);
 
 const selectedCategories = ref([]);
 const selectedBrands = ref([]);
-const minPrice = ref("");
-const maxPrice = ref("");
+const minPrice = ref('');
+const maxPrice = ref('');
 
 const validateInput = (type) => {
-  const input = type === "min" ? minPrice : maxPrice;
-  // Remove any non-digit characters
-  input.value = input.value.replace(/\D/g, "");
-  // Remove leading zeros
-  input.value = input.value.replace(/^0+/, "");
-  // If the input is empty, set it to an empty string
-  if (input.value === "0") {
-    input.value = "";
+  const input = type === 'min' ? minPrice : maxPrice;
+  input.value = input.value.replace(/\D/g, '');
+  input.value = input.value.replace(/^0+/, '');
+  if (input.value === '0') {
+    input.value = '';
   }
 };
 
 const applyFilter = async () => {
-  const filters = {
-    gender: selectedCategories.value.includes("Đồng hồ nam")
-      ? "Male"
-      : selectedCategories.value.includes("Đồng hồ nữ")
-      ? "Female"
-      : selectedCategories.value.includes("Đồng hồ Unisex")
-      ? "Unisex"
-      : null,
-    brand: selectedBrands.value.length > 0 ? selectedBrands.value[0] : null,
-    style: selectedCategories.value.find((cat) =>
-      ["Đồng hồ cao cấp", "Đồng hồ thể thao", "Đồng hồ thông minh"].includes(
-        cat
-      )
-    ),
-    priceRange:
-      minPrice.value && maxPrice.value
-        ? { min: minPrice.value, max: maxPrice.value }
-        : null,
-  };
+  const filters = [];
+  const gender = selectedCategories.value.includes('Đồng hồ nam')
+    ? 'Male'
+    : selectedCategories.value.includes('Đồng hồ nữ')
+    ? 'Female'
+    : selectedCategories.value.includes('Đồng hồ Unisex')
+    ? 'Unisex'
+    : null;
+
+  if (gender) filters.push(`gender=${gender}`);
+  if (selectedBrands.value.length > 0) filters.push(`brand=${selectedBrands.value.join(',')}`);
+  const style = selectedCategories.value.find(cat =>
+    ['Đồng hồ cao cấp', 'Đồng hồ thể thao', 'Đồng hồ thông minh'].includes(cat)
+  );
+  if (style) filters.push(`style=${style}`);
+  if (minPrice.value && maxPrice.value) filters.push(`priceRange[min]=${minPrice.value}&priceRange[max]=${maxPrice.value}`);
 
   try {
-    await watchStore.applyFilters(filters);
+    // Clear the watches map and fetch filtered results
+    watchStore.watches.clear();
+    await watchStore.getWatchesOfPage(0, searchQuery.value, filters);
   } catch (error) {
-    console.error("Lỗi khi áp dụng bộ lọc:", error);
+    console.error('Error applying filters:', error);
   }
 };
 
 onMounted(async () => {
   if (searchQuery.value) {
     try {
-      await watchStore.searchWatches(searchQuery.value);
+      await watchStore.getWatchesOfPage(0, searchQuery.value);
     } catch (error) {
-      console.error("Lỗi khi tìm kiếm kết quả:", error);
+      console.error('Error fetching initial results:', error);
     }
   }
 });
 
+// Watch for changes to searchQuery and reload
+watch(searchQuery, (newQuery) => {
+    window.location.reload(); // Reload the page
+});
+
 watch([selectedCategories, selectedBrands, minPrice, maxPrice], () => {
   applyFilter();
+});
+
+const searchResults = computed(() => {
+  // Flatten all pages into a single array
+  const allWatches = [];
+  for (const watches of watchStore.watches.values()) {
+    allWatches.push(...watches);
+  }
+  return allWatches;
 });
 </script>
 

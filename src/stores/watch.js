@@ -80,6 +80,7 @@ export const useWatchStore = defineStore("watch", {
 
           console.log("Fetched watches for page:", page);
           console.log("Total Pages:", this.totalPage);
+          console.log(response);
         } else {
           console.log("No watches found for page:", page);
           this.hasMore = false;

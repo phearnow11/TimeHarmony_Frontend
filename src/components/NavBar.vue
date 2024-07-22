@@ -185,7 +185,7 @@ const updateHint = () => {
 
 const navigateToSearchResult = () => {
   if (searchQuery.value.trim()) {
-    router.push({ name: "SearchResult", query: { q: searchQuery.value } });
+    window.location.href(`/search?q=${searchQuery.value}`);
     showHint.value = false;
   }
 };
