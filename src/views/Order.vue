@@ -199,44 +199,13 @@
     </div>
 
 
-  <div class="px-16 pt-96 pb-5">
-    <h2 class="text-xl font-semibold mb-4">Need help?</h2>
-    <p class="mb-4">
-      Check our <router-link to="/about" class="hover-underline-animation">Help pages</router-link> or 
-      <router-link to="/about" class="hover-underline-animation">contact us</router-link>
-    </p>
-
-    <h3 class="font-semibold mb-2">For an item sold by Time Harmony:</h3>
-    <p class="mb-4">
-      When you click the "Place your order" button, we'll send you an email message 
-      acknowledging receipt of your order. Your contract to purchase an item will not 
-      be complete until we send you an email notifying you that the item has been shipped.
-    </p>
-
-    <p class="font-semibold mb-2">
-      Important information about sales tax you may owe in your state
-    </p>
-
-    <p class="mb-4">
-      You may return new, unopened merchandise in original condition within 30 days of delivery. 
-      Exceptions and restrictions apply. See Time Harmony's 
-      <router-link to="/about" class="hover-underline-animation">Returns Policy</router-link>.
-    </p>
-
-    <p>
-      Need to add more items to your order? 
-      <router-link to="/" class="hover-underline-animation">
-        Continue shopping on the Time Harmony homepage
-      </router-link>.
-    </p>
-  </div>
 </div>
   <div v-else class="h-screen flex flex-col items-center justify-center">
     <div>
-      <p class="text-xl font-medium text-center">You need to login to use this function, <router-link class="hover-underline-animation" to="/login">Log in now</router-link></p>
+      <p class="text-xl font-medium text-center">Bạn cần đăng nhập để sử dụng chức năng này, <router-link class="hover-underline-animation" to="/login">Đăng nhập ngay</router-link></p>
     </div>
     <div class="mt-4">
-      <router-link to="/" class="hover-underline-animation">Go back to Home</router-link>
+      <router-link to="/" class="hover-underline-animation">Quay trở lại trang chủ</router-link>
     </div>
   </div>
 </template>
@@ -284,7 +253,7 @@ const createOrder = async () => {
     notice: note.value,
     total_price: totalAll.value,
     payment_method: selectedOption.value,
-    transaction_no: selectedOption.value === 'card' ? '123456' : '123456', // Replace '123456' with your actual logic for transaction_no
+    transaction_no: selectedOption.value === 'card' ? transaction_no : '123456', // Replace '123456' with your actual logic for transaction_no
 
   };
 

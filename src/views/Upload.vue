@@ -418,10 +418,10 @@
   </div>
   <div v-else class="h-screen flex flex-col items-center justify-center">
     <div>
-      <p class="text-xl font-medium text-center">You need to login to use this function, <router-link class="hover-underline-animation" to="/login">Log in now</router-link></p>
+      <p class="text-xl font-medium text-center">Bạn cần đăng nhập để sử dụng chức năng này, <router-link class="hover-underline-animation" to="/login">Đăng nhập ngay</router-link></p>
     </div>
     <div class="mt-4">
-      <router-link to="/" class="hover-underline-animation">Go back to Home</router-link>
+      <router-link to="/" class="hover-underline-animation">Quay trở lại trang chủ</router-link>
     </div>
   </div>
 </template>
