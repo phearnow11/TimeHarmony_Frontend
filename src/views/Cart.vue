@@ -501,6 +501,8 @@ function checkSelectedItems() {
   }
 }
 
+const isCartEmpty = computed(() => cartItems.value.length === 0);
+
 onMounted(async () => {
   try {
     await cartStore.getCart(auth.user_id);
@@ -601,6 +603,12 @@ watch(cartItems, updateSelectAllState, { deep: true });
 
 
 const createOrder = async () => {
+  if (isCartEmpty.value) {
+    isPopupVisible.value = true;
+    popupMessage.value = 'Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm vào giỏ hàng trước khi đặt hàng.';
+    showProductDetails.value = false;
+    return;
+  }
   const selectedItems = cartItems.value.filter(item => item.isSelected);
   if (selectedAddress.value !== null) {
     cartStore.setSelectedItems(selectedItems);
