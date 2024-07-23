@@ -335,25 +335,30 @@ async function addToCart() {
 async function buyNow() {
   isLoading.value = true;
   try {
-    // First, add the item to the cart
+    // Add the item to the cart
     await userStore.addToCart(userStore.user_id, watchId);
-    
+
     // Fetch the updated cart to ensure we have the latest data
     await cartStore.getCart(userStore.user_id);
-    
+
     // Find the newly added item in the cart
     const addedItem = cartStore.cart_info.find(item => item.watch_id === watchId);
-    
+
     if (addedItem) {
       // Set only this item as selected, deselecting others
       cartStore.cart_info.forEach(item => {
         cartStore.setItemSelected(item.watch_id, item.watch_id === watchId);
       });
-      
+
       // Update the cart store with the selected item
       cartStore.setSelectedItems([addedItem]);
       cartStore.setTotalPrice(addedItem.price);
-      
+
+      console.log(addedItem.watch_id);
+
+
+      cartStore.buyNowItem = addedItem.watch_id;
+
       // Navigate to the cart page
       router.push('/cart');
     } else {
@@ -368,6 +373,7 @@ async function buyNow() {
     isLoading.value = false;
   }
 }
+
 onMounted(async () => {
   await updateBookmarkStatus();
   await watchStore.getDetailWatch(watchId);

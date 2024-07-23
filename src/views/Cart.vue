@@ -518,6 +518,7 @@ onMounted(async () => {
     await loadProvinces();
     await fetchAddresses();
     await fetchAllWatchDetails();
+    buyNow()
     checkSelectedItems();
     // Check if there's a newly added item and scroll to it
     const newlyAddedItem = cartItems.value.find(item => item.isSelected);
@@ -555,6 +556,17 @@ const toggleItemSelection = (watchId) => {
   if (item) {
     item.isSelected = !item.isSelected;
   }
+  updateSelectAllState();
+};
+
+const buyNow = () => {
+  const item = cartItems.value.find((item) => item.watch_id === useCartStore().buyNowItem);
+
+  console.log("buy:"+item);
+  if (item) {
+    item.isSelected = !item.isSelected;
+  }
+  useCartStore().buyNowItem = null
   updateSelectAllState();
 };
 
