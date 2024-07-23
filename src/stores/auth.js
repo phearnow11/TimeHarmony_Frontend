@@ -64,10 +64,13 @@ export const useAuthStore = defineStore('auth', {
                     cartStore.getCart(this.user_id);
                     userStore.setCartNum(cartStore.cart_count);
                     router.push(this.returnURL || '/');
+                } else{
+                    throw new Error('Login failed');
                 }
             })
             .catch((error) => {
                 console.error('Error logging in:', error);
+                
             });
         },
         logout() {

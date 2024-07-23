@@ -1,105 +1,73 @@
 <template>
+ 
   <div class="flex justify-center items-center h-screen">
     <div class="login-background pr-16 shadow-lg">
       <div class="login-container flex gap-8 items-center">
         <div class="logo-container flex flex-col items-center pr-5">
           <img src="../assets/test2.png" class="w-80 h-full" alt="" />
         </div>
-      <form
-      @submit.prevent="onSubmit"
-      class="flex w-96 flex-col justify-center items-center gap-3"
-      >
-      <div class="flex left-10 justify-center">
-      <router-link to="/">
-        <img
-          class="h-20 flex items-center"
-          src="../assets/time-harmony.png"
-          alt=""
-        />
-      </router-link>
-      <div class="border-l mr-5 border-primary"></div>
-      <span class="font-bold mt-5 mr-5 text-3xl text-primary">
-        Đăng nhập
-      </span>
-      
-    </div>
-        <div class="form-content">
-          <div class="form__group field w-96">
-            <input
-              type="text"
-              class="form__field"
-              placeholder="Username"
-              v-model="user.username"
-              required
-            />
-            <label for="username" class="form__label">Tên tài khoản</label>
+        <form @submit.prevent="onSubmit" class="flex w-96 flex-col justify-center items-center gap-3">
+          <div class="flex left-10 justify-center">
+            <router-link to="/">
+              <img class="h-20 flex items-center" src="../assets/time-harmony.png" alt="" />
+            </router-link>
+            <div class="border-l mr-5 border-primary"></div>
+            <span class="font-bold mt-5 mr-5 text-3xl text-primary">Đăng nhập</span>
           </div>
-          <div class="form__group field w-96">
-            <input
-              type="password"
-              class="form__field"
-              placeholder="Password"
-              v-model="user.password"
-              required
-            />
-            <label for="password" class="form__label">Mật khẩu</label>
-          </div>
-        </div>
-
-        <div class="row-remember w-96 grid grid-cols-2 gap-4">
-          <label
-            class="container flex justify-start items-center text-center gap-2"
-          >
-            <input type="checkbox" v-model="remember" />
-            <svg viewBox="0 0 64 64" height="1em">
-              <path
-                d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
-                pathLength="575.0541381835938"
-                class="path"
-              ></path>
-            </svg>
-            <label>Ghi nhớ tôi</label>
-          </label>
-          <div class="flex justify-end">
-            <router-link to="/forgot" class="hover-underline-animation"
-              >Quên mật khẩu?</router-link
-            >
-          </div>
-        </div>
-
-        <button class="th-p-btn w-full relative" :disabled="isLoading">
-          <span :class="{ 'opacity-0': isLoading }">Đăng nhập</span>
-          <div v-if="isLoading" class="loader-container">
-            <div class="loader">
-              <div class="loaderBar"></div>
+          <div class="form-content">
+            <div class="form__group field w-96">
+              <input type="text" class="form__field" placeholder="Username" v-model="user.username" required />
+              <label for="username" class="form__label">Tên tài khoản</label>
+            </div>
+            <div class="form__group field w-96">
+              <input type="password" class="form__field" placeholder="Password" v-model="user.password" required />
+              <label for="password" class="form__label">Mật khẩu</label>
             </div>
           </div>
-        </button>
-
-        <div class="flex items-center w-full my-2">
-          <div class="border-t border-gray-99 flex-grow mr-3"></div>
-          <span class="text-gray-99">hoặc</span>
-          <div class="border-t border-gray-99 flex-grow ml-3"></div>
-        </div>
-
-        <login-via-google />
-        <login-via-facebook />
-
-        <div class="mt-4">
-          <span>Bạn chưa có tài khoản? </span>
-          <router-link to="/signup" class="hover-underline-animation">Đăng ký tại đây</router-link>
-        </div>
-      </form>
+          <div class="row-remember w-96 grid grid-cols-2 gap-4">
+            <label class="container flex justify-start items-center text-center gap-2">
+              <input type="checkbox" v-model="remember" />
+              <svg viewBox="0 0 64 64" height="1em">
+                <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+              </svg>
+              <label>Ghi nhớ tôi</label>
+            </label>
+            <div class="flex justify-end">
+              <router-link to="/forgot" class="hover-underline-animation">Quên mật khẩu?</router-link>
+            </div>
+          </div>
+          <button class="th-p-btn w-full relative" :disabled="isLoading">
+            <span :class="{ 'opacity-0': isLoading }">Đăng nhập</span>
+            <div v-if="isLoading" class="loader-container">
+              <div class="loader">
+                <div class="loaderBar"></div>
+              </div>
+            </div>
+          </button>
+          
+          <div class="flex items-center w-full my-2">
+            <div class="border-t border-gray-99 flex-grow mr-3"></div>
+            <span class="text-gray-99">hoặc</span>
+            <div class="border-t border-gray-99 flex-grow ml-3"></div>
+          </div>
+          <LoginViaGoogle />
+          <LoginViaFacebook />
+          <div class="mt-4">
+            <span>Bạn chưa có tài khoản? </span>
+            <router-link to="/signup" class="hover-underline-animation">Đăng ký tại đây</router-link>
+          </div>
+        </form>
       </div>
-      <PopUp 
-  :show="showErrorPopup" 
-  :message="errorMessage"
-  :showDetails="false"
-  @close="showErrorPopup = false"
-/>
     </div>
+    <PopUp 
+:show="showErrorPopup" 
+:message="errorMessage"
+:showDetails="false"
+@close="showErrorPopup = false"
+/>
   </div>
 </template>
+
 <script setup>
 import { reactive, ref } from "vue";
 import { useAuthStore } from "../stores/auth";
@@ -112,32 +80,34 @@ const showErrorPopup = ref(false);
 const isLoading = ref(false);
 
 const user = reactive({
-  username: localStorage.getItem(`username`)||"",
-  password:  localStorage.getItem(`password`)||"",
+  username: localStorage.getItem('username') || '',
+  password: localStorage.getItem('password') || '',
 });
 
 const remember = ref(false);
 
-if(localStorage.getItem(`username`)!=null){
-  remember.value = true
+if (localStorage.getItem('username') !== null) {
+  remember.value = true;
 }
 
 async function onSubmit() {
-  if(remember.value){
-    localStorage.setItem(`username`,user.username)
-    localStorage.setItem(`password`,user.password)
-  }
-  else{
-    localStorage.removeItem(`username`)
-    localStorage.removeItem(`password`)
+  if (remember.value) {
+    localStorage.setItem('username', user.username);
+    localStorage.setItem('password', user.password);
+  } else {
+    localStorage.removeItem('username');
+    localStorage.removeItem('password');
   }
   const authStore = useAuthStore();
   if (user.username && user.password) {
     isLoading.value = true;
     try {
-      await authStore.login(user.username, user.password);
+      console.log('Attempting login with:', { username: user.username, password: user.password });
+      const result = await authStore.login(user.username, user.password);
+      console.log('Login result:', result.data);
       await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate login delay
     } catch (error) {
+      console.error('Login error:', error);
       errorMessage.value = 'Sai mật khẩu hoặc tên người dùng';
       showErrorPopup.value = true;
     } finally {
