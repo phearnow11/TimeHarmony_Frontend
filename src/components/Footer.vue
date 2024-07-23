@@ -73,7 +73,7 @@
       </div>
       <div class="mt-12 border-t border-gray-700 pt-8">
         <p class="text-base text-gray-400 xl:text-center">
-          &copy; TimeHarmony, Inc. Đã đăng ký bản quyền.
+          &copy; TimeHarmony, Inc.
         </p>
       </div>
     </div>
