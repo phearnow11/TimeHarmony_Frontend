@@ -21,7 +21,7 @@
             <button class="mb-10 th-p-btn" @click="toggleAddForm">+ THÊM ĐỊA CHỈ MỚI</button>
           </div>
         </div>
-        <div class="table-container">
+        <div class="table-container"> 
         <table class="w-full border-collapse table">
           <thead class="table-header">
             <tr class="bg-[#494949] text-primary">

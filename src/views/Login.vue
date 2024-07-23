@@ -59,12 +59,7 @@
         </form>
       </div>
     </div>
-    <PopUp 
-:show="showErrorPopup" 
-:message="errorMessage"
-:showDetails="false"
-@close="showErrorPopup = false"
-/>
+    
   </div>
 </template>
 
@@ -103,9 +98,8 @@ async function onSubmit() {
     isLoading.value = true;
     try {
       console.log('Attempting login with:', { username: user.username, password: user.password });
-      const result = await authStore.login(user.username, user.password);
-      console.log('Login result:', result.data);
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate login delay
+      await authStore.login(user.username, user.password);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     } catch (error) {
       console.error('Login error:', error);
       errorMessage.value = 'Sai mật khẩu hoặc tên người dùng';
