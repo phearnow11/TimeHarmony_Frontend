@@ -160,6 +160,7 @@ const submenus = ref({
 
 const logout = () => {
   useAuthStore().logout();
+  window.location.reload();
 };
 
 document.addEventListener("click", (e) => {
