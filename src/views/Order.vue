@@ -253,7 +253,7 @@ const createOrder = async () => {
     notice: note.value,
     total_price: totalAll.value,
     payment_method: selectedOption.value,
-    transaction_no: selectedOption.value === 'card' ? transaction_no : '123456', // Replace '123456' with your actual logic for transaction_no
+    transaction_no: selectedOption.value === 'card' ? '123456' : '123456', // Replace '123456' with your actual logic for transaction_no
 
   };
 
