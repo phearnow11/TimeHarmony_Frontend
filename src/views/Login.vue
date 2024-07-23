@@ -91,6 +91,12 @@
         </div>
       </form>
       </div>
+      <PopUp 
+  :show="showErrorPopup" 
+  :message="errorMessage"
+  :showDetails="false"
+  @close="showErrorPopup = false"
+/>
     </div>
   </div>
 </template>
@@ -99,7 +105,10 @@ import { reactive, ref } from "vue";
 import { useAuthStore } from "../stores/auth";
 import LoginViaGoogle from "../components/LoginViaGoogle.vue";
 import LoginViaFacebook from "../components/LoginViaFacebook.vue";
+import PopUp from "../components/PopUp.vue";
 
+const errorMessage = ref('');
+const showErrorPopup = ref(false);
 const isLoading = ref(false);
 
 const user = reactive({
@@ -128,6 +137,9 @@ async function onSubmit() {
     try {
       await authStore.login(user.username, user.password);
       await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate login delay
+    } catch (error) {
+      errorMessage.value = 'Sai mật khẩu hoặc tên người dùng';
+      showErrorPopup.value = true;
     } finally {
       isLoading.value = false;
     }
