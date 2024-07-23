@@ -147,7 +147,7 @@ const orders = computed(() => adminStore.orders);
 const totalCost = computed(() => products.value.reduce((sum, product) => sum + (product.price * 1), 0)); // Stock is always 1
 
 const totalRevenue = computed(() => orders.value.reduce((sum, order) => sum + order.total_price, 0));
-const totalProfit = computed(() => totalRevenue.value * 0.05); // 5% profit from total revenue
+const totalProfit = computed(() => totalRevenue.value * 0.02); // 2% profit from total revenue
 
 // Define a method to promote a user to staff
 const promoteToStaff = async () => {
