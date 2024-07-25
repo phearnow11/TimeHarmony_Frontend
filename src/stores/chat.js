@@ -76,7 +76,7 @@ export const useChatStore = defineStore('chat', {
         }
       } catch (error) {
         this.error = error.message;
-        console.error('Registration failed:', error);
+        console.error('Add to chat failed:', error);
       }
     },
 
