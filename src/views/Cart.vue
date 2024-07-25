@@ -12,7 +12,7 @@
           <label
             class="container flex justify-start items-center text-center gap-2"
           >
-            <input type="checkbox" v-model="remember" :checked="selectAll" @change="toggleAllProducts"/>
+            <input type="checkbox" :checked="selectAll" @change="toggleAllProducts"/>
             <svg viewBox="0 0 64 64" height="1em">
               <path
                 d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
@@ -111,6 +111,7 @@
     
     <cart-item
         v-for="item in cartItems"
+        :watch_id = "item.watch_id"
         :key="item.watch_id"
         :productName="item.name || 'Loading...'"
         :retailerName="item.sellerName || 'Loading...'"
@@ -295,6 +296,7 @@ const showAddAddressModal = ref(false);
 const selectedAddress = ref(null);
 const tempSelectedAddress = ref(null);
 const note = ref('');
+const currentProduct = ref();
 
 const newAddress = ref({
   name: '',
@@ -518,8 +520,8 @@ onMounted(async () => {
     await loadProvinces();
     await fetchAddresses();
     await fetchAllWatchDetails();
-    buyNow()
     checkSelectedItems();
+    buyNow()
     // Check if there's a newly added item and scroll to it
     const newlyAddedItem = cartItems.value.find(item => item.isSelected);
     if (newlyAddedItem) {
@@ -546,23 +548,54 @@ const totalPrice = computed(() => {
   }, 0);
 });
 
+// const toggleAllProducts = () => {
+//   selectAll.value = !selectAll.value;
+//   cartItems.value.forEach((item) => (item.isSelected = selectAll.value));
+// };
+
 const toggleAllProducts = () => {
   selectAll.value = !selectAll.value;
-  cartItems.value.forEach((item) => (item.isSelected = selectAll.value));
+  cartItems.value.forEach((item) => {
+    item.isSelected = selectAll.value;
+    // Add or remove all watchIds from selected_wids
+    if (selectAll.value) {
+      if (!useCartStore().selected_wids.includes(item.watch_id)) {
+        useCartStore().selected_wids.push(item.watch_id);
+      }
+    } else {
+      useCartStore().selected_wids = useCartStore().selected_wids.filter(id => id !== item.watch_id);
+    }
+    console.log(useCartStore().selected_wids);
+  });
 };
 
+
+
+
+// const toggleItemSelection = (watchId) => {
+//   const item = cartItems.value.find((item) => item.watch_id === watchId);
+//   if (item) {
+//     item.isSelected = !item.isSelected;
+//   }
+//   updateSelectAllState();
+// };
+
 const toggleItemSelection = (watchId) => {
-  const item = cartItems.value.find((item) => item.watch_id === watchId);
+  const item = cartItems.value.find(item => item.watch_id === watchId);
   if (item) {
     item.isSelected = !item.isSelected;
+    useCartStore().selected_wids = item.isSelected
+      ? [...useCartStore().selected_wids, watchId]
+      : useCartStore().selected_wids.filter(id => id !== watchId);
   }
   updateSelectAllState();
+  console.log(useCartStore().selected_wids);
 };
+
+
 
 const buyNow = () => {
   const item = cartItems.value.find((item) => item.watch_id === useCartStore().buyNowItem);
-
-  console.log("buy:"+item);
   if (item) {
     item.isSelected = !item.isSelected;
   }
@@ -573,7 +606,7 @@ const buyNow = () => {
 const updateSelectAllState = () => {
   selectAll.value =
     cartItems.value.length > 0 &&
-    cartItems.value.every((item) => item.isSelected);
+    cartItems.value.every(item => item.isSelected);
 };
 
 const removeItem = async (watchId) => {

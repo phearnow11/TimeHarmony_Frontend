@@ -1,11 +1,16 @@
 import axios from 'axios';
 var api = import.meta.env.VITE_API_PORT
-export const createVnPayPayment = async (amount,watch_ids) => {
+
+export const createVnPayPayment = async (amount, wids) => {
+  const totalAmount = Math.round(amount);
   try {
-    const response = await axios.get(`${api}/payment/vn-pay?amount=${amount}`,watch_ids);
-    return response.data;
+    const response = await axios.post(`${api}/payment/vn-pay?amount=${totalAmount}`, wids);
+    if (response.status !== 200) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response;
   } catch (error) {
-    console.error('Error creating VNPay payment:', error);
+    console.error('Error fetching payment URL:', error.response ? error.response.data : error.message);
     throw error;
   }
 };
