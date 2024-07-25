@@ -17,6 +17,7 @@ export const useWatchStore = defineStore("watch", {
       price: "",
       images: [],
       description: "",
+      state: "",
       brand: "",
       series: "",
       model: "",
@@ -122,12 +123,12 @@ export const useWatchStore = defineStore("watch", {
         const response = await axios.get(`${api}/watch/get/${watch_id}`);
         const res = response.data;
         console.log(res);
-
         this.watch_data = {
           seller: res.seller || null,
           name: res.watch_name || null,
           description: res.watch_description || null,
           images: res.image_url ? (Array.isArray(res.image_url) ? res.image_url : [res.image_url]) : [],
+          state: res.state || null,
           price: res.price || null,
           brand: res.brand || null,
           series: res.series || null,

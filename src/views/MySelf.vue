@@ -1,76 +1,75 @@
 <template>
-    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 p-8">
-      <!-- Profile Picture and Basic Info -->
-      <div class="col-span-1 flex flex-col items-center p-4 bg-gray-800 rounded-lg shadow-lg">
-        <img :src="user.image" alt="User Image" class="w-32 h-32 rounded-full border-4 border-primary mb-4">
-        <h1 class="text-4xl font-bold text-white mb-2">{{ user.first_name }} {{ user.last_name }}</h1>
-        <p class="text-lg text-gray-300">{{ user.username }} <span class="mdi mdi-check-decagram-outline text-blue-500"></span></p>
-        <p class="text-gray-400 mt-2">
-          <span class="mdi mdi-map-marker"></span> {{ defaultAddress || "N/A" }}
-        </p>
-      </div>
-  
-      <!-- Contact and Actions -->
-      <div class="col-span-2 flex flex-col bg-gray-800 p-6 rounded-lg shadow-lg">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-2xl font-semibold text-primary">Keep in Touch</h2>
-          <div class="bg-secondary h-1 w-24"></div>
-        </div>
-  
-        <div class="flex gap-6 mb-6">
-          <button class="th-s-btn flex items-center gap-2 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
-            Send message <span class="mdi mdi-message-text-outline"></span>
-          </button>
-          <router-link class="text-blue-400 hover:underline" :href="`tel:${user.phone}`">
-            <span class="mdi mdi-phone"></span> {{ user.phone || "N/A" }}
-          </router-link>
-          <router-link class="text-red-500 hover:underline">Report user</router-link>
-        </div>
-  
-        <div class="flex items-center justify-between mb-6">
-          <div class="flex gap-4">
-            <label>
-              <input type="radio" name="radio" checked id="default-gender" value="contact" class="mr-2">
-              <span class="text-white">Contact</span>
-            </label>
-            <label>
-              <input type="radio" name="radio" value="my-watches" class="mr-2">
-              <span class="text-white">My Selling Watches</span>
-            </label>
-          </div>
-          <div class="bg-secondary h-1 w-full"></div>
-        </div>
-  
-        <!-- Product Cards -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          <product-card
-            v-for="i in user.watches" :key="i.watch_id"
-            :productName="i.watch_name"
-            :productImage="i.image_url[0]"
-            :retailerName="user.username"
-            :retailerAvatar="user.image"
-            :price="i.price"
-            :watch_id="i.watch_id"
-            :seller_id="`/retailer/${user.user_id}`"
-          />
-        </div>
-  
-        <!-- Show More Link -->
-        <div class="flex justify-center mt-6">
-          <a class="text-blue-500 hover:underline" :href="`/discover/seller searching result?page=0&store=${user.username}`">
-            Show more watches
-          </a>
+  <section class="grid grid-cols-3">
+    <div class="left p-20">
+      <img :src="user.image" alt="user Image" class="w-full h-auto avatar">
+      <div class="bg-secondary h-0.5 w-full mt-6"></div>
+    </div>
+    <div class="col-span-2 right p-10">
+      <div class="name-tag flex gap-3 justify-start items-center">
+        <strong class="text-5xl capitalize name text-white">
+          {{ user.first_name }} {{ user.last_name }}
+        </strong>
+        <div class="location hover-underline-animation">
+          <p v-if="defaultAddress">
+            <span class="mdi mdi-map-marker"></span> {{ defaultAddress }}
+          </p>
+          <p v-else>
+            <span class="mdi mdi-map-marker"></span> N/A
+          </p>
         </div>
       </div>
-    </section>
-  </template>
-  
+      <div class="text-white">
+        {{ user.username }} <span class="mdi mdi-check-decagram-outline text-blue-500"></span>
+      </div>
+      <br>
+      
+      <div class="flex items-center justify-center mt-6 mb-6">
+        <p class="text-primary w-40">Thông tin liên hệ</p>
+        <div class="bg-secondary h-0.5 w-full"></div>
+      </div>
+      <div class="flex gap-10 items-center">
+        <router-link class="hover-underline-animation"><span class="mdi mdi-phone"></span> {{ defaultPhone }}</router-link>
+        <router-link class="hover-underline-animation"><span class="mdi mdi-email"></span> {{ user.email?user.email:'Không có thông tin' }}</router-link>
+      </div>
+      <div class="flex items-center justify-between mt-6 mb-6">
+      <p class="text-primary w-60">Đồng hồ của tôi</p>
+      <select v-model="selectedState" class="bg-[#414944] text-[#DEAC80] p-2">
+        <option value="all">Tất cả</option>
+        <option value="approved">Đã được duyệt</option>
+        <option value="pending">Đang chờ duyệt</option>
+        <option value="deleted">Đã xoá</option>
+      </select>
+      <div class="bg-secondary h-0.5 w-full ml-4"></div>
+    </div>
+      
+    <div class="grid grid-cols-4 gap-2">
+      <MyselfCard
+        v-for="i in filteredWatches" :key="i.watch_id"
+        :productName="i.watch_name"
+        :productImage="i.image_url[0]"
+        :retailerName="user.username"
+        :retailerAvatar="user.image"
+        :price="i.price"
+        :state="i.state"
+        :watch_id="i.watch_id"
+      />
+    </div>
+    <div v-if="filteredWatches.length === 0" class="text-center text-gray-500 mt-4">
+      Không có đồng hồ nào trong trạng thái này.
+    </div>
+      <div class="flex justify-center items-center mt-10">
+        <a class="hover-underline-animation" :href="`/discover/seller searching result?page=0&store=${user.username}`">Show more watches</a>
+    </div>
+    </div>
+  </section>
+</template>
+
   <script setup>
-  import ProductCard from '../components/ProductCard.vue';
-  import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed } from 'vue';
   import { useRoute } from 'vue-router';
   import { useUserStore } from '../stores/user';
   import { useAuthStore } from '../stores/auth';
+import MyselfCard from '../components/MyselfCard.vue';
   
   const route = useRoute();
   const userStore = useUserStore();
@@ -93,6 +92,28 @@
       return defaultAddr ? defaultAddr.address : addresses.value[0].detail;
     }
     return null;
+  });
+  const defaultPhone = computed(() => {
+    if (addresses.value && addresses.value.length > 0) {
+      const defaultAddr = addresses.value.find(addr => addr.isDefault === true);
+      return defaultAddr ? defaultAddr.phone : addresses.value[0].phone;
+    }
+    return null;
+  });
+
+  const selectedState = ref('all');
+
+  const filteredWatches = computed(() => {
+    switch (selectedState.value) {
+      case 'approved':
+        return user.value.watches.filter(watch => watch.state === 1);
+      case 'pending':
+        return user.value.watches.filter(watch => watch.state === 0);
+      case 'deleted':
+        return user.value.watches.filter(watch => watch.state === 2);
+      default:
+        return user.value.watches;
+    }
   });
   
   onMounted(async () => {

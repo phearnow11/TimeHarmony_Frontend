@@ -1,6 +1,9 @@
 <template>
   <div class="max-w-4xl mx-auto my-5 p-4">
     <!-- Modal -->
+    <div class="py-5">
+      <span class="font-semibold" :style="{ color: stateColor }">{{ checkState }}</span>
+    </div>
     <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center" @click.self="closeModal">
       <div class="absolute inset-0 modal" @click="closeModal"></div>
       <div class="relative z-10 max-w-3xl max-h-[90vh] overflow-hidden" @click.stop>
@@ -51,8 +54,9 @@
         <div class="justify-between flex items-center">
           <h1 class="text-xl font-semibold mb-2">{{ watchStore.watch_data.name }}</h1>
           <i
-          :class="['fa-sharp cursor-pointer', isBookmarked ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark', 'bookmark-icon', { 'active': isBookmarked }]"
-          @click="toggleBookmark"
+            :class="['fa-sharp cursor-pointer', isBookmarked ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark', 'bookmark-icon', { 'active': isBookmarked }]"
+            @click="toggleBookmark"
+            :style="{ pointerEvents: isWatchAvailable ? 'auto' : 'none', opacity: isWatchAvailable ? 1 : 0.5 }"
           ></i>
         </div>
         <div class="mb-4">
@@ -64,7 +68,7 @@
           <!-- Add shipping and quantity selectors here -->
         </div>
         <div class="flex gap-4">
-          <button @click="addToCart" class="flex-1 th-p-btn py-2 px-4 relative">
+          <button @click="addToCart" class="flex-1 th-p-btn py-2 px-4 relative" :disabled="!isWatchAvailable">
             <span :class="{ 'opacity-0': isLoadingCart }">Thêm vào giỏ</span>
             <div v-if="isLoadingCart" class="loader-container">
               <div class="loader">
@@ -72,7 +76,7 @@
               </div>
             </div>
           </button>
-          <button @click="buyNow" class="flex-1 th-p-btn py-2 px-4 relative">
+          <button @click="buyNow" class="flex-1 th-p-btn py-2 px-4 relative" :disabled="!isWatchAvailable">
             <span :class="{ 'opacity-0': isLoading }">Mua Ngay</span>
             <div v-if="isLoading" class="loader-container">
               <div class="loader">
@@ -295,6 +299,8 @@ const toggleBookmark = (event) => {
   event.stopPropagation();
   event.preventDefault();
   
+  if (!isWatchAvailable.value) return;
+  
   if (!isBookmarked.value) {
     userStore.saveFavoritesToServer(useAuthStore().user_id, watchId)
   } else {
@@ -305,6 +311,8 @@ const toggleBookmark = (event) => {
 };
 
 async function addToCart() {
+  if (!isWatchAvailable.value) return;
+
   console.log("WatchID: " + watchId);
   console.log("UserID: " + userStore.user_id);
   isLoadingCart.value = true;
@@ -336,6 +344,8 @@ async function addToCart() {
 }
 
 async function buyNow() {
+  if (!isWatchAvailable.value) return;
+
   isLoading.value = true;
   try {
     // Add the item to the cart
@@ -376,6 +386,24 @@ async function buyNow() {
     isLoading.value = false;
   }
 }
+
+const isWatchAvailable = computed(() => {
+  return watchStore.watch_data.state !== 0 && watchStore.watch_data.state !== 2;
+});
+
+const checkState = computed(() => {
+  if (watchStore.watch_data.state === 0)
+    return 'Đồng hồ chưa được duyệt';
+  else if (watchStore.watch_data.state === 2)
+    return 'Đồng hồ đã bị xoá'
+});
+
+const stateColor = computed(() => {
+  if (watchStore.watch_data.state === 0)
+    return 'gray'
+  else if (watchStore.watch_data.state === 2)
+    return 'red'
+});
 
 onMounted(async () => {
   await updateBookmarkStatus();
@@ -437,7 +465,13 @@ function prevImage() {
   backdrop-filter: blur(50px); /* Apply a blur effect to the background */
 }
 
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
+.state-gray { color: gray; }
+.state-red { color: red; }
 
 @media (min-width: 768px) {
   .thumbnail {

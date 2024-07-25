@@ -22,7 +22,7 @@
         {{ retailer.username }} <span class="mdi mdi-check-decagram-outline text-blue-500"></span>
       </div>
       <br>
-      <strong class="text-primary">RATINGS</strong>
+      <strong class="text-primary">Đánh giá</strong>
       <div class="rating">
         <p class="text-2xl mr-2">{{ rating.toFixed(1) }}</p>
         <div v-for="star in 5" :key="star" class="star-container">
@@ -35,30 +35,28 @@
         </div>
       </div>
       <div class="flex items-center justify-center mt-6 mb-6">
-        <p class="text-primary w-40">KEEP IN TOUCH</p>
+        <p class="text-primary w-40">Thông tin liên hệ</p>
         <div class="bg-secondary h-0.5 w-full"></div>
       </div>
       <div class="flex gap-10 items-center">
-        <button class="th-s-btn gap-2">Send message <span class="mdi mdi-message-text-outline"></span></button>
-        <router-link class="hover-underline-animation"><span class="mdi mdi-phone"></span> {{ retailer.phone?retailer.phone:"N/A" }}</router-link>
-        <router-link class="hover-underline-animation-r">Report user</router-link>
+        <router-link class="hover-underline-animation"><span class="mdi mdi-phone"></span> {{ defaultPhone?defaultPhone:"N/A" }}</router-link>
+        <a :href="`mailto:${userStore.email}`" class="hover-underline-animation">
+        <span class="mdi mdi-email"></span>
+        {{ userStore.email ? userStore.email : "N/A" }}
+        </a>        
+      <router-link class="hover-underline-animation-r">Report user</router-link>
       </div>
       <div class="flex items-center justify-center mt-6 mb-6">
-        <div class="select gender-select mydict w-96 flex items-center">
+        <div class="w-44">
           <label>
-            <input type="radio" name="radio" checked id="defaut-gender" value="contact">
-            <span class="select-op">Contact</span>
-          </label>
-          <label>
-            <input type="radio" name="radio" value="sell-watches">
-            <span class="select-op">My selling watches</span>
+            <span class="text-primary">Đồng hồ đăng bán</span>
           </label>
         </div>
         <div class="bg-secondary h-0.5 w-full"></div>
       </div>
       <div class="grid grid-cols-4 gap-2">
           <product-card
-            v-for="i in retailer.watches" :key="i"
+            v-for="i in approvedWatches" :key="i"
             :productName="i.watch_name"
             :productImage="i.image_url[0]"
             :retailerName="retailer.username"
@@ -111,6 +109,19 @@ const defaultAddress = computed(() => {
     return defaultAddr ? defaultAddr.address : addresses.value[0].detail;
   }
   return null;
+});
+
+const defaultPhone = computed(() => {
+  if (addresses.value && addresses.value.length > 0) {
+    const defaultAddr = addresses.value.find(addr => addr.isDefault === true);
+    console.log('Default address object:', defaultAddr);
+    return defaultAddr ? defaultAddr.phone : addresses.value[0].phone;
+  }
+  return null;
+});
+
+const approvedWatches = computed(() => {
+  return retailer.value.watches.filter(watch => watch.state === 1);
 });
 
 onMounted(async () => {
