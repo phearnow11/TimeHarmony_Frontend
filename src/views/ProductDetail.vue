@@ -314,6 +314,9 @@ async function addToCart() {
     if (response==='Watch state changed!') {
       popupMessage.value = 'Sản phẩm này đã tồn tại trong giỏ hàng';
       showProductDetails.value = false;
+    } else if (response==='Cannot buy your own watch!') {
+      popupMessage.value = 'Không được mua đồng hồ của bản thân mình';
+      showProductDetails.value = false;
     } else {
       currentProduct.value = {
         image: currentImage.value,
