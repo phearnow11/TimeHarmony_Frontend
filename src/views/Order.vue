@@ -234,7 +234,7 @@
     </div>
   </div>
 </template>
-
+<!-- 
 <script setup>
 import { useCartStore } from "../stores/cart";
 import { useUserStore } from "../stores/user";
@@ -317,7 +317,7 @@ const createOrder = async () => {
         const paymentResponse = await createVnPayPayment(totalAll.value, wids);
 
         // Log the response to understand its structure
-        console.log("Payment Response:", paymentResponse);
+        console.log("Payment Response:", paymentResponse.data);
 
         if (
           paymentResponse.data &&
@@ -394,6 +394,129 @@ onMounted(() => {
   }
 });
 //Tạo order
+</script> -->
+
+<script setup>
+import { useCartStore } from "../stores/cart";
+import { useUserStore } from "../stores/user";
+import { useAuthStore } from "../stores/auth";
+import { onMounted, ref, computed } from "vue";
+import { useRouter } from "vue-router";
+import OrderItem from "../components/OrderItem.vue";
+import { createVnPayPayment } from "../stores/payment";
+
+const cartStore = useCartStore();
+const userStore = useUserStore();
+const auth = useAuthStore();
+const router = useRouter();
+
+const selectedItems = ref([]);
+const shippingAddress = ref(null);
+const note = ref("");
+const selectedOption = ref("cod");
+const isProcessingPayment = ref(false);
+const shipFee = computed(() => cartStore.getShipFee);
+const totalPrice = computed(() => cartStore.getTotalPrice);
+const totalAll = computed(() => cartStore.getTotalWithShipping);
+
+onMounted(async () => {
+  selectedItems.value = cartStore.getSelectedItems;
+  shippingAddress.value = cartStore.getShippingAddress;
+  note.value = cartStore.getNote;
+
+  if (selectedItems.value.length === 0) {
+    router.push("/cart");
+    return;
+  }
+
+  if (window.location.search.includes("vnp_ResponseCode")) {
+    await handleVNPayReturn();
+  }
+});
+
+const createOrder = async () => {
+  const orderData = {
+    wids: selectedItems.value.map((item) => item.watch_id),
+    address: shippingAddress.value ? shippingAddress.value.id : null,
+    notice: note.value,
+    total_price: totalAll.value,
+    payment_method: selectedOption.value,
+    transaction_no: "123456", // Replace with actual logic
+  };
+
+  localStorage.setItem("pay_method", orderData.payment_method);
+  localStorage.setItem("trans_no", orderData.transaction_no);
+
+  try {
+    if (selectedOption.value === "card") {
+    userStore.setPendingOrder(orderData);
+    isProcessingPayment.value = true;
+
+    try {
+      const wids = Object.values(cartStore.selected_wids);
+      console.log('Selected WIDs:', wids);
+
+      const paymentResponse = await createVnPayPayment(totalAll.value, wids);
+      console.log('Payment Response:', paymentResponse);
+
+      if (
+        paymentResponse &&
+        paymentResponse.data &&
+        paymentResponse.data.data &&
+        paymentResponse.data.data.paymentUrl
+      ) {
+        window.location.href = paymentResponse.data.data.paymentUrl;
+      } else {
+        throw new Error("Invalid payment response");
+      }
+    } catch (error) {
+      console.error("Failed to process payment:", error);
+    } finally {
+      isProcessingPayment.value = false;
+    }
+    } else {
+      alert("Invalid payment method. Please try again.");
+    }
+  } catch (error) {
+    console.error("Failed to create order:", error);
+    alert("Failed to create order. Please try again.");
+  }
+};
+
+const handleVNPayReturn = async () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const vnpResponseCode = urlParams.get("vnp_ResponseCode");
+
+  if (vnpResponseCode === "00") {
+    try {
+      const result = await userStore.addOrder(auth.user_id, {
+        wids: selectedItems.value.map((item) => item.watch_id),
+        address: shippingAddress.value ? shippingAddress.value.id : null,
+        notice: note.value,
+        total_price: totalPrice.value,
+        payment_method: "card",
+      });
+      const mostRecentOrder = await userStore.getOrder(auth.user_id);
+      if (mostRecentOrder && mostRecentOrder.order_id) {
+        const orderDetails = await userStore.getOrderDetail(mostRecentOrder.order_id);
+        if (orderDetails && orderDetails.order_detail) {
+          userStore.setCurrentOrder(orderDetails);
+          router.push(`/orderconfirmation/${mostRecentOrder.order_id}`);
+        } else {
+          throw new Error("Invalid order details");
+        }
+      } else {
+        throw new Error("No recent order found");
+      }
+    } catch (error) {
+      console.error("Failed to create order:", error);
+      alert("Failed to create order. Please try again.");
+    }
+  } else {
+    alert("Payment was not successful. Please try again.");
+    router.push("/cart");
+  }
+};
 </script>
 
 <style scoped>
