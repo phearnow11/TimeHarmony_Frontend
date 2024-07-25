@@ -67,10 +67,11 @@
           payment_amount: parseFloat(amountString.value), // Assuming amount is numeric
           bank_code: bankCode.value,
           payment_method: vnpCardType.value,
+          isSuccess: responseCode=='00'?true:false,
         };
 
         
-  
+        console.log("PAYIN4: ",paymentDataToSave);
         const savedPayment = await savePaymentDetail(paymentDataToSave);
         console.log('Saved payment details:', savedPayment);
   

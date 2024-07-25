@@ -232,6 +232,8 @@ const shipFee = computed(() => cartStore.getShipFee);
 const totalPrice = computed(() => cartStore.getTotalPrice);
 const totalAll = computed(() => cartStore.getTotalWithShipping);
 
+const watch_ids = ref([]);
+
 onMounted(() => {
   selectedItems.value = cartStore.getSelectedItems;
   totalAll.value = cartStore.getTotalWithShipping;
@@ -289,7 +291,7 @@ const createOrder = async () => {
 
       isProcessingPayment.value = true;
       // VNPay payment process
-      const paymentResponse = await createVnPayPayment(Math.round(totalAll.value));
+      const paymentResponse = await createVnPayPayment(Math.round(totalAll.value),watch_ids.value);
       if (paymentResponse.data && paymentResponse.data.paymentUrl) {
         // Redirect to VNPay payment page
         window.location.href = paymentResponse.data.paymentUrl;

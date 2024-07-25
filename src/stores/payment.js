@@ -1,8 +1,8 @@
 import axios from 'axios';
 var api = import.meta.env.VITE_API_PORT
-export const createVnPayPayment = async (amount) => {
+export const createVnPayPayment = async (amount,watch_ids) => {
   try {
-    const response = await axios.get(`${api}/payment/vn-pay?amount=${amount}`);
+    const response = await axios.get(`${api}/payment/vn-pay?amount=${amount}`,watch_ids);
     return response.data;
   } catch (error) {
     console.error('Error creating VNPay payment:', error);

@@ -63,8 +63,9 @@
               <th class="pb-2 pl-2">Tên</th>
               <th class="pb-2 pl-2">Giá</th>
               <th class="pb-2">Trạng thái</th>
+              <th class="pb-2">Mã đơn</th>
+              <th class="pb-2">Thời gian tạo đơn</th>
               <th class="pb-2">Hành động</th>
-
             </tr>
           </thead>
           <tbody>
@@ -74,6 +75,8 @@
               <td class="py-4 pl-2">{{ list.watch_id }}</td>
               <td class="py-4 pl-2">{{ list.watch_name }}</td>
               <td class="py-4 pl-2">{{ formatPriceVND(list.price) }}</td>
+              <td></td>
+              <td></td>
               <td class="py-4 pl-2">{{ list.state === 3 ? 'Đang chờ duyệt đơn' : list.state }}</td>
               <td class="py-4 px-2">
                 <button class="hover-underline-animation" @click="setShip(list.watch_id)">Giao hàng</button>
