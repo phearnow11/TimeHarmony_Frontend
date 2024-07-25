@@ -37,9 +37,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useChatStore } from '../stores/chat';
 import { storeToRefs } from 'pinia';
+import { useAuthStore } from '../stores/auth';
+import axios from 'axios';
 
 const chatStore = useChatStore();
 const { user, messages, error } = storeToRefs(chatStore);
@@ -47,11 +49,19 @@ const { user, messages, error } = storeToRefs(chatStore);
 const newMessage = ref('');
 const selectedUser = ref(null);
 const messagesContainer = ref(null);
+const chatUsers = ref([]);
 
-const chatUsers = computed(() => {
-  const allUsers = ['b9d9eead-f1ae-488e-82db-c65b97f3f971', 'ea0df4b0-08c9-4a38-965c-82d72692efa2', "c367a07b-9184-479c-a6b6-3f2628f305a1"];
-  return allUsers.filter(u => u !== user.value?.id);
-});
+var api = import.meta.env.VITE_API_PORT
+
+const fetchChatUsers = async () => {
+  try {
+    const response = await axios.get(`${api}/chat/getall?user_id=${useAuthStore().user_id}`);
+    chatUsers.value = response.data.filter(u => u !== user.value?.id);
+  } catch (error) {
+    console.error('Error fetching chat users:', error);
+    chatUsers.value = []; // Handle error
+  }
+};
 
 const fetchMessages = async () => {
   if (selectedUser.value) {
@@ -86,6 +96,7 @@ const formatTime = (timestamp) => {
 onMounted(async () => {
   try {
     await chatStore.autoLogin();
+    await fetchChatUsers();
   } catch (loginError) {
     console.error('Error during auto-login:', loginError);
   }
