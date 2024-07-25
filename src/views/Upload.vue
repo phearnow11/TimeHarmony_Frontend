@@ -518,6 +518,7 @@ async function uploadHandle() {
     const response = await useWatchStore().uploadWatch(useUserStore().user_id, useUserStore().username);
     console.log("Upload successful", response);
     await new Promise(resolve => setTimeout(resolve, 2000));
+    window.location.reload()
   } catch (error) {
     console.error("Upload error", error);
   } finally {
