@@ -381,20 +381,22 @@ async function buyNow() {
 }
 
 const isWatchAvailable = computed(() => {
-  return watchStore.watch_data.state !== 0 && watchStore.watch_data.state !== 2;
+  return watchStore.watch_data.state !== 0 && watchStore.watch_data.state !== 2 
+  && watchStore.watch_data.state !== 3 && watchStore.watch_data.state !== 4
+  && watchStore.watch_data.state !== 5 && watchStore.watch_data.state !== 6;
 });
 
 const checkState = computed(() => {
   if (watchStore.watch_data.state === 0)
     return 'Đồng hồ chưa được duyệt';
-  else if (watchStore.watch_data.state === 2)
+  else if (watchStore.watch_data.state !== 1 && watchStore.watch_data.state > 0)
     return 'Đồng hồ đã bị xoá'
 });
 
 const stateColor = computed(() => {
   if (watchStore.watch_data.state === 0)
     return 'gray'
-  else if (watchStore.watch_data.state === 2)
+    else if (watchStore.watch_data.state !== 1 && watchStore.watch_data.state > 0)
     return 'red'
 });
 

@@ -414,6 +414,12 @@
           </div>
         </button>
       </div>
+      <PopUp 
+      :show="isPopupVisible" 
+      :product="currentProduct" 
+      :message="popupMessage" 
+      :showDetails="showProductDetails"
+      @close="isPopupVisible = false"  />
     </div>
   </div>
   <div v-else class="h-screen flex flex-col items-center justify-center">
@@ -427,11 +433,15 @@
 </template>
 
 <script setup>
-import { reactive, ref} from "vue";
+import { reactive, onMounted, ref} from "vue";
 import { useWatchStore } from "../stores/watch";
 import { useUserStore } from "../stores/user";
 import { useCloudinaryStore } from "../stores/cloudinary";
+import PopUp from "../components/PopUp.vue"
 
+const isPopupVisible = ref(false);
+const popupMessage = ref('');
+const showProductDetails = ref(true);
 const isLoading = ref(false);
 const auth = useUserStore()
 const watchData = reactive({
@@ -478,6 +488,15 @@ const imageURLs = ref([])
 //   textareaHeight.value = textareaRef.value.scrollHeight;
 // };
 
+onMounted(() => {
+  if (localStorage.getItem('showUploadSuccessPopup') === 'true') {
+    popupMessage.value = 'Đăng bán thành công';
+    isPopupVisible.value = true;
+    showProductDetails.value = false;
+    localStorage.removeItem('showUploadSuccessPopup');
+  }
+});
+
 async function uploadHandle() {
   isLoading.value = true;
    try {
@@ -518,7 +537,9 @@ async function uploadHandle() {
     const response = await useWatchStore().uploadWatch(useUserStore().user_id, useUserStore().username);
     console.log("Upload successful", response);
     await new Promise(resolve => setTimeout(resolve, 2000));
+    localStorage.setItem('showUploadSuccessPopup', 'true');
     window.location.reload()
+
   } catch (error) {
     console.error("Upload error", error);
   } finally {
