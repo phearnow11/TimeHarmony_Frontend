@@ -1,12 +1,31 @@
 import axios from 'axios';
 var api = import.meta.env.VITE_API_PORT
-export const createVnPayPayment = async (amount,watch_ids) => {
+export const createVnPayPayment = async (amount, wids) => {
+  const totalAmount = Math.round(amount);
+
   try {
-    const response = await axios.get(`${api}/payment/vn-pay?amount=${amount}`,watch_ids);
-    return response.data;
+    // Construct the URL
+    const url = `${api}/payment/vn-pay?amount=${totalAmount}`;
+
+    // Perform the GET request with custom headers
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Custom-Body': JSON.stringify(wids) // Use a custom header to send body data
+      },
+    });
+
+    if (!response.ok) {
+      console.log(JSON.stringify(wids));
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.data.paymentUrl; // Return the payment URL
   } catch (error) {
-    console.error('Error creating VNPay payment:', error);
-    throw error;
+    console.error('Error fetching payment URL:', error);
+    throw error; // Re-throw the error to be handled by the caller
   }
 };
 

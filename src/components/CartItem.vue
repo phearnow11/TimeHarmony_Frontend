@@ -47,6 +47,10 @@ export default {
       type: String,
       required: true
     },
+    watch_id: { // Add this line
+      type: String,
+      required: true
+    },
     price: {
       type: Number,
       required: true
