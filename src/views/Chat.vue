@@ -6,7 +6,7 @@
     </div>
     <div v-if="user" class="chat-interface">
       <div class="sidebar">
-        <div class="user-info">
+        <div class="user-info flex gap-2 items-center">
           <img :src="userInfo.image" alt="Ảnh đại diện" class="avatar" />
           <h2>{{ userInfo.username }}</h2>
         </div>
