@@ -2,9 +2,8 @@ import { defineStore } from "pinia";
 import { createClient } from "@supabase/supabase-js";
 import { useAuthStore } from "./auth";
 
-const supabaseUrl = "https://ehictsgsriefiguyhlvq.supabase.co";
-const supabaseAnonKey =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVoaWN0c2dzcmllZmlndXlobHZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjE4OTk1NjYsImV4cCI6MjAzNzQ3NTU2Nn0.k9rDNn_xvgNDN7JHW19JXKh_B9M3w3cUa0aijSuABGU";
+const supabaseUrl = import.meta.env.VITE_SUPABASEURL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASEANONKEY;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export const useChatStore = defineStore('chat', {
