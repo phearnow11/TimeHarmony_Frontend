@@ -78,6 +78,10 @@ const sendMessage = async () => {
   try {
     await chatStore.sendMessage(selectedUser.value, newMessage.value);
     newMessage.value = '';
+    if (selectedUser.value) {
+      console.log(selectedUser.value);
+      await axios.post(`${api}/chat/addtochat?user_id=${selectedUser.value}&user_id2=${user.value.id}`);
+    }
   } catch (sendError) {
     console.error('Error sending message:', sendError);
   }
@@ -85,6 +89,8 @@ const sendMessage = async () => {
 
 const selectUser = async (chatUser) => {
   selectedUser.value = chatUser;
+  chatStore.registerUser2(chatUser)
+  console.log(chatUser);
   await fetchMessages();
 };
 

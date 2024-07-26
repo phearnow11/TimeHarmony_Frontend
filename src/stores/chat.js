@@ -55,7 +55,7 @@ export const useChatStore = defineStore('chat', {
       }
     },
 
-    async addToChat(userId) {
+    async registerUser2(userId) {
       try {
         const { data: existingUser, error: existingUserError } = await supabase
           .from('users')
@@ -76,7 +76,7 @@ export const useChatStore = defineStore('chat', {
         }
       } catch (error) {
         this.error = error.message;
-        console.error('Add to chat failed:', error);
+        console.error('Registered failed:', error);
       }
     },
 
@@ -109,6 +109,9 @@ export const useChatStore = defineStore('chat', {
     },
 
     async sendMessage(receiverId, text) {
+      try {
+        
+      }catch{}
       const authStore = useAuthStore();
       const userId = authStore.user_id;
       
