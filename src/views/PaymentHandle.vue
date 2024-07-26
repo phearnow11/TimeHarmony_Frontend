@@ -149,7 +149,7 @@ onMounted(async () => {
         wids: JSON.stringify(useCartStore().selected_wids) // Add this line
       };
 
-      console.log('Thanh toán thất bại: ' + JSON.stringify(paymentFailDataToSave, null, 2));
+      console.log('Thanh toán thất bại: ' + JSON.stringify(paymentFailDataToSave));
       const savedPayment = await savePaymentDetail(paymentFailDataToSave);
       console.log('Chi tiết thanh toán đã được lưu:', savedPayment);
       
