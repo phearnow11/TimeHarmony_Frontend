@@ -1,13 +1,13 @@
 <template>
   <div class="chat-container">
     <div v-if="error" class="error">
-      <h3>Error:</h3>
+      <h3>Lỗi:</h3>
       <pre>{{ error }}</pre>
     </div>
     <div v-if="user" class="chat-interface">
       <div class="sidebar">
         <div class="user-info">
-          <img :src="userInfo.image" alt="Avatar" class="avatar" />
+          <img :src="userInfo.image" alt="Ảnh đại diện" class="avatar" />
           <h2>{{ userInfo.username }}</h2>
         </div>
         <div class="user-list">
@@ -15,51 +15,54 @@
                @click="selectUser(chatUser)"
                class="user-item"
                :class="{ 'active': selectedUser && selectedUser.user_id === chatUser.user_id }">
-            <img :src="chatUser.image" alt="Avatar" class="avatar" />
+            <img :src="chatUser.image" alt="Ảnh đại diện" class="avatar" />
             <div class="user-details">
               <span class="username">{{ chatUser.username }}</span>
-              <span class="last-message">Last message preview...</span>
+              <span class="last-message">Xem trước tin nhắn cuối cùng...</span>
             </div>
           </div>
         </div>
       </div>
       <div class="chat-window flex flex-end" v-if="selectedUser">
         <div class="chat-header">
-          <img :src="selectedUserInfo.image" alt="Avatar" class="avatar" />
+          <img :src="selectedUserInfo.image" alt="Ảnh đại diện" class="avatar" />
           <div class="chat-name">{{ selectedUserInfo.username }}</div>
         </div>
         <div class="messages-container" ref="messagesContainer">
-          <div v-for="message in messages" :key="message.id" 
-               class="message" 
-               :class="{ 'own-message': message.sender_id === user.id }">
-            <div class="message-content">
-              <p>{{ message.text }}</p>
+          <div v-for="message in messages" :key="message.id" class="message-wrapper">
+            <div v-if="message.sender_id !== user.id" class="message-avatar">
+              <img :src="getUserAvatar(message.sender_id)" alt="Ảnh đại diện" />
             </div>
-            <div class="message-time">{{ formatTime(message.created_at) }}</div>
+            <div class="message"
+                 :class="{ 'own-message': message.sender_id === user.id }">
+              <div class="message-content">
+                <p>{{ message.text }}</p>
+              </div>
+              <div class="message-time">{{ formatTime(message.created_at) }}</div>
+            </div>
           </div>
         </div>
         <div class="input-container flex w-full">
           <div class="ui-input-container flex-grow">
             <input
               required=""
-              v-model="newMessage" @keyup.enter="sendMessage" placeholder="Type a message..."
+              v-model="newMessage" @keyup.enter="sendMessage" placeholder="Nhập tin nhắn..."
               class="ui-input"
               type="text"
             />
             <div class="ui-input-underline"></div>
             <div class="ui-input-highlight"></div>
           </div>
-
-          <button class="th-p-btn gap-1" @click="sendMessage">Send 
+          <button class="th-p-btn gap-1 rounded-lg" @click="sendMessage">Gửi 
             <span class="mdi mdi-send"></span></button>
         </div>
       </div>
       <div v-else class="no-chat-selected w-full">
-        <p>Select a chat to start messaging</p>
+        <p>Chọn một cuộc trò chuyện để bắt đầu nhắn tin</p>
       </div>
     </div>
     <div v-else>
-      <p v-if="!user">Loading user data...</p>
+      <p v-if="!user">Đang tải dữ liệu người dùng...</p>
     </div>
   </div>
 </template>
@@ -273,18 +276,39 @@ watch(messages, () => {
   flex-direction: column;
 }
 
+.message-avatar img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.message-wrapper {
+  display: flex;
+  align-items: center; /* Đặt avatar và tin nhắn vào đầu cùng hàng */
+  margin-bottom: 15px;
+}
+
+.message-avatar {
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+}
+
 .message {
-  max-width: calc(100% - 40px); /* Ensure it's within the container */
-  margin-bottom: 35px;
+  max-width: calc(100% - 50px); /* Điều chỉnh kích thước tin nhắn để phù hợp với không gian */
   padding: 10px;
   border-radius: 10px;
   position: relative;
-  word-break: break-word; /* Ensure long words break */
-  overflow-wrap: break-word; /* Ensures proper wrapping */
+  word-break: break-word;
+  overflow-wrap: break-word;
+  display: flex;
+  align-items: center; /* Đảm bảo nội dung tin nhắn được căn chỉnh đúng */
 }
 
 .own-message {
-  align-self: flex-end;
+  align-self: flex-end; /* Căn chỉnh tin nhắn của bạn sang bên phải */
+  margin-left: auto; /* Đẩy tin nhắn của bạn sang bên phải */
 }
 
 .message-content {
@@ -292,7 +316,7 @@ watch(messages, () => {
   color: white;
   padding: 10px;
   border-radius: 10px;
-  position: relative; /* Ensure relative positioning for tail */
+  position: relative;
 }
 
 .own-message .message-content {
@@ -303,7 +327,7 @@ watch(messages, () => {
 .message:before {
   content: '';
   position: absolute;
-  bottom: 4px; /* Adjust the distance between tail and bubble */
+  bottom: 4px;
   width: 0;
   height: 0;
   border-style: solid;
@@ -312,13 +336,13 @@ watch(messages, () => {
 .message:not(.own-message):before {
   border-width: 10px 10px 0;
   border-color: #2c2c2c transparent transparent transparent;
-  left: 15px; /* Position the tail close to the bubble */
+  left: 15px;
 }
 
 .message.own-message:before {
   border-width: 10px 0 0 10px;
   border-color: #ffc876 transparent transparent transparent;
-  right: 15px; /* Position the tail close to the bubble */
+  right: 15px;
 }
 
 .message-time {
@@ -327,16 +351,16 @@ watch(messages, () => {
   margin-top: 5px;
   text-align: right;
   position: absolute;
-  bottom: -20px; /* Adjusted to position below the message */
-  right: 10px; /* Adjusted to align with the message */
-  min-width: 60px; /* Ensure minimum width */
-  white-space: nowrap; /* Prevent text from breaking */
+  bottom: -20px;
+  right: 10px;
+  min-width: 60px;
+  white-space: nowrap;
 }
 
 .message-content {
   white-space: pre-wrap;
   word-wrap: break-word;
-  padding-bottom: 20px; /* Ensure padding at the bottom for timestamp */
+  padding-bottom: 20px;
 }
 
 .input-container {
