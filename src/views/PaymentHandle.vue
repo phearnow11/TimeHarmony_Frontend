@@ -149,9 +149,9 @@ onMounted(async () => {
         wids: JSON.stringify(useCartStore().selected_wids) // Add this line
       };
 
-      console.log('Payment failed: ' + paymentFailDataToSave);
+      console.log('Thanh toán thất bại: ' + JSON.stringify(paymentFailDataToSave, null, 2));
       const savedPayment = await savePaymentDetail(paymentFailDataToSave);
-      console.log('Saved payment details:', savedPayment);
+      console.log('Chi tiết thanh toán đã được lưu:', savedPayment);
       
       useCartStore().selected_wids = [];
     }
