@@ -100,7 +100,7 @@ onMounted(async () => {
         bank_code: bankCode.value,
         payment_method: vnpCardType.value,
         isSuccess: isSuccess,
-        wids: JSON.stringify(useCartStore().selected_wids) // Add this line
+        wids: Object.values(useCartStore().selected_wids),
       };
       console.log('Payment ok: ' + paymentDataToSave);
       const savedPayment = await savePaymentDetail(paymentDataToSave);
@@ -146,7 +146,7 @@ onMounted(async () => {
         bank_code: bankCode.value,
         payment_method: vnpCardType.value,
         isSuccess: isSuccess,
-        wids: JSON.stringify(useCartStore().selected_wids) // Add this line
+        wids: Object.values(useCartStore().selected_wids) // Add this line
       };
 
       console.log('Thanh toán thất bại: ' + JSON.stringify(paymentFailDataToSave));
