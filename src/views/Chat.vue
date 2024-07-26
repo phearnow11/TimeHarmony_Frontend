@@ -54,7 +54,7 @@
             <span class="mdi mdi-send"></span></button>
         </div>
       </div>
-      <div v-else class="no-chat-selected">
+      <div v-else class="no-chat-selected w-full">
         <p>Select a chat to start messaging</p>
       </div>
     </div>
@@ -248,7 +248,6 @@ watch(messages, () => {
   display: flex;
   flex-direction: column;
   background-color: #0e0e0e;
-  margin-left: 300px; /* Space for sidebar */
 }
 
 .chat-header {
