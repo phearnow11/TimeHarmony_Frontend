@@ -76,7 +76,7 @@ onMounted(async () => {
     // Log the received payment data
     const pendingOrder = userStore.getPendingOrder();
     console.log('Watch IDs:', pendingOrder.wids);
-    console.log('aaaa   ' + JSON.stringify(pendingOrder));
+    console.log('Pending Order:', JSON.stringify(pendingOrder));
 
     console.log('Received payment data:', paymentData);
 
@@ -93,24 +93,24 @@ onMounted(async () => {
     
     const isSuccess = paymentData.vnp_ResponseCode === '00';
 
+    // Prepare payment data to save
+    const paymentDataToSave = {
+      transaction_no: transactionNo.value,
+      payment_amount: parseFloat(amountString.value),
+      bank_code: bankCode.value,
+      payment_method: vnpCardType.value,
+      order_id: pendingOrder.order_id,
+      isSuccess: isSuccess,
+      wids: pendingOrder.wids
+    };
+
+    console.log('Payment data to save:', JSON.stringify(paymentDataToSave));
+    const savedPayment = await savePaymentDetail(paymentDataToSave);
+    console.log('Saved payment details:', savedPayment);
+
     if (isSuccess) {
-      successMessage.value = 'Payment successful. Saving payment details...';
       paymentStatus.value = 'Successful';
-
-      // Save payment details to the backend
-      const paymentDataToSave = {
-        transaction_no: transactionNo.value,
-        payment_amount: parseFloat(amountString.value),
-        bank_code: bankCode.value,
-        payment_method: vnpCardType.value,
-        isSuccess: isSuccess,
-        wids: pendingOrder.wids // Add this line
-      };
-      console.log('Payment ok: ' + JSON.stringify(paymentDataToSave));
-      const savedPayment = await savePaymentDetail(paymentDataToSave);
-      console.log('Saved payment details:', savedPayment);
-
-      successMessage.value = 'Payment details saved. Creating order...';
+      successMessage.value = 'Payment successful. Creating order...';
 
       // Retrieve the pending order data
       const orderData = userStore.getPendingOrder();
@@ -125,6 +125,7 @@ onMounted(async () => {
       console.log('Order creation result:', result);
       const orderID = await userStore.getNewestOrder(authStore.user_id);
       console.log('Order ID:', orderID);
+      
       if (result) {
         orderId.value = result.order_id;
         const orderDetails = await userStore.getOrderDetail(orderID);
@@ -142,27 +143,14 @@ onMounted(async () => {
     } else {
       paymentStatus.value = 'Failed';
       errorMessage.value = `Payment was not successful. Response code: ${paymentData.vnp_ResponseCode}`;
-      
-      // Save failed payment details
-      const paymentFailDataToSave = {
-        transaction_no: transactionNo.value,
-        payment_amount: parseFloat(amountString.value),
-        bank_code: bankCode.value,
-        payment_method: vnpCardType.value,
-        isSuccess: isSuccess,
-        wids: pendingOrder.wids // Add this line
-      };
-
-      console.log('Thanh toán thất bại: ' + JSON.stringify(paymentFailDataToSave));
-      const savedPayment = await savePaymentDetail(paymentFailDataToSave);
-      console.log('Chi tiết thanh toán đã được lưu:', savedPayment);
-      
       useCartStore().selected_wids = [];
+      startCountdown();
     }
   } catch (error) {
     console.error('Error handling payment result:', error);
     errorMessage.value = 'An unexpected error occurred. Please try again or contact support.';
     paymentStatus.value = 'Error';
+    startCountdown();
   }
 });
 </script>
