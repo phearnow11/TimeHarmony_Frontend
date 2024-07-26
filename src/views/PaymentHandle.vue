@@ -74,6 +74,10 @@ onMounted(async () => {
     const paymentData = Object.fromEntries(urlParams.entries());
 
     // Log the received payment data
+    const pendingOrder = userStore.getPendingOrder();
+    console.log('Watch IDs:', pendingOrder.watch_id);
+    console.log('aaaa   ' + pendingOrder);
+    
     console.log('Received payment data:', paymentData);
 
     // Set the payment data values
@@ -100,7 +104,7 @@ onMounted(async () => {
         bank_code: bankCode.value,
         payment_method: vnpCardType.value,
         isSuccess: isSuccess,
-        wids: Object.values(useCartStore().selected_wids),
+        wids: JSON.stringify(useCartStore().selected_wids) // Add this line
       };
       console.log('Payment ok: ' + paymentDataToSave);
       const savedPayment = await savePaymentDetail(paymentDataToSave);
@@ -146,7 +150,7 @@ onMounted(async () => {
         bank_code: bankCode.value,
         payment_method: vnpCardType.value,
         isSuccess: isSuccess,
-        wids: Object.values(useCartStore().selected_wids) // Add this line
+        wids: JSON.stringify(useCartStore().selected_wids) // Add this line
       };
 
       console.log('Thanh toán thất bại: ' + JSON.stringify(paymentFailDataToSave));

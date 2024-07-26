@@ -25,6 +25,7 @@ export const useUserStore = defineStore("user", {
     payment_method: null,
     cart_num: 0,
     role: null,
+    
   }),
 
   actions: {
