@@ -111,5 +111,36 @@ export const useAdminStore = defineStore("admin", {
         this.isLoading = false;
       }
     },
+
+    ban(id) {
+      const token = useAuthStore().token;
+      console.log(id);
+      axios.post(`${api}/admin/ban/${id}`, {}, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error('Error banning user:', error);
+      });
+    },
+
+    unBan(id) {
+      const token = useAuthStore().token;
+      axios.post(`${api}/admin/unban/${id}`, {}, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error('Error banning user:', error);
+      });
+    },
   },
 });
