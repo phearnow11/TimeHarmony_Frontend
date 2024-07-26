@@ -76,8 +76,8 @@ onMounted(async () => {
     // Log the received payment data
     const pendingOrder = userStore.getPendingOrder();
     console.log('Watch IDs:', pendingOrder.watch_id);
-    console.log('aaaa   ' + pendingOrder);
-    
+    console.log('aaaa   ' + JSON.stringify(pendingOrder));
+
     console.log('Received payment data:', paymentData);
 
     // Set the payment data values
