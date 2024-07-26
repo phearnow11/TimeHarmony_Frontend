@@ -44,8 +44,7 @@ const countdown = ref(30);
 let countdownTimer;
 
 const parseDateTimeString = (dateTimeString) => {
-  // Implement your date parsing logic here
-  return dateTimeString;
+  return new Date(dateTimeString).toLocaleString();
 };
 
 const returnToHomepage = () => {
@@ -73,14 +72,9 @@ onMounted(async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const paymentData = Object.fromEntries(urlParams.entries());
 
-    // Log the received payment data
     const pendingOrder = userStore.getPendingOrder();
-    console.log('Watch IDs:', pendingOrder.wids);
-    console.log('Pending Order:', JSON.stringify(pendingOrder));
-
     console.log('Received payment data:', paymentData);
 
-    // Set the payment data values
     amountString.value = paymentData.vnp_Amount;
     bankCode.value = paymentData.vnp_BankCode;
     payDate.value = paymentData.vnp_PayDate;
@@ -93,25 +87,24 @@ onMounted(async () => {
     
     const isSuccess = paymentData.vnp_ResponseCode === '00';
 
-    // Prepare payment data to save
-    const paymentDataToSave = {
-      transaction_no: transactionNo.value,
-      payment_amount: parseFloat(amountString.value),
-      bank_code: bankCode.value,
-      payment_method: vnpCardType.value,
-      isSuccess: isSuccess,
-      wids: pendingOrder.wids
-    };
-
-    console.log('Payment data to save:', JSON.stringify(paymentDataToSave));
-    const savedPayment = await savePaymentDetail(paymentDataToSave);
-    console.log('Saved payment details:', savedPayment);
-
     if (isSuccess) {
+      successMessage.value = 'Payment successful. Saving payment details...';
       paymentStatus.value = 'Successful';
-      successMessage.value = 'Payment successful. Creating order...';
 
-      // Retrieve the pending order data
+      const paymentDataToSave = {
+        transaction_no: transactionNo.value,
+        payment_amount: parseFloat(amountString.value),
+        bank_code: bankCode.value,
+        payment_method: vnpCardType.value,
+        isSuccess: isSuccess.toString(),
+        wids: JSON.stringify(pendingOrder.wids)
+      };
+      console.log('Payment ok: ' + JSON.stringify(paymentDataToSave));
+      const savedPayment = await savePaymentDetail(paymentDataToSave);
+      console.log('Saved payment details:', savedPayment);
+
+      successMessage.value = 'Payment details saved. Creating order...';
+
       const orderData = userStore.getPendingOrder();
 
       if (!orderData) {
@@ -124,7 +117,6 @@ onMounted(async () => {
       console.log('Order creation result:', result);
       const orderID = await userStore.getNewestOrder(authStore.user_id);
       console.log('Order ID:', orderID);
-      
       if (result) {
         orderId.value = result.order_id;
         const orderDetails = await userStore.getOrderDetail(orderID);
@@ -142,6 +134,20 @@ onMounted(async () => {
     } else {
       paymentStatus.value = 'Failed';
       errorMessage.value = `Payment was not successful. Response code: ${paymentData.vnp_ResponseCode}`;
+      
+      const paymentFailDataToSave = {
+        transaction_no: transactionNo.value,
+        payment_amount: parseFloat(amountString.value),
+        bank_code: bankCode.value,
+        payment_method: vnpCardType.value,
+        isSuccess: isSuccess.toString(),
+        wids: JSON.stringify(pendingOrder.wids)
+      };
+
+      console.log('Failed Payment: ' + JSON.stringify(paymentFailDataToSave));
+      const savedPayment = await savePaymentDetail(paymentFailDataToSave);
+      console.log('Payment details saved:', savedPayment);
+      
       useCartStore().selected_wids = [];
       startCountdown();
     }
@@ -149,7 +155,6 @@ onMounted(async () => {
     console.error('Error handling payment result:', error);
     errorMessage.value = 'An unexpected error occurred. Please try again or contact support.';
     paymentStatus.value = 'Error';
-    startCountdown();
   }
 });
 </script>
