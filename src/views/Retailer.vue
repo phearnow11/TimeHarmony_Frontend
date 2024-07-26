@@ -144,7 +144,7 @@ onMounted(async () => {
 });
 
 const mess = () => {
-  useChatStore().addToChat(retailer.user_id)
+  useChatStore().addToChat(retailer.value.user_id)
   .then(
     window.location.replace('/chat')
   )
