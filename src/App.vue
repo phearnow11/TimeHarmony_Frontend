@@ -5,6 +5,7 @@
 
 <template>
   <div class="app-container">
+    <div id="global-notification"></div>
     <NavBar/>
     <main class="main-content">
       <router-view/>

@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "../stores/auth";
 import { useUserStore } from "../stores/user";
-import { onBeforeUnmount } from "vue";
+import { useChatStore } from "../stores/chat";
+
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -203,15 +204,25 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
+  const userStore = useUserStore();
+  const chatStore = useChatStore();
   const user_id = authStore.user_id;
 
   if (user_id != null) {
-    useUserStore().loadUser(user_id);
+    await userStore.loadUser(user_id);
+    
+    // Subscribe to messages if authenticated and not already subscribed
+    if (!chatStore.subscription) {
+      chatStore.subscribeToMessages();
+    }
     
     // Redirect authenticated users away from login, signup, and forgot pages
     if (['/login', '/signup', '/forgot'].includes(to.path)) {
       return next('/');
     }
+  } else {
+    // Unsubscribe from messages if not authenticated
+    chatStore.unsubscribeFromMessages();
   }
   next();
 });

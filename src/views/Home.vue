@@ -45,8 +45,9 @@
 <script setup>
 import Carousel from '../components/Carousel.vue';
 import Brand from '../components/Brand.vue';
-import { ref, computed, onMounted, defineAsyncComponent } from 'vue';
+import { ref, computed, onMounted, defineAsyncComponent, onUnmounted } from 'vue';
 import axios from 'axios';
+import { useChatStore } from '../stores/chat';
 
 const ProductCard = defineAsyncComponent(() => import('../components/ProductCard.vue'));
 const SkeletonCard = defineAsyncComponent(() => import('../components/SkeletonCard.vue'));
@@ -74,6 +75,29 @@ onMounted(async () => {
     console.error('Error fetching watches:', error);
   }
 })
+
+// const chatStore = useChatStore();
+// const showNotification = ref(false);
+// const notificationMessage = ref('');
+
+// const handleNewMessage = (event) => {
+//   const message = event.detail;
+//   notificationMessage.value = `New message from ${message.sender_id}: ${message.text}`;
+//   showNotification.value = true;
+//   setTimeout(() => {
+//     showNotification.value = false;
+//   }, 5000); // Hide notification after 5 seconds
+// };
+
+// onMounted(() => {
+//   window.addEventListener('newMessage', handleNewMessage);
+//   chatStore.subscribeToMessages();
+// });
+
+// onUnmounted(() => {
+//   window.removeEventListener('newMessage', handleNewMessage);
+//   chatStore.unsubscribeFromMessages();
+// });
 </script>
 
 <style scoped>
