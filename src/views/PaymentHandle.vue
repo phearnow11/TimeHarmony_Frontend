@@ -13,10 +13,9 @@
     <p v-if="successMessage" class="success-message">{{ successMessage }}</p>
 
     <div v-if="paymentStatus === 'Failed'">
-    <p>Returning to homepage in {{ countdown }} seconds...</p>
-    <button @click="returnToHomepage">Return to Homepage</button>
-  </div>
-
+      <p>Returning to homepage in {{ countdown }} seconds...</p>
+      <button @click="returnToHomepage">Return to Homepage</button>
+    </div>
   </div>
 </template>
 
@@ -26,7 +25,7 @@ import { useRouter } from 'vue-router';
 import { useUserStore } from '../stores/user';
 import { useAuthStore } from '../stores/auth';
 import { savePaymentDetail } from '../stores/payment';
-
+import { useCartStore } from '../stores/cart';
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -50,29 +49,32 @@ const parseDateTimeString = (dateTimeString) => {
 };
 
 const returnToHomepage = () => {
-router.push('/');
+  router.push('/');
 };
 
 const startCountdown = () => {
-countdownTimer = setInterval(() => {
-  countdown.value--;
-  if (countdown.value <= 0) {
-    clearInterval(countdownTimer);
-    returnToHomepage();
-  }
-}, 1000);
+  countdownTimer = setInterval(() => {
+    countdown.value--;
+    if (countdown.value <= 0) {
+      clearInterval(countdownTimer);
+      returnToHomepage();
+    }
+  }, 1000);
 };
 
 onUnmounted(() => {
-if (countdownTimer) {
-  clearInterval(countdownTimer);
-}
+  if (countdownTimer) {
+    clearInterval(countdownTimer);
+  }
 });
 
 onMounted(async () => {
   try {
     const urlParams = new URLSearchParams(window.location.search);
     const paymentData = Object.fromEntries(urlParams.entries());
+
+    // Log the received payment data
+    console.log('Received payment data:', paymentData);
 
     // Set the payment data values
     amountString.value = paymentData.vnp_Amount;
@@ -81,7 +83,7 @@ onMounted(async () => {
     transactionNo.value = paymentData.vnp_TransactionNo;
     responseCode.value = paymentData.vnp_ResponseCode;
     vnpCardType.value = paymentData.vnp_CardType;
-    
+
     userStore.transaction_no = paymentData.vnp_TransactionNo;
     userStore.payment_method = paymentData.vnp_CardType;
 
@@ -95,11 +97,9 @@ onMounted(async () => {
         payment_amount: parseFloat(amountString.value), // Assuming amount is numeric
         bank_code: bankCode.value,
         payment_method: vnpCardType.value,
-        isSuccess: responseCode=='00'?true:false,
+        isSuccess: paymentData.vnp_ResponseCode === '00',
       };
 
-      
-      console.log("PAYIN4: ",paymentDataToSave);
       const savedPayment = await savePaymentDetail(paymentDataToSave);
       console.log('Saved payment details:', savedPayment);
 
@@ -117,10 +117,10 @@ onMounted(async () => {
       const result = await userStore.addOrder(authStore.user_id, orderData);
       console.log('Order creation result:', result);
       const orderID = await userStore.getNewestOrder(authStore.user_id);
-      console.log('Order ID:' + orderID);
+      console.log('Order ID:', orderID);
       if (result) {
         orderId.value = result.order_id;
-        const orderDetails = await userStore.getOrderDetail(orderID)
+        const orderDetails = await userStore.getOrderDetail(orderID);
         console.log('Order details:', orderDetails);
 
         if (orderDetails) {
@@ -133,16 +133,17 @@ onMounted(async () => {
         throw new Error('Order creation failed');
       }
     } else {
-    paymentStatus.value = 'Failed';
-    errorMessage.value = `Payment was not successful. Response code: ${paymentData.vnp_ResponseCode}`;
+      paymentStatus.value = 'Failed';
+      errorMessage.value = `Payment was not successful. Response code: ${paymentData.vnp_ResponseCode}`;
+      useCartStore().selected_wids = [];
+      startCountdown();
+    }
+  } catch (error) {
+    console.error('Error handling payment result:', error);
+    errorMessage.value = 'An unexpected error occurred. Please try again or contact support.';
+    paymentStatus.value = 'Error';
     startCountdown();
   }
-} catch (error) {
-  console.error('Error handling payment result:', error);
-  errorMessage.value = 'An unexpected error occurred. Please try again or contact support.';
-  paymentStatus.value = 'Error';
-  startCountdown();
-}
 });
 </script>
 
