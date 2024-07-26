@@ -1,10 +1,12 @@
 import { defineStore } from "pinia";
 import { createClient } from "@supabase/supabase-js";
 import { useAuthStore } from "./auth";
+import axios from "axios";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASEURL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASEANONKEY;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
+var api = import.meta.env.VITE_API_PORT;
 
 export const useChatStore = defineStore('chat', {
   state: () => ({
@@ -15,6 +17,10 @@ export const useChatStore = defineStore('chat', {
     subscription: null,
   }),
   actions: {
+    async addToChat(user_id){
+      axios.post(`${api}/chat/addtochat?user_id=${useAuthStore().user_id}&user_id2=${user_id}`);
+    },
+
     async registerUser() {
       const authStore = useAuthStore();
       const userId = authStore.user_id;
