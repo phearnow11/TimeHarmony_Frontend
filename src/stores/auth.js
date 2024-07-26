@@ -74,7 +74,7 @@ export const useAuthStore = defineStore('auth', {
             });
         },
         logout() {
-            axios.post(`${api}/api/auth/logout?member_id=${this.user_id}`)
+            axios.post(`${api}/api/auth/logout?member_id=${this.user_id}`,{})
             this.user_id = null;
             this.token = null;
             Cookies.remove('token');
