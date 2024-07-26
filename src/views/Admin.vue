@@ -27,7 +27,9 @@
               <th class="p-2 border-b">Email</th>
               <th class="p-2 border-b">Username</th>
               <th class="p-2 border-b">Số Điện Thoại</th>
+              <th class="p-2 border-b">Vai trò</th>
               <th class="p-2 border-b">Trạng Thái</th>
+              <th class="p-2 border-b">Cấm người dùng</th>
             </tr>
           </thead>
           <tbody>
@@ -40,7 +42,13 @@
               <td class="p-2 border-b">{{ member.email }}</td>
               <td class="p-2 border-b">{{ member.user_log_info.username }}</td>
               <td class="p-2 border-b">{{ member.phone || 'N/A' }}</td>
+              <td class="p-2 border-b">{{ member.user_log_info.authorities.authority || 'N/A' }}</td>
               <td class="p-2 border-b">{{ member.is_active ? 'Active' : 'Inactive' }}</td>
+              <td class="p-2 border-b"><div class="hover-underline-animation-r flex items-center justify-center">
+                Cấm <span class="mdi mdi-cancel"></span>
+              </div>
+            </td>
+                
             </tr>
           </tbody>
         </table>
