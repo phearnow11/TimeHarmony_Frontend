@@ -45,6 +45,7 @@
         {{ userStore.email ? userStore.email : "N/A" }}
         </a>        
       <router-link class="hover-underline-animation-r">Report user</router-link>
+      <button class="th-s-btn" @click="mess">Nhắn tin</button>
       </div>
       <div class="flex items-center justify-center mt-6 mb-6">
         <div class="w-44">
@@ -78,6 +79,8 @@ import ProductCard from '../components/ProductCard.vue';
 import { ref, onMounted, watch, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useUserStore } from '../stores/user';
+import { useChatStore } from '../stores/chat';
+import router from '../router';
 
 const route = useRoute();
 const userStore = useUserStore();
@@ -139,6 +142,13 @@ onMounted(async () => {
     console.error('Error fetching retailer info:', error);
   }
 });
+
+const mess = () => {
+  useChatStore().addToChat(retailer.value.user_id)
+  .then(
+    window.location.replace('/chat')
+  )
+}
 </script>
 
 <style scoped>

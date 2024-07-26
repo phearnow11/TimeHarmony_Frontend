@@ -1,11 +1,12 @@
 import { defineStore } from "pinia";
 import { createClient } from "@supabase/supabase-js";
 import { useAuthStore } from "./auth";
+import axios from "axios";
 
-const supabaseUrl = "https://ehictsgsriefiguyhlvq.supabase.co";
-const supabaseAnonKey =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVoaWN0c2dzcmllZmlndXlobHZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjE4OTk1NjYsImV4cCI6MjAzNzQ3NTU2Nn0.k9rDNn_xvgNDN7JHW19JXKh_B9M3w3cUa0aijSuABGU";
+const supabaseUrl = import.meta.env.VITE_SUPABASEURL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASEANONKEY;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
+var api = import.meta.env.VITE_API_PORT;
 
 export const useChatStore = defineStore('chat', {
   state: () => ({
@@ -16,6 +17,10 @@ export const useChatStore = defineStore('chat', {
     subscription: null,
   }),
   actions: {
+    async addToChat(user_id){
+      axios.post(`${api}/chat/addtochat?user_id=${useAuthStore().user_id}&user_id2=${user_id}`);
+    },
+
     async registerUser() {
       const authStore = useAuthStore();
       const userId = authStore.user_id;
@@ -154,6 +159,11 @@ export const useChatStore = defineStore('chat', {
           },
           payload => {
             console.log('New message:', payload.new);
+            console.log(import.meta.env.VITE_ADMIN_USERID);
+            if(payload.new.sender_id==import.meta.env.VITE_ADMIN_USERID){
+              console.log("YOU HAVE BEEN BANNED!");
+              useAuthStore().logout()
+            }
             this.messages.push(payload.new);
           }
         )
