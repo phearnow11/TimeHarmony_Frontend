@@ -102,7 +102,7 @@ onMounted(async () => {
         isSuccess: isSuccess,
         wids: JSON.stringify(useCartStore().selected_wids) // Add this line
       };
-
+      console.log('Payment ok: ' + paymentDataToSave);
       const savedPayment = await savePaymentDetail(paymentDataToSave);
       console.log('Saved payment details:', savedPayment);
 
@@ -140,7 +140,7 @@ onMounted(async () => {
       errorMessage.value = `Payment was not successful. Response code: ${paymentData.vnp_ResponseCode}`;
       
       // Save failed payment details
-      const paymentDataToSave = {
+      const paymentFailDataToSave = {
         transaction_no: transactionNo.value,
         payment_amount: parseFloat(amountString.value),
         bank_code: bankCode.value,
@@ -149,16 +149,16 @@ onMounted(async () => {
         wids: JSON.stringify(useCartStore().selected_wids) // Add this line
       };
 
-      await savePaymentDetail(paymentDataToSave);
+      console.log('Payment failed: ' + paymentFailDataToSave);
+      const savedPayment = await savePaymentDetail(paymentFailDataToSave);
+      console.log('Saved payment details:', savedPayment);
       
       useCartStore().selected_wids = [];
-      startCountdown();
     }
   } catch (error) {
     console.error('Error handling payment result:', error);
     errorMessage.value = 'An unexpected error occurred. Please try again or contact support.';
     paymentStatus.value = 'Error';
-    startCountdown();
   }
 });
 </script>
