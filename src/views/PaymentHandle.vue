@@ -87,17 +87,20 @@ onMounted(async () => {
     userStore.transaction_no = paymentData.vnp_TransactionNo;
     userStore.payment_method = paymentData.vnp_CardType;
 
-    if (paymentData.vnp_ResponseCode === '00') {
+    const isSuccess = paymentData.vnp_ResponseCode === '00';
+
+    if (isSuccess) {
       successMessage.value = 'Payment successful. Saving payment details...';
       paymentStatus.value = 'Successful';
 
       // Save payment details to the backend
       const paymentDataToSave = {
         transaction_no: transactionNo.value,
-        payment_amount: parseFloat(amountString.value), // Assuming amount is numeric
+        payment_amount: parseFloat(amountString.value),
         bank_code: bankCode.value,
         payment_method: vnpCardType.value,
-        isSuccess: paymentData.vnp_ResponseCode === '00',
+        isSuccess: isSuccess,
+        wids: JSON.stringify(useCartStore().selected_wids) // Add this line
       };
 
       const savedPayment = await savePaymentDetail(paymentDataToSave);
@@ -135,6 +138,19 @@ onMounted(async () => {
     } else {
       paymentStatus.value = 'Failed';
       errorMessage.value = `Payment was not successful. Response code: ${paymentData.vnp_ResponseCode}`;
+      
+      // Save failed payment details
+      const paymentDataToSave = {
+        transaction_no: transactionNo.value,
+        payment_amount: parseFloat(amountString.value),
+        bank_code: bankCode.value,
+        payment_method: vnpCardType.value,
+        isSuccess: isSuccess,
+        wids: JSON.stringify(useCartStore().selected_wids) // Add this line
+      };
+
+      await savePaymentDetail(paymentDataToSave);
+      
       useCartStore().selected_wids = [];
       startCountdown();
     }

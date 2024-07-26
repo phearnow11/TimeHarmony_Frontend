@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
-var api = import.meta.env.VITE_API_PORT
+const api = import.meta.env.VITE_API_PORT;
+
 export const useStaffStore = defineStore("staff", {
   state: () => ({
     unapprovedWatches: [],
@@ -11,16 +12,19 @@ export const useStaffStore = defineStore("staff", {
     async getAllWatch(state) {
       try {
         const res = await axios.get(`${api}/staff/get/watch-state/${state}`);
+        const watches = res.data;
+    
         if (state === 0) {
-          this.unapprovedWatches = res.data;
+          this.unapprovedWatches = watches;
         } else if (state === 1) {
-          this.approvedWatches = res.data;
+          this.approvedWatches = watches;
         } else if (state === 2) {
-          this.deleteWatches = res.data;
+          this.deleteWatches = watches;
         }
-        console.log(res.data);
+        return watches;
       } catch (err) {
         console.error(err);
+        return [];
       }
     },
     async approveWatch(watch_id) {
@@ -28,7 +32,6 @@ export const useStaffStore = defineStore("staff", {
       try {
         const res = await axios.patch(`${api}/staff/approve-watch?watch_id=${watch_id}`);
         console.log('Watch Approved:', res.data);
-        // Move the watch from unapproved to approved
         const watchIndex = this.unapprovedWatches.findIndex(w => w.watch_id === watch_id);
         if (watchIndex !== -1) {
           const [watch] = this.unapprovedWatches.splice(watchIndex, 1);
@@ -38,15 +41,18 @@ export const useStaffStore = defineStore("staff", {
         console.error(err);
       }
     },
-    async deleteWatch(watch_id) {
-      console.log('Watch Deleted ID:', watch_id);
+    async unapprovedWatchOfSeller(data) {
+      console.log('Watch Unapproved ID:', data.watch_id);
       try {
-        const res = await axios.delete(`${api}/staff/delete-watch?watch_id=${watch_id}`);
-        console.log('Watch Deleted:', res.data);
-        // Remove the watch from all lists
-        this.unapprovedWatches = this.unapprovedWatches.filter(w => w.watch_id !== watch_id);
-        this.approvedWatches = this.approvedWatches.filter(w => w.watch_id !== watch_id);
-        this.deleteWatches = this.deleteWatches.filter(w => w.watch_id !== watch_id);
+        const res = await axios.post(`${api}/staff/send/unapprove-report`, data);
+        console.log('Watch Unapproved:', res.data);
+        const watch = this.approvedWatches.find(w => w.watch_id === data.watch_id) || 
+                      this.unapprovedWatches.find(w => w.watch_id === data.watch_id);
+        if (watch) {
+          this.deleteWatches.push(watch);
+          this.unapprovedWatches = this.unapprovedWatches.filter(w => w.watch_id !== data.watch_id);
+          this.approvedWatches = this.approvedWatches.filter(w => w.watch_id !== data.watch_id);
+        }
       } catch (err) {
         console.error(err);
       }
@@ -56,7 +62,6 @@ export const useStaffStore = defineStore("staff", {
       try {
         const res = await axios.patch(`${api}/staff/unapprove-watch?watch_id=${watch_id}`);
         console.log('Watch Unapproved:', res.data);
-        // Move the watch back to unapproved
         const watchIndex = this.approvedWatches.findIndex(w => w.watch_id === watch_id);
         if (watchIndex !== -1) {
           const [watch] = this.approvedWatches.splice(watchIndex, 1);

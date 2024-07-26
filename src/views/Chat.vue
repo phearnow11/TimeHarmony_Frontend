@@ -6,6 +6,9 @@
     </div>
     <div v-if="user" class="chat-interface">
       <div class="sidebar">
+        <div class="py-5 px-2">
+          <router-link to="/"><span class="hover-underline-animation">Quay về trang chủ</span></router-link>
+        </div>
         <div class="user-info flex gap-2 items-center">
           <img :src="userInfo.image" alt="Ảnh đại diện" class="avatar" />
           <h2>{{ userInfo.username }}</h2>

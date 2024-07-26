@@ -466,17 +466,38 @@ const createOrder = async () => {
         paymentResponse.data.data.paymentUrl
       ) {
         window.location.href = paymentResponse.data.data.paymentUrl;
-      } else {
-        throw new Error("Invalid payment response");
       }
+       
     } catch (error) {
       console.error("Failed to process payment:", error);
     } finally {
       isProcessingPayment.value = false;
     }
     } else {
-      alert("Invalid payment method. Please try again.");
-    }
+      console.log("Sending order data:", orderData);
+      const result = await userStore.addOrder(auth.user_id, orderData);
+      console.log("Order created successfully: ", result);
+      // Get the most recent order
+      const mostRecentOrder = await userStore.getNewestOrder(auth.user_id);
+      console.log("Most recent order:", mostRecentOrder);
+
+      if (mostRecentOrder) {
+        console.log("Fetching order details for order ID:", mostRecentOrder);
+        const orderDetails = await userStore.getOrderDetail(mostRecentOrder);
+        console.log("Order details:", orderDetails);
+
+        if (orderDetails && orderDetails.order_detail) {
+          userStore.setCurrentOrder(orderDetails);
+          router.push(`/orderconfirmation/${mostRecentOrder}`);
+        } else {
+          console.error("Invalid order details:", orderDetails);
+          alert("Error processing order. Please try again.");
+        }
+      } else {
+        console.error("No recent order found");
+        alert("Error creating order. Please try again.");
+      }
+      }
   } catch (error) {
     console.error("Failed to create order:", error);
     alert("Failed to create order. Please try again.");

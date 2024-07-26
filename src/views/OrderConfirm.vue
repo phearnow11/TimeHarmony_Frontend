@@ -57,10 +57,6 @@
             <button @click="cancelOrder(orderDetails.order_detail.order_id)" class="bg-olive-700 text-white px-6 py-2 rounded hover:bg-olive-800 transition duration-300">
               Huỷ đơn hàng
             </button>
-            
-  
-           
-          
           </div>
   
           <div class="flex-1">
@@ -139,7 +135,7 @@
   const mapOrderState = (state) => {
   switch (state) {
     case 'PENDING':
-      return 'Đơn hàng đã được gửi đến người bán';
+      return 'Đơn hàng đang được người bán chuẩn bị ';
     case 'SHIPPING':
       return 'Đơn hàng đang được vận chuyển';
     case 'CANCELLED':
