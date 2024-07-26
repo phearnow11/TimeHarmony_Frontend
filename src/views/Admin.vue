@@ -43,9 +43,11 @@
               <td class="p-2 border-b">{{ member.user_log_info.username }}</td>
               <td class="p-2 border-b">{{ member.phone || 'N/A' }}</td>
               <td class="p-2 border-b">{{ member.user_log_info.authorities.authority || 'N/A' }}</td>
-              <td class="p-2 border-b">{{ member.is_active ? 'Active' : 'Inactive' }}</td>
-              <td class="p-2 border-b"><div class="hover-underline-animation-r flex items-center justify-center">
-                Cấm <span class="mdi mdi-cancel"></span>
+              <td class="p-2 border-b">{{ member.is_active ? 'Hoạt động' : 'Không hoạt động' }}</td>
+              <td class="p-2 border-b"><div class="hover-underline-animation-r flex items-center justify-center gap-2"
+                @click="useAdminStore().ban(member.member_id)"
+                >
+                Cấm khỏi hệ thống <span class="mdi mdi-cancel"></span>
               </div>
             </td>
                 
@@ -79,7 +81,7 @@
                 </div>
               </td>
               <td class="p-2 border-b">{{ product.price }}</td>
-              <td class="p-2 border-b">{{ product.state === 1 ? 'Active' : 'Inactive' }}</td>
+              <td class="p-2 border-b">{{ product.state === 1 ? 'Hoạt động' : 'Không hoạt động' }}</td>
             </tr>
           </tbody>
         </table>
