@@ -97,7 +97,7 @@ onMounted(async () => {
         bank_code: bankCode.value,
         payment_method: vnpCardType.value,
         isSuccess: isSuccess.toString(),
-        wids: JSON.stringify(pendingOrder.wids)
+        wids: JSON.stringify(pendingOrder.wids).replace(/ /g, '')
       };
       console.log('Payment ok: ' + JSON.stringify(paymentDataToSave));
       const savedPayment = await savePaymentDetail(paymentDataToSave);
@@ -141,7 +141,7 @@ onMounted(async () => {
         bank_code: bankCode.value,
         payment_method: vnpCardType.value,
         isSuccess: isSuccess.toString(),
-        wids: JSON.stringify(pendingOrder.wids)
+        wids: JSON.stringify(pendingOrder.wids).replace(/ /g, '')
       };
 
       console.log('Failed Payment: ' + JSON.stringify(paymentFailDataToSave));
