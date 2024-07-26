@@ -106,7 +106,7 @@ onMounted(async () => {
         isSuccess: isSuccess,
         wids: pendingOrder.wids // Add this line
       };
-      console.log('Payment ok: ' + paymentDataToSave);
+      console.log('Payment ok: ' + JSON.stringify(paymentDataToSave));
       const savedPayment = await savePaymentDetail(paymentDataToSave);
       console.log('Saved payment details:', savedPayment);
 
