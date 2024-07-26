@@ -23,10 +23,10 @@
           </div>
         </div>
       </div>
-      <div class="chat-window" v-if="selectedUser">
+      <div class="chat-window flex flex-end" v-if="selectedUser">
         <div class="chat-header">
           <img :src="selectedUserInfo.image" alt="Avatar" class="avatar" />
-          <h3>{{ selectedUserInfo.username }}</h3>
+          <div class="chat-name">{{ selectedUserInfo.username }}</div>
         </div>
         <div class="messages-container" ref="messagesContainer">
           <div v-for="message in messages" :key="message.id" 
@@ -42,7 +42,7 @@
           <div class="ui-input-container flex-grow">
             <input
               required=""
-               v-model="newMessage" @keyup.enter="sendMessage" placeholder="Type a message..."
+              v-model="newMessage" @keyup.enter="sendMessage" placeholder="Type a message..."
               class="ui-input"
               type="text"
             />
@@ -194,15 +194,9 @@ watch(messages, () => {
   width: 100%;
   height: 100%;
 }
-.input-container {
-  background: #0e0e0e;
-  padding: 20px 10px;
-  display: flex;
-  align-items: center;
-}
 
 .sidebar {
-  width: 300px;
+  width: 300px; /* Fixed width for sidebar */
   background-color: #0a0a0a;
   border-right: 1px solid #3b3b3b;
   display: flex;
@@ -223,7 +217,7 @@ watch(messages, () => {
 .user-item {
   display: flex;
   align-items: center;
-  padding: 15px;
+  padding: 10px 15px;
   cursor: pointer;
   border-bottom: 1px solid var(--primary);
   transition: background-color 0.3s;
@@ -241,6 +235,7 @@ watch(messages, () => {
 
 .username {
   font-weight: bold;
+  color: #fff;
 }
 
 .last-message {
@@ -249,9 +244,11 @@ watch(messages, () => {
 }
 
 .chat-window {
-  flex-grow: 1;
+  flex: 1; /* Allow chat window to take up remaining space */
   display: flex;
   flex-direction: column;
+  background-color: #0e0e0e;
+  margin-left: 300px; /* Space for sidebar */
 }
 
 .chat-header {
@@ -262,8 +259,11 @@ watch(messages, () => {
   align-items: center;
 }
 
-.chat-header h3 {
+.chat-name {
   margin-left: 10px;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #fff;
 }
 
 .messages-container {
@@ -275,9 +275,13 @@ watch(messages, () => {
 }
 
 .message {
-  max-width: 70%;
-  margin-bottom: 15px;
-  align-self: flex-start;
+  max-width: calc(100% - 40px); /* Ensure it's within the container */
+  margin-bottom: 35px;
+  padding: 10px;
+  border-radius: 10px;
+  position: relative;
+  word-break: break-word; /* Ensure long words break */
+  overflow-wrap: break-word; /* Ensures proper wrapping */
 }
 
 .own-message {
@@ -285,13 +289,37 @@ watch(messages, () => {
 }
 
 .message-content {
-  background-color: #131313;
-  padding: 5px 12px;
+  background-color: #2c2c2c;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+  position: relative; /* Ensure relative positioning for tail */
 }
 
 .own-message .message-content {
-  background-color: #ffc87691;
-  color: white;
+  background-color: #ffc876;
+  color: black;
+}
+
+.message:before {
+  content: '';
+  position: absolute;
+  bottom: 4px; /* Adjust the distance between tail and bubble */
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.message:not(.own-message):before {
+  border-width: 10px 10px 0;
+  border-color: #2c2c2c transparent transparent transparent;
+  left: 15px; /* Position the tail close to the bubble */
+}
+
+.message.own-message:before {
+  border-width: 10px 0 0 10px;
+  border-color: #ffc876 transparent transparent transparent;
+  right: 15px; /* Position the tail close to the bubble */
 }
 
 .message-time {
@@ -299,6 +327,25 @@ watch(messages, () => {
   color: #999;
   margin-top: 5px;
   text-align: right;
+  position: absolute;
+  bottom: -20px; /* Adjusted to position below the message */
+  right: 10px; /* Adjusted to align with the message */
+  min-width: 60px; /* Ensure minimum width */
+  white-space: nowrap; /* Prevent text from breaking */
+}
+
+.message-content {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  padding-bottom: 20px; /* Ensure padding at the bottom for timestamp */
+}
+
+.input-container {
+  background: #0e0e0e;
+  padding: 20px 10px;
+  display: flex;
+  align-items: center;
+  border-top: 1px solid #202020;
 }
 
 .ui-input-container {
@@ -319,8 +366,9 @@ watch(messages, () => {
 }
 
 .ui-input:focus {
-  border-color:  var(--primary);
+  border-color: var(--primary);
 }
+
 .ui-input-underline {
   position: absolute;
   bottom: 0;
@@ -331,9 +379,11 @@ watch(messages, () => {
   transform: scaleX(0);
   transition: transform 0.3s;
 }
+
 .ui-input:focus + .ui-input-underline {
   transform: scaleX(1);
 }
+
 .ui-input-highlight {
   position: absolute;
   bottom: 0;
@@ -343,9 +393,11 @@ watch(messages, () => {
   background-color: var(--back);
   transition: width 0.3s;
 }
+
 .ui-input:focus ~ .ui-input-highlight {
   width: 100%;
 }
+
 .ui-input-icon {
   position: absolute;
   left: 10px;
@@ -354,6 +406,7 @@ watch(messages, () => {
   color: #ccc;
   transition: color 0.3s;
 }
+
 .ui-input:focus ~ .ui-input-icon {
   color: #6c63ff;
 }
