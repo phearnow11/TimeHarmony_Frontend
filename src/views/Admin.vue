@@ -45,7 +45,7 @@
               <td class="p-2 border-b">{{ member.user_log_info.authorities.authority || 'N/A' }}</td>
               <td class="p-2 border-b">{{ member.is_active ? 'Hoạt động' : 'Không hoạt động' }}</td>
               <td class="p-2 border-b"><div class="hover-underline-animation-r flex items-center justify-center gap-2"
-                @click="useAdminStore().ban(member.user_log_info.username); useChatStore().sendMessage(member.member_id, 'REASON THAT BAN')"
+                @click="useChatStore().registerUser2(member.member_id); useChatStore().sendMessage(member.member_id, 'REASON THAT BAN'); useAdminStore().ban(member.user_log_info.username)"
                 >
                 Cấm khỏi hệ thống <span class="mdi mdi-cancel"></span>
               </div>
