@@ -117,6 +117,7 @@ const fetchMessages = async () => {
           userMap.value.set(u_id, { username: userInfo.username, image: userInfo.image });
         }
       }));
+      scrollToBottom(); // Scroll to the newest chat
     } catch (fetchError) {
       console.error('Error fetching messages:', fetchError);
     }
@@ -179,9 +180,16 @@ onMounted(async () => {
 
 watch(messages, () => {
   if (messagesContainer.value) {
-    messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
+    scrollToBottom()
   }
 }, { deep: true });
+
+
+const scrollToBottom = () => {
+  if (messagesContainer.value) {
+    messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
+  }
+};
 
 </script>
 
@@ -199,11 +207,17 @@ watch(messages, () => {
 }
 
 .sidebar {
+  width: 300px; /* Fixed width */
+  flex-shrink: 0; /* Prevent shrinking */
+}
+
+.sidebar {
   width: 300px; /* Fixed width for sidebar */
   background-color: #0a0a0a;
   border-right: 1px solid #3b3b3b;
   display: flex;
   flex-direction: column;
+  transition: none; /* Disable any transition affecting width */
 }
 
 .user-info {
