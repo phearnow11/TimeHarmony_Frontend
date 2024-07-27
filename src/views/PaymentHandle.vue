@@ -87,7 +87,8 @@ onMounted(async () => {
     
     const isSuccess = paymentData.vnp_ResponseCode === '00';
 
-    const formattedWids = JSON.stringify(pendingOrder.wids);
+    const wids = Object.values(useCartStore().selected_wids);
+    console.log('Selected WIDs:', wids);
 
     if (isSuccess) {
       successMessage.value = 'Payment successful. Saving payment details...';
