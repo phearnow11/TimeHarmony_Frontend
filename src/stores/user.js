@@ -25,6 +25,7 @@ export const useUserStore = defineStore("user", {
     payment_method: null,
     cart_num: 0,
     role: null,
+    staff_role: null,
     pendingWids: [],
   }),
 
@@ -199,7 +200,7 @@ export const useUserStore = defineStore("user", {
         this.user_id = res.data.member_id;
         this.cur_fav = fav.data
         this.role = res.data.user_log_info.authorities.authority;
-
+        this.staff_role = res.data.staff_role;
         return {
           username: this.username,
           email: this.email,
@@ -211,6 +212,7 @@ export const useUserStore = defineStore("user", {
           active: this.active,
           user_id: this.user_id,
           role: this.role,
+          staff_role: this.staff_role
         };
 
       } catch (err) {
@@ -388,6 +390,7 @@ export const useUserStore = defineStore("user", {
         throw error;
       }
     },
+    
     async cancelOrder(order_id) {
       try {
         const response = await axios.put(`${api}/member/cancel/order/${order_id}`);
@@ -448,16 +451,26 @@ export const useUserStore = defineStore("user", {
         return response.data;
       }
   },  
-  async setShipping(watch_id){
+  async setShipping(watch_id, order_id) {
     try {
-      const response = await axios.put(`${api}/seller/ship/${watch_id}`)
+      const response = await axios.put(`${api}/seller/ship/${watch_id}?order_id=${order_id}`);
       console.log('Full shipping response:', response.data);
-      return response.data; // This will return the entire response object
+      return response.data;
     } catch (error) {
-      console.error('Error fetching order details:', error);
+      console.error('Error confirming shipping:', error);
       throw error;
     }
-        
+  },
+
+  async confirmShip(order_id) {
+    try {
+      const response = await axios.post(`${api}/member/confirm-success/order/${order_id}`);
+      console.log('Full shipping response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error confirming shipping:', error);
+      throw error;
+    }
   },
         
   },

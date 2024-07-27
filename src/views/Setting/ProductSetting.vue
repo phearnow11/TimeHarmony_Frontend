@@ -18,7 +18,7 @@
         <a href="#orders" class="mr-4 hover-underline-animation" @click="activeSection = 'orders'">Đồng hồ đã mua</a>
         <a href="#purchases" class="mr-4 hover-underline-animation" @click="activeSection = 'purchases'">Đồng hồ đã đăng bán</a>
         <a v-if="isStaff" href="#pending-watches" class="mr-4 hover-underline-animation" @click="activeSection = 'pending-watches'">Đồng hồ đang chờ người bán xác nhận</a>     
-       </div>
+        <a v-if="isStaff" href="#shipping-orders" class="mr-4 hover-underline-animation" @click="handleShippingOrdersClick">Đơn hàng đang vận chuyển</a>      </div>
 
       <!-- My Orders Section -->
       <div v-if="activeSection === 'orders'" id="orders">
@@ -32,7 +32,8 @@
                 <th class="pb-2 pl-2">Ngày Đặt</th>
                 <th class="pb-2 pl-2">Tổng Tiền</th>
                 <th class="pb-2 pl-2">Trạng Thái</th>
-                <th class="pb-2"></th>
+                <th class="pb-2">Hành động</th>
+
               </tr>
             </thead>
             <tbody>
@@ -43,8 +44,10 @@
                 <td class="py-4 pl-2">{{ formatPriceVND(order.total_price) }}</td>
                 <td class="py-4 pl-2">{{ getOrderStatusText(order.order_id) }}</td>
                 <td class="py-4 px-2">
-                  <button v-if="orderStates[order.order_id] !== 'DELETED'" class="hover-underline-animation" @click="viewOrderDetails(order.order_id)">Xem Chi Tiết</button>
+                  <button v-if="orderStates[order.order_id] !== 'DELETED'" class="hover-underline-animation px-5" @click="viewOrderDetails(order.order_id)">Xem Chi Tiết</button>
+                  <button v-if="orderStates[order.order_id] === 'SHIPPED'" class="hover-underline-animation" @click="confirmShip(order.order_id)">Đã nhận</button>
                 </td>
+                
               </tr>
             </tbody>
           </table>
@@ -76,12 +79,12 @@
                 <td class="py-4 pl-2">{{ list.watch_id }}</td>
                 <td class="py-4 pl-2">{{ list.watch_name }}</td>
                 <td class="py-4 pl-2">{{ formatPriceVND(list.price) }}</td>
-                <td class="py-4 pl-2">{{ list.state === 3 ? 'Đang chờ duyệt đơn' : list.state }}</td>
+                <td class="py-4 pl-2">{{ getPendingWatchStatusText(list.state) }}</td>
                 <td class="py-4 pl-2">{{ watchOrderDetails[list.watch_id] ? watchOrderDetails[list.watch_id][0] : 'N/A' }}</td>
                 <td class="py-4 pl-2">{{ watchOrderDetails[list.watch_id] ? formatDateHour(watchOrderDetails[list.watch_id][1]) : 'N/A' }}</td>
                 
                 <td class="py-4 px-2">
-                  <button class="hover-underline-animation" @click="setShip(list.watch_id)">Đóng gói và giao hàng</button>
+                  <button class="hover-underline-animation" @click="setShip(list.watch_id, watchOrderDetails[list.watch_id][0])">Đóng gói và giao hàng</button>
                 </td>
               </tr>
             </tbody>
@@ -127,8 +130,7 @@
                 <td class="py-4 pl-2">{{ shipping_date ? shipping_date : 'Không có thông tin' }}</td>
 
                 <td class="py-4 px-2">
-                  <button class="hover-underline-animation" @click="approveWatch(item.watch_id)">Duyệt</button>
-                  <button class="hover-underline-animation" @click="deleteWatch(item.watch_id)">Xóa</button>
+                  <button class="hover-underline-animation" @click="shipOrder(item.order_id, auth.user_id)">Giao đơn</button>                
                 </td>
                 
               </tr>
@@ -136,6 +138,40 @@
           </table>
         </div>
       </div>
+      <!-- Shipping Orders Section -->
+      <div v-if="activeSection === 'shipping-orders'" id="shipping-orders">
+  <h2 class="text-2xl mb-4 text-secondary">Đơn hàng đang vận chuyển</h2>
+  <div class="table-container">
+    <table class="w-full border-collapse table">
+      <thead class="table-header">
+        <tr class="bg-[#494949] text-primary">
+          <th class="pb-2">Số Thứ Tự</th>
+          <th class="pb-2">Mã Đơn Hàng</th>
+          <th class="pb-2 pl-2">Thời gian tạo đơn</th>
+          <th class="pb-2 pl-2">Địa chỉ giao hàng</th>
+          <th class="pb-2 pl-2">Tên người nhận</th>
+          <th class="pb-2 pl-2">SĐT người nhận</th>
+          <th class="pb-2">Trạng thái</th>
+          <th class="pb-2">Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(order, index) in shippingOrders" :key="order.order_id" class="border-t">
+          <td class="py-4">{{ index + 1 }}</td>
+          <td class="py-4">{{ order.order_id }}</td>
+          <td class="py-4 pl-2">{{ formatDate(order.create_time) }}</td>
+          <td class="py-4 pl-2">{{ order.address }}</td>
+          <td class="py-4 pl-2">{{ order.receive_name }}</td>
+          <td class="py-4 pl-2">{{ order.phone }}</td>
+          <td class="py-4 pl-2">{{ getShippingStatusText(order.state) }}</td>
+          <td class="py-4 px-2">
+            <button class="hover-underline-animation" @click="shippedOrderToMember(order.order_id, auth.user_id)">Đã giao</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
     </div>
   </div>
 </template>
@@ -154,6 +190,7 @@ const orderStates = ref({}); // Store order states
 const orders = ref([]);
 const wlists = ref([]);
 const pendingWatches = ref([]);
+const shippingOrders = ref([]);
 const activeSection = ref('orders'); // Default section is 'orders'
 const isStaff = ref(false);
 const watchOrderDetails = ref({});
@@ -169,6 +206,17 @@ const viewOrderDetails = (orderId) => {
   }
 };
 
+const confirmShip = (orderId) => {
+  const state = orderStates.value[orderId];
+  if (state === 'SHIPPED') {
+    useUserStore().confirmShip(orderId)
+    loadOrders();
+  } else {
+    alert('Không chấp thuận, lỗi');
+  }
+};
+
+
 
 
 onMounted(async () => {
@@ -180,10 +228,13 @@ onMounted(async () => {
     await loadOrderStates();
     const u = await user.loadUser(auth.user_id);
     console.log(u.role);
-    if(u.role === 'ROLE_STAFF') isStaff.value = true;
-    else isStaff.value = false;
+    if(u.role === 'ROLE_STAFF') 
+      isStaff.value = true;
+    else 
+      isStaff.value = false;
     if (isStaff) {
       await loadPendingWatches();
+      await loadShippingOrders();
     }
   }
 });
@@ -202,22 +253,32 @@ const loadOrderStates = async () => {
 
 const getOrderStatusText = (orderId) => {
   const state = orderStates.value[orderId];
-  if(state === 'PENDING')
-           return 'Đơn hàng đã được gửi đến người bán'
-        else if (state === 'SHIPPING')
-            return 'Đơn hàng đang được vận chuyển'
-        else
-            return 'Đã huỷ đơn hàng'
+  if (state === 'PENDING')
+    return 'Đơn hàng đã được gửi đến người bán'
+  else if (state === 'SHIPPING')
+    return 'Đơn hàng đang được vận chuyển'
+  else if (state === 'SHIPPED')
+    return 'Đơn hàng đã được giao đến người mua'
+  else if (state === 'SUCCESS')
+    return 'Đơn hàng giao thành công'
+  else if (state === 'DELETED')
+    return 'Đã huỷ đơn hàng'
+  else
+    return 'Trạng thái không xác định'
 };
 
 const loadOrders = async () => {
   try {
     orders.value = await user.getAllOrders(auth.user_id);
+    console.log('All orders:', orders.value); // Log all orders to check if state 4 orders are present
+
     wlists.value = await user.getOrderWaiting(auth.user_id);
+    console.log('Waiting orders:', wlists.value); // Log waiting orders
+
     for (const watch of wlists.value) {
       try {
         const orderDetails = await user.getOrderOfWatch(watch.watch_id);
-        watchOrderDetails.value[watch.watch_id] = orderDetails[0]; // Assuming the API always returns an array with one item
+        watchOrderDetails.value[watch.watch_id] = orderDetails[0];
       } catch (error) {
         console.error(`Error fetching order details for watch ${watch.watch_id}:`, error);
         watchOrderDetails.value[watch.watch_id] = null;
@@ -225,7 +286,6 @@ const loadOrders = async () => {
     }
   } catch (error) {
     console.error('Lỗi khi tải danh sách đơn hàng:', error);
-    // Xử lý lỗi (ví dụ: hiển thị thông báo lỗi cho người dùng)
   }
 };
 
@@ -239,31 +299,105 @@ const loadPendingWatches = async () => {
   }
 };
 
+
+
 const sortedPendingWatches = computed(() => {
   return [...pendingWatches.value].sort((a, b) => {
     return new Date(b.create_time) - new Date(a.create_time);
   });
 });
 
+const sortedOrderWaiting = computed(() => {
+  return [...wlists.value].sort((a, b) => {
+    return new Date(b.create_time) - new Date(a.create_time);
+  });
+});
 
 
-const deleteWatch = async (watchId) => {
+
+
+const setShip = async (watchid, orderId) => {
   try {
-    await useStaffStore().deleteWatch(watchId);
-    await loadPendingWatches();
+    const res = await user.setShipping(watchid, orderId);
+    console.log(res);
   } catch (error) {
-    console.error('Lỗi khi xóa đồng hồ:', error);
+    console.error('Lỗi khi cập nhật trạng thái giao hàng:', error);
     // Xử lý lỗi (ví dụ: hiển thị thông báo lỗi cho người dùng)
   }
 };
 
-const setShip = async (watchid) => {
+const getPendingWatchStatusText = (state) => {
+  switch (state) {
+    case 3:
+      return 'Đang chờ đóng gói';
+    case 4:
+      return 'Đã giao cho shipper';
+    case 6:
+      return 'Giao thành công';
+
+  }
+};
+
+const handleShippingOrdersClick = async () => {
+  const user = await useUserStore().loadUser(auth.user_id);
+  if (user.staff_role !== 'SHIPPER') {
+    alert('Bạn không phải là shipper nên không thể sử dụng chức năng này');
+    return;
+  }
+  activeSection.value = 'shipping-orders';
+};
+
+const loadShippingOrders = async () => {
   try {
-    await user.setShipping(watchid);
-    await loadOrders(); // Reload the orders and wlists after shipping
+    
+      const orderIds = await useStaffStore().getMyShippingOrder(auth.user_id);
+      console.log("Shipping order IDs:", orderIds);
+      
+      const orderDetails = await Promise.all(
+        orderIds.map(orderId => useUserStore().getOrderDetail(orderId))
+      );
+      
+      shippingOrders.value = orderDetails.map(detail => detail.order_detail);
+      console.log("Shipping order details:", shippingOrders.value);
+    
   } catch (error) {
-    console.error('Lỗi khi cập nhật trạng thái giao hàng:', error);
-    // Xử lý lỗi (ví dụ: hiển thị thông báo lỗi cho người dùng)
+    console.error('Lỗi khi tải đơn hàng đang vận chuyển:', error);
+  }
+};
+
+const getShippingStatusText = (state) => {
+  switch (state) {
+    case 'SHIPPING':
+      return 'Đang vận chuyển';
+    case 'DELIVERED':
+      return 'Đã giao hàng';
+    default:
+      return 'Trạng thái không xác định';
+  }
+};
+
+const shipOrder = async (order_id, user_id) => {
+  try {
+    const user = await useUserStore().loadUser(auth.user_id);
+    console.log('Loaded user:', user);
+
+    if (user.staff_role !== 'SHIPPER') {
+      alert('Bạn không phải là shipper nên không thể sử dụng chức năng này');
+      return;
+    }
+    await useStaffStore().shipOrderByShipper(order_id, user_id)
+  } catch (error) {
+    console.error('Lỗi khi cập nhật trạng thái vận chuyển:', error);
+  }
+};
+
+const shippedOrderToMember = async (order_id, user_id) => {
+  try {
+    
+
+    await useStaffStore().shippedToMember(order_id, user_id);
+  } catch (error) {
+    console.error('Lỗi khi cập nhật trạng thái vận chuyển:', error);
   }
 };
 

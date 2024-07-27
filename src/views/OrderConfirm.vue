@@ -138,10 +138,13 @@
       return 'Đơn hàng đang được người bán chuẩn bị ';
     case 'SHIPPING':
       return 'Đơn hàng đang được vận chuyển';
+    case 'SHIPPED':
+      return 'Đơn hàng đã giao đến người nhận';
+    case 'SUCCESS':
+      return 'Đơn hàng giao thành công';
     case 'CANCELLED':
       return 'Đã huỷ đơn hàng';
-    default:
-      return 'Trạng thái không xác định';
+
   }
 };
 

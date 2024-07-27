@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import axios from "axios";
+import { useUserStore } from "./user";
 const api = import.meta.env.VITE_API_PORT;
 
 export const useStaffStore = defineStore("staff", {
@@ -86,11 +87,33 @@ export const useStaffStore = defineStore("staff", {
     }, 
     async shipOrderByShipper(order_id, user_id) {
       try {
-        const res = await axios.get(`${api}/staff/ship/order?oid=${order_id}&id=${user_id}`);
+        const res = await axios.post(`${api}/staff/ship/order?oid=${order_id}&id=${user_id}`);
         console.log(res.data);
         return res.data;  
       } catch (err) {
         console.error(err);
+        return [];
+      }
+    },
+    async getMyShippingOrder(user_id) {
+      try {
+        const res = await axios.get(`${api}/staff/get/my-shipping-order/${user_id}`);
+        console.log("Order IDs:", res.data);
+        
+        return res.data;
+      } catch (err) {
+        console.error("Error fetching shipping orders:", err);
+        return [];
+      }
+    },
+    async shippedToMember(order_id, user_id) {
+      try {
+        const res = await axios.post(`${api}/staff/shipped/order?oid=${order_id}&id=${user_id}`);
+        console.log("Order IDs:", res.data);
+        
+        return res.data;
+      } catch (err) {
+        console.error("Error fetching shipping orders:", err);
         return [];
       }
     },
