@@ -146,7 +146,7 @@ onMounted(async () => {
         wids: JSON.stringify(wids)
       };
 
-      console.log('Failed Payment: ' + JSON.stringify(paymentFailDataToSave));
+      console.log('Failed Payment: ' + JSON.parse(paymentFailDataToSave));
       const savedPayment = await savePaymentDetail(paymentFailDataToSave);
       console.log('Payment details saved:', savedPayment);
       
