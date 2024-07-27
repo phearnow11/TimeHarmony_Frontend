@@ -100,7 +100,7 @@ onMounted(async () => {
         payment_amount: parseFloat(amountString.value),
         bank_code: bankCode.value,
         payment_method: vnpCardType.value,
-        isSuccess: "True",
+        isSuccess: isSuccess,
         wids: widsString
       };
       console.log('Payment ok: ' + JSON.stringify(paymentDataToSave));
@@ -144,7 +144,7 @@ onMounted(async () => {
         payment_amount: parseFloat(amountString.value),
         bank_code: bankCode.value,
         payment_method: vnpCardType.value,
-        isSuccess: "False",
+        isSuccess: isSuccess,
         wids: widsString
       };
 
