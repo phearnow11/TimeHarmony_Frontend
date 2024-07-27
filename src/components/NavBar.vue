@@ -159,8 +159,9 @@ const submenus = ref({
 });
 
 const logout = () => {
-  useAuthStore().logout();
-  window.location.replace('/')
+   useAuthStore().logout().then(
+    window.location.replace('/')
+  )
 };
 
 document.addEventListener("click", (e) => {

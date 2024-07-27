@@ -44,14 +44,14 @@
               </div>
             </div>
           </button>
-          
+          <p v-if="message" class="text-red-500 mt-2">{{ message }}</p>
           <div class="flex items-center w-full my-2">
             <div class="border-t border-gray-99 flex-grow mr-3"></div>
             <span class="text-gray-99">hoặc</span>
             <div class="border-t border-gray-99 flex-grow ml-3"></div>
           </div>
           <LoginViaGoogle />
-          <LoginViaFacebook />
+          <!-- <LoginViaFacebook /> -->
           <div class="mt-4">
             <span>Bạn chưa có tài khoản? </span>
             <router-link to="/signup" class="hover-underline-animation">Đăng ký tại đây</router-link>
@@ -64,15 +64,23 @@
 </template>
 
 <script setup>
-import { reactive, ref } from "vue";
+import { reactive, ref, toRaw, watch } from "vue";
 import { useAuthStore } from "../stores/auth";
 import LoginViaGoogle from "../components/LoginViaGoogle.vue";
 import LoginViaFacebook from "../components/LoginViaFacebook.vue";
 import PopUp from "../components/PopUp.vue";
+import { useChatStore } from "../stores/chat";
+import { useUserStore } from "../stores/user";
 
 const errorMessage = ref('');
 const showErrorPopup = ref(false);
 const isLoading = ref(false);
+
+const message = ref(null)
+
+watch(message, (newValue) => {
+  console.log('Message changed:', newValue);
+});
 
 const user = reactive({
   username: localStorage.getItem('username') || '',
@@ -86,6 +94,10 @@ if (localStorage.getItem('username') !== null) {
 }
 
 async function onSubmit() {
+  console.log('onSubmit called');
+  message.value = '';
+  console.log('Message cleared:', message.value);
+  
   if (remember.value) {
     localStorage.setItem('username', user.username);
     localStorage.setItem('password', user.password);
@@ -93,19 +105,49 @@ async function onSubmit() {
     localStorage.removeItem('username');
     localStorage.removeItem('password');
   }
+
   const authStore = useAuthStore();
   if (user.username && user.password) {
     isLoading.value = true;
     try {
+      const ban = await useChatStore().findBanChat(user.username, "54b0e42b-f72b-4edb-b967-2c421285fcda");
+      if (ban && ban.length > 0) {
+        message.value = ban[0].text;
+        console.log('Ban message set:', message.value);
+        return;
+      }
+
       console.log('Attempting login with:', { username: user.username, password: user.password });
-      await authStore.login(user.username, user.password);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      
+      // Wrap the login call in a Promise to handle its asynchronous nature
+      await new Promise((resolve, reject) => {
+        authStore.login(user.username, user.password);
+        
+        // Set up a timeout to check if login was successful
+        const loginCheckInterval = setInterval(() => {
+          if (authStore.user_id) {
+            clearInterval(loginCheckInterval);
+            resolve();
+          }
+        }, 100);
+
+        // Set a timeout for login attempt
+        setTimeout(() => {
+          clearInterval(loginCheckInterval);
+          reject(new Error('Login timed out'));
+        }, 5000);
+      });
+
+      console.log('Login successful');
+      message.value = '';
     } catch (error) {
       console.error('Login error:', error);
-      errorMessage.value = 'Sai mật khẩu hoặc tên người dùng';
+      message.value = 'Sai mật khẩu hoặc tên người dùng';
+      console.log('Error message set:', message.value);
       showErrorPopup.value = true;
     } finally {
       isLoading.value = false;
+      console.log('Final message value:', message.value);
     }
   }
 }

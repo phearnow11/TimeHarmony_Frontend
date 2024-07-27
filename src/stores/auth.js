@@ -73,7 +73,7 @@ export const useAuthStore = defineStore('auth', {
                 
             });
         },
-        logout() {
+        async logout() {
             axios.post(`${api}/api/auth/logout?member_id=${this.user_id}`,{})
             this.user_id = null;
             this.token = null;
