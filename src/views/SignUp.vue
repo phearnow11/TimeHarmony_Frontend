@@ -95,14 +95,22 @@
             <label for="lastname" class="form__label">Họ*</label>
           </div>
         </div>
-        <button class="th-p-btn w-full relative" :disabled="isLoading">
-          <span :class="{ 'opacity-0': isLoading }">Đăng ký</span>
-          <div v-if="isLoading" class="loader-container">
-            <div class="loader">
-              <div class="loaderBar"></div>
-            </div>
-          </div>
-        </button>
+        <label class="container flex justify-start items-center gap-4">
+              <input type="checkbox" required/>
+              <svg viewBox="0 0 64 64" height="1em">
+                <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+              </svg>
+              <label class="text-left">tôi đã đọc và đồng ý với <router-link class="hover-underline-animation" to="#">Chính sách & điều khoản dịch vụ</router-link> của website.</label>
+            </label>
+            <button class="th-p-btn w-full relative" :disabled="isLoading">
+  <span :class="{ 'opacity-0': isLoading }">Đăng ký</span>
+  <div v-if="isLoading" class="loader-container">
+    <div class="loader">
+      <div class="loaderBar"></div>
+    </div>
+  </div>
+</button>
+
         
         <div class="mt-1">
           <span>Đã có tài khoản? </span>
@@ -238,5 +246,65 @@ async function signupHandle() {
 
 .shake {
   animation: shake 0.5s;
+}
+
+.loader-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+  background: rgba(
+    23,
+    23,
+    23,
+    0.5
+  ); /* Adjust the alpha value for transparency */
+}
+
+.loader {
+  width: 80px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  padding: 1px;
+}
+
+.loader .loaderBar {
+  position: absolute;
+  top: 0;
+  right: 100%;
+  bottom: 0;
+  left: 0;
+  background: var(--secondary);
+  width: 0;
+  animation: borealisBar 2s linear infinite;
+}
+
+
+
+.loader::after {
+  content: "";
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--secondary);
+  left: 0;
+  top: 0;
+  animation: rotation 2s ease-in-out infinite alternate;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>
