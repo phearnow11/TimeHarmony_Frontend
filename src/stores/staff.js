@@ -83,6 +83,16 @@ export const useStaffStore = defineStore("staff", {
         console.error(err);
         return [];
       }
+    }, 
+    async shipOrderByShipper(order_id, user_id) {
+      try {
+        const res = await axios.get(`${api}/staff/ship/order?oid=${order_id}&id=${user_id}`);
+        console.log(res.data);
+        return res.data;  
+      } catch (err) {
+        console.error(err);
+        return [];
+      }
     },
   },
 });

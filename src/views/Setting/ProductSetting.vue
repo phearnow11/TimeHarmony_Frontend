@@ -78,10 +78,10 @@
                 <td class="py-4 pl-2">{{ formatPriceVND(list.price) }}</td>
                 <td class="py-4 pl-2">{{ list.state === 3 ? 'Đang chờ duyệt đơn' : list.state }}</td>
                 <td class="py-4 pl-2">{{ watchOrderDetails[list.watch_id] ? watchOrderDetails[list.watch_id][0] : 'N/A' }}</td>
-                <td class="py-4 pl-2">{{ watchOrderDetails[list.watch_id] ? formatDate(watchOrderDetails[list.watch_id][1]) : 'N/A' }}</td>
+                <td class="py-4 pl-2">{{ watchOrderDetails[list.watch_id] ? formatDateHour(watchOrderDetails[list.watch_id][1]) : 'N/A' }}</td>
                 
                 <td class="py-4 px-2">
-                  <button class="hover-underline-animation" @click="setShip(list.watch_id)">Giao hàng</button>
+                  <button class="hover-underline-animation" @click="setShip(list.watch_id)">Đóng gói và giao hàng</button>
                 </td>
               </tr>
             </tbody>
@@ -110,21 +110,27 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(item, index) in pendingWatches" class="border-t">
+              <tr v-for="(item, index) in sortedPendingWatches" class="border-t">
                 <td class="py-4">{{ index + 1 }}</td>
-                <td class="py-4">{{ item.order_id }}</td>
+                <td class="py-4">
+                <span @click="viewOrderDetails(item.order_id)" class="hover-underline-animation">
+                  {{ item.order_id }}
+                </span>
+                </td>
                 <td class="py-4 pl-2">{{ formatDate(item.create_time) }}</td>
                 <td class="py-4 pl-2">{{ item.address }}</td>
                 <td class="py-4 pl-2">{{ item.receive_name }}</td>
                 <td class="py-4 pl-2">{{ item.phone }}</td>
                 <td class="py-4 pl-2">{{ item.notice ? item.notice : 'Không có thông tin' }}</td>
                 <td class="py-4 pl-2">{{ formatPriceVND(item.total_price) }}</td>
-                <td class="py-4 pl-2">{{ item.state === 'PENDING' ? 'Đang chờ người bán' : 'Đã được gửi đến người vận chuyển' }}</td>
+                <td class="py-4 pl-2">{{ item.state === 'PENDING' ? 'Đang chờ người vận chuyển hoặc người bán' : 'Đã được gửi đến người vận chuyển' }}</td>
                 <td class="py-4 pl-2">{{ shipping_date ? shipping_date : 'Không có thông tin' }}</td>
+
                 <td class="py-4 px-2">
                   <button class="hover-underline-animation" @click="approveWatch(item.watch_id)">Duyệt</button>
                   <button class="hover-underline-animation" @click="deleteWatch(item.watch_id)">Xóa</button>
                 </td>
+                
               </tr>
             </tbody>
           </table>
@@ -159,9 +165,11 @@ const viewOrderDetails = (orderId) => {
     router.push(`/orderconfirmation/${orderId}`);
     console.log('Xem chi tiết đơn hàng:', orderId);
   } else {
-    console.log('Đơn hàng đã bị xóa, không thể xem chi tiết.');
+    alert('Đơn hàng đã bị xóa, không thể xem chi tiết.');
   }
 };
+
+
 
 onMounted(async () => {
   if (!auth.user_id) {
@@ -206,7 +214,15 @@ const loadOrders = async () => {
   try {
     orders.value = await user.getAllOrders(auth.user_id);
     wlists.value = await user.getOrderWaiting(auth.user_id);
-    
+    for (const watch of wlists.value) {
+      try {
+        const orderDetails = await user.getOrderOfWatch(watch.watch_id);
+        watchOrderDetails.value[watch.watch_id] = orderDetails[0]; // Assuming the API always returns an array with one item
+      } catch (error) {
+        console.error(`Error fetching order details for watch ${watch.watch_id}:`, error);
+        watchOrderDetails.value[watch.watch_id] = null;
+      }
+    }
   } catch (error) {
     console.error('Lỗi khi tải danh sách đơn hàng:', error);
     // Xử lý lỗi (ví dụ: hiển thị thông báo lỗi cho người dùng)
@@ -222,6 +238,12 @@ const loadPendingWatches = async () => {
     // Xử lý lỗi (ví dụ: hiển thị thông báo lỗi cho người dùng)
   }
 };
+
+const sortedPendingWatches = computed(() => {
+  return [...pendingWatches.value].sort((a, b) => {
+    return new Date(b.create_time) - new Date(a.create_time);
+  });
+});
 
 
 
@@ -254,6 +276,12 @@ const formatPriceVND = (price) => {
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
+  return date.toLocaleString('vi-VN')
+};
+
+const formatDateHour = (dateString) => {
+  const date = new Date(dateString);
+  date.setHours(date.getHours()+7)
   return date.toLocaleString('vi-VN')
 };
 
