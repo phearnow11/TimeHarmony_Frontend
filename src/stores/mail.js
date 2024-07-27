@@ -14,6 +14,16 @@ export const useMailStore = defineStore("mail", {
         .then(res=>{
             console.log(res);
         })
+    },
+    sendAttach(email, subject, content, attach){
+        axios.post(`${api}/mail/send-to/attachment/${email}`,{
+            subject: subject,
+            content: content,
+            path_attachment: attach 
+        })
+        .then(res=>{
+            console.log(res);
+        })
     }
   },
 });
