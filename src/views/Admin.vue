@@ -159,7 +159,7 @@
               </td>
               <td class="p-2 border-b">{{ product.price }}</td>
               <td class="p-2 border-b">
-                {{ product.state === 1 ? "Hoạt động" : "Không hoạt động" }}
+                {{ stateLabels[product.state] }}
               </td>
             </tr>
           </tbody>
@@ -270,6 +270,17 @@ import { useAuthStore } from "../stores/auth";
 import { useUserStore } from "../stores/user";
 import router from "../router";
 import { useMailStore } from "../stores/mail";
+
+const stateLabels = {
+  0: "Vừa đăng",
+  1: "Được duyệt",
+  2: "Từ chối",
+  3: "Chờ giao",
+  4: "Đang giao",
+  5: "Đang thanh toán",
+  6: "Hoàn tất",
+  7: "Đã giao",
+};
 
 // Initialize the store
 const adminStore = useAdminStore();
