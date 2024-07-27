@@ -72,6 +72,7 @@ onMounted(async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const paymentData = Object.fromEntries(urlParams.entries());
 
+    const pendingOrder = userStore.getPendingOrder();
     console.log('Received payment data:', paymentData);
 
     amountString.value = paymentData.vnp_Amount;
@@ -83,10 +84,12 @@ onMounted(async () => {
 
     userStore.transaction_no = paymentData.vnp_TransactionNo;
     userStore.payment_method = paymentData.vnp_CardType;
+    
+    const isSuccess = paymentData.vnp_ResponseCode === '00';
+
     const wids = JSON.parse(localStorage.getItem('pendingWids') || '[]');
 
-    const isSuccess = paymentData.vnp_ResponseCode === '00';
-    console.log('Selected WIDs:', wids);
+
 
     if (isSuccess) {
       successMessage.value = 'Payment successful. Saving payment details...';
@@ -97,7 +100,7 @@ onMounted(async () => {
         payment_amount: parseFloat(amountString.value),
         bank_code: bankCode.value,
         payment_method: vnpCardType.value,
-        isSuccess: "true",
+        isSuccess: "True",
         wids: wids
       };
       console.log('Payment ok: ' + JSON.stringify(paymentDataToSave));
@@ -141,7 +144,7 @@ onMounted(async () => {
         payment_amount: parseFloat(amountString.value),
         bank_code: bankCode.value,
         payment_method: vnpCardType.value,
-        isSuccess: "false",
+        isSuccess: "False",
         wids: wids
       };
 
@@ -149,14 +152,16 @@ onMounted(async () => {
       const savedPayment = await savePaymentDetail(paymentFailDataToSave);
       console.log('Payment details saved:', savedPayment);
       
-      useCartStore().selected_wids = [];
-      startCountdown();
+      
+
+      localStorage.removeItem(wids)
     }
   } catch (error) {
     console.error('Error handling payment result:', error);
     errorMessage.value = 'An unexpected error occurred. Please try again or contact support.';
     paymentStatus.value = 'Error';
   }
+
 });
 </script>
 
