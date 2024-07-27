@@ -87,7 +87,7 @@ onMounted(async () => {
     const isSuccess = paymentData.vnp_ResponseCode === '00';
 
     const wids = JSON.parse(localStorage.getItem('pendingWids') || '[]');
-    console.log(wids.toString());
+    console.log('Watch id: ' + wids);
 
     if (isSuccess) {
       successMessage.value = 'Payment successful. Saving payment details...';
@@ -146,7 +146,7 @@ onMounted(async () => {
         wids: JSON.stringify(wids)
       };
 
-      console.log('Failed Payment: ' + JSON.parse(paymentFailDataToSave));
+      console.log('Failed Payment: ' + JSON.stringify(paymentFailDataToSave));
       const savedPayment = await savePaymentDetail(paymentFailDataToSave);
       console.log('Payment details saved:', savedPayment);
       
