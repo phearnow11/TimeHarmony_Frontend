@@ -12,7 +12,9 @@
         />
         <label for="userid" class="form__label">ID người dùng</label>
       </div>
-      <button @click="promoteToStaff" class="th-p-btn">Thêm làm nhân viên</button>
+      <button @click="promoteToStaff" class="th-p-btn">
+        Thêm làm nhân viên
+      </button>
     </div>
 
     <section class="mb-6">
@@ -36,21 +38,39 @@
             <tr v-for="member in members" :key="member.member_id">
               <td class="p-2 border-b">{{ member.member_id }}</td>
               <td class="p-2 border-b">
-                <img :src="member.member_image" alt="Member Image" class="w-12 h-12" />
+                <img
+                  :src="member.member_image"
+                  alt="Member Image"
+                  class="w-12 h-12"
+                />
               </td>
-              <td class="p-2 border-b">{{ member.first_name }} {{ member.last_name }}</td>
+              <td class="p-2 border-b">
+                {{ member.first_name }} {{ member.last_name }}
+              </td>
               <td class="p-2 border-b">{{ member.email }}</td>
               <td class="p-2 border-b">{{ member.user_log_info.username }}</td>
-              <td class="p-2 border-b">{{ member.phone || 'N/A' }}</td>
-              <td class="p-2 border-b">{{ member.user_log_info.authorities.authority || 'N/A' }}</td>
-              <td class="p-2 border-b">{{ member.is_active ? 'Hoạt động' : 'Bị cấm' }}</td>
-              <td class="p-2 border-b"><div class="hover-underline-animation-r flex items-center justify-center gap-2"
-                @click="useChatStore().registerUser2(member.member_id); useChatStore().sendMessage(member.member_id, 'REASON THAT BAN'); useAdminStore().ban(member.user_log_info.username)"
+              <td class="p-2 border-b">{{ member.phone || "N/A" }}</td>
+              <td class="p-2 border-b">
+                {{ member.user_log_info.authorities.authority || "N/A" }}
+              </td>
+              <td class="p-2 border-b">
+                {{ member.is_active ? "Hoạt động" : "Không hoạt động" }}
+              </td>
+              <td class="p-2 border-b">
+                <div
+                  v-if="member.is_active"
+                  class="hover-underline-animation-r flex items-center justify-center gap-2"
+                  @click="banUser(member)"
                 >
-                Cấm khỏi hệ thống <span class="mdi mdi-cancel"></span>
-              </div>
-            </td>
-                
+                  Cấm khỏi hệ thống <span class="mdi mdi-cancel"></span>
+                </div>
+                <div
+                  class="hover-underline-animation-r flex items-center justify-center gap-2"
+                  @click="unbanUser(member)"
+                >
+                  Bỏ cấm người dùng<span class="mdi mdi-cancel"></span>
+                </div>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -76,12 +96,18 @@
               <td class="p-2 border-b">{{ product.watch_name }}</td>
               <td class="p-2 border-b">
                 <div class="flex items-center">
-                  <img :src="product.seller.member_image" alt="Seller Image" class="w-8 h-8 rounded-full mr-2" />
+                  <img
+                    :src="product.seller.member_image"
+                    alt="Seller Image"
+                    class="w-8 h-8 rounded-full mr-2"
+                  />
                   <span>{{ product.seller.user_log_info.username }}</span>
                 </div>
               </td>
               <td class="p-2 border-b">{{ product.price }}</td>
-              <td class="p-2 border-b">{{ product.state === 1 ? 'Hoạt động' : 'Không hoạt động' }}</td>
+              <td class="p-2 border-b">
+                {{ product.state === 1 ? "Hoạt động" : "Không hoạt động" }}
+              </td>
             </tr>
           </tbody>
         </table>
@@ -106,11 +132,13 @@
           <tbody>
             <tr v-for="order in orders" :key="order.order_id">
               <td class="p-2 border-b">{{ order.order_id }}</td>
-              <td class="p-2 border-b">{{ new Date(order.create_time).toLocaleDateString() }}</td>
+              <td class="p-2 border-b">
+                {{ new Date(order.create_time).toLocaleDateString() }}
+              </td>
               <td class="p-2 border-b">{{ order.address }}</td>
               <td class="p-2 border-b">{{ order.receive_name }}</td>
               <td class="p-2 border-b">{{ order.phone }}</td>
-              <td class="p-2 border-b">{{ order.notice || 'N/A' }}</td>
+              <td class="p-2 border-b">{{ order.notice || "N/A" }}</td>
               <td class="p-2 border-b">{{ order.total_price }}</td>
             </tr>
           </tbody>
@@ -121,26 +149,41 @@
     <section class="mb-6">
       <h2 class="text-2xl font-semibold mb-2">Tổng Quan Lợi Nhuận</h2>
       <div class="profit-container p-4 border border-secondary rounded mb-6">
-        <p class="text-xl font-medium">Doanh Thu Tổng: {{ totalRevenue.toLocaleString("vi-VN") + ' ₫' }}</p>
-        <p class="text-xl font-medium">Chi Phí Tổng: {{ totalCost.toLocaleString("vi-VN") + ' ₫' }}</p>
-        <p class="text-xl font-medium">Lợi Nhuận Tổng: {{ totalProfit.toLocaleString("vi-VN") + ' ₫' }}</p>
+        <p class="text-xl font-medium">
+          Doanh Thu Tổng: {{ totalRevenue.toLocaleString("vi-VN") + " ₫" }}
+        </p>
+        <p class="text-xl font-medium">
+          Chi Phí Tổng: {{ totalCost.toLocaleString("vi-VN") + " ₫" }}
+        </p>
+        <p class="text-xl font-medium">
+          Lợi Nhuận Tổng: {{ totalProfit.toLocaleString("vi-VN") + " ₫" }}
+        </p>
       </div>
-      <ProfitChart :totalRevenue="totalRevenue" :totalCost="totalCost" :totalProfit="totalProfit" />
+      <ProfitChart
+        :totalRevenue="totalRevenue"
+        :totalCost="totalCost"
+        :totalProfit="totalProfit"
+      />
     </section>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { useAdminStore } from '../stores/admin';
-import ProfitChart from '../components/ProfitChart.vue';
-import { useChatStore } from '../stores/chat';
+import { ref, computed, onMounted } from "vue";
+import { useAdminStore } from "../stores/admin";
+import ProfitChart from "../components/ProfitChart.vue";
+import { useChatStore } from "../stores/chat";
+import { useAuthStore } from "../stores/auth";
+import { useUserStore } from "../stores/user";
+import router from "../router";
+
+const reason = ref('ngu');
 
 // Initialize the store
 const adminStore = useAdminStore();
 
 // State variables
-const userId = ref('');
+const userId = ref("");
 
 // Fetch data from the store on component mount
 onMounted(async () => {
@@ -149,15 +192,24 @@ onMounted(async () => {
   await adminStore.getOrders();
 });
 
+if(useUserStore().role !== 'ROLE_ADMIN' && useAuthStore().user_id !== import.meta.env.VITE_ADMIN_USERID) {
+  console.log('Not ADMIN');
+  router.push('/');
+}
+
 // Define computed properties
 const members = computed(() => adminStore.members);
 const products = computed(() => adminStore.products);
 const orders = computed(() => adminStore.orders);
 
 // Compute financial metrics
-const totalCost = computed(() => products.value.reduce((sum, product) => sum + (product.price * 1), 0)); // Stock is always 1
+const totalCost = computed(() =>
+  products.value.reduce((sum, product) => sum + product.price * 1, 0)
+); // Stock is always 1
 
-const totalRevenue = computed(() => orders.value.reduce((sum, order) => sum + order.total_price, 0));
+const totalRevenue = computed(() =>
+  orders.value.reduce((sum, order) => sum + order.total_price, 0)
+);
 const totalProfit = computed(() => totalRevenue.value * 0.02); // 2% profit from total revenue
 
 // Define a method to promote a user to staff
@@ -167,8 +219,29 @@ const promoteToStaff = async () => {
     // Optionally refresh members data after promotion
     await adminStore.getMembers();
   } catch (error) {
-    console.error('Failed to promote user:', error);
+    console.error("Failed to promote user:", error);
   }
+};
+
+const banUser = (member) => {
+  useChatStore().registerUser2(member.member_id)
+    .then(() => {
+      return useChatStore().sendMessage(
+        member.member_id,
+        `Tài khoản mang tên ${member.user_log_info.username} đã bị cấm khỏi nền tảng! Lý do: ${reason.value}.`
+      );
+    })
+    .then(() => {
+      return useAdminStore().ban(member.user_log_info.username);
+    })
+    .catch((error) => {
+      console.error("Error banning user:", error);
+    });
+};
+
+const unbanUser = (member) => {
+  useChatStore().removeChat(useAuthStore().user_id, member.member_id);
+  useAdminStore().unBan(member.user_log_info.username);
 };
 
 // Format currency
@@ -196,7 +269,8 @@ const currency = (value) => `${value.toLocaleString("vi-VN")} ₫`;
   color: #fff;
 }
 
-.table th, .table td {
+.table th,
+.table td {
   padding: 8px;
   border: 1px solid var(--secondary);
 }

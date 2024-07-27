@@ -21,6 +21,43 @@ export const useChatStore = defineStore('chat', {
       axios.post(`${api}/chat/addtochat?user_id=${useAuthStore().user_id}&user_id2=${user_id}`);
     },
 
+    async findBanChat(username, sender_id) {
+      try {
+        console.log('Searching for messages with:', { sender_id, username });
+        const response = await supabase
+          .from('messages')
+          .select("*")
+          .eq('sender_id', sender_id)
+          .ilike('text', `%${username}%`);
+    
+        console.log('Supabase response:', response);
+    
+        if (response.data && response.data.length > 0) {
+          console.log('isBanned:', response.data);
+          return response.data;
+        } else {
+          console.log('No banned messages found');
+          return null;
+        }
+      } catch (error) {
+        console.log('Error finding chat', error);
+      }
+    },    
+
+    async removeChat(sender_id, receiver_id){
+      try {
+        const response = await supabase
+        .from('messages')
+        .delete()
+        .eq('receiver_id', receiver_id)
+        .eq('sender_id', sender_id)
+
+        console.log("Remove chat successfully.");
+        } catch (error) {
+        console.log('Error delete chat');
+      }
+    },
+
     async registerUser() {
       const authStore = useAuthStore();
       const userId = authStore.user_id;

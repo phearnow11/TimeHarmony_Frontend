@@ -127,6 +127,13 @@
   <script setup>
   import { ref, onMounted } from 'vue';
   import { useVoucherStore } from '../stores/voucher';
+import { useUserStore } from '../stores/user';
+import router from '../router';
+
+  if(useUserStore().role!='ROLE_STAFF'){
+  console.log('Not STAFF');
+  router.push('/')
+}
   
   const voucherStore = useVoucherStore();
   

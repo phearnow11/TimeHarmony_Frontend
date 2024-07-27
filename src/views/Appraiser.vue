@@ -84,6 +84,13 @@ import { ref, onMounted } from 'vue';
 import draggable from 'vuedraggable';
 import { useStaffStore } from '../stores/staff';
 import { useAuthStore } from '../stores/auth';
+import { useUserStore } from '../stores/user';
+import router from '../router';
+
+if(useUserStore().role!='ROLE_STAFF'){
+  console.log('Not STAFF');
+  router.push('/')
+}
 
 const authStore = useAuthStore();
 const viewMode = ref('kanban');
