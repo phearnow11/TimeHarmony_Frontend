@@ -41,7 +41,7 @@ export const useStaffStore = defineStore("staff", {
         console.error(err);
       }
     },
-    async unapprovedWatchOfSeller(data) {
+    async notapproveWatch(data) {
       console.log('Watch Unapproved ID:', data.watch_id);
       try {
         const res = await axios.post(`${api}/staff/send/unapprove-report`, data);

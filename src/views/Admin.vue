@@ -54,17 +54,17 @@
                 {{ member.user_log_info.authorities.authority || "N/A" }}
               </td>
               <td class="p-2 border-b">
-                {{ member.is_active ? "Hoạt động" : "Không hoạt động" }}
+                {{ member.user_log_info.enabled === 1 ? 'Hoạt động' : 'Bị cấm' }}
               </td>
               <td class="p-2 border-b">
                 <div
-                  v-if="member.is_active"
+                  v-if="member.user_log_info.enabled === 1"
                   class="hover-underline-animation-r flex items-center justify-center gap-2"
                   @click="banUser(member)"
                 >
                   Cấm khỏi hệ thống <span class="mdi mdi-cancel"></span>
                 </div>
-                <div
+                <div v-else
                   class="hover-underline-animation-r flex items-center justify-center gap-2"
                   @click="unbanUser(member)"
                 >
