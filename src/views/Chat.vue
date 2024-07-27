@@ -45,7 +45,7 @@
             </div>
           </div>
         </div>
-        <div class="input-container flex w-full">
+        <div class="input-container flex w-full" v-if="useUserStore().role != 'ROLE_ADMIN'">
           <div class="ui-input-container flex-grow">
             <input
               required=""
