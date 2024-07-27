@@ -44,8 +44,9 @@
                 <td class="py-4 pl-2">{{ formatPriceVND(order.total_price) }}</td>
                 <td class="py-4 pl-2">{{ getOrderStatusText(order.order_id) }}</td>
                 <td class="py-4 px-2">
-                  <button v-if="orderStates[order.order_id] !== 'DELETED'" class="hover-underline-animation px-5" @click="viewOrderDetails(order.order_id)">Xem Chi Tiết</button>
-                  <button v-if="orderStates[order.order_id] === 'SHIPPED'" class="hover-underline-animation" @click="confirmShip(order.order_id)">Đã nhận</button>
+                  <button v-if="orderStates[order.order_id] !== 'DELETED'" class="hover-underline-animation px-2" @click="viewOrderDetails(order.order_id)">Xem Chi Tiết</button>
+                  <button v-if="orderStates[order.order_id] === 'PENDING'" class="hover-underline-animation px-2 border-l border-secondary" @click="cancelOrder(order.order_id)">Huỷ Đơn</button>
+                  <button v-if="orderStates[order.order_id] === 'SHIPPED'" class="hover-underline-animation px-2 border-l border-secondary" @click="confirmShip(order.order_id)">Đã nhận</button>
                 </td>
                 
               </tr>
@@ -313,7 +314,16 @@ const sortedOrderWaiting = computed(() => {
   });
 });
 
-
+const cancelOrder = async (orderid) => {
+    try {
+        console.log('cancelling order');
+        await useUserStore().cancelOrder(orderid);
+        await loadOrders();
+      
+    } catch (error) {
+      console.log('Lỗi canceled order:', error);
+    }
+  }
 
 
 const setShip = async (watchid, orderId) => {
@@ -393,8 +403,6 @@ const shipOrder = async (order_id, user_id) => {
 
 const shippedOrderToMember = async (order_id, user_id) => {
   try {
-    
-
     await useStaffStore().shippedToMember(order_id, user_id);
   } catch (error) {
     console.error('Lỗi khi cập nhật trạng thái vận chuyển:', error);

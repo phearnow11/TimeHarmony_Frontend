@@ -150,9 +150,12 @@
 
   const cancelOrder = async (orderid) => {
     try {
-      console.log('cancelling order');
-      await userStore.cancelOrder(orderid);
-      console.log('cancer');
+      if(state === 'PENDING'){
+        console.log('cancelling order');
+        await userStore.cancelOrder(orderid);
+      } else {
+        alert("Cannot huỷ đơn")
+      }
     } catch (error) {
       console.log('Lỗi canceled order:', error);
     }
