@@ -60,7 +60,7 @@
                 <div
                   v-if="member.user_log_info.enabled === 1"
                   class="hover-underline-animation-r flex items-center justify-center gap-2"
-                  @click="banUser(member)"
+                  @click="openBanModal(member)"
                 >
                   Cấm khỏi hệ thống <span class="mdi mdi-cancel"></span>
                 </div>
@@ -165,6 +165,21 @@
         :totalProfit="totalProfit"
       />
     </section>
+
+    <!-- Ban User Modal -->
+    <div v-if="isBanModalOpen" class="modal">
+      <div class="modal-content">
+        <span class="close" @click="closeBanModal">&times;</span>
+        <h2>Xác nhận Cấm người dùng</h2>
+        <textarea
+          v-model="banMessage"
+          placeholder="Lý do cấm người dùng"
+          rows="4"
+          class="textarea"
+        ></textarea>
+        <button @click="confirmBanUser" class="confirm-btn">Xác nhận</button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -178,13 +193,14 @@ import { useUserStore } from "../stores/user";
 import router from "../router";
 import { useMailStore } from "../stores/mail";
 
-const reason = ref('ngu');
-
 // Initialize the store
 const adminStore = useAdminStore();
 
 // State variables
 const userId = ref("");
+const isBanModalOpen = ref(false);
+const banMessage = ref("");
+const selectedMember = ref(null);
 
 // Fetch data from the store on component mount
 onMounted(async () => {
@@ -224,21 +240,40 @@ const promoteToStaff = async () => {
   }
 };
 
-const banUser = (member) => {
-  useChatStore().registerUser2(member.member_id)
-    .then(() => {
-      return useChatStore().sendMessage(
-        member.member_id,
-        `Tài khoản mang tên ${member.user_log_info.username} đã bị cấm khỏi nền tảng! Lý do: ${reason.value}.`
-      );
-    })
-    .then(() => {
-      useMailStore().send(member.email, "THÔNG BÁO BẠN ĐÃ BỊ BAN KHỎI TIME HARMONY.", `Tài khoản mang tên ${member.user_log_info.username} đã bị cấm khỏi nền tảng! Lý do: ${reason.value}.`)
-      return useAdminStore().ban(member.user_log_info.username);
-    })
-    .catch((error) => {
-      console.error("Error banning user:", error);
-    });
+// Open the ban modal
+const openBanModal = (member) => {
+  selectedMember.value = member;
+  isBanModalOpen.value = true;
+};
+
+// Close the ban modal
+const closeBanModal = () => {
+  isBanModalOpen.value = false;
+  banMessage.value = "";
+  selectedMember.value = null;
+};
+
+// Confirm ban user
+const confirmBanUser = () => {
+  if (selectedMember.value) {
+    useChatStore().registerUser2(selectedMember.value.member_id)
+      .then(() => {
+        return useChatStore().sendMessage(
+          selectedMember.value.member_id,
+          `Tài khoản mang tên ${selectedMember.value.user_log_info.username} đã bị cấm khỏi nền tảng! Lý do: ${banMessage.value}.`
+        );
+      })
+      .then(() => {
+        useMailStore().send(selectedMember.value.email, "THÔNG BÁO BẠN ĐÃ BỊ BAN KHỎI TIME HARMONY.", `Tài khoản mang tên ${selectedMember.value.user_log_info.username} đã bị cấm khỏi nền tảng! Lý do: ${banMessage.value}.`);
+        return useAdminStore().ban(selectedMember.value.user_log_info.username);
+      })
+      .catch((error) => {
+        console.error("Error banning user:", error);
+      })
+      .finally(() => {
+        closeBanModal();
+      });
+  }
 };
 
 const unbanUser = (member) => {
@@ -269,6 +304,9 @@ const currency = (value) => `${value.toLocaleString("vi-VN")} ₫`;
 .table thead {
   background-color: var(--primary);
   color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10; /* Ensure the table header is above the table rows */
 }
 
 .table th,
@@ -278,10 +316,7 @@ const currency = (value) => `${value.toLocaleString("vi-VN")} ₫`;
 }
 
 .table-header th {
-  position: sticky;
-  top: 0;
   background-color: #494949; /* Matches your background color */
-  z-index: 1; /* Keeps the header above the table rows */
 }
 
 .table tbody tr:nth-child(even) {
@@ -304,5 +339,49 @@ const currency = (value) => `${value.toLocaleString("vi-VN")} ₫`;
 .profit-container {
   background-color: #333;
   color: var(--secondary);
+}
+
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000; /* Ensure the modal is above all other content */
+}
+
+.modal-content {
+  background-color: #181818;
+  padding: 20px;
+  border-radius: 8px;
+  width: 500px;
+  position: relative;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
+.textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background: #181818;
+}
+
+.confirm-btn {
+  margin-top: 10px;
+  background-color: var(--primary);
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
 }
 </style>
