@@ -47,7 +47,6 @@ import Carousel from '../components/Carousel.vue';
 import Brand from '../components/Brand.vue';
 import { ref, computed, onMounted, defineAsyncComponent, onUnmounted } from 'vue';
 import axios from 'axios';
-import { useChatStore } from '../stores/chat';
 
 const ProductCard = defineAsyncComponent(() => import('../components/ProductCard.vue'));
 const SkeletonCard = defineAsyncComponent(() => import('../components/SkeletonCard.vue'));
