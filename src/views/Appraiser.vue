@@ -134,7 +134,10 @@ onMounted(async () => {
   await staffStore.getAllWatch(0);
   await staffStore.getAllWatch(1);
   await staffStore.getAllWatch(2);
-  
+  const pendingWatches = await staffStore.getAllWatch(3);
+
+console.log('Pending Watches:', JSON.stringify(pendingWatches, null, 2));
+
   columns.value[0].tasks = staffStore.unapprovedWatches.map(watch => ({
     id: watch.watch_id,
     title: watch.watch_name,

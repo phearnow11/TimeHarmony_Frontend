@@ -16,37 +16,38 @@
       <!-- Navigation links -->
       <div class="mb-6">
         <a href="#orders" class="mr-4 hover-underline-animation" @click="activeSection = 'orders'">Đồng hồ đã mua</a>
-        <a href="#purchases" class="hover-underline-animation" @click="activeSection = 'purchases'">Đồng hồ đã đăng bán</a>
-      </div>
+        <a href="#purchases" class="mr-4 hover-underline-animation" @click="activeSection = 'purchases'">Đồng hồ đã đăng bán</a>
+        <a v-if="isStaff" href="#pending-watches" class="mr-4 hover-underline-animation" @click="activeSection = 'pending-watches'">Đồng hồ đang chờ người bán xác nhận</a>     
+       </div>
 
       <!-- My Orders Section -->
       <div v-if="activeSection === 'orders'" id="orders">
         <h2 class="text-2xl mb-4 text-secondary">Đơn hàng mua</h2>
         <div class="table-container">
-        <table class="w-full border-collapse table">
-          <thead class="table-header">
-            <tr class="bg-[#494949] text-primary">
-              <th class="pb-2">Số Thứ Tự</th>
-              <th class="pb-2">Mã Đơn Hàng</th>
-              <th class="pb-2 pl-2">Ngày Đặt</th>
-              <th class="pb-2 pl-2">Tổng Tiền</th>
-              <th class="pb-2 pl-2">Trạng Thái</th>
-              <th class="pb-2"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(order, index) in orders" :key="order.order_id" class="border-t">
-              <td class="py-4">{{ index + 1 }}</td>
-              <td class="py-4">{{ order.order_id }}</td>
-              <td class="py-4 pl-2">{{ formatDate(order.create_time) }}</td>
-              <td class="py-4 pl-2">{{ formatPriceVND(order.total_price) }}</td>
-              <td class="py-4 pl-2">{{ getOrderStatusText(order.order_id) }}</td>
-              <td class="py-4 px-2">
-                <button v-if="orderStates[order.order_id] !== 'DELETED'" class="hover-underline-animation" @click="viewOrderDetails(order.order_id)">Xem Chi Tiết</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+          <table class="w-full border-collapse table">
+            <thead class="table-header">
+              <tr class="bg-[#494949] text-primary">
+                <th class="pb-2">Số Thứ Tự</th>
+                <th class="pb-2">Mã Đơn Hàng</th>
+                <th class="pb-2 pl-2">Ngày Đặt</th>
+                <th class="pb-2 pl-2">Tổng Tiền</th>
+                <th class="pb-2 pl-2">Trạng Thái</th>
+                <th class="pb-2"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(order, index) in orders" :key="order.order_id" class="border-t">
+                <td class="py-4">{{ index + 1 }}</td>
+                <td class="py-4">{{ order.order_id }}</td>
+                <td class="py-4 pl-2">{{ formatDate(order.create_time) }}</td>
+                <td class="py-4 pl-2">{{ formatPriceVND(order.total_price) }}</td>
+                <td class="py-4 pl-2">{{ getOrderStatusText(order.order_id) }}</td>
+                <td class="py-4 px-2">
+                  <button v-if="orderStates[order.order_id] !== 'DELETED'" class="hover-underline-animation" @click="viewOrderDetails(order.order_id)">Xem Chi Tiết</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -54,36 +55,71 @@
       <div v-if="activeSection === 'purchases'" id="purchases">
         <h2 class="text-2xl mb-4">Các đơn hàng đồng hồ đã đăng bán</h2>
         <div class="table-container">
-        <table class="w-full border-collapse table">
-          <thead class="table-header">
-            <tr class="bg-[#494949] text-primary">
-              <th class="pb-2">Số Thứ Tự</th>
-              <th class="pb-2">Ảnh</th>
-              <th class="pb-2 pl-2">Mã đồng hồ</th>
-              <th class="pb-2 pl-2">Tên</th>
-              <th class="pb-2 pl-2">Giá</th>
-              <th class="pb-2">Trạng thái</th>
-              <th class="pb-2">Mã đơn</th>
-              <th class="pb-2">Thời gian tạo đơn</th>
-              <th class="pb-2">Hành động</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(list, index) in wlists" :key="list.watch_id" class="border-t">
-              <td class="py-4">{{ index + 1 }}</td>
-              <td class="py-4"><img :src="list.image_url[0]" alt="watch image" class="w-16 h-16 object-cover"></td>
-              <td class="py-4 pl-2">{{ list.watch_id }}</td>
-              <td class="py-4 pl-2">{{ list.watch_name }}</td>
-              <td class="py-4 pl-2">{{ formatPriceVND(list.price) }}</td>
-              <td></td>
-              <td></td>
-              <td class="py-4 pl-2">{{ list.state === 3 ? 'Đang chờ duyệt đơn' : list.state }}</td>
-              <td class="py-4 px-2">
-                <button class="hover-underline-animation" @click="setShip(list.watch_id)">Giao hàng</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+          <table class="w-full border-collapse table">
+            <thead class="table-header">
+              <tr class="bg-[#494949] text-primary">
+                <th class="pb-2">Số Thứ Tự</th>
+                <th class="pb-2">Ảnh</th>
+                <th class="pb-2 pl-2">Mã đồng hồ</th>
+                <th class="pb-2 pl-2">Tên</th>
+                <th class="pb-2 pl-2">Giá</th>
+                <th class="pb-2">Trạng thái</th>
+                <th class="pb-2">Mã đơn</th>
+                <th class="pb-2">Thời gian tạo đơn</th>
+                <th class="pb-2">Hành động</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(list, index) in wlists" :key="list.watch_id" class="border-t">
+                <td class="py-4">{{ index + 1 }}</td>
+                <td class="py-4"><img :src="list.image_url[0]" alt="watch image" class="w-16 h-16 object-cover"></td>
+                <td class="py-4 pl-2">{{ list.watch_id }}</td>
+                <td class="py-4 pl-2">{{ list.watch_name }}</td>
+                <td class="py-4 pl-2">{{ formatPriceVND(list.price) }}</td>
+                <td class="py-4 pl-2">{{ list.state === 3 ? 'Đang chờ duyệt đơn' : list.state }}</td>
+                <td class="py-4 pl-2">{{ watchOrderDetails[list.watch_id] ? watchOrderDetails[list.watch_id][0] : 'N/A' }}</td>
+                <td class="py-4 pl-2">{{ watchOrderDetails[list.watch_id] ? formatDate(watchOrderDetails[list.watch_id][1]) : 'N/A' }}</td>
+                
+                <td class="py-4 px-2">
+                  <button class="hover-underline-animation" @click="setShip(list.watch_id)">Giao hàng</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pending Watches Section -->
+      <div v-if="activeSection === 'pending-watches'" id="pending-watches">
+        <h2 class="text-2xl mb-4 text-secondary">Đồng hồ chờ duyệt</h2>
+        <div class="table-container">
+          <table class="w-full border-collapse table">
+            <thead class="table-header">
+              <tr class="bg-[#494949] text-primary">
+                <th class="pb-2">Số Thứ Tự</th>
+                <th class="pb-2">Mã đồng hồ</th>
+                <th class="pb-2 pl-2">Tên</th>
+                <th class="pb-2 pl-2">Giá</th>
+                <th class="pb-2 pl-2">Trạng thái</th>
+                <th class="pb-2 pl-2">Thời gian tạo</th>
+                <th class="pb-2">Hành động</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(watch, index) in pendingWatches" :key="watch.watch_id" class="border-t">
+                <td class="py-4">{{ index + 1 }}</td>
+                <td class="py-4">{{ watch.watch_id }}</td>
+                <td class="py-4 pl-2">{{ watch.watch_name }}</td>
+                <td class="py-4 pl-2">{{ formatPriceVND(watch.price) }}</td>
+                <td class="py-4 pl-2">Đang chờ người bán xác nhận và gửi cho shipper</td>
+                <td class="py-4 pl-2">{{ formatDate(watch.watch_create_date) }}</td>
+                <td class="py-4 px-2">
+                  <button class="hover-underline-animation" @click="approveWatch(watch.watch_id)">Duyệt</button>
+                  <button class="hover-underline-animation" @click="deleteWatch(watch.watch_id)">Xóa</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -92,8 +128,9 @@
 
 <script setup>
 import { useAuthStore } from '../../stores/auth';
+import { useStaffStore } from '../../stores/staff';
 import { useUserStore } from '../../stores/user';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 const user = useUserStore();
@@ -102,7 +139,11 @@ const router = useRouter();
 const orderStates = ref({}); // Store order states
 const orders = ref([]);
 const wlists = ref([]);
-const activeSection = ref('orders'); // Mặc định là phần 'Đơn hàng của tôi'
+const pendingWatches = ref([]);
+const activeSection = ref('orders'); // Default section is 'orders'
+const isStaff = ref(false);
+const watchOrderDetails = ref({});
+
 
 const viewOrderDetails = (orderId) => {
   const state = orderStates.value[orderId];
@@ -114,7 +155,6 @@ const viewOrderDetails = (orderId) => {
   }
 };
 
-
 onMounted(async () => {
   if (!auth.user_id) {
     console.log('Người dùng chưa đăng nhập. Đang chuyển hướng đến trang đăng nhập...');
@@ -122,7 +162,13 @@ onMounted(async () => {
   } else {
     await loadOrders();
     await loadOrderStates();
-
+    const u = await user.loadUser(auth.user_id);
+    console.log(u.role);
+    if(u.role === 'ROLE_STAFF') isStaff.value = true;
+    else isStaff.value = false;
+    if (isStaff) {
+      await loadPendingWatches();
+    }
   }
 });
 
@@ -152,8 +198,39 @@ const loadOrders = async () => {
   try {
     orders.value = await user.getAllOrders(auth.user_id);
     wlists.value = await user.getOrderWaiting(auth.user_id);
+    for (const watch of wlists.value) {
+      try {
+        const orderDetails = await user.getOrderOfWatch(watch.watch_id);
+        watchOrderDetails.value[watch.watch_id] = orderDetails[0]; // Assuming the API always returns an array with one item
+      } catch (error) {
+        console.error(`Error fetching order details for watch ${watch.watch_id}:`, error);
+        watchOrderDetails.value[watch.watch_id] = null;
+      }
+    }
   } catch (error) {
     console.error('Lỗi khi tải danh sách đơn hàng:', error);
+    // Xử lý lỗi (ví dụ: hiển thị thông báo lỗi cho người dùng)
+  }
+};
+
+const loadPendingWatches = async () => {
+  try {
+    pendingWatches.value = await useStaffStore().getAllWatch(3);
+    console.log(pendingWatches.value);
+  } catch (error) {
+    console.error('Lỗi khi tải đồng hồ chờ duyệt:', error);
+    // Xử lý lỗi (ví dụ: hiển thị thông báo lỗi cho người dùng)
+  }
+};
+
+
+
+const deleteWatch = async (watchId) => {
+  try {
+    await useStaffStore().deleteWatch(watchId);
+    await loadPendingWatches();
+  } catch (error) {
+    console.error('Lỗi khi xóa đồng hồ:', error);
     // Xử lý lỗi (ví dụ: hiển thị thông báo lỗi cho người dùng)
   }
 };
@@ -167,6 +244,7 @@ const setShip = async (watchid) => {
     // Xử lý lỗi (ví dụ: hiển thị thông báo lỗi cho người dùng)
   }
 };
+
 const formatPriceVND = (price) => {
   return price.toLocaleString('vi-VN', {
     style: 'currency',
@@ -175,12 +253,15 @@ const formatPriceVND = (price) => {
 };
 
 const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleString();
+  const date = new Date(dateString);
+  date.setHours(date.getHours() + 7);
+  return date.toLocaleString('vi-VN')
 };
+
+
 </script>
 
 <style scoped>
-
 .table-container {
   overflow-x: auto;
   max-height: 400px; /* Adjust this value as needed */
@@ -224,6 +305,4 @@ const formatDate = (dateString) => {
 .table-container::-webkit-scrollbar-thumb:hover {
   background: #ffbd59;
 }
-
-
 </style>

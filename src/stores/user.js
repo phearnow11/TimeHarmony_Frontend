@@ -199,6 +199,20 @@ export const useUserStore = defineStore("user", {
         this.user_id = res.data.member_id;
         this.cur_fav = fav.data
         this.role = res.data.user_log_info.authorities.authority;
+
+        return {
+          username: this.username,
+          email: this.email,
+          first_name: this.first_name,
+          last_name: this.last_name,
+          address: this.address,
+          phone: this.phone,
+          image: this.image,
+          active: this.active,
+          user_id: this.user_id,
+          role: this.role,
+        };
+
       } catch (err) {
         console.error("Error fetching member data:", err);
       }
@@ -347,6 +361,16 @@ export const useUserStore = defineStore("user", {
     async getOrderWaiting(seller_id) {
       try {
         const response = await axios.get(`${api}/seller/get/waiting/${seller_id}`);
+        console.log('Full list response:', response.data);
+        return response.data; // This will return the entire response object
+      } catch (error) {
+        console.error('Error fetching order details:', error);
+        throw error;
+      }
+    },
+    async getOrderOfWatch(watch_id) {
+      try {
+        const response = await axios.get(`${api}/seller/get/order/${watch_id}`);
         console.log('Full list response:', response.data);
         return response.data; // This will return the entire response object
       } catch (error) {

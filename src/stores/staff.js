@@ -7,6 +7,7 @@ export const useStaffStore = defineStore("staff", {
     unapprovedWatches: [],
     approvedWatches: [],
     deleteWatches: [],
+    pendingWatches: [],
   }),
   actions: {
     async getAllWatch(state) {
@@ -20,6 +21,8 @@ export const useStaffStore = defineStore("staff", {
           this.approvedWatches = watches;
         } else if (state === 2) {
           this.deleteWatches = watches;
+        } else if (state === 3) {
+          this.pendingWatches = watches;
         }
         return watches;
       } catch (err) {
