@@ -143,4 +143,37 @@ export const useAdminStore = defineStore("admin", {
       });
     },
   },
+  getters: {
+    filteredMembers: (state) => (query) => {
+      const lowerQuery = query.toLowerCase();
+      return state.members.filter(
+        (member) =>
+          member.member_id.toLowerCase().includes(lowerQuery) ||
+          member.first_name.toLowerCase().includes(lowerQuery) ||
+          member.last_name.toLowerCase().includes(lowerQuery) ||
+          member.email.toLowerCase().includes(lowerQuery) ||
+          member.user_log_info.username.toLowerCase().includes(lowerQuery)
+      );
+    },
+
+    filteredWatches: (state) => (query) => {
+      const lowerQuery = query.toLowerCase();
+      return state.products.filter(
+        (product) =>
+          product.watch_id.toLowerCase().includes(lowerQuery) ||
+          product.watch_name.toLowerCase().includes(lowerQuery) ||
+          product.seller.user_log_info.username.toLowerCase().includes(lowerQuery)
+      );
+    },
+
+    filteredOrders: (state) => (query) => {
+      const lowerQuery = query.toLowerCase();
+      return state.orders.filter(
+        (order) =>
+          order.order_id.toLowerCase().includes(lowerQuery) ||
+          order.receive_name.toLowerCase().includes(lowerQuery) ||
+          new Date(order.create_time).toLocaleDateString().toLowerCase().includes(lowerQuery)
+      );
+    },
+  }
 });

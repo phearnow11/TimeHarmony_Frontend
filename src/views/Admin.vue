@@ -19,6 +19,31 @@
 
     <section class="mb-6">
       <h2 class="text-2xl font-semibold mb-2">Danh Sách Thành Viên</h2>
+      <div class="ui-input-container col-span-3 mb-5">
+        <input
+          required
+          placeholder="Tìm kiếm id, tên hoặc email.."
+          class="ui-input"
+          type="text"
+          v-model="qMembers"
+          @keyup="searchMembers"
+        />
+        <div class="ui-input-underline"></div>
+        <div class="ui-input-highlight"></div>
+        <div class="ui-input-icon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-width="2"
+              stroke="currentColor"
+              d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
+            ></path>
+          </svg>
+        </div>
+      </div>
       <div class="table-container">
         <table class="table">
           <thead class="table-header">
@@ -35,7 +60,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="member in members" :key="member.member_id">
+            <tr v-for="member in filteredMembers" :key="member.member_id">
               <td class="p-2 border-b">{{ member.member_id }}</td>
               <td class="p-2 border-b">
                 <img
@@ -45,7 +70,7 @@
                 />
               </td>
               <td class="p-2 border-b">
-                {{ member.first_name }} {{ member.last_name }}
+                {{ member?.first_name }} {{ member?.last_name }}
               </td>
               <td class="p-2 border-b">{{ member.email }}</td>
               <td class="p-2 border-b">{{ member.user_log_info.username }}</td>
@@ -54,7 +79,9 @@
                 {{ member.user_log_info.authorities.authority || "N/A" }}
               </td>
               <td class="p-2 border-b">
-                {{ member.user_log_info.enabled === 1 ? 'Hoạt động' : 'Bị cấm' }}
+                {{
+                  member.user_log_info.enabled === 1 ? "Hoạt động" : "Bị cấm"
+                }}
               </td>
               <td class="p-2 border-b">
                 <div
@@ -64,7 +91,8 @@
                 >
                   Cấm khỏi hệ thống <span class="mdi mdi-cancel"></span>
                 </div>
-                <div v-else
+                <div
+                  v-else
                   class="hover-underline-animation-r flex items-center justify-center gap-2"
                   @click="unbanUser(member)"
                 >
@@ -79,6 +107,31 @@
 
     <section class="mb-6">
       <h2 class="text-2xl font-semibold mb-2">Sản Phẩm</h2>
+      <div class="ui-input-container col-span-3 mb-5">
+        <input
+          required
+          placeholder="Tìm kiếm id, tên sản phẩm hoặc người bán.."
+          class="ui-input"
+          type="text"
+          v-model="qWatches"
+          @keyup.enter="searchWatches"
+        />
+        <div class="ui-input-underline"></div>
+        <div class="ui-input-highlight"></div>
+        <div class="ui-input-icon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-width="2"
+              stroke="currentColor"
+              d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
+            ></path>
+          </svg>
+        </div>
+      </div>
       <div class="table-container">
         <table class="table">
           <thead class="table-header">
@@ -91,7 +144,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="product in products" :key="product.watch_id">
+            <tr v-for="product in filteredWatches" :key="product.watch_id">
               <td class="p-2 border-b">{{ product.watch_id }}</td>
               <td class="p-2 border-b">{{ product.watch_name }}</td>
               <td class="p-2 border-b">
@@ -116,6 +169,31 @@
 
     <section class="mb-6">
       <h2 class="text-2xl font-semibold mb-2">Đơn Hàng</h2>
+      <div class="ui-input-container col-span-3 mb-5">
+        <input
+          required
+          placeholder="Tìm kiếm id, tên hoặc ngày tạo.."
+          class="ui-input"
+          type="text"
+          v-model="qOrders"
+          @keyup.enter="searchOrders"
+        />
+        <div class="ui-input-underline"></div>
+        <div class="ui-input-highlight"></div>
+        <div class="ui-input-icon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-width="2"
+              stroke="currentColor"
+              d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
+            ></path>
+          </svg>
+        </div>
+      </div>
       <div class="table-container">
         <table class="table">
           <thead class="table-header">
@@ -130,7 +208,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="order in orders" :key="order.order_id">
+            <tr v-for="order in filteredOrders" :key="order.order_id">
               <td class="p-2 border-b">{{ order.order_id }}</td>
               <td class="p-2 border-b">
                 {{ new Date(order.create_time).toLocaleDateString() }}
@@ -184,7 +262,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { useAdminStore } from "../stores/admin";
 import ProfitChart from "../components/ProfitChart.vue";
 import { useChatStore } from "../stores/chat";
@@ -202,32 +280,174 @@ const isBanModalOpen = ref(false);
 const banMessage = ref("");
 const selectedMember = ref(null);
 
+const qMembers = ref('');
+const qWatches = ref('');
+const qOrders = ref('');
+
+// Error state
+const error = ref(null);
+
 // Fetch data from the store on component mount
 onMounted(async () => {
-  await adminStore.getMembers();
-  await adminStore.getWatches();
-  await adminStore.getOrders();
+  try {
+    await adminStore.getMembers();
+    await adminStore.getWatches();
+    await adminStore.getOrders();
+  } catch (err) {
+    console.error("Error fetching data:", err);
+    error.value = "Failed to fetch initial data. Please try refreshing the page.";
+  }
 });
 
-if(useUserStore().role !== 'ROLE_ADMIN' && useAuthStore().user_id !== import.meta.env.VITE_ADMIN_USERID) {
-  console.log('Not ADMIN');
-  router.push('/');
+// Check user role
+const userStore = useUserStore();
+const authStore = useAuthStore();
+if (
+  userStore.role !== "ROLE_ADMIN" &&
+  authStore.user_id !== import.meta.env.VITE_ADMIN_USERID
+) {
+  console.log("Not ADMIN");
+  router.push("/");
 }
 
-// Define computed properties
-const members = computed(() => adminStore.members);
-const products = computed(() => adminStore.products);
-const orders = computed(() => adminStore.orders);
+// Define computed properties with error handling
+const filteredMembers = computed(() => {
+  try {
+    return adminStore.filteredMembers(qMembers.value);
+  } catch (err) {
+    console.error("Error in filteredMembers:", err);
+    error.value = "Error filtering members. Please try again.";
+    return [];
+  }
+});
 
-// Compute financial metrics
-const totalCost = computed(() =>
-  products.value.reduce((sum, product) => sum + product.price * 1, 0)
-); // Stock is always 1
+const filteredWatches = computed(() => {
+  try {
+    return adminStore.filteredWatches(qWatches.value);
+  } catch (err) {
+    console.error("Error in filteredWatches:", err);
+    error.value = "Error filtering watches. Please try again.";
+    return [];
+  }
+});
 
-const totalRevenue = computed(() =>
-  orders.value.reduce((sum, order) => sum + order.total_price, 0)
-);
-const totalProfit = computed(() => totalRevenue.value * 0.02); // 2% profit from total revenue
+const filteredOrders = computed(() => {
+  try {
+    return adminStore.filteredOrders(qOrders.value);
+  } catch (err) {
+    console.error("Error in filteredOrders:", err);
+    error.value = "Error filtering orders. Please try again.";
+    return [];
+  }
+});
+
+// Compute financial metrics with error handling
+const totalCost = computed(() => {
+  try {
+    return filteredWatches.value.reduce((sum, product) => sum + product.price * 1, 0);
+  } catch (err) {
+    console.error("Error calculating totalCost:", err);
+    error.value = "Error calculating total cost. Please try again.";
+    return 0;
+  }
+});
+
+const totalRevenue = computed(() => {
+  try {
+    return filteredOrders.value.reduce((sum, order) => sum + order.total_price, 0);
+  } catch (err) {
+    console.error("Error calculating totalRevenue:", err);
+    error.value = "Error calculating total revenue. Please try again.";
+    return 0;
+  }
+});
+
+const totalProfit = computed(() => totalRevenue.value * 0.02);
+
+// Updated searchMembers function with more robust error handling
+const searchMembers = () => {
+  adminStore.getMembers()
+    .then(() => {
+      adminStore.members = adminStore.members.filter(member => {
+        if (!member) return false;
+
+        // Ensure member properties are defined
+        const id = member.member_id ? member.member_id.toString() : ''; // Convert ID to string
+        const firstName = member.first_name ? member.first_name.toLowerCase() : '';
+        const lastName = member.last_name ? member.last_name.toLowerCase() : '';
+        const email = member.email ? member.email.toLowerCase() : '';
+        const username = member.user_log_info.username ? member.user_log_info.username.toLowerCase() : '';
+
+        // Convert query to lower case
+        const query = qMembers.value.toLowerCase();
+
+        // Check if any field includes the search query
+        return (
+          id.includes(query) || 
+          firstName.includes(query) || 
+          lastName.includes(query) || 
+          email.includes(query) ||
+          username.includes(query)
+        );
+      });
+    })
+    .catch(error => {
+      console.error("Error searching members:", error);
+    });
+};
+
+const searchWatches = () => {
+  adminStore.getWatches()
+    .then(() => {
+      adminStore.products = adminStore.products.filter(watch => {
+        if (!watch) return false;
+
+        // Ensure member properties are defined
+        const id = product.watch_id ? product.watch_id.toLowerCase() : '' ;
+        const name = product.watch_name ? product.watch_name.toLowerCase() : '' 
+        const seller = product.seller.user_log_info.username ? product.seller.user_log_info.username.toLowerCase() : ''
+
+        // Convert query to lower case
+        const query = qWatches.value.toLowerCase();
+
+        // Check if any field includes the search query
+        return (
+          id.includes(query) || 
+          name.includes(query) ||
+          seller.includes(query)
+        );
+      });
+    })
+    .catch(error => {
+      console.error("Error searching members:", error);
+    });
+};
+
+const searchOrders = () => {
+  adminStore.getOrders()
+    .then(() => {
+      adminStore.orders = adminStore.orders.filter(order => {
+        if (!order) return false;
+
+        // Ensure member properties are defined
+        const id = order.order_id?order.order_id.toLowerCase():''
+        const ord =  order.receive_name?order.receive_name.toLowerCase():''
+          const date = order.create_time?new Date(order.create_time).toLocaleDateString().toLowerCase(): ''
+        // Convert query to lower case
+        const query = qOrders.value.toLowerCase();
+
+        // Check if any field includes the search query
+        return (
+          id.includes(query) || 
+          ord.includes(query) ||
+          date.includes(query)
+        );
+      });
+    })
+    .catch(error => {
+      console.error("Error searching members:", error);
+    });
+};
 
 // Define a method to promote a user to staff
 const promoteToStaff = async () => {
@@ -256,7 +476,8 @@ const closeBanModal = () => {
 // Confirm ban user
 const confirmBanUser = () => {
   if (selectedMember.value) {
-    useChatStore().registerUser2(selectedMember.value.member_id)
+    useChatStore()
+      .registerUser2(selectedMember.value.member_id)
       .then(() => {
         return useChatStore().sendMessage(
           selectedMember.value.member_id,
@@ -264,7 +485,11 @@ const confirmBanUser = () => {
         );
       })
       .then(() => {
-        useMailStore().send(selectedMember.value.email, "THÔNG BÁO BẠN ĐÃ BỊ BAN KHỎI TIME HARMONY.", `Tài khoản mang tên ${selectedMember.value.user_log_info.username} đã bị cấm khỏi nền tảng! Lý do: ${banMessage.value}.`);
+        useMailStore().send(
+          selectedMember.value.email,
+          "THÔNG BÁO BẠN ĐÃ BỊ BAN KHỎI TIME HARMONY.",
+          `Tài khoản mang tên ${selectedMember.value.user_log_info.username} đã bị cấm khỏi nền tảng! Lý do: ${banMessage.value}.`
+        );
         return useAdminStore().ban(selectedMember.value.user_log_info.username);
       })
       .catch((error) => {
@@ -383,5 +608,75 @@ const currency = (value) => `${value.toLocaleString("vi-VN")} ₫`;
   padding: 10px 20px;
   border: none;
   cursor: pointer;
+}
+
+.ui-input-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.ui-input {
+  width: 100%;
+  padding: 10px 10px 10px 40px;
+  font-size: 1em;
+  border: none;
+  border-bottom: 2px solid #ccc;
+  background-color: transparent;
+  transition: border-color 0.3s, background-color 0.3s, padding 0.3s;
+}
+
+.ui-input:focus {
+  border-color: var(--secondary);
+
+  padding: 10px 10px 10px 40px; /* Ensuring the padding remains the same on focus */
+}
+
+.ui-input-underline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background-color: var(--primary);
+  transform: scaleX(0);
+  transition: transform 0.3s;
+}
+
+.ui-input:focus + .ui-input-underline {
+  transform: scaleX(1);
+}
+
+.ui-input-highlight {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  background-color: var(--back);
+  transition: width 0.3s;
+}
+
+.ui-input:focus ~ .ui-input-highlight {
+  width: 100%;
+}
+
+.ui-input-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+  transition: color 0.3s;
+}
+
+.ui-input:focus ~ .ui-input-icon {
+  color: #e6c591;
+}
+
+.ui-input-icon svg {
+  width: 20px;
+  height: 20px;
 }
 </style>
