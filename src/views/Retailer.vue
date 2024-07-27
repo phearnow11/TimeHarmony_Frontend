@@ -40,9 +40,9 @@
       </div>
       <div class="flex gap-10 items-center">
         <router-link class="hover-underline-animation"><span class="mdi mdi-phone"></span> {{ defaultPhone?defaultPhone:"N/A" }}</router-link>
-        <a :href="`mailto:${userStore.email}`" class="hover-underline-animation">
+        <a :href="`mailto:${retailer.email}`" class="hover-underline-animation">
         <span class="mdi mdi-email"></span>
-        {{ userStore.email ? userStore.email : "N/A" }}
+        {{ retailer.email ? retailer.email : "N/A" }}
         </a>        
       <router-link class="hover-underline-animation-r">Report user</router-link>
       <button class="th-s-btn" @click="mess">Nhắn tin</button>

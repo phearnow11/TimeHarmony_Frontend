@@ -74,5 +74,15 @@ export const useStaffStore = defineStore("staff", {
         console.error(err);
       }
     },
+    async getPendingOrder() {
+      try {
+        const res = await axios.get(`${api}/staff/get/pending-order`);
+        console.log(res.data);
+        return res.data;  
+      } catch (err) {
+        console.error(err);
+        return [];
+      }
+    },
   },
 });
