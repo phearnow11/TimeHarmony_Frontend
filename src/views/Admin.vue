@@ -176,6 +176,7 @@ import { useChatStore } from "../stores/chat";
 import { useAuthStore } from "../stores/auth";
 import { useUserStore } from "../stores/user";
 import router from "../router";
+import { useMailStore } from "../stores/mail";
 
 const reason = ref('ngu');
 
@@ -232,6 +233,7 @@ const banUser = (member) => {
       );
     })
     .then(() => {
+      useMailStore().send(member.email, "THÔNG BÁO BẠN ĐÃ BỊ BAN KHỎI TIME HARMONY.", `Tài khoản mang tên ${member.user_log_info.username} đã bị cấm khỏi nền tảng! Lý do: ${reason.value}.`)
       return useAdminStore().ban(member.user_log_info.username);
     })
     .catch((error) => {
