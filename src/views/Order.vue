@@ -455,7 +455,7 @@ const createOrder = async () => {
     try {
       const wids = Object.values(cartStore.selected_wids);
       console.log('Selected WIDs:', wids);
-      userStore.setPendingWids(wids);
+      localStorage.setItem('pendingWids', JSON.stringify(wids));
 
       const paymentResponse = await createVnPayPayment(totalAll.value, wids);
       console.log('Payment Response:', paymentResponse);

@@ -41,7 +41,6 @@ const transactionNo = ref('');
 const responseCode = ref('');
 const vnpCardType = ref('');
 const countdown = ref(30);
-const wids = userStore.pendingWids;
 let countdownTimer;
 
 const parseDateTimeString = (dateTimeString) => {
@@ -84,7 +83,8 @@ onMounted(async () => {
 
     userStore.transaction_no = paymentData.vnp_TransactionNo;
     userStore.payment_method = paymentData.vnp_CardType;
-  
+    const wids = JSON.parse(localStorage.getItem('pendingWids') || '[]');
+
     const isSuccess = paymentData.vnp_ResponseCode === '00';
     console.log('Selected WIDs:', wids);
 
