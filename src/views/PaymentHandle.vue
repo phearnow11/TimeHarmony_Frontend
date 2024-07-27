@@ -40,8 +40,8 @@ const payDate = ref('');
 const transactionNo = ref('');
 const responseCode = ref('');
 const vnpCardType = ref('');
-const countdown = ref(30);
-let countdownTimer;
+// const countdown = ref(30);
+// let countdownTimer;
 
 const parseDateTimeString = (dateTimeString) => {
   return new Date(dateTimeString).toLocaleString();
@@ -51,21 +51,21 @@ const returnToHomepage = () => {
   router.push('/');
 };
 
-const startCountdown = () => {
-  countdownTimer = setInterval(() => {
-    countdown.value--;
-    if (countdown.value <= 0) {
-      clearInterval(countdownTimer);
-      returnToHomepage();
-    }
-  }, 1000);
-};
+// const startCountdown = () => {
+//   countdownTimer = setInterval(() => {
+//     countdown.value--;
+//     if (countdown.value <= 0) {
+//       clearInterval(countdownTimer);
+//       returnToHomepage();
+//     }
+//   }, 1000);
+// };
 
-onUnmounted(() => {
-  if (countdownTimer) {
-    clearInterval(countdownTimer);
-  }
-});
+// onUnmounted(() => {
+//   if (countdownTimer) {
+//     clearInterval(countdownTimer);
+//   }
+// });
 
 onMounted(async () => {
   try {
