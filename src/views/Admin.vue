@@ -76,7 +76,7 @@
               <td class="p-2 border-b">{{ member.user_log_info.username }}</td>
               <td class="p-2 border-b">{{ member.phone || "N/A" }}</td>
               <td class="p-2 border-b">
-                {{ member.user_log_info.authorities.authority || "N/A" }}
+                  {{ member.staff_role?member.staff_role:member.user_log_info.authorities.authority }}
               </td>
               <td class="p-2 border-b">
                 {{
