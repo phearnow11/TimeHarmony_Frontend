@@ -89,6 +89,8 @@ onMounted(async () => {
     const wids = JSON.parse(localStorage.getItem('pendingWids') || '[]');
     console.log('Watch id: ' + wids);
 
+    const widsString = wids.join(',');
+
     if (isSuccess) {
       successMessage.value = 'Payment successful. Saving payment details...';
       paymentStatus.value = 'Successful';
@@ -99,7 +101,7 @@ onMounted(async () => {
         bank_code: bankCode.value,
         payment_method: vnpCardType.value,
         isSuccess: "True",
-        wids: JSON.stringify(wids)
+        wids: widsString
       };
       console.log('Payment ok: ' + JSON.stringify(paymentDataToSave));
       const savedPayment = await savePaymentDetail(paymentDataToSave);
@@ -143,15 +145,13 @@ onMounted(async () => {
         bank_code: bankCode.value,
         payment_method: vnpCardType.value,
         isSuccess: "False",
-        wids: JSON.stringify(wids)
+        wids: widsString
       };
 
       console.log('Failed Payment: ' + JSON.stringify(paymentFailDataToSave));
       const savedPayment = await savePaymentDetail(paymentFailDataToSave);
       console.log('Payment details saved:', savedPayment);
       
-      
-
       localStorage.removeItem(wids)
     }
   } catch (error) {
