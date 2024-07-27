@@ -133,6 +133,13 @@ const router = createRouter({
       }),
     },
     {
+      path: '/setting/profit',
+      name: 'ProfitSetting',
+      component: () => import('../views/Setting/ProfitSetting.vue').catch(err => {
+        console.error(err);
+      }),
+    },
+    {
       path: '/detail/:watch_id',
       name: 'ProductDetail',
       component: () => import('../views/ProductDetail.vue').catch(err => {

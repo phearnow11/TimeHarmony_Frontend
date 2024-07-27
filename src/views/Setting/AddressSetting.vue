@@ -8,6 +8,7 @@
         <li><router-link to="/setting/password" class="hover-underline-animation">Mật khẩu</router-link></li>
         <li class="text-secondary">Sổ địa chỉ</li>
         <li><router-link to="/setting/product" class="hover-underline-animation">Đơn hàng của tôi</router-link></li>
+        <li><router-link to="/setting/profit" class="hover-underline-animation">Thu nhập</router-link></li>
         <li><router-link to="#" class="hover-underline-animation-r">Xoá tài khoản</router-link></li>
       </ul>
     </aside>
