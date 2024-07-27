@@ -32,7 +32,7 @@
               v-model="user.username"
               required
             />
-            <label for="username" class="form__label">Username</label>
+            <label for="username" class="form__label">Tên tài khoản</label>
           </div>
           <button type="submit" class="th-p-btn mt-8">Lưu thay đổi</button>
         </form>
@@ -42,7 +42,7 @@
       <section class="p-6">
         <h3 class="text-xl text-secondary mb-4">Thông tin cá nhân</h3>
         <form @submit.prevent="saveChanges">
-          <div class="flex gap-4 mb-4">
+          <div class="flex gap-4">
             <div class="form__group field flex-1">
               <input
                 type="text"
@@ -51,7 +51,7 @@
                 v-model="user.first_name"
                 required
               />
-              <label for="first_name" class="form__label">First Name</label>
+              <label for="first_name" class="form__label">Tên</label>
             </div>
             <div class="form__group field flex-1">
               <input
@@ -61,7 +61,7 @@
                 v-model="user.last_name"
                 required
               />
-              <label for="last_name" class="form__label">Last Name</label>
+              <label for="last_name" class="form__label">Họ (Tên đệm)</label>
             </div>
           </div>
           <div class="form__group field ">
@@ -72,9 +72,9 @@
               v-model="user.phone"
               required
             />
-            <label for="phone" class="form__label">Phone</label>
+            <label for="phone" class="form__label">Số điện thoại</label>
           </div>
-          <div class="form__group field ">
+          <div class="form__group field">
             <input
               type="email"
               class="form__field"
@@ -109,6 +109,7 @@ const uploadToCDN = async (file) => {
   try {
     const response = await cloudinary.uploadImage(file);
     await user.updateImage(response.secure_url)
+    user.loadUser(auth.user_id)
   } catch (error) {
     console.error("Error uploading file:", error);
     // You might want to show an error message to the user here

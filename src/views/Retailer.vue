@@ -39,13 +39,13 @@
         <div class="bg-secondary h-0.5 w-full"></div>
       </div>
       <div class="flex gap-10 items-center">
-        <router-link class="hover-underline-animation"><span class="mdi mdi-phone"></span> {{ defaultPhone?defaultPhone:"N/A" }}</router-link>
+        <a :href="`tel:${retailer.phone}`" class="hover-underline-animation"><span class="mdi mdi-phone"></span> {{ retailer.phone?retailer.phone:"N/A" }}</a>
         <a :href="`mailto:${retailer.email}`" class="hover-underline-animation">
         <span class="mdi mdi-email"></span>
         {{ retailer.email ? retailer.email : "N/A" }}
         </a>        
-      <router-link class="hover-underline-animation-r">Report user</router-link>
-      <button class="th-s-btn" @click="mess">Nhắn tin</button>
+        <button class="th-s-btn" @click="mess">Nhắn tin</button>
+      <button @click="openReportModal" class="hover-underline-animation-r">Report user</button>
       </div>
       <div class="flex items-center justify-center mt-6 mb-6">
         <div class="w-44">
@@ -71,17 +71,29 @@
         <a class="hover-underline-animation" :href="`/discover/seller searching result?page=0&store=${retailer.username}`">Show more watches</a>
     </div>
     </div>
+     <!-- Report Modal -->
+     <div v-if="showReportModal" class="modal-overlay">
+      <div class="modal">
+        <h2>Report User</h2>
+        <textarea v-model="message" placeholder="Enter reason for reporting" rows="4"></textarea>
+        <div class="modal-actions">
+          <button @click="submitReport" class="th-p-btn">Submit</button>
+          <button @click="closeReportModal" class="th-s-btn">Cancel</button>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
 <script setup>
 import ProductCard from '../components/ProductCard.vue';
-import { ref, onMounted, watch, computed } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useUserStore } from '../stores/user';
 import { useChatStore } from '../stores/chat';
-import router from '../router';
-
+import axios from 'axios';
+ 
+var api = import.meta.env.VITE_API_PORT
 const route = useRoute();
 const userStore = useUserStore();
 const addresses = ref([]);
@@ -99,6 +111,7 @@ const retailer = ref({
 
 const selectedRating = ref(0);
 const rating = ref(0);
+const message = ref('')
 
 const updateRating = (star) => {
   selectedRating.value = star;
@@ -110,15 +123,6 @@ const defaultAddress = computed(() => {
     const defaultAddr = addresses.value.find(addr => addr.isDefault === true);
     console.log('Default address object:', defaultAddr);
     return defaultAddr ? defaultAddr.address : addresses.value[0].detail;
-  }
-  return null;
-});
-
-const defaultPhone = computed(() => {
-  if (addresses.value && addresses.value.length > 0) {
-    const defaultAddr = addresses.value.find(addr => addr.isDefault === true);
-    console.log('Default address object:', defaultAddr);
-    return defaultAddr ? defaultAddr.phone : addresses.value[0].phone;
   }
   return null;
 });
@@ -145,10 +149,35 @@ onMounted(async () => {
 
 const mess = () => {
   useChatStore().addToChat(retailer.value.user_id)
-  .then(
-    window.location.replace('/chat')
-  )
-}
+  .then(() => {
+    window.location.replace('/chat');
+  });
+};
+
+// Modal related state and methods
+const showReportModal = ref(false);
+
+const openReportModal = () => {
+  showReportModal.value = true;
+  document.body.classList.add('no-scroll');
+};
+
+const closeReportModal = () => {
+  showReportModal.value = false;
+  document.body.classList.remove('no-scroll');
+  message.value = '';
+};
+
+const submitReport = () => {
+  if (message.value.trim() === '') {
+    alert('Please enter a reason for reporting.');
+    return;
+  }
+  // Handle the report submission logic here
+  axios.post(`${api}/chat/addtochat?user_id=${import.meta.env.VITE_ADMIN_USERID}&user_id2=${userStore.user_id}`);
+  useChatStore().sendMessage(import.meta.env.VITE_ADMIN_USERID, `Báo cáo người dùng "${retailer.value.username}", lý do: ${message.value}.`)
+  closeReportModal();
+};
 </script>
 
 <style scoped>
@@ -346,5 +375,43 @@ label .select-op {
   .radio-inputs .radio .name {
     padding: 0.1rem;
   }
+}
+
+/* Modal styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  background: #222222;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 100%;
+  z-index: 1000; /* Ensure the modal is above all other content */
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+  gap: 3px;
+}
+
+textarea {
+  color:rgb(0, 0, 0);
+  width: 100%;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  resize: none;
 }
 </style>
