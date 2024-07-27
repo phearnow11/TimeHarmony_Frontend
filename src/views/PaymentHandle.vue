@@ -101,7 +101,7 @@ onMounted(async () => {
         bank_code: bankCode.value,
         payment_method: vnpCardType.value,
         isSuccess: "true",
-        wids: wids
+        wids: pendingWids
       };
       console.log('Payment ok: ' + JSON.stringify(paymentDataToSave));
       const savedPayment = await savePaymentDetail(paymentDataToSave);
@@ -145,7 +145,7 @@ onMounted(async () => {
         bank_code: bankCode.value,
         payment_method: vnpCardType.value,
         isSuccess: "false",
-        wids: wids
+        wids: pendingWids
       };
 
       console.log('Failed Payment: ' + JSON.stringify(paymentFailDataToSave));
