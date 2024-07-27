@@ -189,6 +189,13 @@ const router = createRouter({
       }),
     },
     {
+      path: '/location',
+      name: 'Location',
+      component: () => import('../views/Location.vue').catch(err => {
+        console.error(err);
+      }),
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'Error',
       component: () => import('../views/Error.vue').catch(err => {
