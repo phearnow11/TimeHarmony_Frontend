@@ -87,7 +87,7 @@ onMounted(async () => {
     
     const isSuccess = paymentData.vnp_ResponseCode === '00';
 
-    const wids = JSON.parse(localStorage.getItem('pendingWids') || '[]');
+    const wids = localStorage.getItem('pendingWids') || '[]';
 
 
 
