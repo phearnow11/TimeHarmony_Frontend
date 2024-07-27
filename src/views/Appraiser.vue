@@ -206,7 +206,7 @@ const handleConfirm = async (type) => {
 
     if(sellerId){
       console.log(data);
-      await useStaffStore().unapprovedWatchOfSeller(data);
+      await useStaffStore().notapproveWatch(data);
     } else {
       console.error('Seller ID not found for watch:', draggedItemId.value);
     }
