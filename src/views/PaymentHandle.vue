@@ -88,7 +88,9 @@ onMounted(async () => {
     const isSuccess = paymentData.vnp_ResponseCode === '00';
 
     const wids = localStorage.getItem('pendingWids') || '[]';
-
+    const formatWids = (wids) => {
+      return `[${wids.map(w => `"${w}"`).join(',')}]`;
+    };
 
 
     if (isSuccess) {
@@ -101,7 +103,7 @@ onMounted(async () => {
         bank_code: bankCode.value,
         payment_method: vnpCardType.value,
         isSuccess: "True",
-        wids: wids
+        wids: formatWids(wids)
       };
       console.log('Payment ok: ' + JSON.stringify(paymentDataToSave));
       const savedPayment = await savePaymentDetail(paymentDataToSave);
@@ -145,7 +147,7 @@ onMounted(async () => {
         bank_code: bankCode.value,
         payment_method: vnpCardType.value,
         isSuccess: "False",
-        wids: wids
+        wids: formatWids(wids)
       };
 
       console.log('Failed Payment: ' + JSON.stringify(paymentFailDataToSave));
