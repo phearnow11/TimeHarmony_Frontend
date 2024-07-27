@@ -41,6 +41,7 @@ const transactionNo = ref('');
 const responseCode = ref('');
 const vnpCardType = ref('');
 const countdown = ref(30);
+const wids = useUserStore().pendingWids;
 let countdownTimer;
 
 const parseDateTimeString = (dateTimeString) => {
@@ -72,7 +73,7 @@ onMounted(async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const paymentData = Object.fromEntries(urlParams.entries());
 
-    const pendingOrder = userStore.getPendingOrder();
+    wids = JSON.parse(localStorage.getItem('pendingWids') || '[]'); // Use the method you chose to store wids
     console.log('Received payment data:', paymentData);
 
     amountString.value = paymentData.vnp_Amount;
@@ -87,8 +88,8 @@ onMounted(async () => {
     
     const isSuccess = paymentData.vnp_ResponseCode === '00';
 
-    const wids = Object.values(useCartStore().selected_wids);
-    console.log('Selected WIDs:', wids);
+    const pendingWids = JSON.parse(localStorage.getItem('pendingWids') || '[]');
+    console.log('Selected WIDs:', pendingWids);
 
     if (isSuccess) {
       successMessage.value = 'Payment successful. Saving payment details...';
@@ -99,8 +100,8 @@ onMounted(async () => {
         payment_amount: parseFloat(amountString.value),
         bank_code: bankCode.value,
         payment_method: vnpCardType.value,
-        isSuccess: isSuccess.toString(),
-        wids: formattedWids
+        isSuccess: "true",
+        wids: wids
       };
       console.log('Payment ok: ' + JSON.stringify(paymentDataToSave));
       const savedPayment = await savePaymentDetail(paymentDataToSave);
@@ -143,8 +144,8 @@ onMounted(async () => {
         payment_amount: parseFloat(amountString.value),
         bank_code: bankCode.value,
         payment_method: vnpCardType.value,
-        isSuccess: isSuccess.toString(),
-        wids: formattedWids
+        isSuccess: "false",
+        wids: wids
       };
 
       console.log('Failed Payment: ' + JSON.stringify(paymentFailDataToSave));

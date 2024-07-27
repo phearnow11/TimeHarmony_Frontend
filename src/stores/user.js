@@ -25,10 +25,13 @@ export const useUserStore = defineStore("user", {
     payment_method: null,
     cart_num: 0,
     role: null,
-    
+    pendingWids: [],
   }),
 
   actions: {
+    setPendingWids(wids) {
+      this.pendingWids = wids;
+    },
     setCurrentOrder(order) {
       this.currentOrder = order;
     },
