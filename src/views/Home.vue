@@ -47,7 +47,7 @@ import Carousel from '../components/Carousel.vue';
 import Brand from '../components/Brand.vue';
 import { ref, computed, onMounted, defineAsyncComponent, onUnmounted } from 'vue';
 import axios from 'axios';
-import { useChatStore } from '../stores/chat';
+import { useMailStore } from '../stores/mail';
 
 const ProductCard = defineAsyncComponent(() => import('../components/ProductCard.vue'));
 const SkeletonCard = defineAsyncComponent(() => import('../components/SkeletonCard.vue'));
@@ -76,27 +76,18 @@ onMounted(async () => {
   }
 })
 
-// const chatStore = useChatStore();
-// const showNotification = ref(false);
-// const notificationMessage = ref('');
+// function handleBeforeUnload(event) {
+//   //Start codes here
 
-// const handleNewMessage = (event) => {
-//   const message = event.detail;
-//   notificationMessage.value = `New message from ${message.sender_id}: ${message.text}`;
-//   showNotification.value = true;
-//   setTimeout(() => {
-//     showNotification.value = false;
-//   }, 5000); // Hide notification after 5 seconds
-// };
-
+//   //End codes
+//   event.preventDefault();
+//   event.returnValue = '';
+// }
 // onMounted(() => {
-//   window.addEventListener('newMessage', handleNewMessage);
-//   chatStore.subscribeToMessages();
+//   window.addEventListener('beforeunload', handleBeforeUnload);
 // });
-
 // onUnmounted(() => {
-//   window.removeEventListener('newMessage', handleNewMessage);
-//   chatStore.unsubscribeFromMessages();
+//   window.removeEventListener('beforeunload', handleBeforeUnload);
 // });
 </script>
 

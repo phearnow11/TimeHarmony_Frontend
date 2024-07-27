@@ -51,7 +51,7 @@
         v-if="auth.user_id"
         >Upload</router-link
       > -->
-      <router-link to="/upload" v-if="auth.user_id">
+      <router-link to="/upload" v-if="auth.user_id && userStore.role!='ROLE_STAFF' && userStore.role!='ROLE_ADMIN'">
 
         <button  class="th-p-btn upload-button px-6">
           Đăng bán<span class="mdi mdi-plus"></span>

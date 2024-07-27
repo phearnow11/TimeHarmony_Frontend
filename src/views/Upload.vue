@@ -438,6 +438,7 @@ import { useWatchStore } from "../stores/watch";
 import { useUserStore } from "../stores/user";
 import { useCloudinaryStore } from "../stores/cloudinary";
 import PopUp from "../components/PopUp.vue"
+import router from "../router";
 
 const isPopupVisible = ref(false);
 const popupMessage = ref('');
@@ -476,6 +477,11 @@ const watchData = reactive({
   case_shape: ""
 }
 )
+
+if(useUserStore().role!='ROLE_USER' && useUserStore().role!='ROLE_SELLER'){
+  router.push('/')
+}
+
 const textareaHeight = ref("80"); // Initial height of textarea
 const isFocused = ref(false); // Flag to track textarea focus state
 const uploadedImages = ref([]); // Array to hold uploaded images
