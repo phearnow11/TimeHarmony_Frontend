@@ -73,9 +73,8 @@ onMounted(async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const paymentData = Object.fromEntries(urlParams.entries());
 
-    wids = JSON.parse(localStorage.getItem('pendingWids') || '[]'); // Use the method you chose to store wids
     console.log('Received payment data:', paymentData);
-
+    
     amountString.value = paymentData.vnp_Amount;
     bankCode.value = paymentData.vnp_BankCode;
     payDate.value = paymentData.vnp_PayDate;
@@ -85,9 +84,8 @@ onMounted(async () => {
 
     userStore.transaction_no = paymentData.vnp_TransactionNo;
     userStore.payment_method = paymentData.vnp_CardType;
-    
+  
     const isSuccess = paymentData.vnp_ResponseCode === '00';
-
     console.log('Selected WIDs:', pendingWids);
 
     if (isSuccess) {
