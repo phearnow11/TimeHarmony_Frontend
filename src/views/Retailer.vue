@@ -1,7 +1,7 @@
 <template>
   <section class="grid grid-cols-3">
     <div class="left p-20">
-      <img :src="retailer.image" alt="Retailer Image" class="w-full h-auto avatar">
+      <img :src="retailer.image" alt="Retailer Image" class="w-full h-96 avatar">
       <div class="bg-secondary h-0.5 w-full mt-6"></div>
     </div>
     <div class="col-span-2 right p-10">

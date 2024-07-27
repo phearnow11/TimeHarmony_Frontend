@@ -110,7 +110,7 @@ async function onSubmit() {
   if (user.username && user.password) {
     isLoading.value = true;
     try {
-      const ban = await useChatStore().findBanChat(user.username, "54b0e42b-f72b-4edb-b967-2c421285fcda");
+      const ban = await useChatStore().findBanChat(user.username, import.meta.env.VITE_ADMIN_USERID);
       if (ban && ban.length > 0) {
         message.value = ban[0].text;
         console.log('Ban message set:', message.value);
