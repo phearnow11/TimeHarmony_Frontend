@@ -43,7 +43,7 @@
               <td class="p-2 border-b">{{ member.user_log_info.username }}</td>
               <td class="p-2 border-b">{{ member.phone || 'N/A' }}</td>
               <td class="p-2 border-b">{{ member.user_log_info.authorities.authority || 'N/A' }}</td>
-              <td class="p-2 border-b">{{ member.is_active ? 'Hoạt động' : 'Không hoạt động' }}</td>
+              <td class="p-2 border-b">{{ member.is_active ? 'Hoạt động' : 'Bị cấm' }}</td>
               <td class="p-2 border-b"><div class="hover-underline-animation-r flex items-center justify-center gap-2"
                 @click="useChatStore().registerUser2(member.member_id); useChatStore().sendMessage(member.member_id, 'REASON THAT BAN'); useAdminStore().ban(member.user_log_info.username)"
                 >
