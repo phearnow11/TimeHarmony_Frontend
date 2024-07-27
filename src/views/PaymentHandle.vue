@@ -74,7 +74,7 @@ onMounted(async () => {
     const paymentData = Object.fromEntries(urlParams.entries());
 
     console.log('Received payment data:', paymentData);
-    
+
     amountString.value = paymentData.vnp_Amount;
     bankCode.value = paymentData.vnp_BankCode;
     payDate.value = paymentData.vnp_PayDate;
@@ -86,7 +86,7 @@ onMounted(async () => {
     userStore.payment_method = paymentData.vnp_CardType;
   
     const isSuccess = paymentData.vnp_ResponseCode === '00';
-    console.log('Selected WIDs:', pendingWids);
+    console.log('Selected WIDs:', wids);
 
     if (isSuccess) {
       successMessage.value = 'Payment successful. Saving payment details...';
