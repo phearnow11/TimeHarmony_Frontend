@@ -89,7 +89,7 @@ onMounted(async () => {
     const wids = JSON.parse(localStorage.getItem('pendingWids') || '[]');
     console.log('Watch id: ' + wids);
 
-    const widsString = wids.join(',');
+    const widsString = `[${wids.join(',')}]`;
 
     if (isSuccess) {
       successMessage.value = 'Payment successful. Saving payment details...';
