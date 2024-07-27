@@ -1,124 +1,76 @@
 <template>
   <div class="flex justify-center items-center min-h-screen">
     <div class="login-background pr-16 shadow-lg">
-      <div class="login-container flex gap-8 items-center">
-        <div class="logo-container flex flex-col items-center pr-5">
-          <img src="../assets/test2.png" class="w-80 h-full" alt="" />
-        </div>
-      
-      <form
-      @submit.prevent="signupHandle"
-      class="flex w-96 flex-col justify-center items-center gap-3"
-      >
-      <div class="flex left-10 justify-center">
-      <router-link to="/">
-        <img
-          class="h-20 flex items-center"
-          src="../assets/time-harmony.png"
-          alt=""
-        />
-      </router-link>
-      <div class="border-l mr-5 border-primary"></div>
-      <span class="font-bold mt-5 mr-9 text-3xl text-primary">
-        Đăng ký
-      </span>
-      
-    </div>
-        <div class="form__group field w-96">
-          <input
-            type="email"
-            class="form__field"
-            placeholder="Email"
-            v-model="signUpForm.email"
-            required
-          />
-          <label for="email" class="form__label">Email*</label>
+      <div class="login-container flex">
+        <!-- Picture Section -->
+        <div class="picture-section flex-3">
+          <img src="../assets/test2.png" class="logo-container-img" alt="" />
         </div>
 
-        <div class="form__group field w-96">
-          <input
-            type="text"
-            class="form__field"
-            placeholder="Username"
-            v-model="signUpForm.username"
-            required
-          />
-          <label for="username" class="form__label">Tên tài khoản*</label>
-        </div>
-
-        <div :class="['form__group', 'field', 'w-96', {'input-error': !isPasswordValid && signUpForm.password !== ''}]">
-          <input
-            type="password"
-            class="form__field"
-            placeholder="Password"
-            v-model="signUpForm.password"
-            @input="checkPasswordFormat"
-            required
-          />
-          <label for="password" class="form__label">Mật khẩu*</label>
-          <p v-if="!isPasswordValid && signUpForm.password !== ''" class="error-message">
-            Password must be at least 8 characters, contain at least one uppercase letter, one number, and one special character.
-          </p>
-        </div>
-
-        <div :class="['form__group', 'field', 'w-96', {'input-error': !passwordsMatch && signUpForm.repassword !== ''}]">
-          <input
-            type="password"
-            class="form__field"
-            placeholder="Confirm password"
-            v-model="signUpForm.repassword"
-            @blur="checkPasswords"
-            required
-          />
-          <label for="repassword" class="form__label">Xác nhận mật khẩu*</label>
-        </div>
-
-        <div class="flex space-x-2 w-96">
-          <div class="form__group w-1/2">
-            <input
-              type="text"
-              class="form__field"
-              placeholder="First Name"
-              v-model="signUpForm.first_name"
-              required
-            />
-            <label for="firstname" class="form__label">Tên*</label>
-          </div>
-          <div class="form__group w-1/2">
-            <input
-              type="text"
-              class="form__field"
-              placeholder="Last Name"
-              v-model="signUpForm.last_name"
-              required
-            />
-            <label for="lastname" class="form__label">Họ*</label>
-          </div>
-        </div>
-        <label class="container flex justify-start items-center gap-4">
-              <input type="checkbox" required/>
+        <!-- Form Section -->
+        <div class="form-section flex-6">
+          <form @submit.prevent="signupHandle" class="flex flex-col justify-center items-center gap-3">
+            <div class="flex left-10 justify-center">
+              <router-link to="/">
+                <img class="h-20 flex items-center" src="../assets/time-harmony.png" alt="" />
+              </router-link>
+              <div class="border-l mr-5 border-primary"></div>
+              <span class="font-bold mt-5 mr-9 text-3xl text-primary">
+                Đăng ký
+              </span>
+            </div>
+            <div class="form__group field w-96">
+              <input type="email" class="form__field" placeholder="Email" v-model="signUpForm.email" required />
+              <label for="email" class="form__label">Email*</label>
+            </div>
+            <div class="form__group field w-96">
+              <input type="text" class="form__field" placeholder="Username" v-model="signUpForm.username" required />
+              <label for="username" class="form__label">Tên tài khoản*</label>
+            </div>
+            <div :class="['form__group', 'field', 'w-96', {'input-error': !isPasswordValid && signUpForm.password !== ''}]">
+              <input type="password" class="form__field" placeholder="Password" v-model="signUpForm.password" @input="checkPasswordFormat" required />
+              <label for="password" class="form__label">Mật khẩu*</label>
+              <p v-if="!isPasswordValid && signUpForm.password !== ''" class="error-message">
+                Password must be at least 8 characters, contain at least one uppercase letter, one number, and one special character.
+              </p>
+            </div>
+            <div :class="['form__group', 'field', 'w-96', {'input-error': !passwordsMatch && signUpForm.repassword !== ''}]">
+              <input type="password" class="form__field" placeholder="Confirm password" v-model="signUpForm.repassword" @blur="checkPasswords" required />
+              <label for="repassword" class="form__label">Xác nhận mật khẩu*</label>
+            </div>
+            <div class="flex space-x-2 w-96">
+              <div class="form__group w-1/2">
+                <input type="text" class="form__field" placeholder="First Name" v-model="signUpForm.first_name" required />
+                <label for="firstname" class="form__label">Tên*</label>
+              </div>
+              <div class="form__group w-1/2">
+                <input type="text" class="form__field" placeholder="Last Name" v-model="signUpForm.last_name" required />
+                <label for="lastname" class="form__label">Họ*</label>
+              </div>
+            </div>
+            <label class="container flex justify-start items-center gap-4 w-96">
+              <input type="checkbox" required />
               <svg viewBox="0 0 64 64" height="1em">
                 <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
               </svg>
               <label class="text-left">tôi đã đọc và đồng ý với <router-link class="hover-underline-animation" to="#">Chính sách & điều khoản dịch vụ</router-link> của website.</label>
             </label>
             <button class="th-p-btn w-full relative" :disabled="isLoading">
-  <span :class="{ 'opacity-0': isLoading }">Đăng ký</span>
-  <div v-if="isLoading" class="loader-container">
-    <div class="loader">
-      <div class="loaderBar"></div>
-    </div>
-  </div>
-</button>
-
-        
-        <div class="mt-1">
-          <span>Đã có tài khoản? </span>
-          <router-link to="/login" class="hover-underline-animation">Đăng nhập tại đây</router-link>
+              <span :class="{ 'opacity-0': isLoading }">Đăng ký</span>
+              <div v-if="isLoading" class="loader-container">
+                <div class="loader">
+                  <div class="loaderBar"></div>
+                </div>
+              </div>
+            </button>
+            <div class="mt-1">
+              <span>Đã có tài khoản? </span>
+              <router-link to="/login" class="hover-underline-animation">Đăng nhập tại đây</router-link>
+            </div>
+          </form>
         </div>
-      </form>
+      </div>
     </div>
-  </div>
   </div>
 </template>
 
@@ -197,10 +149,42 @@ async function signupHandle() {
 </script>
 
 <style scoped>
-/* Ensure the parent container takes the full height */
+.login-container {
+  display: flex;
+}
+
+.picture-section {
+  flex: 3;
+  display: flex;
+  align-items: center; /* Center the image vertically */
+  justify-content: center;
+}
+
+.picture-section img {
+  max-width: 100%;
+  height: auto; /* Maintain aspect ratio */
+}
+
+.form-section {
+  flex: 6;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center the form vertically */
+  align-items: center;
+}
+
+.login-background {
+  background-color: #6f6f6f22; /* Dark, semi-transparent background */
+  backdrop-filter: blur(10px);
+  box-shadow: 0px 0px 20px 1px #ffbb763f;
+  border: 1px solid rgba(255, 255, 255, 0.454);
+}
+
 .thisForm {
   height: 100vh;
 }
+
+/* Other styles remain unchanged */
 
 .login-background {
   background-color: #6f6f6f22; /* Dark, semi-transparent background */
