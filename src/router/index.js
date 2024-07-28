@@ -133,6 +133,13 @@ const router = createRouter({
       }),
     },
     {
+      path: '/setting/shipper',
+      name: 'Forshipper',
+      component: () => import('../views/Forshipper.vue').catch(err => {
+        console.error(err);
+      }),
+    },
+    {
       path: '/setting/profit',
       name: 'ProfitSetting',
       component: () => import('../views/Setting/ProfitSetting.vue').catch(err => {
