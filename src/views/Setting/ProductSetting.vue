@@ -47,7 +47,7 @@
                 <td class="py-4 pl-2">{{ formatPriceVND(order.total_price) }}</td>
                 <td class="py-4 pl-2">{{ getOrderStatusText(order.order_id) }}</td>
                 <td class="py-4 pl-2">
-                  {{ orderLocations[order.order_id]?.translatedName ?? orderLocations[order.order_id]?.locationName ??  'N/A' }}
+                  <a :href="orderLocations[order.order_id]?.mapUrl" class="hover-underline-animation">{{ orderLocations[order.order_id]?.translatedName ?? orderLocations[order.order_id]?.locationName ??  'N/A' }}</a>
                 </td>
                 <td class="py-4 pl-2">{{ order.shipping_date ? formatDate(order.shipping_date) : formatDate(order.create_time) }}</td>
                 <td class="py-4 px-2">
@@ -344,6 +344,28 @@ const loadOrders = async () => {
 
     wlists.value = await user.getOrderWaiting(auth.user_id);
     console.log('Waiting orders:', wlists.value);
+
+    for (const order of orders.value) {
+      console.log('fetching location');
+      const detail = await user.getOrderDetail(order.order_id);
+      console.log("DET", detail);
+
+      if (detail && detail.locations) {
+        // Sort locations by created_at from newest to oldest
+        detail.locations.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      }
+
+      if (detail && detail.locations && detail.locations[0]) {
+        const { latitude, longitude } = detail.locations[0];
+        if (latitude && longitude) {
+          await fetchOrderLocation(order.order_id, latitude, longitude);
+        } else {
+          console.error('Latitude or longitude is missing for order:', order.order_id);
+        }
+      } else {
+        console.error('Location details are missing for order:', order.order_id);
+      }
+    }
 
     for (const watch of wlists.value) {
       try {
