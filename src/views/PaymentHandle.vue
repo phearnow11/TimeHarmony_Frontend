@@ -108,7 +108,7 @@ onMounted(async () => {
         payment_amount: parseFloat(amountString.value),
         bank_code: bankCode.value,
         payment_method: vnpCardType.value,
-        order_id: orderID.value,
+        order_id: orderID,
         isSuccess: isSuccess,
         wids: widsString
       };
