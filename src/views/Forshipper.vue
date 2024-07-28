@@ -6,7 +6,7 @@
     <div class="container mx-auto p-4 w-full lg:w-3/4">
       <!-- Navigation links -->
       <div class="mb-6">
-        <span class="text-lg text-primary"><button class="hover-underline-animation text-lg">Cập nhật</button> vị trí hiện tại: <br>
+        <span class="text-lg text-primary"><button class="hover-underline-animation text-lg" @click="locationStore.getMyLocation()">Cập nhật</button> vị trí hiện tại: <br>
           <div class="text-secondary text-sm">{{ locationStore.translatedName }}</div></span>
       </div>
       
@@ -23,7 +23,8 @@
                 <th class="pb-2 pl-2">Địa chỉ giao hàng</th>
                 <th class="pb-2 pl-2">Tên người nhận</th>
                 <th class="pb-2 pl-2">SĐT người nhận</th>
-                <th class="pb-2">Trạng thái</th>
+                <th class="pb-2 pl-2">Tiền</th>
+                <!-- <th class="pb-2">Trạng thái</th> -->
                 <th class="pb-2">Hành động</th>
               </tr>
             </thead>
@@ -35,9 +36,10 @@
                 <td class="py-4 pl-2">{{ order.address }}</td>
                 <td class="py-4 pl-2">{{ order.receive_name }}</td>
                 <td class="py-4 pl-2">{{ order.phone }}</td>
-                <td class="py-4 pl-2">{{ getShippingStatusText(order.state) }}</td>
+                <td class="py-4 pl-2">{{ currency(order.total_price) }}</td>
+                <!-- <td class="py-4 pl-2">{{ getShippingStatusText(order.state) }}</td> -->
                 <td class="py-4 px-2">
-                  <button class="hover-underline-animation" @click="shippedOrderToMember(order.order_id, auth.user_id)">Đã giao</button>
+                  <button class="hover-underline-animation" @click="shippedOrderToMember(order.order_id, auth.user_id)">Xác nhận đã giao</button>
                 </td>
               </tr>
             </tbody>
@@ -52,7 +54,7 @@
   import { useAuthStore } from '../stores/auth';
   import { useStaffStore } from '../stores/staff';
   import { useUserStore } from '../stores/user';
-  import { onMounted, ref, computed } from 'vue';
+  import { onMounted, ref, computed, onUnmounted } from 'vue';
   import { useRouter } from 'vue-router';
   import { useLocationStore } from '../stores/location';
   
@@ -296,7 +298,18 @@
   onMounted(async () => {
     await locationStore.getMyLocation();
   });
+  // Run getMyLocation every 15 minutes
+  const interval = setInterval(async () => {
+    await locationStore.getMyLocation();
+    console.log('update location');
+  }, 1 * 60 * 1000); // 15 minutes in milliseconds
+
+  // Clear the interval when the component is unmounted
+  onUnmounted(() => {
+    clearInterval(interval);
+  });
   
+  const currency = (value) => `${value.toLocaleString("vi-VN")} ₫`;
   
   </script>
   
