@@ -94,12 +94,29 @@ onMounted(async () => {
     if (isSuccess) {
       successMessage.value = 'Payment successful. Saving payment details...';
       paymentStatus.value = 'Successful';
+      
+      if (!orderData) {
+        throw new Error('No pending order data found');
+      }
+
+      
+      successMessage.value = 'Payment details saved. Creating order...';
+
+      const orderData = userStore.getPendingOrder();
+
+
+      console.log('Attempting to create order with data:', orderData);
+
+      const result = await userStore.addOrder(authStore.user_id, orderData);
+      console.log('Order creation result:', result);
+      const orderID = await userStore.getNewestOrder(authStore.user_id);
 
       const paymentDataToSave = {
         transaction_no: transactionNo.value,
         payment_amount: parseFloat(amountString.value),
         bank_code: bankCode.value,
         payment_method: vnpCardType.value,
+        order_id: orderID.value,
         isSuccess: isSuccess,
         wids: widsString
       };
@@ -107,19 +124,7 @@ onMounted(async () => {
       const savedPayment = await savePaymentDetail(paymentDataToSave);
       console.log('Saved payment details:', savedPayment);
 
-      successMessage.value = 'Payment details saved. Creating order...';
-
-      const orderData = userStore.getPendingOrder();
-
-      if (!orderData) {
-        throw new Error('No pending order data found');
-      }
-
-      console.log('Attempting to create order with data:', orderData);
-
-      const result = await userStore.addOrder(authStore.user_id, orderData);
-      console.log('Order creation result:', result);
-      const orderID = await userStore.getNewestOrder(authStore.user_id);
+      
       console.log('Order ID:', orderID);
       if (result) {
         orderId.value = result.order_id;
