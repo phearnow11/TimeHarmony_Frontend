@@ -1,4 +1,3 @@
-// locationStore.js
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
@@ -12,58 +11,81 @@ export const useLocationStore = defineStore('location', {
   }),
 
   getters: {
-    mapUrl: (state) => {
-      if (state.latitude && state.longitude) {
-        return `https://www.google.com/maps/search/?api=1&query=${state.latitude},${state.longitude}`;
+    mapUrl: (state) => (latitude, longitude) => {
+      if (latitude && longitude) {
+        return `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
       }
       return null;
     },
   },
 
   actions: {
-    async getLocation() {
+    async getMyLocation() {
       try {
         const position = await new Promise((resolve, reject) => {
           navigator.geolocation.getCurrentPosition(resolve, reject);
         });
 
-        this.latitude = position.coords.latitude;
-        this.longitude = position.coords.longitude;
+        const result = await this.getLocation(position.coords.latitude, position.coords.longitude);
 
-        await this.getLocationName();
+        this.latitude = result.latitude;
+        this.longitude = result.longitude;
+        this.locationName = result.locationName;
+        this.translatedName = result.translatedName;
+
+        return result;
       } catch (error) {
         this.error = "Failed to get location: " + error.message;
+        return { error: this.error };
       }
     },
 
-    async getLocationName() {
+    async getLocation(latitude, longitude) {
       try {
-        const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${this.latitude}&lon=${this.longitude}`;
+        const locationName = await this.fetchLocationName(latitude, longitude);
+        const translatedName = await this.translateLocationName(locationName);
+        const mapUrl = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
+
+        return {
+          latitude,
+          longitude,
+          locationName,
+          translatedName,
+          mapUrl,
+        };
+      } catch (error) {
+        this.error = "Error: " + error.message;
+        return { error: this.error };
+      }
+    },
+
+    async fetchLocationName(latitude, longitude) {
+      try {
+        const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`;
         const response = await axios.get(url);
 
         if (response.data && response.data.display_name) {
-          this.locationName = response.data.display_name;
-          await this.translateLocationName();
+          return response.data.display_name;
         } else {
-          this.locationName = "Location name not found";
+          throw new Error("Location name not found");
         }
       } catch (error) {
-        this.error = "Error fetching location name: " + error.message;
+        throw new Error("Error fetching location name: " + error.message);
       }
     },
 
-    async translateLocationName() {
+    async translateLocationName(locationName) {
       try {
-        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(this.locationName)}&langpair=en|vi`;
+        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(locationName)}&langpair=en|vi`;
         const response = await axios.get(url);
 
         if (response.data && response.data.responseData && response.data.responseData.translatedText) {
-          this.translatedName = response.data.responseData.translatedText;
+          return response.data.responseData.translatedText;
         } else {
-          this.translatedName = 'Translation not found';
+          throw new Error("Translation not found");
         }
       } catch (error) {
-        this.error = "Error fetching translation: " + error.message;
+        throw new Error("Error fetching translation: " + error.message);
       }
     },
   },
