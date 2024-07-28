@@ -47,7 +47,7 @@
                 <td class="py-4 pl-2">{{ formatPriceVND(order.total_price) }}</td>
                 <td class="py-4 pl-2">{{ getOrderStatusText(order.order_id) }}</td>
                 <td class="py-4 pl-2">
-                  {{ orderLocations[order.order_id]?.translatedName ??  'N/A' }}
+                  {{ orderLocations[order.order_id]?.translatedName ?? orderLocations[order.order_id]?.locationName ??  'N/A' }}
                 </td>
                 <td class="py-4 pl-2">{{ order.shipping_date ? formatDate(order.shipping_date) : formatDate(order.create_time) }}</td>
                 <td class="py-4 px-2">
@@ -89,7 +89,7 @@
                 <td class="py-4 pl-2">{{ formatPriceVND(list.price) }}</td>
                 <td class="py-4 pl-2">{{ getPendingWatchStatusText(list.state) }}</td>
                 <td class="py-4 pl-2">{{ orderDetails[list.watch_id]?.order_detail?.order_id ?? 'N/A' }}</td>
-                <td class="py-4 pl-2"><a class="hover-underline-animation" target="_blank" :href="locations[list.watch_id]?.mapUrl">{{ locations[list.watch_id]?.translatedName ?? 'N/A' }}</a></td>
+                <td class="py-4 pl-2"><a class="hover-underline-animation" target="_blank" :href="locations[list.watch_id]?.mapUrl">{{ locations[list.watch_id]?.translatedName ?? locations[list.watch_id]?.locationName ??'N/A' }}</a></td>
                 <td class="py-4 pl-2">{{ watchOrderDetails[list.watch_id] ? formatDateHour(watchOrderDetails[list.watch_id][1]) : 'N/A' }}</td>
                 
                 <td class="py-4 px-2">

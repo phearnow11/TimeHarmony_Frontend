@@ -82,10 +82,10 @@ export const useLocationStore = defineStore('location', {
         if (response.data && response.data.responseData && response.data.responseData.translatedText) {
           return response.data.responseData.translatedText;
         } else {
-          throw new Error("Translation not found");
+          return locationName;
         }
       } catch (error) {
-        throw new Error("Error fetching translation: " + error.message);
+        return locationName;
       }
     },
   },

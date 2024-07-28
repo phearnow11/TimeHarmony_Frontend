@@ -7,7 +7,7 @@
       <!-- Navigation links -->
       <div class="mb-6">
         <span class="text-lg text-primary"><button class="hover-underline-animation text-lg" @click="locationStore.getMyLocation(); updateLocation()">Cập nhật</button> vị trí hiện tại: <br>
-          <div class="text-secondary text-sm">{{ locationStore.translatedName }}</div></span>
+          <div class="text-secondary text-sm">{{ locationStore.translatedName ?? locationStore.locationName }}</div></span>
       </div>
       
       <!-- Shipping Orders Section -->
