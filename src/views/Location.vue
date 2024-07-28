@@ -13,13 +13,15 @@
   </template>
   
   <script setup>
-  import { onMounted } from 'vue';
+  import { onMounted, ref } from 'vue';
   import { useLocationStore } from '../stores/location';
   
   const locationStore = useLocationStore();
+  const data = ref({})
   
   onMounted(async () => {
-    await locationStore.getMyLocation();
+    data.value = await locationStore.getLocation('9.871173','105.587533');
+    console.log(data.value);
   });
   </script>
   

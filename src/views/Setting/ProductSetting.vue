@@ -72,6 +72,7 @@
                 <th class="pb-2 pl-2">Giá</th>
                 <th class="pb-2">Trạng thái</th>
                 <th class="pb-2">Mã đơn</th>
+                <th class="pb-2">Đơn hàng đang tại</th>
                 <th class="pb-2">Thời gian tạo đơn</th>
                 <th class="pb-2">Hành động</th>
               </tr>
@@ -85,6 +86,7 @@
                 <td class="py-4 pl-2">{{ formatPriceVND(list.price) }}</td>
                 <td class="py-4 pl-2">{{ getPendingWatchStatusText(list.state) }}</td>
                 <td class="py-4 pl-2">{{ watchOrderDetails[list.watch_id] ? watchOrderDetails[list.watch_id][0] : 'N/A' }}</td>
+                <td class="py-4 pl-2">{{ watchOrderDetails[list.watch_id] ? user.getOrderDetail(watchOrderDetails[list.watch_id][0]) : 'N/A' }}</td>
                 <td class="py-4 pl-2">{{ watchOrderDetails[list.watch_id] ? formatDateHour(watchOrderDetails[list.watch_id][1]) : 'N/A' }}</td>
                 
                 <td class="py-4 px-2">
@@ -117,7 +119,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(item, index) in sortedPendingWatches" class="border-t">
+              <tr v-for="(item, index) in sortedPendingWatches" :key="item" class="border-t">
                 <td class="py-4">{{ index + 1 }}</td>
                 <td class="py-4">
                 <span @click="viewOrderDetails(item.order_id)" class="hover-underline-animation">
@@ -221,9 +223,6 @@ const confirmShip = (orderId) => {
   }
 };
 
-
-
-
 onMounted(async () => {
   if (!auth.user_id) {
     console.log('Người dùng chưa đăng nhập. Đang chuyển hướng đến trang đăng nhập...');
@@ -274,7 +273,6 @@ const getOrderStatusText = (orderId) => {
     return 'Trạng thái không xác định'
 };
 
-
 const loadOrders = async () => {
   try {
     //load tất cả order mình đã mua
@@ -311,8 +309,6 @@ const loadPendingWatches = async () => {
   }
 };
 
-
-
 const sortedPendingWatches = computed(() => {
   return [...pendingWatches.value].sort((a, b) => {
     return new Date(b.create_time) - new Date(a.create_time);
@@ -331,12 +327,10 @@ const cancelOrder = async (orderid) => {
         console.log('cancelling order');
         await useUserStore().cancelOrder(orderid);
         await loadOrders();
-      
     } catch (error) {
       console.log('Lỗi canceled order:', error);
     }
-  }
-
+}
 
 //nút đóng gói và giao hàng gửi đến cho shipper (dành cho seller)
 const setShip = async (watchid, orderId) => {
@@ -348,7 +342,6 @@ const setShip = async (watchid, orderId) => {
   }
 };
 
-
 const getPendingWatchStatusText = (state) => {
   switch (state) {
     case 3:
@@ -357,7 +350,6 @@ const getPendingWatchStatusText = (state) => {
       return 'Đã giao cho shipper';
     case 6:
       return 'Giao thành công';
-
   }
 };
 
@@ -374,17 +366,15 @@ const handleShippingOrdersClick = async () => {
 //load tất cả đơn hàng mà shipper đang giao
 const loadShippingOrders = async () => {
   try {
+    const orderIds = await useStaffStore().getMyShippingOrder(auth.user_id);
+    console.log("Shipping order IDs:", orderIds);
     
-      const orderIds = await useStaffStore().getMyShippingOrder(auth.user_id);
-      console.log("Shipping order IDs:", orderIds);
-      
-      const orderDetails = await Promise.all(
-        orderIds.map(orderId => useUserStore().getOrderDetail(orderId))
-      );
-      
-      shippingOrders.value = orderDetails.map(detail => detail.order_detail);
-      console.log("Shipping order details:", shippingOrders.value);
+    const orderDetails = await Promise.all(
+      orderIds.map(orderId => useUserStore().getOrderDetail(orderId))
+    );
     
+    shippingOrders.value = orderDetails.map(detail => detail.order_detail);
+    console.log("Shipping order details:", shippingOrders.value);
   } catch (error) {
     console.error('Lỗi khi tải đơn hàng đang vận chuyển:', error);
   }
@@ -443,7 +433,6 @@ const formatDateHour = (dateString) => {
   date.setHours(date.getHours()+7)
   return date.toLocaleString('vi-VN')
 };
-
 
 </script>
 
