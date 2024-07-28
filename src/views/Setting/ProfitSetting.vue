@@ -15,10 +15,15 @@
   
       <!-- Nội dung -->
       <div class="container mx-auto p-4">
-        <h2 class="text-2xl relative bottom-4 mb-5">Thống kê thu nhập</h2>
-        <div class="p-6">
-    
-
+        <h2 class="text-2xl relative bottom-4">Thống kê thu nhập</h2>
+        <div class="p-1">
+          <div class="mt-8">
+          <h3 class="text-xl font-semibold mb-4">TỔNG THU NHẬP CỦA TÔI</h3>
+          <div class="relative h-64">
+            <canvas ref="incomeChart"></canvas>
+          </div>
+          
+        </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
       <div v-for="(item, index) in performanceItems" :key="index" class="p-4 shadow">
         <div class="flex items-center justify-between mb-4">
@@ -28,7 +33,7 @@
             </div>
             <div>
               <h3 class="text-2xl font-bold">{{ item.value }}</h3>
-              <p class="text-sm text-gray-500">{{ item.label }}</p>
+              <p class="text-sm text-gray-99">{{ item.label }}</p>
             </div>
           </div>
           <div :class="`text-${item.trend === 'up' ? 'green' : 'red'}-500 text-lg font-semibold`">
@@ -67,7 +72,7 @@ export default {
         {
           icon: 'fa-dollar-sign',
           value: '$56,789',
-          label: 'Tổng lợi nhuận cá nhân',
+          label: 'Tổng thu nhập tháng này',
           trend: 'up',
           trendValue: '7.35%',
           bgColor: 'bg-green-500',
@@ -78,8 +83,10 @@ export default {
   },
   mounted() {
     this.createCharts()
+    this.createIncomeChart()
   },
   methods: {
+
     createCharts() {
       this.performanceItems.forEach((item, index) => {
         const ctx = this.$refs[`chart${index}`][0].getContext('2d')
@@ -137,6 +144,59 @@ export default {
             },
           }
         })
+      })
+    },
+    createIncomeChart() {
+      const ctx = this.$refs.incomeChart.getContext('2d')
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['2018', '2019', '2020', '2021', '2022', '2023', '2024'],
+          datasets: [{
+            label: 'Tổng thu nhập',
+            data: [30000, 45000, 55000, 70000, 85000, 100000, 120000],
+            borderColor: '#10B981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            tension: 0.4,
+            fill: true,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { 
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.7)',
+              titleColor: '#fff',
+              bodyColor: '#fff',
+              padding: 10,
+              cornerRadius: 5,
+            }
+          },
+          scales: {
+            x: { 
+              grid: {
+                display: true,
+                color: 'rgba(0, 0, 0, 0.1)',
+              },
+              ticks: { color: '#6B7280' },
+            },
+            y: { 
+              grid: {
+                display: true,
+                color: 'rgba(0, 0, 0, 0.1)',
+              },
+              ticks: {
+                color: '#6B7280',
+                callback: function(value) {
+                  return '$' + value
+                }
+              },
+              beginAtZero: true,
+            }
+          },
+        }
       })
     }
   }

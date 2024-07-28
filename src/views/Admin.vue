@@ -76,7 +76,7 @@
               <td class="p-2 border-b">{{ member.user_log_info.username }}</td>
               <td class="p-2 border-b">{{ member.phone || "N/A" }}</td>
               <td class="p-2 border-b">
-                  {{ member.staff_role?member.staff_role:member.user_log_info.authorities.authority }}
+                  {{ member.staff_role ? member.staff_role : member.user_log_info.authorities.authority }}
               </td>
               <td class="p-2 border-b">
                 {{
@@ -157,7 +157,7 @@
                   <span>{{ product.seller.user_log_info.username }}</span>
                 </div>
               </td>
-              <td class="p-2 border-b">{{ product.price }}</td>
+              <td class="p-2 border-b">{{ currency(product.price) }}</td>
               <td class="p-2 border-b">
                 {{ stateLabels[product.state] }}
               </td>
@@ -217,7 +217,7 @@
               <td class="p-2 border-b">{{ order.receive_name }}</td>
               <td class="p-2 border-b">{{ order.phone }}</td>
               <td class="p-2 border-b">{{ order.notice || "N/A" }}</td>
-              <td class="p-2 border-b">{{ order.total_price }}</td>
+              <td class="p-2 border-b">{{ currency(order.total_price) }}</td>
             </tr>
           </tbody>
         </table>
@@ -228,20 +228,29 @@
       <h2 class="text-2xl font-semibold mb-2">Tổng Quan Lợi Nhuận</h2>
       <div class="profit-container p-4 border border-secondary rounded mb-6">
         <p class="text-xl font-medium">
-          Doanh Thu Tổng: {{ totalRevenue.toLocaleString("vi-VN") + " ₫" }}
+          Doanh Thu Tổng: {{ currency(totalRevenue) }}
         </p>
         <p class="text-xl font-medium">
-          Chi Phí Tổng: {{ totalCost.toLocaleString("vi-VN") + " ₫" }}
+          Chi Phí Tổng: {{ currency(totalCost) }}
         </p>
         <p class="text-xl font-medium">
-          Lợi Nhuận Tổng: {{ totalProfit.toLocaleString("vi-VN") + " ₫" }}
+          Lợi Nhuận Tổng: {{ currency(totalProfit) }}
         </p>
       </div>
-      <ProfitChart
-        :totalRevenue="totalRevenue"
-        :totalCost="totalCost"
-        :totalProfit="totalProfit"
-      />
+      <div class="chart-grid">
+        <div class="chart-container">
+          <canvas ref="revenueChart"></canvas>
+        </div>
+        <div class="chart-container">
+          <canvas ref="costChart"></canvas>
+        </div>
+        <div class="chart-container">
+          <canvas ref="profitChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-container-large">
+        <canvas ref="overviewChart"></canvas>
+      </div>
     </section>
 
     <!-- Ban User Modal -->
@@ -264,7 +273,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from "vue";
 import { useAdminStore } from "../stores/admin";
-import ProfitChart from "../components/ProfitChart.vue";
+import Chart from 'chart.js/auto';
 import { useChatStore } from "../stores/chat";
 import { useAuthStore } from "../stores/auth";
 import { useUserStore } from "../stores/user";
@@ -295,8 +304,26 @@ const qMembers = ref('');
 const qWatches = ref('');
 const qOrders = ref('');
 
+const overviewChart = ref(null);
+const revenueChart = ref(null);
+const costChart = ref(null);
+const profitChart = ref(null);
+
+let overviewChartInstance = null;
+let revenueChartInstance = null;
+let costChartInstance = null;
+let profitChartInstance = null;
+
 // Error state
 const error = ref(null);
+
+
+const createCharts = () => {
+  createOverviewChart();
+  createRevenueChart();
+  createCostChart();
+  createProfitChart();
+};
 
 // Fetch data from the store on component mount
 onMounted(async () => {
@@ -304,12 +331,12 @@ onMounted(async () => {
     await adminStore.getMembers();
     await adminStore.getWatches();
     await adminStore.getOrders();
+    createCharts();
   } catch (err) {
     console.error("Error fetching data:", err);
     error.value = "Failed to fetch initial data. Please try refreshing the page.";
   }
 });
-
 // Check user role
 const userStore = useUserStore();
 const authStore = useAuthStore();
@@ -352,28 +379,7 @@ const filteredOrders = computed(() => {
   }
 });
 
-// Compute financial metrics with error handling
-const totalCost = computed(() => {
-  try {
-    return filteredWatches.value.reduce((sum, product) => sum + product.price * 1, 0);
-  } catch (err) {
-    console.error("Error calculating totalCost:", err);
-    error.value = "Error calculating total cost. Please try again.";
-    return 0;
-  }
-});
 
-const totalRevenue = computed(() => {
-  try {
-    return filteredOrders.value.reduce((sum, order) => sum + order.total_price, 0);
-  } catch (err) {
-    console.error("Error calculating totalRevenue:", err);
-    error.value = "Error calculating total revenue. Please try again.";
-    return 0;
-  }
-});
-
-const totalProfit = computed(() => totalRevenue.value * 0.02);
 
 // Updated searchMembers function with more robust error handling
 const searchMembers = () => {
@@ -414,9 +420,9 @@ const searchWatches = () => {
         if (!watch) return false;
 
         // Ensure member properties are defined
-        const id = product.watch_id ? product.watch_id.toLowerCase() : '' ;
-        const name = product.watch_name ? product.watch_name.toLowerCase() : '' 
-        const seller = product.seller.user_log_info.username ? product.seller.user_log_info.username.toLowerCase() : ''
+        const id = watch.watch_id ? watch.watch_id.toString().toLowerCase() : '' ;
+        const name = watch.watch_name ? watch.watch_name.toLowerCase() : '' 
+        const seller = watch.seller.user_log_info.username ? watch.seller.user_log_info.username.toLowerCase() : ''
 
         // Convert query to lower case
         const query = qWatches.value.toLowerCase();
@@ -430,7 +436,7 @@ const searchWatches = () => {
       });
     })
     .catch(error => {
-      console.error("Error searching members:", error);
+      console.error("Error searching watches:", error);
     });
 };
 
@@ -441,22 +447,23 @@ const searchOrders = () => {
         if (!order) return false;
 
         // Ensure member properties are defined
-        const id = order.order_id?order.order_id.toLowerCase():''
-        const ord =  order.receive_name?order.receive_name.toLowerCase():''
-          const date = order.create_time?new Date(order.create_time).toLocaleDateString().toLowerCase(): ''
+        const id = order.order_id ? order.order_id.toString().toLowerCase() : '';
+        const receiveName = order.receive_name ? order.receive_name.toLowerCase() : '';
+        const date = order.create_time ? new Date(order.create_time).toLocaleDateString().toLowerCase() : '';
+
         // Convert query to lower case
         const query = qOrders.value.toLowerCase();
 
         // Check if any field includes the search query
         return (
           id.includes(query) || 
-          ord.includes(query) ||
+          receiveName.includes(query) ||
           date.includes(query)
         );
       });
     })
     .catch(error => {
-      console.error("Error searching members:", error);
+      console.error("Error searching orders:", error);
     });
 };
 
@@ -517,14 +524,197 @@ const unbanUser = (member) => {
   useAdminStore().unBan(member.user_log_info.username);
 };
 
+// Compute financial metrics with error handling
+const totalCost = computed(() => {
+  try {
+    return filteredWatches.value.reduce((sum, product) => sum + (product?.price || 0), 0);
+  } catch (err) {
+    console.error("Error calculating totalCost:", err);
+    error.value = "Error calculating total cost. Please try again.";
+    return 0;
+  }
+});
+
+const totalRevenue = computed(() => {
+  try {
+    return filteredOrders.value.reduce((sum, order) => sum + (order?.total_price || 0), 0);
+  } catch (err) {
+    console.error("Error calculating totalRevenue:", err);
+    error.value = "Error calculating total revenue. Please try again.";
+    return 0;
+  }
+});
+
+const totalProfit = computed(() => totalRevenue.value * 0.02);
+
+const monthlyData = computed(() => {
+  const currentMonth = new Date().getMonth();
+  const data = Array(12).fill(0).map((_, index) => ({
+    revenue: index === currentMonth ? totalRevenue.value : 0,
+    cost: index === currentMonth ? totalCost.value : 0,
+    profit: index === currentMonth ? totalProfit.value : 0,
+  }));
+  return data;
+});
+
+const createOverviewChart = () => {
+  const ctx = overviewChart.value.getContext('2d');
+  overviewChartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+      datasets: [
+        {
+          label: 'Doanh Thu Tổng',
+          data: monthlyData.value.map(month => month.revenue),
+          backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        },
+        {
+          label: 'Chi Phí Tổng',
+          data: monthlyData.value.map(month => month.cost),
+          backgroundColor: 'rgba(54, 162, 235, 0.5)',
+        },
+        {
+          label: 'Lợi Nhuận Tổng',
+          data: monthlyData.value.map(month => month.profit),
+          backgroundColor: 'rgba(75, 192, 192, 0.5)',
+        }
+      ]
+    },
+    options: chartOptions
+  });
+};
+
+const createRevenueChart = () => {
+  const ctx = revenueChart.value.getContext('2d');
+  revenueChartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+      datasets: [{
+        label: 'Doanh Thu Tổng',
+        data: monthlyData.value.map(month => month.revenue),
+        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        tension: 0.1
+      }]
+    },
+    options: chartOptions
+  });
+};
+
+const createCostChart = () => {
+  const ctx = costChart.value.getContext('2d');
+  costChartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+      datasets: [{
+        label: 'Chi Phí Tổng',
+        data: monthlyData.value.map(month => month.cost),
+        borderColor: 'rgb(54, 162, 235)',
+        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+        tension: 0.1
+      }]
+    },
+    options: chartOptions
+  });
+};
+
+const createProfitChart = () => {
+  const ctx = profitChart.value.getContext('2d');
+  profitChartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+      datasets: [{
+        label: 'Lợi Nhuận Tổng',
+        data: monthlyData.value.map(month => month.profit),
+        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: 'rgba(75, 192, 192, 0.5)',
+        tension: 0.1
+      }]
+    },
+    options: chartOptions
+  });
+};
+
+const chartOptions = {
+  responsive: true,
+  scales: {
+    y: {
+      beginAtZero: true,
+      ticks: {
+        callback: function(value) {
+          return value.toLocaleString('vi-VN') + ' ₫';
+        }
+      }
+    }
+  },
+  plugins: {
+    tooltip: {
+      callbacks: {
+        label: function(context) {
+          let label = context.dataset.label || '';
+          if (label) {
+            label += ': ';
+          }
+          if (context.parsed.y !== null) {
+            label += context.parsed.y.toLocaleString('vi-VN') + ' ₫';
+          }
+          return label;
+        }
+      }
+    }
+  }
+};
+
+watch([totalRevenue, totalCost, totalProfit], () => {
+  if (overviewChartInstance) {
+    overviewChartInstance.data.datasets[0].data = monthlyData.value.map(month => month.revenue);
+    overviewChartInstance.data.datasets[1].data = monthlyData.value.map(month => month.cost);
+    overviewChartInstance.data.datasets[2].data = monthlyData.value.map(month => month.profit);
+    overviewChartInstance.update();
+  }
+  if (revenueChartInstance) {
+    revenueChartInstance.data.datasets[0].data = monthlyData.value.map(month => month.revenue);
+    revenueChartInstance.update();
+  }
+  if (costChartInstance) {
+    costChartInstance.data.datasets[0].data = monthlyData.value.map(month => month.cost);
+    costChartInstance.update();
+  }
+  if (profitChartInstance) {
+    profitChartInstance.data.datasets[0].data = monthlyData.value.map(month => month.profit);
+    profitChartInstance.update();
+  }
+}, { deep: true });
 // Format currency
 const currency = (value) => `${value.toLocaleString("vi-VN")} ₫`;
+
+
 </script>
 
 <style scoped>
 .admin-page {
   background-color: #212121;
   color: var(--secondary);
+}
+
+.chart-grid {
+  display: flex;
+  justify-content: space-between;
+}
+
+.chart-container, .chart-container-large {
+  flex: 1;
+  height: 300px; /* hoặc kích thước phù hợp khác */
+}
+
+.chart-container-large {
+  height: 500px;
+  width: 100%;
+  margin-top: 20px;
 }
 
 .table-container {
@@ -573,7 +763,6 @@ const currency = (value) => `${value.toLocaleString("vi-VN")} ₫`;
 }
 
 .profit-container {
-  background-color: #333;
   color: var(--secondary);
 }
 

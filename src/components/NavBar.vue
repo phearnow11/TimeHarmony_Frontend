@@ -106,10 +106,10 @@
             >Quản lý trang cá nhân</router-link>
             <router-link v-if="useUserStore().staff_role === 'SHIPPER'" to="/setting/shipper" class="submenu-item block px-4 py-2 hover-underline-animation">Vận chuyển đơn hàng</router-link>
             <router-link to="/appraiser" 
-            class="submenu-item block px-4 py-2 hover-underline-animation" v-if="useUserStore().role=='ROLE_STAFF'"
+            class="submenu-item block px-4 py-2 hover-underline-animation" v-if="useUserStore().role=='ROLE_STAFF' && useUserStore().staff_role=='APPRAISER'"
             >Kiểm Duyệt</router-link>
             <router-link to="/voucher" 
-            class="submenu-item block px-4 py-2 hover-underline-animation" v-if="useUserStore().role=='ROLE_STAFF'"
+            class="submenu-item block px-4 py-2 hover-underline-animation" v-if="useUserStore().role=='ROLE_STAFF' && useUserStore().staff_role=='APPRAISER'"
             >Khuyến mãi</router-link>
             <router-link to="/admin" 
             class="submenu-item block px-4 py-2 hover-underline-animation" v-if="useUserStore().role=='ROLE_ADMIN'"
