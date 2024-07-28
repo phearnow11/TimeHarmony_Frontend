@@ -33,6 +33,7 @@
                 <th class="pb-2 pl-2">Ngày Đặt</th>
                 <th class="pb-2 pl-2">Tổng Tiền</th>
                 <th class="pb-2 pl-2">Trạng Thái</th>
+                <th class="pb-2">Đơn hàng đang tại</th>
                 <th class="pb-2 pl-2">Thời gian</th>
                 <th class="pb-2">Hành động</th>
 
@@ -45,6 +46,7 @@
                 <td class="py-4 pl-2">{{ formatDate(order.create_time) }}</td>
                 <td class="py-4 pl-2">{{ formatPriceVND(order.total_price) }}</td>
                 <td class="py-4 pl-2">{{ getOrderStatusText(order.order_id) }}</td>
+                <td>{{ location }}</td>
                 <td class="py-4 pl-2">{{ order.shipping_date ? formatDate(order.shipping_date) : formatDate(order.create_time) }}</td>
                 <td class="py-4 px-2">
                   <button v-if="orderStates[order.order_id] !== 'DELETED'" class="hover-underline-animation px-2" @click="viewOrderDetails(order.order_id)">Xem Chi Tiết</button>
@@ -85,8 +87,8 @@
                 <td class="py-4 pl-2">{{ list.watch_name }}</td>
                 <td class="py-4 pl-2">{{ formatPriceVND(list.price) }}</td>
                 <td class="py-4 pl-2">{{ getPendingWatchStatusText(list.state) }}</td>
-                <td class="py-4 pl-2">{{ watchOrderDetails[list.watch_id] ? watchOrderDetails[list.watch_id][0] : 'N/A' }}</td>
-                <td class="py-4 pl-2">{{ orderDetails[list.watch_id] ? orderDetails[list.watch_id].value.locations : 'N/A' }}</td>
+                <td class="py-4 pl-2">{{ orderDetails[list.watch_id]?.order_detail?.order_id || 'N/A' }}</td>
+                <td class="py-4 pl-2"><a class="hover-underline-animation" target="_blank" :href="locations[list.watch_id]?.mapUrl">{{ locations[list.watch_id]?.translatedName ?? 'N/A' }}</a></td>
                 <td class="py-4 pl-2">{{ watchOrderDetails[list.watch_id] ? formatDateHour(watchOrderDetails[list.watch_id][1]) : 'N/A' }}</td>
                 
                 <td class="py-4 px-2">
@@ -184,9 +186,10 @@
 
 <script setup>
 import { useAuthStore } from '../../stores/auth';
+import { useLocationStore } from '../../stores/location';
 import { useStaffStore } from '../../stores/staff';
 import { useUserStore } from '../../stores/user';
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 const user = useUserStore();
@@ -200,6 +203,43 @@ const shippingOrders = ref([]);
 const activeSection = ref('orders'); // Default section is 'orders'
 const isStaff = ref(false);
 const watchOrderDetails = ref({});
+const orderDetails = ref({});
+
+const locationStore = useLocationStore()
+
+const locations = ref({});
+
+const fetchOrderDetails = async (watchId, orderId) => {
+  try {
+    const result = await user.getOrderDetail(orderId);
+    orderDetails.value[watchId] = result;
+  } catch (error) {
+    console.error(`Error fetching order detail for watch ${watchId}:`, error);
+    orderDetails.value[watchId] = 'Error';
+  }
+};
+
+const fetchLocation = async (watchId, latitude, longitude) => {
+  if (latitude && longitude) {
+    try {
+      locations.value[watchId] = await locationStore.getLocation(latitude, longitude);
+    } catch (error) {
+      console.error(`Error fetching location for watch ${watchId}:`, error);
+      locations.value[watchId] = 'Error fetching location';
+    }
+  } else {
+    locations.value[watchId] = 'No location data';
+  }
+};
+
+watch(orderDetails, (newOrderDetails) => {
+  Object.entries(newOrderDetails).forEach(([watchId, details]) => {
+    if (details && details.locations && details.locations[0]) {
+      const { latitude, longitude } = details.locations[0];
+      fetchLocation(watchId, latitude, longitude);
+    }
+  });
+}, { deep: true });
 
 //nút xem chi tiết ở bảng 1 các đơn hàng đã mua
 const viewOrderDetails = (orderId) => {
@@ -236,10 +276,18 @@ onMounted(async () => {
       isStaff.value = true;
     else 
       isStaff.value = false;
-    if (isStaff) {
+    if (isStaff.value) {
       await loadPendingWatches();
       await loadShippingOrders();
     }
+
+    // Fetch locations after order details are loaded
+    Object.entries(orderDetails.value).forEach(([watchId, details]) => {
+      if (details && details.locations && details.locations[0]) {
+        const { latitude, longitude } = details.locations[0];
+        fetchLocation(watchId, latitude, longitude);
+      }
+    });
   }
 });
 
@@ -275,19 +323,17 @@ const getOrderStatusText = (orderId) => {
 
 const loadOrders = async () => {
   try {
-    //load tất cả order mình đã mua
     orders.value = await user.getAllOrders(auth.user_id);
     console.log('All orders:', orders.value);
 
-    //load các đồng hồ của mình đăng bán đã được người ta mua
     wlists.value = await user.getOrderWaiting(auth.user_id);
-    console.log('Waiting orders:', wlists.value); // Log waiting orders
+    console.log('Waiting orders:', wlists.value);
 
     for (const watch of wlists.value) {
       try {
-        //lấy order id và thời gian của đồng hồ đã được ngta mua
         const orderDetails = await user.getOrderOfWatch(watch.watch_id);
         watchOrderDetails.value[watch.watch_id] = orderDetails[0];
+        await fetchOrderDetails(watch.watch_id, orderDetails[0][0]);
       } catch (error) {
         console.error(`Error fetching order details for watch ${watch.watch_id}:`, error);
         watchOrderDetails.value[watch.watch_id] = null;
@@ -433,24 +479,6 @@ const formatDateHour = (dateString) => {
   date.setHours(date.getHours()+7)
   return date.toLocaleString('vi-VN')
 };
-
-const orderDetails = computed(() => {
-  const details = {};
-  Object.keys(watchOrderDetails.value).forEach(watchId => {
-    if (watchOrderDetails.value[watchId]) {
-      details[watchId] = ref(null);
-      user.getOrderDetail(watchOrderDetails.value[watchId][0])
-        .then(result => {
-          details[watchId].value = result;
-        })
-        .catch(error => {
-          console.error(`Error fetching order detail for watch ${watchId}:`, error);
-          details[watchId].value = 'Error';
-        });
-    }
-  });
-  return details;
-});
 </script>
 
 <style scoped>
