@@ -94,17 +94,9 @@ onMounted(async () => {
     if (isSuccess) {
       successMessage.value = 'Payment successful. Saving payment details...';
       paymentStatus.value = 'Successful';
-      
-      if (!orderData) {
-        throw new Error('No pending order data found');
-      }
 
-      
       successMessage.value = 'Payment details saved. Creating order...';
-
       const orderData = userStore.getPendingOrder();
-
-
       console.log('Attempting to create order with data:', orderData);
 
       const result = await userStore.addOrder(authStore.user_id, orderData);
