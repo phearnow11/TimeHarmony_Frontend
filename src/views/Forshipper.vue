@@ -1,51 +1,52 @@
 <template>
-    <div v-if="auth.user_id" class="mx-auto p-6 flex flex-col lg:flex-row">
-      <!-- Sidebar -->
+  <div v-if="auth.user_id" class="mx-auto p-6 flex flex-col lg:flex-row">
+    <!-- Sidebar -->
+
+    <!-- Content -->
+    <div class="container mx-auto p-4 w-full lg:w-3/4">
+      <!-- Navigation links -->
+      <div class="mb-6">
+        <span class="text-lg text-primary"><button class="hover-underline-animation text-lg">Cập nhật</button> vị trí hiện tại: <br>
+          <div class="text-secondary text-sm">{{ locationStore.translatedName }}</div></span>
+      </div>
       
-      <!-- Content -->
-      <div class="container mx-auto p-4 w-3/4">
-        <!-- Navigation links -->
-        <div class="mb-6">
-          <span>Đơn hàng vận chuyển của tôi</span>
+      <!-- Shipping Orders Section -->
+      <div>
+        <h2 class="text-2xl mb-4 text-primary">Đơn hàng đang vận chuyển</h2>
+        <div class="table-container">
+          <table class="w-full border-collapse table">
+            <thead class="table-header">
+              <tr class="bg-[#494949] text-primary">
+                <th class="pb-2">Số Thứ Tự</th>
+                <th class="pb-2">Mã Đơn Hàng</th>
+                <th class="pb-2 pl-2">Thời gian tạo đơn</th>
+                <th class="pb-2 pl-2">Địa chỉ giao hàng</th>
+                <th class="pb-2 pl-2">Tên người nhận</th>
+                <th class="pb-2 pl-2">SĐT người nhận</th>
+                <th class="pb-2">Trạng thái</th>
+                <th class="pb-2">Hành động</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(order, index) in shippingOrders" :key="order.order_id" class="border-t">
+                <td class="py-4">{{ index + 1 }}</td>
+                <td class="py-4">{{ order.order_id }}</td>
+                <td class="py-4 pl-2">{{ formatDate(order.create_time) }}</td>
+                <td class="py-4 pl-2">{{ order.address }}</td>
+                <td class="py-4 pl-2">{{ order.receive_name }}</td>
+                <td class="py-4 pl-2">{{ order.phone }}</td>
+                <td class="py-4 pl-2">{{ getShippingStatusText(order.state) }}</td>
+                <td class="py-4 px-2">
+                  <button class="hover-underline-animation" @click="shippedOrderToMember(order.order_id, auth.user_id)">Đã giao</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        
-        <!-- Shipping Orders Section -->
-        <div>
-    <h2 class="text-2xl mb-4 text-secondary">Đơn hàng đang vận chuyển của tôi</h2>
-    <div class="table-container">
-      <table class="w-full border-collapse table">
-        <thead class="table-header">
-          <tr class="bg-[#494949] text-primary">
-            <th class="pb-2">Số Thứ Tự</th>
-            <th class="pb-2">Mã Đơn Hàng</th>
-            <th class="pb-2 pl-2">Thời gian tạo đơn</th>
-            <th class="pb-2 pl-2">Địa chỉ giao hàng</th>
-            <th class="pb-2 pl-2">Tên người nhận</th>
-            <th class="pb-2 pl-2">SĐT người nhận</th>
-            <th class="pb-2">Trạng thái</th>
-            <th class="pb-2">Hành động</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(order, index) in shippingOrders" :key="order.order_id" class="border-t">
-            <td class="py-4">{{ index + 1 }}</td>
-            <td class="py-4">{{ order.order_id }}</td>
-            <td class="py-4 pl-2">{{ formatDate(order.create_time) }}</td>
-            <td class="py-4 pl-2">{{ order.address }}</td>
-            <td class="py-4 pl-2">{{ order.receive_name }}</td>
-            <td class="py-4 pl-2">{{ order.phone }}</td>
-            <td class="py-4 pl-2">{{ getShippingStatusText(order.state) }}</td>
-            <td class="py-4 px-2">
-              <button class="hover-underline-animation" @click="shippedOrderToMember(order.order_id, auth.user_id)">Đã giao</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
       </div>
     </div>
-  </template>
+  </div>
+</template>
   
   <script setup>
   import { useAuthStore } from '../stores/auth';
@@ -53,6 +54,7 @@
   import { useUserStore } from '../stores/user';
   import { onMounted, ref, computed } from 'vue';
   import { useRouter } from 'vue-router';
+  import { useLocationStore } from '../stores/location';
   
   const user = useUserStore();
   const auth = useAuthStore();
@@ -287,6 +289,13 @@
     date.setHours(date.getHours()+7)
     return date.toLocaleString('vi-VN')
   };
+
+  
+  const locationStore = useLocationStore();
+  
+  onMounted(async () => {
+    await locationStore.getMyLocation();
+  });
   
   
   </script>
@@ -334,6 +343,48 @@
   
   .table-container::-webkit-scrollbar-thumb:hover {
     background: #ffbd59;
+  }
+  
+  /* Mobile styles */
+  @media (max-width: 1024px) {
+    .table th, .table td {
+      display: block;
+      width: 100%;
+      text-align: left;
+      box-sizing: border-box; /* Ensures padding is included in the width */
+    }
+  
+    .table thead {
+      display: none;
+    }
+  
+    .table tbody tr {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 10px;
+      border: 1px solid var(--secondary);
+    }
+  
+    .table tbody td {
+      border: none;
+      padding-left: 15px;
+      padding-right: 15px; /* Ensure padding on both sides */
+      padding-top: 10px;
+      padding-bottom: 10px;
+      position: relative;
+    }
+  
+    .table tbody td:before {
+      content: attr(data-label);
+      position: absolute;
+      left: 0;
+      width: 50%; /* Ensure the label takes half the width */
+      padding-left: 15px;
+      font-weight: bold;
+      background-color: #494949;
+      color: #fff;
+      box-sizing: border-box; /* Ensures padding is included in the width */
+    }
   }
   </style>
   
