@@ -86,7 +86,7 @@
                 <td class="py-4 pl-2">{{ formatPriceVND(list.price) }}</td>
                 <td class="py-4 pl-2">{{ getPendingWatchStatusText(list.state) }}</td>
                 <td class="py-4 pl-2">{{ watchOrderDetails[list.watch_id] ? watchOrderDetails[list.watch_id][0] : 'N/A' }}</td>
-                <td class="py-4 pl-2">{{ watchOrderDetails[list.watch_id] ? user.getOrderDetail(watchOrderDetails[list.watch_id][0]) : 'N/A' }}</td>
+                <td class="py-4 pl-2">{{ orderDetails[list.watch_id] ? orderDetails[list.watch_id].value.locations : 'N/A' }}</td>
                 <td class="py-4 pl-2">{{ watchOrderDetails[list.watch_id] ? formatDateHour(watchOrderDetails[list.watch_id][1]) : 'N/A' }}</td>
                 
                 <td class="py-4 px-2">
@@ -434,6 +434,23 @@ const formatDateHour = (dateString) => {
   return date.toLocaleString('vi-VN')
 };
 
+const orderDetails = computed(() => {
+  const details = {};
+  Object.keys(watchOrderDetails.value).forEach(watchId => {
+    if (watchOrderDetails.value[watchId]) {
+      details[watchId] = ref(null);
+      user.getOrderDetail(watchOrderDetails.value[watchId][0])
+        .then(result => {
+          details[watchId].value = result;
+        })
+        .catch(error => {
+          console.error(`Error fetching order detail for watch ${watchId}:`, error);
+          details[watchId].value = 'Error';
+        });
+    }
+  });
+  return details;
+});
 </script>
 
 <style scoped>
