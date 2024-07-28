@@ -11,6 +11,15 @@ export const useLocationStore = defineStore('location', {
     error: null,
   }),
 
+  getters: {
+    mapUrl: (state) => {
+      if (state.latitude && state.longitude) {
+        return `https://www.google.com/maps/search/?api=1&query=${state.latitude},${state.longitude}`;
+      }
+      return null;
+    },
+  },
+
   actions: {
     async getLocation() {
       try {
