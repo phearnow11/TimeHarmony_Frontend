@@ -175,7 +175,7 @@ const submitReport = () => {
   }
   // Handle the report submission logic here
   axios.post(`${api}/chat/addtochat?user_id=${import.meta.env.VITE_ADMIN_USERID}&user_id2=${userStore.user_id}`);
-  useChatStore().sendMessage(import.meta.env.VITE_ADMIN_USERID, `Báo cáo người dùng "${retailer.value.username}", lý do: ${message.value}.`)
+  useChatStore().sendMessage(import.meta.env.VITE_ADMIN_USERID, `Báo cáo người dùng "${retailer.value.username} : ${retailer.value.user_id}", lý do: ${message.value}.`)
   closeReportModal();
 };
 </script>
