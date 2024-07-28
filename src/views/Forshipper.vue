@@ -6,7 +6,7 @@
     <div class="container mx-auto p-4 w-full lg:w-3/4">
       <!-- Navigation links -->
       <div class="mb-6">
-        <span class="text-lg text-primary"><button class="hover-underline-animation text-lg" @click="locationStore.getMyLocation()">Cập nhật</button> vị trí hiện tại: <br>
+        <span class="text-lg text-primary"><button class="hover-underline-animation text-lg" @click="locationStore.getMyLocation(); updateLocation()">Cập nhật</button> vị trí hiện tại: <br>
           <div class="text-secondary text-sm">{{ locationStore.translatedName }}</div></span>
       </div>
       
@@ -57,6 +57,7 @@
   import { onMounted, ref, computed, onUnmounted } from 'vue';
   import { useRouter } from 'vue-router';
   import { useLocationStore } from '../stores/location';
+import axios from 'axios';
   
   const user = useUserStore();
   const auth = useAuthStore();
@@ -302,12 +303,34 @@
   const interval = setInterval(async () => {
     await locationStore.getMyLocation();
     console.log('update location');
+    updateLocation()
   }, 1 * 60 * 1000); // 15 minutes in milliseconds
 
   // Clear the interval when the component is unmounted
   onUnmounted(() => {
     clearInterval(interval);
   });
+
+  var api = import.meta.env.VITE_API_PORT
+  const saveLocation = (n) => {
+    axios.post(`${api}/staff/save/location/${user.user_id}`,{
+      oid: n,
+      latitude: locationStore.latitude,
+      longtitude: locationStore.longitude
+    })
+  }
+
+  // Check if shippingOrders is an array before calling forEach
+const updateLocation = () => {
+  if (Array.isArray(shippingOrders.value)) {
+    shippingOrders.value.forEach(order => {
+      saveLocation(order.order_id); // Use order.order_id instead of just order
+      console.log(`save order ${order.order_id}`);
+    });
+  } else {
+    console.error('shippingOrders is not an array');
+  }
+};
   
   const currency = (value) => `${value.toLocaleString("vi-VN")} ₫`;
   

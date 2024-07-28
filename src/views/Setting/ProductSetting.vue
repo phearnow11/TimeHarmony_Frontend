@@ -46,14 +46,15 @@
                 <td class="py-4 pl-2">{{ formatDate(order.create_time) }}</td>
                 <td class="py-4 pl-2">{{ formatPriceVND(order.total_price) }}</td>
                 <td class="py-4 pl-2">{{ getOrderStatusText(order.order_id) }}</td>
-                <td>{{ location }}</td>
+                <td class="py-4 pl-2">
+                  {{ orderLocations[order.order_id]?.translatedName ??  'N/A' }}
+                </td>
                 <td class="py-4 pl-2">{{ order.shipping_date ? formatDate(order.shipping_date) : formatDate(order.create_time) }}</td>
                 <td class="py-4 px-2">
                   <button v-if="orderStates[order.order_id] !== 'DELETED'" class="hover-underline-animation px-2" @click="viewOrderDetails(order.order_id)">Xem Chi Tiết</button>
                   <button v-if="orderStates[order.order_id] === 'PENDING'" class="hover-underline-animation px-2 border-l border-secondary" @click="cancelOrder(order.order_id)">Huỷ Đơn</button>
                   <button v-if="orderStates[order.order_id] === 'SHIPPED'" class="hover-underline-animation px-2 border-l border-secondary" @click="confirmShip(order.order_id)">Đã nhận</button>
                 </td>
-                
               </tr>
             </tbody>
           </table>
@@ -87,7 +88,7 @@
                 <td class="py-4 pl-2">{{ list.watch_name }}</td>
                 <td class="py-4 pl-2">{{ formatPriceVND(list.price) }}</td>
                 <td class="py-4 pl-2">{{ getPendingWatchStatusText(list.state) }}</td>
-                <td class="py-4 pl-2">{{ orderDetails[list.watch_id]?.order_detail?.order_id || 'N/A' }}</td>
+                <td class="py-4 pl-2">{{ orderDetails[list.watch_id]?.order_detail?.order_id ?? 'N/A' }}</td>
                 <td class="py-4 pl-2"><a class="hover-underline-animation" target="_blank" :href="locations[list.watch_id]?.mapUrl">{{ locations[list.watch_id]?.translatedName ?? 'N/A' }}</a></td>
                 <td class="py-4 pl-2">{{ watchOrderDetails[list.watch_id] ? formatDateHour(watchOrderDetails[list.watch_id][1]) : 'N/A' }}</td>
                 
@@ -219,6 +220,21 @@ const fetchOrderDetails = async (watchId, orderId) => {
   }
 };
 
+const orderLocations = ref({});
+
+const fetchOrderLocation = async (orderId, latitude, longitude) => {
+  if (latitude && longitude) {
+    try {
+      orderLocations.value[orderId] = await locationStore.getLocation(latitude, longitude);
+    } catch (error) {
+      console.error(`Error fetching location for order ${orderId}:`, error);
+      orderLocations.value[orderId] = { translatedName: 'Error fetching location', locationName: 'Error' };
+    }
+  } else {
+    orderLocations.value[orderId] = { translatedName: 'No location data', locationName: 'No data' };
+  }
+};
+
 const fetchLocation = async (watchId, latitude, longitude) => {
   if (latitude && longitude) {
     try {
@@ -334,6 +350,7 @@ const loadOrders = async () => {
         const orderDetails = await user.getOrderOfWatch(watch.watch_id);
         watchOrderDetails.value[watch.watch_id] = orderDetails[0];
         await fetchOrderDetails(watch.watch_id, orderDetails[0][0]);
+        await fetchOrderLocation(order.order_id, order.latitude, order.longitude);
       } catch (error) {
         console.error(`Error fetching order details for watch ${watch.watch_id}:`, error);
         watchOrderDetails.value[watch.watch_id] = null;
