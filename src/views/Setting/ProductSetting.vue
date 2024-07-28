@@ -47,7 +47,7 @@
                 <td class="py-4 pl-2">{{ formatPriceVND(order.total_price) }}</td>
                 <td class="py-4 pl-2">{{ getOrderStatusText(order.order_id) }}</td>
                 <td class="py-4 pl-2">
-                  <a :href="orderLocations[order.order_id]?.mapUrl" class="hover-underline-animation">{{ orderLocations[order.order_id]?.translatedName ?? orderLocations[order.order_id]?.locationName ??  'N/A' }}</a>
+                  <a target="_blank" :href="orderLocations[order.order_id]?.mapUrl" class="hover-underline-animation">{{ orderLocations[order.order_id]?.translatedName ?? orderLocations[order.order_id]?.locationName ??  'N/A' }}</a>
                 </td>
                 <td class="py-4 pl-2">{{ order.shipping_date ? formatDate(order.shipping_date) : formatDate(order.create_time) }}</td>
                 <td class="py-4 px-2">
@@ -350,11 +350,6 @@ const loadOrders = async () => {
       const detail = await user.getOrderDetail(order.order_id);
       console.log("DET", detail);
 
-      if (detail && detail.locations) {
-        // Sort locations by created_at from newest to oldest
-        detail.locations.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      }
-
       if (detail && detail.locations && detail.locations[0]) {
         const { latitude, longitude } = detail.locations[0];
         if (latitude && longitude) {
@@ -369,10 +364,9 @@ const loadOrders = async () => {
 
     for (const watch of wlists.value) {
       try {
-        const orderDetails = await user.getOrderOfWatch(watch.watch_id);
-        watchOrderDetails.value[watch.watch_id] = orderDetails[0];
-        await fetchOrderDetails(watch.watch_id, orderDetails[0][0]);
-        await fetchOrderLocation(order.order_id, order.latitude, order.longitude);
+        const details = await user.getOrderOfWatch(watch.watch_id);
+        watchOrderDetails.value[watch.watch_id] = details[0];
+        await fetchOrderDetails(watch.watch_id, details[0][0]);
       } catch (error) {
         console.error(`Error fetching order details for watch ${watch.watch_id}:`, error);
         watchOrderDetails.value[watch.watch_id] = null;
