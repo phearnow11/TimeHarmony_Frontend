@@ -21,8 +21,12 @@
           <img :src="user.image" alt="Avatar" class="w-32 h-32 border-4 border-primary mx-auto mb-4">
           <p class="text-gray-400 mb-4">For best results, use an image at least 128px by 128px in jpg format</p>
           <input type="file" id="file-upload" class="hidden" @change="handleFileUpload">
-          <label for="file-upload" class="th-p-btn cursor-pointer">Upload</label>
+          <label for="file-upload" class="th-p-btn cursor-pointer gap-2">Upload <span class="mdi mdi-tray-arrow-up"></span></label>
         </div>
+      </section>
+
+      <!-- Private Info -->
+      <section class="p-6">
         <h3 class="text-xl text-secondary mb-4">Thông tin tài khoản</h3>
         <form @submit.prevent="saveChanges">
           <div class="form__group field">
@@ -35,14 +39,6 @@
             />
             <label for="username" class="form__label">Tên tài khoản</label>
           </div>
-          <button type="submit" class="th-p-btn mt-8">Lưu thay đổi</button>
-        </form>
-      </section>
-
-      <!-- Private Info -->
-      <section class="p-6">
-        <h3 class="text-xl text-secondary mb-4">Thông tin cá nhân</h3>
-        <form @submit.prevent="saveChanges">
           <div class="flex gap-4">
             <div class="form__group field flex-1">
               <input
@@ -85,7 +81,7 @@
             />
             <label for="email" class="form__label">Email</label>
           </div>
-          <button type="submit" class="th-p-btn mt-8">Lưu thay đổi</button>
+          <button type="submit" class="th-p-btn mt-8" @click="submit">Lưu thay đổi</button>
         </form>
       </section>
     </main>
@@ -135,8 +131,8 @@ async function handleFileUpload(event) {
   }
 }
 
-function saveChanges() {
-  user.saveChanges(); // Assuming this method is implemented in the user store
+const submit = () => {
+  user.updateUserInfo(user.user_id, user.username, user.first_name, user.last_name, user.phone, user.email)
 }
 </script>
 
