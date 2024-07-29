@@ -27,6 +27,10 @@ export const useUserStore = defineStore("user", {
     role: null,
     staff_role: null,
     pendingWids: [],
+    profitByMonth: [],
+    totalProfit: 0,
+    postedWatches: 0,
+    soldWatches: 0,
   }),
 
   actions: {
@@ -469,6 +473,63 @@ export const useUserStore = defineStore("user", {
       return response.data;
     } catch (error) {
       console.error('Error confirming shipping:', error);
+      throw error;
+    }
+  },
+  async getProfitOfSeller(seller_id) {
+    try {
+      const response = await axios.get(`${api}/seller/get/seller-total-profit/${seller_id}`);
+      console.log('Total profit response:', response.data);
+      this.totalProfit = response.data.total_profit;
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching total profit:', error);
+      throw error;
+    }
+  },
+
+  async getProfitOfSellerByMonth(seller_id, month) {
+    try {
+      const response = await axios.get(`${api}/seller/get/seller-profit-by-month/${seller_id}/month=${month}`);
+      console.log('Monthly profit response:', response.data);
+      this.profitByMonth = response.data.monthly_profit;
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching monthly profit:', error);
+      throw error;
+    }
+  },
+  async getProfitOfSellerByDate(seller_id, date) {
+    try {
+      const response = await axios.get(`${api}/seller/get/seller-profit-by-day/${seller_id}/day=${date}`);
+      console.log('Daily profit response:', response.data);
+      this.profitByMonth = response.data.monthly_profit;
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching monthly profit:', error);
+      throw error;
+    }
+  },
+  async countPostWatch(seller_id) {
+    try {
+      const response = await axios.get(`${api}/seller/count/post-watches/${seller_id}`);
+      console.log('Posted watches response:', response.data);
+      this.postedWatches = response.data.posted_watches;
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching posted watches count:', error);
+      throw error;
+    }
+  },
+
+  async countSoldWatch(seller_id) {
+    try {
+      const response = await axios.get(`${api}/seller/count/sold-watches/${seller_id}`);
+      console.log('Sold watches response:', response.data);
+      this.soldWatches = response.data.sold_watches;
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching sold watches count:', error);
       throw error;
     }
   },
