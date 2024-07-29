@@ -9,12 +9,6 @@
         </div>
         <div>
           <strong class="product-name text-primary">{{ productName }}</strong>
-          <!-- <div class="retailer">
-            <img class="avatar" :src="retailerAvatar" />
-            <router-link :to="seller_id">
-              <span class="username hover-underline-animation">{{ retailerName }}</span>
-            </router-link>
-          </div> -->
           <span class="price">Giá {{ formattedPrice }}</span>
           <br>
           <span class="state" :style="{ color: stateColor }">● {{ checkState }}</span>
@@ -60,14 +54,6 @@ const props = defineProps({
     type: String,
     required: true
   },
-  retailerName: {
-    type: String,
-    required: true
-  },
-  retailerAvatar: {
-    type: String,
-    required: true
-  },
   state: {
     type: Number,
     required: true
@@ -80,13 +66,7 @@ const props = defineProps({
     type: String,
     required: true
   },
-  seller_id: {
-    type: String,
-    required: true
-  }
 });
-
-const userStore = useUserStore();
 
 const confirmDeleteWatch = () => {
   showDeleteModal.value = true;
