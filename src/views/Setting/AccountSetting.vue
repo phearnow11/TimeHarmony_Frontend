@@ -35,6 +35,7 @@
               class="form__field"
               placeholder="Username"
               v-model="user.username"
+              @input="updateChangedField('username')"
               required
             />
             <label for="username" class="form__label">Tên tài khoản</label>
@@ -46,6 +47,7 @@
                 class="form__field"
                 placeholder="First Name"
                 v-model="user.first_name"
+                @input="updateChangedField('first_name')"
                 required
               />
               <label for="first_name" class="form__label">Tên</label>
@@ -56,6 +58,7 @@
                 class="form__field"
                 placeholder="Last Name"
                 v-model="user.last_name"
+                @input="updateChangedField('last_name')"
                 required
               />
               <label for="last_name" class="form__label">Họ (Tên đệm)</label>
@@ -67,6 +70,7 @@
               class="form__field"
               placeholder="Phone"
               v-model="user.phone"
+              @input="updateChangedField('phone')"
               required
             />
             <label for="phone" class="form__label">Số điện thoại</label>
@@ -77,6 +81,7 @@
               class="form__field"
               placeholder="Email"
               v-model="user.email"
+              @input="updateChangedField('email')"
               required
             />
             <label for="email" class="form__label">Email</label>
@@ -89,17 +94,19 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
 import { useAuthStore } from '../../stores/auth';
 import { onMounted } from 'vue';
 import { useUserStore } from '../../stores/user';
-import { useCloudinaryStore } from '../../stores/cloudinary'; // Make sure this import is correct
+import { useCloudinaryStore } from '../../stores/cloudinary';
 
 const user = useUserStore();
 const auth = useAuthStore();
 const cloudinary = useCloudinaryStore();
 
 const isUploading = ref(false);
+const originalUser = reactive({});
+const changedFields = reactive({});
 
 const uploadToCDN = async (file) => {
   isUploading.value = true;
@@ -109,18 +116,18 @@ const uploadToCDN = async (file) => {
     user.loadUser(auth.user_id)
   } catch (error) {
     console.error("Error uploading file:", error);
-    // You might want to show an error message to the user here
   } finally {
     isUploading.value = false;
   }
 };
 
-onMounted(() => {
+onMounted(async () => {
   if (!auth.user_id) {
     console.log('User is not logged in. Redirecting to login...');
     // Implement redirect logic here
   } else {
-    user.loadUser(auth.user_id);
+    await user.loadUser(auth.user_id);
+    Object.assign(originalUser, user.$state);
   }
 });
 
@@ -131,11 +138,28 @@ async function handleFileUpload(event) {
   }
 }
 
-const submit = () => {
-  user.updateUserInfo(user.user_id, user.username, user.first_name, user.last_name, user.phone, user.email)
-}
-</script>
+const updateChangedField = (field) => {
+  if (user[field] !== originalUser[field]) {
+    changedFields[field] = user[field];
+  } else {
+    delete changedFields[field];
+  }
+};
 
-<style scoped>
-/* Add your styles here */
-</style>
+const submit = () => {
+  updateChangedField('username');
+  updateChangedField('first_name');
+  updateChangedField('last_name');
+  updateChangedField('phone');
+  updateChangedField('email');
+
+  user.updateUserInfo(
+    user.user_id,
+    changedFields.username ?? null,
+    changedFields.first_name ?? null,
+    changedFields.last_name ?? null,
+    changedFields.phone ?? null,
+    changedFields.email ?? null
+  );
+};
+</script>

@@ -582,16 +582,28 @@ export const useUserStore = defineStore("user", {
     },
 
     updateUserInfo(id, username, fname, lname, phone, email) {
+      // Create an object with all parameters
+      const updateData = {
+        username,
+        fname,
+        lname,
+        phone,
+        email
+      };
+    
+      // Remove null or undefined values
+      const cleanedData = Object.entries(updateData)
+        .reduce((acc, [key, value]) => {
+          if (value != null) {
+            acc[key] = value;
+          }
+          return acc;
+        }, {});
+    
       axios
         .put(
-          `https://timeharmony.azurewebsites.net/member/update/member/${id}`,
-          {
-            username: username,
-            fname: fname,
-            lname: lname,
-            phone: phone,
-            email: email,
-          }
+          `${api}/member/update/member/${id}`,
+          cleanedData
         )
         .then((res) => {
           console.log(res.data);
