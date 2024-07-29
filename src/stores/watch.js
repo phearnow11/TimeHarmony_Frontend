@@ -251,5 +251,15 @@ export const useWatchStore = defineStore("watch", {
         throw error;
       }
     },
+
+    async deleteWatch(watchId) {
+      try {
+        const response = await axios.delete(`${api}/seller/delete/watch/${watchId}`);
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching watches by series:", error);
+        throw error;
+      }
+    },
   }
 });

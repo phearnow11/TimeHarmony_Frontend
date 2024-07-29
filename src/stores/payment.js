@@ -24,3 +24,13 @@ export const savePaymentDetail = async (data) => {
     throw error;
   }
 };
+
+export const paymentCOD = async (data) => {
+  try {
+    const response = await axios.post(`${api}/payment/cash`, data);
+    return response.data;
+  } catch (error) {
+    console.error('Error saving payment details:', error);
+    throw error;
+  }
+};

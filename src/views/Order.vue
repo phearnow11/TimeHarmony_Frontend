@@ -403,7 +403,7 @@ import { useAuthStore } from "../stores/auth";
 import { onMounted, ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import OrderItem from "../components/OrderItem.vue";
-import { createVnPayPayment } from "../stores/payment";
+import { createVnPayPayment, paymentCOD } from "../stores/payment";
 
 const cartStore = useCartStore();
 const userStore = useUserStore();
@@ -446,6 +446,7 @@ const createOrder = async () => {
 
   localStorage.setItem("pay_method", orderData.payment_method);
   localStorage.setItem("trans_no", orderData.transaction_no);
+  const wids = Object.values(cartStore.selected_wids);
 
   try {
     if (selectedOption.value === "card") {
@@ -453,7 +454,6 @@ const createOrder = async () => {
     isProcessingPayment.value = true;
 
     try {
-      const wids = Object.values(cartStore.selected_wids);
       console.log('Selected WIDs:', wids);
       localStorage.setItem('pendingWids', JSON.stringify(wids));
 
@@ -476,28 +476,34 @@ const createOrder = async () => {
     }
     } else {
       console.log("Sending order data:", orderData);
-      const result = await userStore.addOrder(auth.user_id, orderData);
-      console.log("Order created successfully: ", result);
-      // Get the most recent order
-      const mostRecentOrder = await userStore.getNewestOrder(auth.user_id);
-      console.log("Most recent order:", mostRecentOrder);
+      const checkWatch = await paymentCOD(wids);
+      console.log('Watch id ' + wids);
+      console.log(checkWatch);
 
-      if (mostRecentOrder) {
-        console.log("Fetching order details for order ID:", mostRecentOrder);
-        const orderDetails = await userStore.getOrderDetail(mostRecentOrder);
-        console.log("Order details:", orderDetails);
-
-        if (orderDetails && orderDetails.order_detail) {
-          userStore.setCurrentOrder(orderDetails);
-          router.push(`/orderconfirmation/${mostRecentOrder}`);
+      if(checkWatch){
+        const result = await userStore.addOrder(auth.user_id, orderData);
+        console.log("Order created successfully: ", result);
+        // Get the most recent order
+        const mostRecentOrder = await userStore.getNewestOrder(auth.user_id);
+        console.log("Most recent order:", mostRecentOrder);
+  
+        if (mostRecentOrder) {
+          console.log("Fetching order details for order ID:", mostRecentOrder);
+          const orderDetails = await userStore.getOrderDetail(mostRecentOrder);
+          console.log("Order details:", orderDetails);
+  
+          if (orderDetails && orderDetails.order_detail) {
+            userStore.setCurrentOrder(orderDetails);
+            router.push(`/orderconfirmation/${mostRecentOrder}`);
+          } else {
+            console.error("Invalid order details:", orderDetails);
+            alert("Error processing order. Please try again.");
+          }
         } else {
-          console.error("Invalid order details:", orderDetails);
-          alert("Error processing order. Please try again.");
+          console.error("No recent order found");
+          alert("Error creating order. Please try again.");
         }
-      } else {
-        console.error("No recent order found");
-        alert("Error creating order. Please try again.");
-      }
+      } else alert("Error creating order. Please try again.");
       }
   } catch (error) {
     console.error("Failed to create order:", error);

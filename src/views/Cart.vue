@@ -180,9 +180,11 @@
               class="form__field w-full"
               placeholder="Số điện thoại"
               v-model="newAddress.phone"
+              @input="validatePhone"
               required
             />
             <label for="phone" class="form__label">Số điện thoại</label>
+            <p v-if="errorMessage" class="text-red-500">{{ errorMessage }}</p>
           </div>
           <!-- Lựa chọn địa chỉ -->
           <div class="address-form mt-2">
@@ -323,6 +325,21 @@ const showProductDetails = ref(true);
 const closePopup = () => {
   isPopupVisible.value = false;
 };
+
+
+const errorMessage = ref('');
+
+function validatePhone(event) {
+  const value = event.target.value;
+  const numericValue = value.replace(/\D/g, '');
+  newAddress.value.phone = numericValue;
+
+  if (value !== numericValue) {
+    errorMessage.value = 'Vui lòng chỉ nhập số vào ô này.';
+  } else {
+    errorMessage.value = '';
+  }
+}
 
 const shipFee = computed(() => {
   return selectedItemsCount.value > 0 ? totalPrice.value * 0.02 : 0;

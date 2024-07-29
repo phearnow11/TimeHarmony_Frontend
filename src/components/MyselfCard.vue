@@ -1,31 +1,54 @@
 <template>
-  <router-link :to="`/detail/${watch_id}`" class="container">
+  <div class="container">
     <div class="box" :class="{ bookmarked: isBookmarked }">
-      <div class="image-container">
-        <img class="watch-img" :src="productImage" />
-        
-        <div class="gradient-overlay"></div>
-      </div>
-      <div>
-        <strong class="product-name">{{ productName }}</strong>
-        <div class="retailer">
-          <img class="avatar" :src="retailerAvatar" />
-          <router-link :to="seller_id">
-            <span class="username hover-underline-animation">{{ retailerName }}</span>
-          </router-link>
-        </div>
-        <span class="price">{{ formattedPrice }}</span>
-        <br>
+        <router-link :to="`/detail/${watch_id}`">
         <span class="state" :style="{ color: stateColor }">⁙ {{ checkState }}</span>
+        <div class="image-container">
+          <img class="watch-img" :src="productImage" />
+          
+          <div class="gradient-overlay"></div>
+        </div>
+        <div>
+          <strong class="product-name">{{ productName }}</strong>
+          <div class="retailer">
+            <img class="avatar" :src="retailerAvatar" />
+            <router-link :to="seller_id">
+              <span class="username hover-underline-animation">{{ retailerName }}</span>
+            </router-link>
+          </div>
+          <span class="price">{{ formattedPrice }}</span>
+        </div>
+      </router-link>
+      <button v-if="props.state==1" @click="confirmDeleteWatch" class="border-2 border-primary h-12 mt-5 w-full">Xoá đồng hồ</button>
+      </div>
+  </div>
+
+  <div v-if="showDeleteModal" class="fixed inset-0 z-50 flex items-center justify-center back bg-opacity-50">
+      <div class="bg-[#1b1b1b] p-6 shadow-lg max-w-md w-full">
+        <h2 class="text-lg font-semibold mb-4">Xác nhận xoá</h2>
+        <p class="mb-4">Bạn có muốn xoá đồng hồ này không?</p>
+        <div class="flex justify-center px-5 py-8">
+          
+            <img class="w-48" :src="productImage" />
+          <strong class="text-2xl px-5">{{ productName }}</strong>
+          <strong class="text-2xl pl-5">{{ formatPriceVND(price) }}</strong>
+        </div>
+          <div class="flex justify-end space-x-4">
+            <button type="button" @click="handleCancel" class="border-2 px-4 py-2 border-secondary">Huỷ</button>
+            <button type="submit" @click="handleDelete" class="th-p-btn">Xác nhận xoá</button>
+          </div>
       </div>
     </div>
-  </router-link>
+  
 </template>
 
 <script setup>
 import { ref, defineProps, computed, onMounted} from 'vue';
 import { useUserStore } from '../stores/user';
 import { useAuthStore } from '../stores/auth';
+import { useWatchStore } from '../stores/watch';
+
+const showDeleteModal = ref(false)
 
 const props = defineProps({
   productName: {
@@ -64,6 +87,23 @@ const props = defineProps({
 
 const userStore = useUserStore();
 
+const confirmDeleteWatch = () => {
+  showDeleteModal.value = true;
+};
+
+const handleCancel = () => {
+  showDeleteModal.value = false;
+};
+
+const handleDelete = async () => {
+  try {
+    await useWatchStore().deleteWatch(props.watch_id);
+    showDeleteModal.value = false;
+  } catch (error) {
+    console.error("Error deleting watch:", error);
+  }
+};
+
 const checkState = computed(() => {
   if (props.state === 0)
     return 'Đang trong quá trình duyệt'
@@ -98,7 +138,7 @@ const formattedPrice = computed(() => formatPriceVND(props.price));
 .state-green { color: green; }
 .state-red { color: red; }
 .state{
-  font-size: 14px;
+  font-size: 16px;
   font-family: Arial, Helvetica, sans-serif;
   font-weight: bold;
 }
@@ -238,6 +278,11 @@ const formattedPrice = computed(() => formatPriceVND(props.price));
   justify-content: start;
   align-items: center;
   margin-bottom: 2vw;
+}
+
+.back{
+  background-color: rgba(20, 20, 20, 0.836);
+  backdrop-filter: blur(10px);
 }
 
 @media screen and (max-width: 768px) {
