@@ -80,12 +80,7 @@ import { useAuthStore } from "../stores/auth";
 import MyselfCard from "../components/MyselfCard.vue";
 import router from "../router";
 
-if(useUserStore().role !='ROLE_SELLER' && useUserStore().role != 'ROLE_USER'){
-  console.log(useUserStore().role );
-  
-    console.log('no permission');
-    router.push('/')
-}
+
 
 const userStore = useUserStore();
 const addresses = ref([]);
@@ -127,6 +122,12 @@ const filteredWatches = computed(() => {
 });
 
 onMounted(async () => {
+  if(useUserStore().role !='ROLE_SELLER' && useUserStore().role != 'ROLE_USER'){
+  console.log(useUserStore().role );
+  
+    console.log('no permission');
+    router.push('/')
+}
   const userId = useAuthStore().user_id;
   try {
     const userInfo = await userStore.getUserInfo(userId);
