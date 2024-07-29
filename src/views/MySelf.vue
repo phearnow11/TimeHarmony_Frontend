@@ -33,11 +33,11 @@
       </div>
       <div class="flex gap-5 items-center">
         <router-link class="hover-underline-animation"
-          ><span class="mdi mdi-phone"></span> {{ user?.phone ?? "Không có thông tin" }}</router-link
+          ><span class="mdi mdi-phone"></span> {{ useUserStore()?.phone ?? "Không có thông tin" }}</router-link
         >
         <router-link class="hover-underline-animation"
           ><span class="mdi mdi-email"></span>
-          {{ user?.email ? user?.email : "Không có thông tin" }}</router-link
+          {{ useUserStore()?.email ? useUserStore()?.email : "Không có thông tin" }}</router-link
         >
       </div>
       <div class="flex items-center justify-between mt-6 mb-6">
