@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import { useAuthStore } from "./auth";
-var api = import.meta.env.VITE_API_PORT
+var api = import.meta.env.VITE_API_PORT;
 export const useUserStore = defineStore("user", {
   state: () => ({
     username: "",
@@ -13,12 +13,12 @@ export const useUserStore = defineStore("user", {
     phone: "",
     image: "https://files.catbox.moe/n1w3b0.png",
     active: "",
-    user_id: null,  // Add this to your state
+    user_id: null, // Add this to your state
     selectedItems: [],
     totalPrice: 0,
     shipFee: 0,
     shippingAddress: null,
-    note: '',
+    note: "",
     mostRecentOrderId: null,
     pendingOrder: null,
     transaction_no: null,
@@ -53,14 +53,14 @@ export const useUserStore = defineStore("user", {
       this.selectedItems = [];
       this.totalPrice = 0;
       this.shippingAddress = null;
-      this.note = '';
+      this.note = "";
     },
     getFavorites() {
-      this.wait_fav.add
+      this.wait_fav.add;
       return [...this.state.cur_fav, ...this.state.wait_fav];
     },
     setUsername(username) {
-      this.username = username
+      this.username = username;
     },
     setCartNum(num) {
       this.cart_num = num;
@@ -71,53 +71,62 @@ export const useUserStore = defineStore("user", {
 
     async getFavoritesFromServer(user_id) {
       try {
-        console.log('Prepare');
-        const response = await axios.get(`${api}/member/get/favorites/${user_id}`);
-        console.log('Get OK');
+        console.log("Prepare");
+        const response = await axios.get(
+          `${api}/member/get/favorites/${user_id}`
+        );
+        console.log("Get OK");
         return response.data; // Assuming this returns an array of favorite watch objects
       } catch (error) {
-        console.error('Error fetching favorites:', error);
+        console.error("Error fetching favorites:", error);
         throw error;
       }
     },
 
     async saveFavoritesToServer(user_id, watch_id) {
       if (!user_id) {
-        console.error('No user ID provided');
+        console.error("No user ID provided");
         return;
       }
       try {
-        console.log('Preparing to save favorites:', watch_id);
-        const response = await axios.post(`${api}/member/add/favorites/${user_id}-${watch_id}`);
-        console.log('aaaaaaaa: '+response.data);
-    
+        console.log("Preparing to save favorites:", watch_id);
+        const response = await axios.post(
+          `${api}/member/add/favorites/${user_id}-${watch_id}`
+        );
+        console.log("aaaaaaaa: " + response.data);
+
         if (response.data && response.status === 200) {
-          console.log('Favorites saved successfully:', response.data);
-          
+          console.log("Favorites saved successfully:", response.data);
         } else {
-          console.error('Unexpected response from server:', response);
+          console.error("Unexpected response from server:", response);
         }
       } catch (error) {
-        console.error('Error saving favorites:', error.response ? error.response.data : error.message);
+        console.error(
+          "Error saving favorites:",
+          error.response ? error.response.data : error.message
+        );
         throw error;
       }
     },
 
     async deleteFavorite(user_id, watch_id) {
       try {
-        const response = await axios.delete(`${api}/member/delete/favorites/${user_id}?wid=${watch_id}`);
-        console.log('Favorite deleted successfully:', response.data);
+        const response = await axios.delete(
+          `${api}/member/delete/favorites/${user_id}?wid=${watch_id}`
+        );
+        console.log("Favorite deleted successfully:", response.data);
         return response.data;
       } catch (error) {
-        console.error('Error deleting favorite:', error);
+        console.error("Error deleting favorite:", error);
         throw error;
       }
     },
 
-
-
     addToWaitFav(watch_id) {
-      if (!this.wait_fav.includes(watch_id) && !this.cur_fav.includes(watch_id)) {
+      if (
+        !this.wait_fav.includes(watch_id) &&
+        !this.cur_fav.includes(watch_id)
+      ) {
         this.wait_fav.push(watch_id);
       }
     },
@@ -134,7 +143,9 @@ export const useUserStore = defineStore("user", {
     },
 
     isWatchFavorite(watch_id) {
-      return this.cur_fav.includes(watch_id) || this.wait_fav.includes(watch_id);
+      return (
+        this.cur_fav.includes(watch_id) || this.wait_fav.includes(watch_id)
+      );
     },
 
     async signUp(userData) {
@@ -153,8 +164,10 @@ export const useUserStore = defineStore("user", {
 
     async addToCart(member_id, watch_id) {
       try {
-        const response = await axios.post(`${api}/member/add/to-cart/${member_id}?watch_id=${watch_id}`);
-        
+        const response = await axios.post(
+          `${api}/member/add/to-cart/${member_id}?watch_id=${watch_id}`
+        );
+
         return response.data;
       } catch (error) {
         console.error("Cart addition error", error);
@@ -166,21 +179,21 @@ export const useUserStore = defineStore("user", {
       try {
         const url = `${api}/member/delete/carts/${member_id}`;
         const data = { wids: watch_ids };
-        console.log('Deleting cart items with URL:', url);
-        console.log('Data being sent:', data);
+        console.log("Deleting cart items with URL:", url);
+        console.log("Data being sent:", data);
         const response = await axios.delete(url, { data });
-        console.log('Watch cart deleted successfully:', response.data);
+        console.log("Watch cart deleted successfully:", response.data);
         return response.data;
       } catch (error) {
-        console.error('Error deleting watch cart:', error);
+        console.error("Error deleting watch cart:", error);
         if (error.response) {
-          console.error('Error response:', error.response.data);
-          console.error('Error status:', error.response.status);
-          console.error('Error headers:', error.response.headers);
+          console.error("Error response:", error.response.data);
+          console.error("Error status:", error.response.status);
+          console.error("Error headers:", error.response.headers);
         } else if (error.request) {
-          console.error('Error request:', error.request);
+          console.error("Error request:", error.request);
         } else {
-          console.error('Error message:', error.message);
+          console.error("Error message:", error.message);
         }
         throw error;
       }
@@ -189,7 +202,7 @@ export const useUserStore = defineStore("user", {
     async loadUser(user_id) {
       try {
         const res = await axios.get(`${api}/member/get/${user_id}`);
-        const fav = await axios.get(`${api}/member/get/favorites/${user_id}`)
+        const fav = await axios.get(`${api}/member/get/favorites/${user_id}`);
         console.log("Member data:", res.data);
 
         // Update the state with user data
@@ -202,7 +215,7 @@ export const useUserStore = defineStore("user", {
         this.image = res.data.member_image;
         this.active = res.data.active;
         this.user_id = res.data.member_id;
-        this.cur_fav = fav.data
+        this.cur_fav = fav.data;
         this.role = res.data.user_log_info.authorities.authority;
         this.staff_role = res.data.staff_role;
         return {
@@ -216,9 +229,8 @@ export const useUserStore = defineStore("user", {
           active: this.active,
           user_id: this.user_id,
           role: this.role,
-          staff_role: this.staff_role
+          staff_role: this.staff_role,
         };
-
       } catch (err) {
         console.error("Error fetching member data:", err);
       }
@@ -240,7 +252,7 @@ export const useUserStore = defineStore("user", {
           image: res.data.member_image,
           active: res.data.active,
           user_id: res.data.member_id,
-          watches: res.data.watches
+          watches: res.data.watches,
         };
 
         return userInfo;
@@ -259,66 +271,74 @@ export const useUserStore = defineStore("user", {
             name: addressData.name,
             phone: addressData.phone,
             detail: addressData.detail,
-            default: addressData.default
-          },)
-          console.log('Address saved successfully:', response.data);
-          return response.data;
-        } catch (error) {
-          console.error('Error saving address:', error);
-          throw error;
-        }
+            default: addressData.default,
+          }
+        );
+        console.log("Address saved successfully:", response.data);
+        return response.data;
+      } catch (error) {
+        console.error("Error saving address:", error);
+        throw error;
+      }
     },
     async getAddressDetails(user_id) {
       try {
-        const response = await axios.get(`${api}/member/get/address/${user_id}`);
-        return response.data.map(address => ({
+        const response = await axios.get(
+          `${api}/member/get/address/${user_id}`
+        );
+        return response.data.map((address) => ({
           id: address.address_id,
           name: address.name,
           phone: address.phone,
           address: address.address_detail,
-          isDefault: address._default
+          isDefault: address._default,
         }));
       } catch (error) {
-        console.error('Error fetching address details:', error);
+        console.error("Error fetching address details:", error);
         throw error;
       }
     },
     async deleteAddress(id, addressid) {
       try {
-        const response = await axios.delete(`${api}/member/delete/address/${id}?a_id=${addressid}`);
-        console.log('Full list response:', response.data);
+        const response = await axios.delete(
+          `${api}/member/delete/address/${id}?a_id=${addressid}`
+        );
+        console.log("Full list response:", response.data);
         return response.data; // This will return the entire response object
       } catch (error) {
-        console.error('Error fetching order details:', error);
+        console.error("Error fetching order details:", error);
         throw error;
       }
     },
     setPendingOrder(orderData) {
-      localStorage.setItem('pendingOrder', JSON.stringify(orderData));
+      localStorage.setItem("pendingOrder", JSON.stringify(orderData));
     },
 
     getPendingOrder() {
-      const pendingOrder = localStorage.getItem('pendingOrder');
+      const pendingOrder = localStorage.getItem("pendingOrder");
       return pendingOrder ? JSON.parse(pendingOrder) : null;
     },
 
     clearPendingOrder() {
-      localStorage.removeItem('pendingOrder');
+      localStorage.removeItem("pendingOrder");
     },
 
     async addOrder(user_id, orderData) {
       try {
         const dataToUse = orderData || this.getPendingOrder();
         if (!dataToUse) {
-          throw new Error('No order data available');
+          throw new Error("No order data available");
         }
 
-        const response = await axios.post(`${api}/member/add/order/${user_id}`, dataToUse);
+        const response = await axios.post(
+          `${api}/member/add/order/${user_id}`,
+          dataToUse
+        );
         this.mostRecentOrderId = response.data.order_id;
         this.clearPendingOrder(); // Clear pending order after successful creation
         return response.data;
       } catch (error) {
-        console.error('Error adding order:', error);
+        console.error("Error adding order:", error);
         throw error;
       }
     },
@@ -326,86 +346,93 @@ export const useUserStore = defineStore("user", {
     async getAllOrders(user_id) {
       try {
         const response = await axios.get(`${api}/member/get/order/${user_id}`);
-        console.log('Full getAllOrders response:', response.data);
-        
+        console.log("Full getAllOrders response:", response.data);
+
         // Return all orders, sorted by create_time in descending order
-        return response.data.orders.sort((a, b) => 
-          new Date(b.create_time) - new Date(a.create_time)
+        return response.data.orders.sort(
+          (a, b) => new Date(b.create_time) - new Date(a.create_time)
         );
       } catch (error) {
-        console.error('Error fetching all orders:', error);
+        console.error("Error fetching all orders:", error);
         throw error;
       }
     },
     async getNewestOrder(user_id) {
       try {
         const response = await axios.get(`${api}/member/get/order/${user_id}`);
-        console.log('Full getOrder response:', response.data);
-        
+        console.log("Full getOrder response:", response.data);
+
         // Sort orders by create_time in descending order (most recent first)
-        const sortedOrders = response.data.orders.sort((a, b) => 
-          new Date(b.create_time) - new Date(a.create_time)
+        const sortedOrders = response.data.orders.sort(
+          (a, b) => new Date(b.create_time) - new Date(a.create_time)
         );
         console.log(sortedOrders[0].order_id);
         // Return the most recent order (first in the sorted array)
         return sortedOrders[0].order_id;
       } catch (error) {
-        console.error('Error fetching orders:', error);
+        console.error("Error fetching orders:", error);
         throw error;
       }
     },
     async getOrderState(order_id) {
       try {
-        const response = await axios.get(`${api}/member/get/order/state/${order_id}`);
-        console.log('Full state response:', response.data);
+        const response = await axios.get(
+          `${api}/member/get/order/state/${order_id}`
+        );
+        console.log("Full state response:", response.data);
         return response.data; // This will return the entire response object
       } catch (error) {
-        console.error('Error fetching order details:', error);
+        console.error("Error fetching order details:", error);
         throw error;
       }
     },
     async getOrderWaiting(seller_id) {
       try {
-        const response = await axios.get(`${api}/seller/get/waiting/${seller_id}`);
-        console.log('Full list response:', response.data);
+        const response = await axios.get(
+          `${api}/seller/get/waiting/${seller_id}`
+        );
+        console.log("Full list response:", response.data);
         return response.data; // This will return the entire response object
       } catch (error) {
-        console.error('Error fetching order details:', error);
+        console.error("Error fetching order details:", error);
         throw error;
       }
     },
     async getOrderOfWatch(watch_id) {
       try {
         const response = await axios.get(`${api}/seller/get/order/${watch_id}`);
-        console.log('Full list response:', response.data);
+        console.log("Full list response:", response.data);
         return response.data; // This will return the entire response object
       } catch (error) {
-        console.error('Error fetching order details:', error);
+        console.error("Error fetching order details:", error);
         throw error;
       }
     },
     async getOrderDetail(order_id) {
       try {
-        const response = await axios.get(`${api}/member/get/order/detail/${order_id}`);
-        console.log('Full getOrderDetail response:', response.data);
+        const response = await axios.get(
+          `${api}/member/get/order/detail/${order_id}`
+        );
+        console.log("Full getOrderDetail response:", response.data);
         return response.data; // This will return the entire response object
       } catch (error) {
-        console.error('Error fetching order details:', error);
-        throw error;
-      }
-    },
-    
-    async cancelOrder(order_id) {
-      try {
-        const response = await axios.put(`${api}/member/cancel/order/${order_id}`);
-        console.log('Full Cancel Order response:', response.data);
-        return response.data; // This will return the entire response object
-      } catch (error) {
-        console.error('Error fetching order details:', error);
+        console.error("Error fetching order details:", error);
         throw error;
       }
     },
 
+    async cancelOrder(order_id) {
+      try {
+        const response = await axios.put(
+          `${api}/member/cancel/order/${order_id}`
+        );
+        console.log("Full Cancel Order response:", response.data);
+        return response.data; // This will return the entire response object
+      } catch (error) {
+        console.error("Error fetching order details:", error);
+        throw error;
+      }
+    },
 
     async uploadAvatar(imageFile) {
       try {
@@ -413,10 +440,15 @@ export const useUserStore = defineStore("user", {
         formData.append("file", imageFile);
         formData.append("upload_preset", import.meta.env.VITE_UPLOAD_PRESET);
 
-        const response = await fetch(`https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUD_NAME}/image/upload`, {
-          method: "POST",
-          body: formData
-        });
+        const response = await fetch(
+          `https://api.cloudinary.com/v1_1/${
+            import.meta.env.VITE_CLOUD_NAME
+          }/image/upload`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
 
         if (!response.ok) {
           throw new Error("Image upload failed");
@@ -436,7 +468,9 @@ export const useUserStore = defineStore("user", {
 
     async updateImage(imageUrl) {
       try {
-        const response = await axios.patch(`${api}/member/update/user/image/${this.user_id}?url=${imageUrl}`);
+        const response = await axios.patch(
+          `${api}/member/update/user/image/${this.user_id}?url=${imageUrl}`
+        );
         console.log("Image updated successfully:", response.data);
       } catch (error) {
         console.error("Error updating image:", error);
@@ -444,95 +478,139 @@ export const useUserStore = defineStore("user", {
       }
     },
 
-    async getUserByEmail(email){
-      const response = await axios.get(`${api}/member/getbyemail/${email}`)
-      if(response.data === ''){
-        console.log('No user found for email:', email);
-      }
-      else{
+    async getUserByEmail(email) {
+      const response = await axios.get(`${api}/member/getbyemail/${email}`);
+      if (response.data === "") {
+        console.log("No user found for email:", email);
+      } else {
         console.log(response.data);
-        this.setUsername(response.data.user_log_info.username)
+        this.setUsername(response.data.user_log_info.username);
         return response.data;
       }
-  },  
-  async setShipping(watch_id, order_id) {
-    try {
-      const response = await axios.put(`${api}/seller/ship/${watch_id}?order_id=${order_id}`);
-      console.log('Full shipping response:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error('Error confirming shipping:', error);
-      throw error;
-    }
-  },
+    },
+    async setShipping(watch_id, order_id) {
+      try {
+        const response = await axios.put(
+          `${api}/seller/ship/${watch_id}?order_id=${order_id}`
+        );
+        console.log("Full shipping response:", response.data);
+        return response.data;
+      } catch (error) {
+        console.error("Error confirming shipping:", error);
+        throw error;
+      }
+    },
 
-  async confirmShip(order_id) {
-    try {
-      const response = await axios.post(`${api}/member/confirm-success/order/${order_id}`);
-      console.log('Full shipping response:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error('Error confirming shipping:', error);
-      throw error;
-    }
-  },
-  async getProfitOfSeller(seller_id) {
-    try {
-      const response = await axios.get(`${api}/seller/get/seller-total-profit/${seller_id}`);
-      console.log('Total profit response:', response.data);
-      this.totalProfit = response.data.total_profit;
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching total profit:', error);
-      throw error;
-    }
-  },
+    async confirmShip(order_id) {
+      try {
+        const response = await axios.post(
+          `${api}/member/confirm-success/order/${order_id}`
+        );
+        console.log("Full shipping response:", response.data);
+        return response.data;
+      } catch (error) {
+        console.error("Error confirming shipping:", error);
+        throw error;
+      }
+    },
+    async getProfitOfSeller(seller_id) {
+      try {
+        const response = await axios.get(
+          `${api}/seller/get/seller-total-profit/${seller_id}`
+        );
+        console.log("Total profit response:", response.data);
+        this.totalProfit = response.data.total_profit;
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching total profit:", error);
+        throw error;
+      }
+    },
 
-  async getProfitOfSellerByMonth(seller_id, month) {
-    try {
-      const response = await axios.get(`${api}/seller/get/seller-profit-by-month/${seller_id}/month=${month}`);
-      console.log('Monthly profit response:', response.data);
-      this.profitByMonth = response.data.monthly_profit;
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching monthly profit:', error);
-      throw error;
-    }
-  },
-  async getProfitOfSellerByDate(seller_id, date) {
-    try {
-      const response = await axios.get(`${api}/seller/get/seller-profit-by-day/${seller_id}/day=${date}`);
-      console.log('Daily profit response:', response.data);
-      this.profitByMonth = response.data.monthly_profit;
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching monthly profit:', error);
-      throw error;
-    }
-  },
-  async countPostWatch(seller_id) {
-    try {
-      const response = await axios.get(`${api}/seller/count/post-watches/${seller_id}`);
-      console.log('Posted watches response:', response.data);
-      this.postedWatches = response.data.posted_watches;
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching posted watches count:', error);
-      throw error;
-    }
-  },
+    async getProfitOfSellerByMonth(seller_id, month) {
+      try {
+        const response = await axios.get(
+          `${api}/seller/get/seller-profit-by-month/${seller_id}/month=${month}`
+        );
+        console.log("Monthly profit response:", response.data);
+        this.profitByMonth = response.data.monthly_profit;
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching monthly profit:", error);
+        throw error;
+      }
+    },
+    async getProfitOfSellerByDate(seller_id, date) {
+      try {
+        const response = await axios.get(
+          `${api}/seller/get/seller-profit-by-day/${seller_id}/day=${date}`
+        );
+        console.log("Daily profit response:", response.data);
+        this.profitByMonth = response.data.monthly_profit;
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching monthly profit:", error);
+        throw error;
+      }
+    },
+    async countPostWatch(seller_id) {
+      try {
+        const response = await axios.get(
+          `${api}/seller/count/post-watches/${seller_id}`
+        );
+        console.log("Posted watches response:", response.data);
+        this.postedWatches = response.data.posted_watches;
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching posted watches count:", error);
+        throw error;
+      }
+    },
 
-  async countSoldWatch(seller_id) {
-    try {
-      const response = await axios.get(`${api}/seller/count/sold-watches/${seller_id}`);
-      console.log('Sold watches response:', response.data);
-      this.soldWatches = response.data.sold_watches;
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching sold watches count:', error);
-      throw error;
-    }
-  },
-        
+    async countSoldWatch(seller_id) {
+      try {
+        const response = await axios.get(
+          `${api}/seller/count/sold-watches/${seller_id}`
+        );
+        console.log("Sold watches response:", response.data);
+        this.soldWatches = response.data.sold_watches;
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching sold watches count:", error);
+        throw error;
+      }
+    },
+
+    updateUserInfo(id, username, fname, lname, phone, email) {
+      // Create an object with all parameters
+      const updateData = {
+        username,
+        fname,
+        lname,
+        phone,
+        email
+      };
+    
+      // Remove null or undefined values
+      const cleanedData = Object.entries(updateData)
+        .reduce((acc, [key, value]) => {
+          if (value != null) {
+            acc[key] = value;
+          }
+          return acc;
+        }, {});
+    
+      axios
+        .put(
+          `${api}/member/update/member/${id}`,
+          cleanedData
+        )
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
   },
 });

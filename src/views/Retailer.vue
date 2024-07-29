@@ -1,7 +1,11 @@
 <template>
   <section class="grid grid-cols-3">
-    <div class="left p-20">
-      <img :src="retailer.image" alt="Retailer Image" class="w-full h-96 avatar">
+    <div class="left p-20 flex flex-col items-center">
+      <div class="avatar-container">
+        <div class="avatar-wrapper">
+          <img :src="retailer.image" alt="user Image" class="avatar" />
+        </div>
+      </div>
       <div class="bg-secondary h-0.5 w-full mt-6"></div>
     </div>
     <div class="col-span-2 right p-10">
@@ -38,14 +42,20 @@
         <p class="text-primary w-40">Thông tin liên hệ</p>
         <div class="bg-secondary h-0.5 w-full"></div>
       </div>
-      <div class="flex gap-10 items-center">
-        <a :href="`tel:${retailer.phone}`" class="hover-underline-animation"><span class="mdi mdi-phone"></span> {{ retailer.phone?retailer.phone:"N/A" }}</a>
+      <div class="flex justify-between">
+        <div class="gap-10 flex items-center">
+          <a :href="`tel:${retailer.phone}`" class="hover-underline-animation"><span class="mdi mdi-phone"></span> {{ retailer.phone?retailer.phone:"N/A" }}</a>
         <a :href="`mailto:${retailer.email}`" class="hover-underline-animation">
         <span class="mdi mdi-email"></span>
         {{ retailer.email ? retailer.email : "N/A" }}
-        </a>        
+        </a>   
+            
         <button class="th-s-btn" @click="mess">Nhắn tin</button>
-      <button @click="openReportModal" class="hover-underline-animation-r">Report user</button>
+        </div>
+
+        <div class="flex items-center">
+          <button @click="openReportModal" class="hover-underline-animation-r">Báo cáo</button>
+        </div> 
       </div>
       <div class="flex items-center justify-center mt-6 mb-6">
         <div class="w-44">
@@ -67,18 +77,18 @@
             :seller_id="`/retailer/${retailer.user_id}`"
           />
       </div>
-      <div class="flex justify-center items-center mt-10">
+      <!-- <div class="flex justify-center items-center mt-10">
         <a class="hover-underline-animation" :href="`/discover/seller searching result?page=0&store=${retailer.username}`">Show more watches</a>
-    </div>
+    </div> -->
     </div>
      <!-- Report Modal -->
      <div v-if="showReportModal" class="modal-overlay">
       <div class="modal">
-        <h2>Report User</h2>
-        <textarea v-model="message" placeholder="Enter reason for reporting" rows="4"></textarea>
+        <h2>Báo cáo tài khoản này</h2>
+        <textarea v-model="message" placeholder="Lý do.." rows="4"></textarea>
         <div class="modal-actions">
-          <button @click="submitReport" class="th-p-btn">Submit</button>
-          <button @click="closeReportModal" class="th-s-btn">Cancel</button>
+          <button @click="submitReport" class="th-p-btn">Hoàn tất</button>
+          <button @click="closeReportModal" class="th-s-btn">Hủy</button>
         </div>
       </div>
     </div>
@@ -264,8 +274,30 @@ const submitReport = () => {
   }
 }
 
+.avatar-container {
+  width: 20vw; /* Adjust this value as needed */
+  height: 20vw; /* Set the height equal to the width to make it square */
+  overflow: hidden; /* Hide any overflow to ensure the image fits within the container */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.avatar-wrapper {
+  width: 100%;
+  height: 100%;
+  border: 3px solid var(--primary); /* Ensure the border is applied to the wrapper */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+}
+
 .avatar {
-  border: 1px solid var(--primary);
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensure the image covers the container */
 }
 
 .select {
