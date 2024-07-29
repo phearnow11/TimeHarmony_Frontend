@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="box" :class="{ bookmarked: isBookmarked }">
+    <div class="box" >
         <router-link :to="`/detail/${watch_id}`">
         <div class="image-container">
           <img class="watch-img" :src="productImage"/>
@@ -39,8 +39,6 @@
 
 <script setup>
 import { ref, defineProps, computed, onMounted} from 'vue';
-import { useUserStore } from '../stores/user';
-import { useAuthStore } from '../stores/auth';
 import { useWatchStore } from '../stores/watch';
 
 const showDeleteModal = ref(false)
