@@ -110,7 +110,7 @@ import MyselfCard from '../components/MyselfCard.vue';
       case 'pending':
         return user.value.watches.filter(watch => watch.state === 0);
       case 'deleted':
-        return user.value.watches.filter(watch => watch.state === 2);
+        return user.value.watches.filter(watch => watch.state !== 0 && watch.state !== 1);
       default:
         return user.value.watches;
     }
