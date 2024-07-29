@@ -2,24 +2,25 @@
   <div class="container">
     <div class="box" :class="{ bookmarked: isBookmarked }">
         <router-link :to="`/detail/${watch_id}`">
-        <span class="state" :style="{ color: stateColor }">⁙ {{ checkState }}</span>
         <div class="image-container">
-          <img class="watch-img" :src="productImage" />
+          <img class="watch-img" :src="productImage"/>
           
           <div class="gradient-overlay"></div>
         </div>
         <div>
-          <strong class="product-name">{{ productName }}</strong>
-          <div class="retailer">
+          <strong class="product-name text-primary">{{ productName }}</strong>
+          <!-- <div class="retailer">
             <img class="avatar" :src="retailerAvatar" />
             <router-link :to="seller_id">
               <span class="username hover-underline-animation">{{ retailerName }}</span>
             </router-link>
-          </div>
-          <span class="price">{{ formattedPrice }}</span>
+          </div> -->
+          <span class="price">Giá {{ formattedPrice }}</span>
+          <br>
+          <span class="state" :style="{ color: stateColor }">● {{ checkState }}</span>
         </div>
       </router-link>
-      <button v-if="props.state==1" @click="confirmDeleteWatch" class="border-2 border-primary h-12 mt-5 w-full">Xoá đồng hồ</button>
+      <button v-if="props.state==1 || props.state==0" @click="confirmDeleteWatch" class="border-2 border-primary h-12 mt-5 w-full">Xoá đồng hồ</button>
       </div>
   </div>
 
@@ -115,11 +116,11 @@ const checkState = computed(() => {
 
 const stateColor = computed(() => {
   if (props.state === 0)
-    return 'gray'
+    return '#f2963f'
   else if (props.state === 1)
-    return 'green'
+    return '#23d18b'
   else
-    return 'red'
+    return '#fe3839'
 });
 
 const formatPriceVND = (price) => {
@@ -140,7 +141,7 @@ const formattedPrice = computed(() => formatPriceVND(props.price));
 .state{
   font-size: 16px;
   font-family: Arial, Helvetica, sans-serif;
-  font-weight: bold;
+  /* font-weight: bold; */
 }
 .container {
   display: flex;
@@ -225,7 +226,6 @@ const formattedPrice = computed(() => formatPriceVND(props.price));
 
 .container .box div strong.product-name {
   margin-top: 4px;
-  color: white;
   display: block;
   margin-bottom: 0.5rem;
   max-width: 100%;
@@ -257,7 +257,7 @@ const formattedPrice = computed(() => formatPriceVND(props.price));
 .container .box div span.price {
   color: whitesmoke;
   font-size: 1vw;
-  font-weight: bold;
+  /* font-weight: bold; */
 }
 
 .container .box .avatar {
