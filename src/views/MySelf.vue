@@ -33,7 +33,7 @@
       </div>
       <div class="flex gap-5 items-center">
         <router-link class="hover-underline-animation"
-          ><span class="mdi mdi-phone"></span> {{ defaultPhone }}</router-link
+          ><span class="mdi mdi-phone"></span> {{ user.phone ?? 'N/A' }}</router-link
         >
         <router-link class="hover-underline-animation"
           ><span class="mdi mdi-email"></span>
