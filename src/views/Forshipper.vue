@@ -1,7 +1,13 @@
 <template>
   <div v-if="auth.user_id" class="mx-auto p-6 flex flex-col lg:flex-row">
     <!-- Sidebar -->
-
+    <div v-if="isLoading" class="overlay">
+      <div class="loader-container">
+        <div class="loader">
+          <div class="loaderBar"></div>
+        </div>
+      </div>
+    </div>
     <!-- Content -->
     <div class="container mx-auto p-4 w-full lg:w-3/4">
       <!-- Navigation links -->
@@ -9,9 +15,61 @@
         <span class="text-lg text-primary"><button class="hover-underline-animation text-lg" @click="locationStore.getMyLocation(); updateLocation()">Cập nhật</button> vị trí hiện tại: <br>
           <div class="text-secondary text-sm">{{ locationStore.translatedName ?? locationStore.locationName }}</div></span>
       </div>
-      
+      <div class="mb-6">
+        <a href="#pending-watches" class="mr-4 hover-underline-animation" @click="activeSection = 'pending-watches'">Đồng hồ đang chờ người bán xác nhận</a>     
+        <a href="#shipping-orders" class="mr-4 hover-underline-animation" @click="handleShippingOrdersClick">Đơn hàng đang vận chuyển</a>
+      </div>
+
+
+      <!-- Pending Watches Section -->
+      <div v-if="activeSection === 'pending-watches'" id="pending-watches">
+        <h2 class="text-2xl mb-4 text-secondary">Các đơn hàng chờ xác nhận bởi người bán</h2>
+        <div class="table-container">
+          <table class="w-full border-collapse table">
+            <thead class="table-header">
+              <tr class="bg-[#494949] text-primary">
+                <th class="pb-2">Số Thứ Tự</th>
+                <th class="pb-2">Mã đơn</th>
+                <th class="pb-2 pl-2">Thời gian tạo đơn</th>
+                <th class="pb-2 pl-2">Địa chỉ ship</th>
+                <th class="pb-2 pl-2">Tên người nhận</th>
+                <th class="pb-2 pl-2">SĐT người nhận</th>
+                <th class="pb-2">Lời nhắn</th>
+                <th class="pb-2">Giá đơn</th>
+                <th class="pb-2">Trạng thái</th>
+                <th class="pb-2">Ngày giao đến</th>
+                <th class="pb-2">Hành động</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(item, index) in sortedPendingWatches" :key="item" class="border-t">
+                <td class="py-4">{{ index + 1 }}</td>
+                <td class="py-4">
+                <span @click="viewOrderDetails(item.order_id)" class="hover-underline-animation">
+                  {{ item.order_id }}
+                </span>
+                </td>
+                <td class="py-4 pl-2">{{ formatDate(item.create_time) }}</td>
+                <td class="py-4 pl-2">{{ item.address }}</td>
+                <td class="py-4 pl-2">{{ item.receive_name }}</td>
+                <td class="py-4 pl-2">{{ item.phone }}</td>
+                <td class="py-4 pl-2">{{ item.notice ? item.notice : 'Không có thông tin' }}</td>
+                <td class="py-4 pl-2">{{ formatPriceVND(item.total_price) }}</td>
+                <td class="py-4 pl-2">{{ item.state === 'PENDING' ? 'Đang chờ người vận chuyển hoặc người bán' : 'Đã được gửi đến người vận chuyển' }}</td>
+                <td class="py-4 pl-2">{{ shipping_date ? shipping_date : 'Không có thông tin' }}</td>
+
+                <td class="py-4 px-2">
+                  <button class="hover-underline-animation" @click="shipOrder(item.order_id, auth.user_id)">Xác nhận giao đơn</button>                
+                </td>
+                
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- Shipping Orders Section -->
-      <div>
+      <div v-if="activeSection === 'shipping-orders'" id="shipping-orders">
         <h2 class="text-2xl mb-4 text-primary">Đơn hàng đang vận chuyển</h2>
         <div class="table-container">
           <table class="w-full border-collapse table">
@@ -63,14 +121,12 @@ import axios from 'axios';
   const auth = useAuthStore();
   const router = useRouter();
   const orderStates = ref({}); // Store order states
-  const orders = ref([]);
-  const wlists = ref([]);
   const pendingWatches = ref([]);
   const shippingOrders = ref([]);
-  const activeSection = ref('orders'); // Default section is 'orders'
+  const activeSection = ref('pending-watches'); 
   const isStaff = ref(false);
   const watchOrderDetails = ref({});
-  
+  const isLoading = ref(false);
   
   const viewOrderDetails = (orderId) => {
     const state = orderStates.value[orderId];
@@ -81,11 +137,7 @@ import axios from 'axios';
       alert('Đơn hàng đã bị xóa, không thể xem chi tiết.');
     }
   };
-  
 
-  
-  
-  
   onMounted(async () => {
     if (!auth.user_id) {
       console.log('Người dùng chưa đăng nhập. Đang chuyển hướng đến trang đăng nhập...');
@@ -253,6 +305,7 @@ import axios from 'axios';
   // lấy đơn
   const shipOrder = async (order_id, user_id) => {
     try {
+      isLoading.value = true;
       const user = await useUserStore().loadUser(auth.user_id);
       console.log('Loaded user:', user);
   
@@ -263,15 +316,20 @@ import axios from 'axios';
       await useStaffStore().shipOrderByShipper(order_id, user_id)
     } catch (error) {
       console.error('Lỗi khi cập nhật trạng thái vận chuyển:', error);
+    } finally {
+      isLoading.value = false
     }
   };
   
   // đã giao đơn thành công cho ngta
   const shippedOrderToMember = async (order_id, user_id) => {
     try {
+      isLoading.value = true;
       await useStaffStore().shippedToMember(order_id, user_id);
     } catch (error) {
       console.error('Lỗi khi cập nhật trạng thái vận chuyển:', error);
+    } finally{
+      isLoading.value = false;
     }
   };
   
@@ -380,6 +438,80 @@ const updateLocation = () => {
   .table-container::-webkit-scrollbar-thumb:hover {
     background: #ffbd59;
   }
+
+  
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  z-index: 9999;
+}
+.loader-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+  background: rgba(
+    23,
+    23,
+    23,
+    0.5
+  ); /* Adjust the alpha value for transparency */
+}
+
+.loader {
+  width: 80px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  padding: 1px;
+}
+
+.loader .loaderBar {
+  position: absolute;
+  top: 0;
+  right: 100%;
+  bottom: 0;
+  left: 0;
+  background: var(--secondary);
+  width: 0;
+  animation: borealisBar 2s linear infinite;
+}
+
+
+
+.loader::after {
+  content: "";
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--secondary);
+  left: 0;
+  top: 0;
+  animation: rotation 2s ease-in-out infinite alternate;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
   
   /* Mobile styles */
   @media (max-width: 1024px) {

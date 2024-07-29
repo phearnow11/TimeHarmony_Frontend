@@ -14,7 +14,6 @@
     </aside>
 
     <!-- Nội dung -->
-    <!-- Nội dung -->
     <div class="container mx-auto p-4">
       <h2 class="text-2xl mt-4 text-primary relative bottom-4">Thống kê thu nhập</h2>
       <div class="p-1">
@@ -47,6 +46,7 @@
             </div>
           </div>
         </div>
+        <button @click="exportToExcel">Xuất Excel</button>
       </div>
     </div>
   </div>
@@ -57,6 +57,7 @@ import { ref, onMounted, reactive } from 'vue'
 import Chart from 'chart.js/auto'
 import { useUserStore } from '../../stores/user'
 import { useAuthStore } from '../../stores/auth.js'
+import * as XLSX from 'xlsx';
 
 const userStore = useUserStore()
 const authStore = useAuthStore()
@@ -70,7 +71,7 @@ const createMonthlyData = (value) => {
 };
 
 const performanceItems = ref([
-{
+  {
     icon: 'fa-dollar-sign',
     value: 0,
     label: 'Tổng lợi nhuận theo ngày',
@@ -142,13 +143,13 @@ const createCharts = () => {
               callback: (value) => formatValue(value, item.isCurrency),
               stepSize: 1
             }
-            
           }
         },
       }
     })
   })
 }
+
 const createIncomeChart = (monthlyProfit) => {
   const ctx = incomeChart.value.getContext('2d');
   new Chart(ctx, {
@@ -167,7 +168,7 @@ const createIncomeChart = (monthlyProfit) => {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { 
+      plugins: {
         legend: { display: false },
         tooltip: {
           backgroundColor: 'rgba(0, 0, 0, 0.7)',
@@ -178,7 +179,7 @@ const createIncomeChart = (monthlyProfit) => {
         }
       },
       scales: {
-        y: { 
+        y: {
           beginAtZero: true,
           ticks: {
             callback: (value) => formatValue(value, true)
@@ -192,6 +193,31 @@ const createIncomeChart = (monthlyProfit) => {
 const getChartColor = (index, alpha = 1) => {
   const colors = ['#9061f9', '#3B82F6', '#F59E0B']
   return alpha === 1 ? colors[index] : `${colors[index]}${Math.round(alpha * 255).toString(16)}`
+}
+
+const exportToExcel = () => {
+  const data = performanceItems.value.map(item => ({
+    label: item.label,
+    value: item.isCurrency ? formatValue(item.value, item.isCurrency) : item.value,
+    data: item.data.join(', '),  // Convert data array to string for Excel
+    isCurrency: item.isCurrency
+  }));
+
+  // Lấy dữ liệu từ biểu đồ Tổng thu nhập
+  const totalProfitData = incomeChart.value?.chart?.data?.datasets[0]?.data || [];
+  const totalProfit = {
+    label: 'Tổng thu nhập của tôi',
+    value: totalProfitData.reduce((acc, val) => acc + val, 0),  // Tổng hợp các giá trị
+    data: totalProfitData.join(', '),  // Chuyển đổi mảng dữ liệu thành chuỗi cho Excel
+    isCurrency: true
+  };
+  data.push(totalProfit);
+
+  const worksheet = XLSX.utils.json_to_sheet(data, { header: ['label', 'value', 'data'] });
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Performance Data');
+
+  XLSX.writeFile(workbook, 'Dữ liệu thu nhập cá nhân.xlsx');
 }
 
 onMounted(async () => {
@@ -210,16 +236,17 @@ onMounted(async () => {
     const yesterday = new Date(date);
     yesterday.setDate(date.getDate() - 1)
     const formattedDate = formatDate(yesterday);
-   
+
     const profitData = await userStore.getProfitOfSeller(sellerId);
     const postedWatchesData = await userStore.countPostWatch(sellerId);
     const soldWatchesData = await userStore.countSoldWatch(sellerId);
     const dailyData = await userStore.getProfitOfSellerByDate(sellerId, formatDate(date));
     const yesterdayData = await userStore.getProfitOfSellerByDate(sellerId, formattedDate);
 
-    const percentChange = yesterdayData !== 0 
-    ? ((dailyData - yesterdayData) / yesterdayData) * 100 
-    : 100;
+    const percentChange = yesterdayData !== 0
+      ? ((dailyData - yesterdayData) / yesterdayData) * 100
+      : 100;
+
     // Cập nhật dữ liệu cho các biểu đồ
     performanceItems.value[0].value = dailyData;
     performanceItems.value[0].data = createMonthlyData(dailyData);
@@ -238,6 +265,3 @@ onMounted(async () => {
   }
 });
 </script>
-<style scoped>
-/* Các styles từ component gốc có thể được giữ nguyên */
-</style>

@@ -501,7 +501,7 @@ const createOrder = async () => {
           }
         } else {
           console.error("No recent order found");
-          alert("Error creating order. Please try again.");
+          alert("Lỗi khi mua hàng, hãy thử lại!!!");
         }
       } else alert("Error creating order. Please try again.");
       }

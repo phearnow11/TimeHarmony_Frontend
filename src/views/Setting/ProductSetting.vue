@@ -1,5 +1,12 @@
 <template>
   <div v-if="auth.user_id" class="mx-auto p-6 flex flex-col lg:flex-row">
+    <div v-if="isLoading" class="overlay">
+      <div class="loader-container">
+        <div class="loader">
+          <div class="loaderBar"></div>
+        </div>
+      </div>
+    </div>
     <!-- Sidebar -->
     <aside class="w-1/4 lg:mr-8 p-4">
       <h2 class="text-2xl mb-4">Cài đặt Hồ sơ</h2>
@@ -19,7 +26,8 @@
         <a href="#orders" class="mr-4 hover-underline-animation" @click="activeSection = 'orders'">Đồng hồ đã mua</a>
         <a href="#purchases" class="mr-4 hover-underline-animation" @click="activeSection = 'purchases'">Đồng hồ đã đăng bán</a>
         <a v-if="isStaff" href="#pending-watches" class="mr-4 hover-underline-animation" @click="activeSection = 'pending-watches'">Đồng hồ đang chờ người bán xác nhận</a>     
-        <a v-if="isStaff" href="#shipping-orders" class="mr-4 hover-underline-animation" @click="handleShippingOrdersClick">Đơn hàng đang vận chuyển</a>      </div>
+        <a v-if="isStaff" href="#shipping-orders" class="mr-4 hover-underline-animation" @click="handleShippingOrdersClick">Đơn hàng đang vận chuyển</a>
+      </div>
 
       <!-- My Orders Section -->
       <div v-if="activeSection === 'orders'" id="orders">
@@ -49,7 +57,7 @@
                 <td class="py-4 pl-2">
                   <a target="_blank" :href="orderLocations[order.order_id]?.mapUrl" class="hover-underline-animation">{{ orderLocations[order.order_id]?.translatedName ?? orderLocations[order.order_id]?.locationName ??  'N/A' }}</a>
                 </td>
-                <td class="py-4 pl-2">{{ order.shipping_date ? formatDate(order.shipping_date) : formatDate(order.create_time) }}</td>
+                <td class="py-4 pl-2">{{ order.shipping_date ? formatDate(order.shipping_date) : "N/A" }}</td>
                 <td class="py-4 px-2">
                   <button v-if="orderStates[order.order_id] !== 'DELETED'" class="hover-underline-animation px-2" @click="viewOrderDetails(order.order_id)">Xem Chi Tiết</button>
                   <button v-if="orderStates[order.order_id] === 'PENDING'" class="hover-underline-animation px-2 border-l border-secondary" @click="cancelOrder(order.order_id)">Huỷ Đơn</button>
@@ -93,7 +101,7 @@
                 <td class="py-4 pl-2">{{ watchOrderDetails[list.watch_id] ? formatDateHour(watchOrderDetails[list.watch_id][1]) : 'N/A' }}</td>
                 
                 <td class="py-4 px-2">
-                  <button class="hover-underline-animation" @click="setShip(list.watch_id, watchOrderDetails[list.watch_id][0])">Đóng gói và giao hàng</button>
+                  <button v-if="list.state === 3" class="hover-underline-animation" @click="setShip(list.watch_id, watchOrderDetails[list.watch_id][0])">Đóng gói và giao hàng</button>
                 </td>
               </tr>
             </tbody>
@@ -135,11 +143,11 @@
                 <td class="py-4 pl-2">{{ item.phone }}</td>
                 <td class="py-4 pl-2">{{ item.notice ? item.notice : 'Không có thông tin' }}</td>
                 <td class="py-4 pl-2">{{ formatPriceVND(item.total_price) }}</td>
-                <td class="py-4 pl-2">{{ item.state === 'PENDING' ? 'Đang chờ người vận chuyển hoặc người bán' : 'Đã được gửi đến người vận chuyển' }}</td>
+                <td class="py-4 pl-2">{{ item.state === 'PENDING' ? 'Đang chờ người vận chuyển đóng gói' : 'Đã được gửi đến người vận chuyển' }}</td>
                 <td class="py-4 pl-2">{{ shipping_date ? shipping_date : 'Không có thông tin' }}</td>
 
                 <td class="py-4 px-2">
-                  <button class="hover-underline-animation" @click="shipOrder(item.order_id, auth.user_id)">Giao đơn</button>                
+                  <button v-if="isShipper" class="hover-underline-animation" @click="shipOrder(item.order_id, auth.user_id)">Xác nhận giao đơn</button>                
                 </td>
                 
               </tr>
@@ -174,7 +182,7 @@
           <td class="py-4 pl-2">{{ order.phone }}</td>
           <td class="py-4 pl-2">{{ getShippingStatusText(order.state) }}</td>
           <td class="py-4 px-2">
-            <button class="hover-underline-animation" @click="shippedOrderToMember(order.order_id, auth.user_id)">Đã giao</button>
+            <button class="hover-underline-animation" @click="shippedOrderToMember(order.order_id, auth.user_id)">Đã giao đến người nhận</button>
           </td>
         </tr>
       </tbody>
@@ -203,12 +211,13 @@ const pendingWatches = ref([]);
 const shippingOrders = ref([]);
 const activeSection = ref('orders'); // Default section is 'orders'
 const isStaff = ref(false);
+const isShipper = ref(false);
 const watchOrderDetails = ref({});
 const orderDetails = ref({});
-
 const locationStore = useLocationStore()
-
 const locations = ref({});
+const isLoading = ref(false);
+
 
 const fetchOrderDetails = async (watchId, orderId) => {
   try {
@@ -269,14 +278,22 @@ const viewOrderDetails = (orderId) => {
 };
 
 //nút xác nhận đơn hàng cho user nếu shipper đã giao thành công
-const confirmShip = (orderId) => {
-  const state = orderStates.value[orderId];
-  if (state === 'SHIPPED') {
-    useUserStore().confirmShip(orderId)
-    loadOrders();
-  } else {
-    alert('Không chấp thuận, lỗi');
-  }
+const confirmShip = async (orderId) => {
+    try {
+      isLoading.value = true;
+      const state = orderStates.value[orderId];
+    if (state === 'SHIPPED') {
+      await useUserStore().confirmShip(orderId)
+      await loadOrders();
+    } else {
+      alert('Không chấp thuận, lỗi');
+    }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      isLoading.value = false;
+    }
+    
 };
 
 onMounted(async () => {
@@ -287,7 +304,6 @@ onMounted(async () => {
     await loadOrders();
     await loadOrderStates();
     const u = await user.loadUser(auth.user_id);
-    console.log(u.role);
     if(u.role === 'ROLE_STAFF') 
       isStaff.value = true;
     else 
@@ -296,7 +312,10 @@ onMounted(async () => {
       await loadPendingWatches();
       await loadShippingOrders();
     }
-
+    if (u.staff_role === 'SHIPPER') {
+      isShipper.value = true;
+    } else 
+      isShipper.value = false;
     // Fetch locations after order details are loaded
     Object.entries(orderDetails.value).forEach(([watchId, details]) => {
       if (details && details.locations && details.locations[0]) {
@@ -403,21 +422,28 @@ const sortedOrderWaiting = computed(() => {
 //huỷ đơn hoạt động chỉ khi mới đặt đơn và người bán chưa xác nhận
 const cancelOrder = async (orderid) => {
     try {
-        console.log('cancelling order');
-        await useUserStore().cancelOrder(orderid);
-        await loadOrders();
+      isLoading.value = true;
+      console.log('cancelling order');
+      await useUserStore().cancelOrder(orderid);
+      await loadOrders();
+      await loadOrderStates();
     } catch (error) {
       console.log('Lỗi canceled order:', error);
+    } finally {
+      isLoading.value = false;
     }
 }
 
 //nút đóng gói và giao hàng gửi đến cho shipper (dành cho seller)
 const setShip = async (watchid, orderId) => {
   try {
+    isLoading.value = true;
     const res = await user.setShipping(watchid, orderId);
     console.log(res);
   } catch (error) {
     console.error('Lỗi khi cập nhật trạng thái giao hàng:', error);
+  } finally {
+    isLoading.value = false;
   }
 };
 
@@ -441,6 +467,7 @@ const handleShippingOrdersClick = async () => {
   }
   activeSection.value = 'shipping-orders';
 };
+
 
 //load tất cả đơn hàng mà shipper đang giao
 const loadShippingOrders = async () => {
@@ -473,6 +500,7 @@ const getShippingStatusText = (state) => {
 //nếu là shipper thì được dùng nút này, nút này để xác nhận rằng shipper cầm đơn này đi giao
 const shipOrder = async (order_id, user_id) => {
   try {
+    isLoading.value = true
     const user = await useUserStore().loadUser(auth.user_id);
     console.log('Loaded user:', user);
 
@@ -480,18 +508,26 @@ const shipOrder = async (order_id, user_id) => {
       alert('Bạn không phải là shipper nên không thể sử dụng chức năng này');
       return;
     }
-    await useStaffStore().shipOrderByShipper(order_id, user_id)
+    const res = await useStaffStore().shipOrderByShipper(order_id, user_id)
+    console.log(res);
+    if(res === 'java.lang.Exception: Order is not packed') 
+      alert('Người bán chưa đóng gói hàng và gửi cho Shipper')
   } catch (error) {
     console.error('Lỗi khi cập nhật trạng thái vận chuyển:', error);
+  } finally {
+    isLoading.value = false
   }
 };
 
 //nút này dùng để báo là đơn đã giao tới tay ng dùng và ng dùng chỉ cần bấm xác nhận là hoàn tất quy trình giao hàng
 const shippedOrderToMember = async (order_id, user_id) => {
   try {
+    isLoading.value = true
     await useStaffStore().shippedToMember(order_id, user_id);
   } catch (error) {
     console.error('Lỗi khi cập nhật trạng thái vận chuyển:', error);
+  } finally{
+    isLoading.value = false
   }
 };
 
@@ -558,4 +594,78 @@ const formatDateHour = (dateString) => {
 .table-container::-webkit-scrollbar-thumb:hover {
   background: #ffbd59;
 }
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  z-index: 9999;
+}
+.loader-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+  background: rgba(
+    23,
+    23,
+    23,
+    0.5
+  ); /* Adjust the alpha value for transparency */
+}
+
+.loader {
+  width: 80px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  padding: 1px;
+}
+
+.loader .loaderBar {
+  position: absolute;
+  top: 0;
+  right: 100%;
+  bottom: 0;
+  left: 0;
+  background: var(--secondary);
+  width: 0;
+  animation: borealisBar 2s linear infinite;
+}
+
+
+
+.loader::after {
+  content: "";
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--secondary);
+  left: 0;
+  top: 0;
+  animation: rotation 2s ease-in-out infinite alternate;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 </style>

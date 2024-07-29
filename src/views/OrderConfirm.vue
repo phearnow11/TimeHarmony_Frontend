@@ -11,14 +11,7 @@
     </div>
 
       <div class="shadow-lg p-8 max-w-7xl w-full">
-        <div class="mb-6">
-            <router-link to="/" class="hover-underline-animation flex w-40 ">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mt-1 mr-2" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
-            </svg>
-            <span>Tiếp tục mua hàng</span>
-          </router-link>
-        </div>
+        
         
         <div v-if="orderDetails">
         <h1 class="text-3xl font-bold mb-4">Đơn hàng #{{ orderDetails.order_detail.order_id }} đã được xác nhận. Cảm ơn bạn vì đã đặt hàng</h1>
@@ -49,12 +42,22 @@
                 <div>
                   <h3 class="font-bold mb-2">Trạng thái giao hàng</h3>
                   <span class="text-[whitesmoke]">
-                    {{ state }} 
+                    {{ state?.display }} 
                   </span>
                 </div>
             </div>
   
-            <button @click="cancelOrder(orderDetails.order_detail.order_id)" class="bg-olive-700 text-white px-6 py-2 rounded hover:bg-olive-800 transition duration-300">
+            <button
+              v-if="buttonState" 
+              @click="cancelOrder(orderDetails.order_detail.order_id)" 
+              :disabled="state.original !== 'PENDING'"
+              :class="[
+                'px-6 py-2 rounded transition duration-300',
+                state.original === 'PENDING'
+                  ? 'bg-olive-700 text-white hover:bg-olive-800' 
+                  : 'bg-gray-400 text-gray-700 cursor-not-allowed'
+              ]"
+            >
               Huỷ đơn hàng
             </button>
           </div>
@@ -105,61 +108,71 @@
   import { useRoute } from 'vue-router';
   import { useUserStore } from '../stores/user'; // Adjust the import path as needed
   import { useWatchStore } from '../stores/watch';
+  import { useAuthStore } from '../stores/auth';
   
   const userStore = useUserStore();
   const watchStore = useWatchStore();
   const route = useRoute();
   const orderDetails = ref(null);
   const state = ref(null); 
+  const buttonState = ref(false)
   const detailedWatches = ref([]);
+  const order = ref([])
   const paymentMethod = localStorage.getItem(`pay_method`)
   const transactionNo = localStorage.getItem(`trans_no`)
   userStore.payment_method = null;
   userStore.transaction_no = null;
+  const auth = useAuthStore();
 
   onMounted(async () => {
     const orderId = route.params.order_id;
+    order.value = await useUserStore().getAllOrders(auth.user_id)
+    
     if (orderId) {
       try {
         orderDetails.value = await userStore.getOrderDetail(orderId);
         await fetchWatchDetails(orderDetails.value.watch);
-        
         const orderState = await userStore.getOrderState(orderId);
         state.value = mapOrderState(orderState);
+        buttonState.value = order.value.some(order => order.order_id === orderId);
       } catch (error) {
         console.error('Failed to fetch order details:', error);
       }
     }
+
+
+    
   });
 
   const mapOrderState = (state) => {
   switch (state) {
     case 'PENDING':
-      return 'Đơn hàng đang được người bán chuẩn bị ';
+      return { original: 'PENDING', display: 'Đơn hàng đang được người bán chuẩn bị' };
     case 'SHIPPING':
-      return 'Đơn hàng đang được vận chuyển';
+      return { original: 'SHIPPING', display: 'Đơn hàng đang được vận chuyển' };
     case 'SHIPPED':
-      return 'Đơn hàng đã giao đến người nhận';
+      return { original: 'SHIPPED', display: 'Đơn hàng đã giao đến người nhận' };
     case 'SUCCESS':
-      return 'Đơn hàng giao thành công';
+      return { original: 'SUCCESS', display: 'Đơn hàng giao thành công' };
     case 'CANCELLED':
-      return 'Đã huỷ đơn hàng';
-
+      return { original: 'CANCELLED', display: 'Đã huỷ đơn hàng' };
   }
 };
 
-  const cancelOrder = async (orderid) => {
-    try {
-      if(state === 'PENDING'){
-        console.log('cancelling order');
-        await userStore.cancelOrder(orderid);
-      } else {
-        alert("Cannot huỷ đơn")
+    const cancelOrder = async (orderid) => {
+      try {
+        if (state.value.original === 'PENDING') {
+          console.log('cancelling order');
+          await userStore.cancelOrder(orderid);
+          // Sau khi huỷ đơn hàng thành công, cập nhật lại trạng thái
+          state.value = mapOrderState('CANCELLED');
+        } else {
+          alert("Không thể huỷ đơn hàng trong trạng thái hiện tại");
+        }
+      } catch (error) {
+        console.log('Lỗi canceled order:', error);
       }
-    } catch (error) {
-      console.log('Lỗi canceled order:', error);
     }
-  }
   
   const fetchWatchDetails = async (watchIds) => {
     try {

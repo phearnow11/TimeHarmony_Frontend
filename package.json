@@ -34,7 +34,8 @@
     "vue-google-oauth2": "^1.5.10",
     "vue-router": "^4.3.2",
     "vue3-google-login": "^2.0.26",
-    "vuedraggable": "^4.1.0"
+    "vuedraggable": "^4.1.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",
