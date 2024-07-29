@@ -33,11 +33,11 @@
       </div>
       <div class="flex gap-5 items-center">
         <router-link class="hover-underline-animation"
-          ><span class="mdi mdi-phone"></span> {{ user.phone ?? 'N/A' }}</router-link
+          ><span class="mdi mdi-phone"></span> {{ user?.phone ?? "Không có thông tin" }}</router-link
         >
         <router-link class="hover-underline-animation"
           ><span class="mdi mdi-email"></span>
-          {{ user.email ? user.email : "Không có thông tin" }}</router-link
+          {{ user?.email ? user?.email : "Không có thông tin" }}</router-link
         >
       </div>
       <div class="flex items-center justify-between mt-6 mb-6">
@@ -69,20 +69,12 @@
       >
         Không có đồng hồ nào trong trạng thái này.
       </div>
-      <!-- <div class="flex justify-center items-center mt-10">
-        <a
-          class="hover-underline-animation"
-          :href="`/discover/seller searching result?page=0&store=${user.username}`"
-          >Show more watches</a
-        >
-      </div> -->
     </div>
   </section>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from "vue";
-import { useRoute } from "vue-router";
 import { useUserStore } from "../stores/user";
 import { useAuthStore } from "../stores/auth";
 import MyselfCard from "../components/MyselfCard.vue";
@@ -95,7 +87,6 @@ if(useUserStore().role !='ROLE_SELLER' && useUserStore().role != 'ROLE_USER'){
     router.push('/')
 }
 
-const route = useRoute();
 const userStore = useUserStore();
 const addresses = ref([]);
 const user = ref({
@@ -114,13 +105,6 @@ const defaultAddress = computed(() => {
   if (addresses.value && addresses.value.length > 0) {
     const defaultAddr = addresses.value.find((addr) => addr.isDefault === true);
     return defaultAddr ? defaultAddr.address : addresses.value[0].detail;
-  }
-  return null;
-});
-const defaultPhone = computed(() => {
-  if (addresses.value && addresses.value.length > 0) {
-    const defaultAddr = addresses.value.find((addr) => addr.isDefault === true);
-    return defaultAddr ? defaultAddr.phone : addresses.value[0].phone;
   }
   return null;
 });
@@ -143,8 +127,6 @@ const filteredWatches = computed(() => {
 });
 
 onMounted(async () => {
-
-
   const userId = useAuthStore().user_id;
   try {
     const userInfo = await userStore.getUserInfo(userId);
