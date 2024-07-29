@@ -38,7 +38,7 @@
 </template>
 
 <script setup>
-import { ref, defineProps, computed, onMounted} from 'vue';
+import { ref, defineProps, computed} from 'vue';
 import { useWatchStore } from '../stores/watch';
 
 const showDeleteModal = ref(false)

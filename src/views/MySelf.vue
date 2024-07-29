@@ -32,12 +32,12 @@
         <div class="bg-secondary h-0.5 w-full"></div>
       </div>
       <div class="flex gap-5 items-center">
-        <router-link class="hover-underline-animation"
-          ><span class="mdi mdi-phone"></span> {{ useUserStore()?.phone ?? "Không có thông tin" }}</router-link
+        <div class="hover-underline-animation"
+          ><span class="mdi mdi-phone"></span> {{ useUserStore()?.phone ?? "Không có thông tin" }}</div
         >
-        <router-link class="hover-underline-animation"
+        <div class="hover-underline-animation"
           ><span class="mdi mdi-email"></span>
-          {{ useUserStore()?.email ? useUserStore()?.email : "Không có thông tin" }}</router-link
+          {{ useUserStore()?.email ? useUserStore()?.email : "Không có thông tin" }}</div
         >
       </div>
       <div class="flex items-center justify-between mt-6 mb-6">
@@ -56,8 +56,6 @@
           :key="i.watch_id"
           :productName="i.watch_name"
           :productImage="i.image_url[0]"
-          :retailerName="user.username"
-          :retailerAvatar="user.image"
           :price="i.price"
           :state="i.state"
           :watch_id="i.watch_id"
