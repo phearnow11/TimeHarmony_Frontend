@@ -6,11 +6,25 @@
         <div class="filter-category mb-6">
           <h2 class="text-lg font-bold">Phân loại</h2>
           <ul>
-            <li v-for="(category, index) in categories" :key="index" class="mt-2">
-              <label class="container flex justify-start items-center text-center gap-2">
-                <input type="checkbox" v-model="selectedCategories" :value="category" />
+            <li
+              v-for="(category, index) in categories"
+              :key="index"
+              class="mt-2"
+            >
+              <label
+                class="container flex justify-start items-center text-center gap-2"
+              >
+                <input
+                  type="checkbox"
+                  v-model="selectedCategories"
+                  :value="category"
+                />
                 <svg viewBox="0 0 64 64" height="1em">
-                  <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+                  <path
+                    d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                    pathLength="575.0541381835938"
+                    class="path"
+                  ></path>
                 </svg>
                 <span class="ml-2">{{ category }}</span>
               </label>
@@ -22,10 +36,20 @@
           <h2 class="text-lg font-bold">Hãng</h2>
           <ul>
             <li v-for="(brand, index) in brands" :key="index" class="mt-2">
-              <label class="container flex justify-start items-center text-center gap-2">
-                <input type="checkbox" v-model="selectedBrands" :value="brand" />
+              <label
+                class="container flex justify-start items-center text-center gap-2"
+              >
+                <input
+                  type="checkbox"
+                  v-model="selectedBrands"
+                  :value="brand"
+                />
                 <svg viewBox="0 0 64 64" height="1em">
-                  <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+                  <path
+                    d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                    pathLength="575.0541381835938"
+                    class="path"
+                  ></path>
                 </svg>
                 <span class="ml-2">{{ brand }}</span>
               </label>
@@ -36,14 +60,29 @@
         <div class="filter-price mb-6">
           <h2 class="text-lg font-bold">Giá</h2>
           <vue-slider
-           v-model="priceRange" 
-           :min="100000" 
-           :max="maxPriceValue" 
-           :step="100000"
-           class="mt-12"/>
-          <div class="flex gap-2 mt-2">Giá từ
-            <span>{{ formatPrice(priceRange[0]) }}</span>đến
-            <span>{{ formatPrice(priceRange[1]) }}</span>
+            v-model="priceRange"
+            :min="100000"
+            :max="maxPriceValue"
+            :step="100000"
+            class="mt-12 pr-16"
+          />
+          <div class="flex items-center gap-2 mt-2">
+            Giá từ
+            <input
+              type="text"
+              v-model="formattedPrice[0]"
+              @focus="handleFocus(0)"
+              @blur="handleBlur(0)"
+              class="price-input"
+            />₫ đến
+            <input
+              type="text"
+              v-model="formattedPrice[1]"
+              @focus="handleFocus(1)"
+              @blur="handleBlur(1)"
+              class="price-input"
+            />
+            ₫
           </div>
         </div>
       </div>
@@ -52,7 +91,10 @@
         <div class="search-header">
           <h1 class="px-10 pb-10">Hiển thị kết quả cho "{{ searchQuery }}"</h1>
         </div>
-        <div v-if="searchResults.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 lg:gap-10 relative">
+        <div
+          v-if="searchResults.length > 0"
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 lg:gap-10 relative"
+        >
           <ProductCard
             v-for="watch in searchResults"
             :key="watch.id"
@@ -95,8 +137,35 @@ const selectedBrands = ref([]);
 const priceRange = ref([1000000, 5000000000]); // Default price range
 const maxPriceValue = ref(5000000000); // Adjust this value based on your data
 
+const formattedPrice = computed(() => {
+  return priceRange.value.map(price => formatPrice(price));
+});
+
 const formatPrice = (price) => {
-  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price).replace('₫', '');
+};
+
+const parsePrice = (value) => {
+  return parseInt(value.replace(/[^0-9]/g, ''), 10);
+};
+
+const handleFocus = (index) => {
+  formattedPrice.value[index] = priceRange.value[index];
+};
+
+const handleBlur = (index) => {
+  const newValue = parsePrice(formattedPrice.value[index]);
+  if (!isNaN(newValue)) {
+    priceRange.value[index] = Math.max(100000, Math.min(newValue, maxPriceValue.value));
+    updateSlider();
+  }
+};
+
+const updateSlider = () => {
+  // Ensure that priceRange values are within bounds
+  if (priceRange.value[0] < 100000) priceRange.value[0] = 100000;
+  if (priceRange.value[1] > maxPriceValue.value) priceRange.value[1] = maxPriceValue.value;
+  applyFilter();
 };
 
 const applyFilter = async () => {
@@ -168,5 +237,13 @@ const searchResults = computed(() => {
 .search-results {
   flex-grow: 1;
   padding: 20px;
+}
+.price-input {
+  width: 100px; /* Adjust width as needed */
+  padding: 4px;
+  font-size: 0.875rem; /* Adjust font size as needed */
+  border: 1px solid var(--primary);
+  border-radius: 4px;
+  background: none;
 }
 </style>
