@@ -6,18 +6,13 @@
         <div class="filter-category mb-6">
           <h2 class="text-lg font-bold">Phân loại</h2>
           <ul>
-            <li
-              v-for="(category, index) in categories"
-              :key="index"
-              class="mt-2"
-            >
-              <label
-                class="container flex justify-start items-center text-center gap-2"
-              >
+            <li v-for="(category, index) in categories" :key="index" class="mt-2">
+              <label class="container flex justify-start items-center text-center gap-2">
                 <input
                   type="checkbox"
-                  v-model="selectedCategories"
                   :value="category"
+                  :checked="selectedCategory === category"
+                  @change="toggleCategory(category)"
                 />
                 <svg viewBox="0 0 64 64" height="1em">
                   <path
@@ -36,13 +31,12 @@
           <h2 class="text-lg font-bold">Hãng</h2>
           <ul>
             <li v-for="(brand, index) in brands" :key="index" class="mt-2">
-              <label
-                class="container flex justify-start items-center text-center gap-2"
-              >
+              <label class="container flex justify-start items-center text-center gap-2">
                 <input
                   type="checkbox"
-                  v-model="selectedBrands"
                   :value="brand"
+                  :checked="selectedBrand === brand"
+                  @change="toggleBrand(brand)"
                 />
                 <svg viewBox="0 0 64 64" height="1em">
                   <path
@@ -132,8 +126,8 @@ const searchQuery = computed(() => route.query.q || '');
 const categories = ref(['Đồng hồ nam', 'Đồng hồ nữ', 'Đồng hồ phi giới']);
 const brands = ref(['Rolex', 'Omega', 'Cartier', 'Tag Heuer', 'Seiko', 'Casio', 'Apple', 'Fossil']);
 
-const selectedCategories = ref([]);
-const selectedBrands = ref([]);
+const selectedCategory = ref(null); // Only one category
+const selectedBrand = ref(null); // Only one brand
 const priceRange = ref([1000000, 5000000000]); // Default price range
 const maxPriceValue = ref(5000000000); // Adjust this value based on your data
 
@@ -168,21 +162,32 @@ const updateSlider = () => {
   applyFilter();
 };
 
+const toggleCategory = (category) => {
+  selectedCategory.value = selectedCategory.value === category ? null : category;
+  applyFilter();
+};
+
+const toggleBrand = (brand) => {
+  selectedBrand.value = selectedBrand.value === brand ? null : brand;
+  applyFilter();
+};
+
 const applyFilter = async () => {
   const filters = [];
-  const gender = selectedCategories.value.includes('Đồng hồ nam')
-    ? 'male'
-    : selectedCategories.value.includes('Đồng hồ nữ')
-    ? 'female'
-    : selectedCategories.value.includes('Đồng hồ phi giới')
-    ? 'unisex'
+  const gender = selectedCategory.value
+    ? selectedCategory.value === 'Đồng hồ nam'
+      ? 'male'
+      : selectedCategory.value === 'Đồng hồ nữ'
+      ? 'female'
+      : 'unisex'
     : null;
 
   if (gender) filters.push(`gender=${gender}`);
-  if (selectedBrands.value.length > 0) filters.push(`brand=${selectedBrands.value.join(',')}`);
-  const style = selectedCategories.value.find(cat =>
-    ['Đồng hồ cao cấp', 'Đồng hồ thể thao', 'Đồng hồ thông minh'].includes(cat)
-  );
+  if (selectedBrand.value) filters.push(`brand=${selectedBrand.value}`);
+  const style = selectedCategory.value &&
+    ['Đồng hồ cao cấp', 'Đồng hồ thể thao', 'Đồng hồ thông minh'].includes(selectedCategory.value)
+    ? selectedCategory.value
+    : null;
   if (style) filters.push(`style=${style}`);
   if (priceRange.value[0] && priceRange.value[1]) filters.push(`lprice=${priceRange.value[0]}&hprice=${priceRange.value[1]}`);
 
@@ -210,7 +215,7 @@ watch(searchQuery, (newQuery) => {
     window.location.reload(); // Reload the page
 });
 
-watch([selectedCategories, selectedBrands, priceRange], () => {
+watch([selectedCategory, selectedBrand, priceRange], () => {
   applyFilter();
 });
 
