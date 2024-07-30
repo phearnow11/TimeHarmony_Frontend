@@ -104,6 +104,8 @@ onMounted(async () => {
 
       if (result) {
 
+      console.log('Order ID:', result.order_id);
+
       const paymentDataToSave = {
         transaction_no: transactionNo.value,
         payment_amount: parseFloat(amountString.value),
@@ -117,8 +119,6 @@ onMounted(async () => {
       const savedPayment = await savePaymentDetail(paymentDataToSave);
       console.log('Saved payment details:', savedPayment);
 
-      
-      console.log('Order ID:', result.order_id);
         
       orderId.value = result.order_id;
       const orderDetails = await userStore.getOrderDetail(result.order_id);
