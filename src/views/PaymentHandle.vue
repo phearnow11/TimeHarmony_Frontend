@@ -104,14 +104,14 @@ onMounted(async () => {
 
       if (result) {
 
-      console.log('Order ID:', result.order_id);
+      console.log('Order ID:', result);
 
       const paymentDataToSave = {
         transaction_no: transactionNo.value,
         payment_amount: parseFloat(amountString.value),
         bank_code: bankCode.value,
         payment_method: vnpCardType.value,
-        order_id: result.order_id,
+        order_id: result,
         isSuccess: isSuccess,
         wids: widsString
       };
@@ -120,8 +120,7 @@ onMounted(async () => {
       console.log('Saved payment details:', savedPayment);
 
         
-      orderId.value = result.order_id;
-      const orderDetails = await userStore.getOrderDetail(result.order_id);
+      const orderDetails = await userStore.getOrderDetail(result);
       console.log('Order details:', orderDetails);
 
       if (orderDetails) {
