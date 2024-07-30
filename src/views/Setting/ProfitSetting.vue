@@ -46,7 +46,7 @@
             </div>
           </div>
         </div>
-        <button @click="exportToExcel">Xuất Excel</button>
+        <button @click="exportToExcel" class="hover-underline-animation">Xuất Excel</button>
       </div>
     </div>
   </div>

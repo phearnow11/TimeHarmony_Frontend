@@ -581,32 +581,16 @@ export const useUserStore = defineStore("user", {
       }
     },
 
-    updateUserInfo(id, username, fname, lname, phone, email) {
-      // Create an object with all parameters
-      const updateData = {
-        username,
-        fname,
-        lname,
-        phone,
-        email
-      };
-    
-      // Remove null or undefined values
-      const cleanedData = Object.entries(updateData)
-        .reduce((acc, [key, value]) => {
-          if (value != null) {
-            acc[key] = value;
-          }
-          return acc;
-        }, {});
-    
+    updateUserInfo(id, updateData) {
       axios
         .put(
           `${api}/member/update/member/${id}`,
-          cleanedData
+          updateData
         )
         .then((res) => {
           console.log(res.data);
+          // Update the local user state with the changes
+          this.$patch(updateData);
         })
         .catch((err) => {
           console.log(err);

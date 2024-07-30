@@ -18,7 +18,7 @@
       <!-- Public Info -->
       <section class="p-6 mb-8">
         <div class="text-center mb-6">
-          <img :src="user.image" alt="Avatar" class="w-32 h-32 border-4 border-primary mx-auto mb-4">
+          <img :src="user.image" alt="Avatar" class="w-32 h-32 border-2 border-primary mx-auto mb-4 object-cover">
           <p class="text-gray-400 mb-4">For best results, use an image at least 128px by 128px in jpg format</p>
           <input type="file" id="file-upload" class="hidden" @change="handleFileUpload">
           <label for="file-upload" class="th-p-btn cursor-pointer gap-2">Upload <span class="mdi mdi-tray-arrow-up"></span></label>
@@ -48,7 +48,6 @@
                 placeholder="First Name"
                 v-model="user.first_name"
                 @input="updateChangedField('first_name')"
-                required
               />
               <label for="first_name" class="form__label">Tên</label>
             </div>
@@ -59,7 +58,6 @@
                 placeholder="Last Name"
                 v-model="user.last_name"
                 @input="updateChangedField('last_name')"
-                required
               />
               <label for="last_name" class="form__label">Họ (Tên đệm)</label>
             </div>
@@ -70,10 +68,12 @@
               class="form__field"
               placeholder="Phone"
               v-model="user.phone"
-              @input="updateChangedField('phone')"
-              required
+              @input="validatePhone"
             />
             <label for="phone" class="form__label">Số điện thoại</label>
+            <p v-if="!isPhoneValid && user.phone" class="text-red-500 text-sm mt-1">
+              Số điện thoại không hợp lệ
+            </p>
           </div>
           <div class="form__group field">
             <input
@@ -107,6 +107,21 @@ const cloudinary = useCloudinaryStore();
 const isUploading = ref(false);
 const originalUser = reactive({});
 const changedFields = reactive({});
+
+const isPhoneValid = ref(true);
+
+const validatePhone = () => {
+  isPhoneValid.value = isValidPhoneNumber(user.phone);
+};
+
+const isValidPhoneNumber = (phone) => {
+  // This regex allows for Vietnamese phone numbers:
+  // - Optionally starts with +84
+  // - Can start with 0
+  // - Followed by 9-10 digits
+  const phoneRegex = /^(\+84|0)([3|5|7|8|9])?[0-9]{8}$/;
+  return phoneRegex.test(phone);
+};
 
 const uploadToCDN = async (file) => {
   isUploading.value = true;
@@ -147,19 +162,26 @@ const updateChangedField = (field) => {
 };
 
 const submit = () => {
-  updateChangedField('username');
-  updateChangedField('first_name');
-  updateChangedField('last_name');
-  updateChangedField('phone');
-  updateChangedField('email');
+  if (!isValidPhoneNumber(user.phone)) {
+    alert("Số điện thoại không hợp lệ. Vui lòng kiểm tra lại.");
+    return;
+  }
 
-  user.updateUserInfo(
-    user.user_id,
-    changedFields.username ?? null,
-    changedFields.first_name ?? null,
-    changedFields.last_name ?? null,
-    changedFields.phone ?? null,
-    changedFields.email ?? null
-  );
+  const updatedFields = {
+    fname: user.first_name,
+    lname: user.last_name,
+    phone: user.phone
+  };
+
+  // Only include email and username if they've changed
+  if (user.email !== originalUser.email) {
+    updatedFields.email = user.email;
+  }
+  
+  if (user.username !== originalUser.username) {
+    updatedFields.username = user.username;
+  }
+
+  user.updateUserInfo(user.user_id, updatedFields);
 };
 </script>

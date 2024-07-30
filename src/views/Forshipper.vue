@@ -356,13 +356,14 @@ import axios from 'axios';
   
   onMounted(async () => {
     await locationStore.getMyLocation();
+    updateLocation()
   });
   // Run getMyLocation every 15 minutes
   const interval = setInterval(async () => {
     await locationStore.getMyLocation();
     console.log('update location');
     updateLocation()
-  }, 1 * 60 * 1000); // 15 minutes in milliseconds
+  }, 1 * 60 * 1000); // 1 minute
 
   // Clear the interval when the component is unmounted
   onUnmounted(() => {
