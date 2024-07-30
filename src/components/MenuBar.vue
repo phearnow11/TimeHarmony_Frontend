@@ -15,20 +15,20 @@
     <div v-show="showMenu" class="dropdown-menu py-2 top-12 absolute z-10 w-48">
       <!-- Men -->
       <div class="menu-item relative" @mouseenter="showSubmenu('menWatch')" @mouseleave="hideSubmenu('menWatch')">
-        <a href="/discover/men watches?page=0&gender=male" class="flex items-center justify-between hover-underline-animation w-full px-4 py-2">
+        <a href="/discover/Đồng hồ nam?page=0&gender=male" class="flex items-center justify-between hover-underline-animation w-full px-4 py-2">
           <span>Đồng hồ nam</span>
         </a>
       </div>
       <!-- Women -->
       <div class="menu-item relative" @mouseenter="showSubmenu('womenWatch')" @mouseleave="hideSubmenu('womenWatch')">
-        <a href="/discover/women watches?page=0&gender=female" class="flex items-center justify-between hover-underline-animation w-full px-4 py-2">
+        <a href="/discover/Đồng hồ nữ?page=0&gender=female" class="flex items-center justify-between hover-underline-animation w-full px-4 py-2">
           <span>Đồng hồ nữ</span>
         </a>
       </div>
       <!-- Unisex -->
       <div class="menu-item relative" @mouseenter="showSubmenu('womenWatch')" @mouseleave="hideSubmenu('womenWatch')">
-        <a href="/discover/unisex watches?page=0&gender=unisex" class="flex items-center justify-between hover-underline-animation w-full px-4 py-2">
-          <span>Đồng hồ unisex</span>
+        <a href="/discover/Đồng hồ phi giới?page=0&gender=unisex" class="flex items-center justify-between hover-underline-animation w-full px-4 py-2">
+          <span>Đồng hồ phi giới</span>
         </a>
       </div>
       <!-- Style -->

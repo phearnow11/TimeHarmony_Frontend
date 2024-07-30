@@ -116,7 +116,7 @@ const searchQuery = computed(() => route.query.q || '');
 const categories = ref([
   'Đồng hồ nam',
   'Đồng hồ nữ',
-  'Đồng hồ Unisex',
+  'Đồng hồ phi giới',
 ]);
 
 const brands = ref([
@@ -147,11 +147,11 @@ const validateInput = (type) => {
 const applyFilter = async () => {
   const filters = [];
   const gender = selectedCategories.value.includes('Đồng hồ nam')
-    ? 'Male'
+    ? 'male'
     : selectedCategories.value.includes('Đồng hồ nữ')
-    ? 'Female'
-    : selectedCategories.value.includes('Đồng hồ Unisex')
-    ? 'Unisex'
+    ? 'female'
+    : selectedCategories.value.includes('Đồng hồ phi giới')
+    ? 'unisex'
     : null;
 
   if (gender) filters.push(`gender=${gender}`);
