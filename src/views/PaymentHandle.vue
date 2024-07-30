@@ -88,9 +88,9 @@ onMounted(async () => {
 
     const wids = JSON.parse(localStorage.getItem('pendingWids') || '[]');
     console.log('Watch id: ' + wids);
-    
-    const widsString = `[${wids.join(',')}]`;
 
+
+    const widsString = `[${wids.join(',')}]`;
 
     if (isSuccess) {
       successMessage.value = 'Payment successful. Saving payment details...';
@@ -103,31 +103,23 @@ onMounted(async () => {
       const result = await userStore.addOrder(authStore.user_id, orderData);
       console.log('Order creation result:', result);
 
+      if (result !== "java.lang.Exception: An Error occur") {
+      console.log('Order ID:', result);
       const paymentDataToSave = {
         transaction_no: transactionNo.value,
         payment_amount: parseFloat(amountString.value),
         bank_code: bankCode.value,
         payment_method: vnpCardType.value,
-        order_id: result !== "java.lang.Exception: An Error occur" ? null : result,
+        order_id: result,
         isSuccess: isSuccess,
         wids: widsString
       };
-
-      console.log('Payment data to save:', JSON.stringify(paymentDataToSave));
+      console.log('Payment ok: ' + JSON.stringify(paymentDataToSave));
       const savedPayment = await savePaymentDetail(paymentDataToSave);
       console.log('Saved payment details:', savedPayment);
-
-      if (result !== "java.lang.Exception: An Error occur") {
-        successMessage.value = 'Order created successfully';
-        paymentStatus.value = 'Success';
-      } else {
-        errorMessage.value = 'An error occurred while creating the order.';
-        paymentStatus.value = 'Error';
-      }
-
+        
       const orderDetails = await userStore.getOrderDetail(result);
       console.log('Order details:', orderDetails);
-
       if (orderDetails) {
         successMessage.value = 'Order created successfully. Redirecting to confirmation page...';
         router.push(`/orderconfirmation/${result}`);
@@ -135,7 +127,21 @@ onMounted(async () => {
         throw new Error('Invalid order details received');
       }
 
-      
+      } else {
+        const paymentDataNullOrder = {
+          transaction_no: transactionNo.value,
+          payment_amount: parseFloat(amountString.value),
+          bank_code: bankCode.value,
+          payment_method: vnpCardType.value,
+          order_id: "BANORDERID",
+          isSuccess: isSuccess,
+          wids: widsString
+        };
+        console.log('Payment order id null: ' + JSON.stringify(paymentDataNullOrder));
+        const savedPayment = await savePaymentDetail(paymentDataNullOrder);
+        console.log('Saved payment details:', savedPayment);
+        return;
+      }
     } else {
       paymentStatus.value = 'Failed';
       errorMessage.value = `Payment was not successful. Response code: ${paymentData.vnp_ResponseCode}`;
