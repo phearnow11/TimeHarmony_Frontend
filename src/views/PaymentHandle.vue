@@ -101,14 +101,15 @@ onMounted(async () => {
 
       const result = await userStore.addOrder(authStore.user_id, orderData);
       console.log('Order creation result:', result);
-      const orderID = await userStore.getNewestOrder(authStore.user_id);
+
+      if (result) {
 
       const paymentDataToSave = {
         transaction_no: transactionNo.value,
         payment_amount: parseFloat(amountString.value),
         bank_code: bankCode.value,
         payment_method: vnpCardType.value,
-        order_id: orderID,
+        order_id: result.order_id,
         isSuccess: isSuccess,
         wids: widsString
       };
@@ -117,18 +118,18 @@ onMounted(async () => {
       console.log('Saved payment details:', savedPayment);
 
       
-      console.log('Order ID:', orderID);
-      if (result) {
-        orderId.value = result.order_id;
-        const orderDetails = await userStore.getOrderDetail(orderID);
-        console.log('Order details:', orderDetails);
+      console.log('Order ID:', result.order_id);
+        
+      orderId.value = result.order_id;
+      const orderDetails = await userStore.getOrderDetail(result.order_id);
+      console.log('Order details:', orderDetails);
 
-        if (orderDetails) {
-          successMessage.value = 'Order created successfully. Redirecting to confirmation page...';
-          router.push(`/orderconfirmation/${orderID}`);
-        } else {
-          throw new Error('Invalid order details received');
-        }
+      if (orderDetails) {
+        successMessage.value = 'Order created successfully. Redirecting to confirmation page...';
+        router.push(`/orderconfirmation/${result.order_id}`);
+      } else {
+        throw new Error('Invalid order details received');
+      }
       } else {
         throw new Error('Order creation failed');
       }
