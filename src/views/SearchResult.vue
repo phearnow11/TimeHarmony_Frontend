@@ -55,7 +55,7 @@
           <h2 class="text-lg font-bold">Giá</h2>
           <vue-slider
             v-model="priceRange"
-            :min="100000"
+            :min="1000000"
             :max="maxPriceValue"
             :step="100000"
             class="mt-12 pr-16"
