@@ -1,13 +1,7 @@
 <template>
   <div class="container mx-auto p-4">
     <div class="flex justify-between items-center mb-4">
-      <h1 class="text-2xl font-bold">Watch Appraise</h1>
-      <div class="space-x-2">
-        <button @click="toggleViewMode" class="btn">
-          <i class="material-icons">{{ viewMode === 'kanban' ? 'view_list' : 'view_column' }}</i>
-          {{ viewMode === 'kanban' ? 'List View' : 'Kanban View' }}
-        </button>
-      </div>
+      <h1 class="text-2xl font-bold text-primary">Kiểm duyệt và thẩm định đồng hồ</h1>
     </div>
     <div :class="{ 'flex align-middle justify-center space-x-4': viewMode === 'kanban' }">
       <div v-for="(column) in columns" :key="column.name"
@@ -27,12 +21,12 @@
           :class="['flex-grow min-h-[200px] p-2 bg-[#343432]', { 'list-none': viewMode === 'kanban' }]"
         >
           <template #item="{element}">
-            <div class="bg-[#1b1b1b] p-4 shadow-md cursor-move mb-2">
+            <div class="bg-[#1b1b1b] p-4 shadow-md cursor-move mb-2 box">
               <h3 class="text-primary font-bold text-md">{{ element.title }}</h3>
               <p class="text-sm text-[whitesmoke]">{{ formatPriceVND(element.price) }}</p>
               <p class="text-sm text-[whitesmoke]">{{ element.id }}</p>
-              <p class="text-xs text-[whitesmoke] mt-2 mb-2">Due: {{ element.dueDate }}</p>
-              <router-link :to="`/detail/${element.id}`" class="mt-2 hover-underline-animation">Go to Detail</router-link>
+              <p class="text-xs text-[whitesmoke] mt-2 mb-2">Thời gian: {{ element.dueDate }}</p>
+              <router-link :to="`/detail/${element.id}`" class="mt-2 hover-underline-animation">Xem chi tiết</router-link>
             </div>
           </template>
         </draggable>
@@ -269,5 +263,10 @@ const formatPriceVND = (price) => {
 
 .btn-active {
   @apply bg-primary;
+}
+
+.box:hover{
+  box-shadow: 0px 0px 20px 1px #ffbb763f;
+  border: 1px solid rgba(255, 255, 255, 0.454);
 }
 </style>

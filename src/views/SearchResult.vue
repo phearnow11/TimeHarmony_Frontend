@@ -150,14 +150,14 @@ const handleFocus = (index) => {
 const handleBlur = (index) => {
   const newValue = parsePrice(formattedPrice.value[index]);
   if (!isNaN(newValue)) {
-    priceRange.value[index] = Math.max(100000, Math.min(newValue, maxPriceValue.value));
+    priceRange.value[index] = Math.max(1000000, Math.min(newValue, maxPriceValue.value));
     updateSlider();
   }
 };
 
 const updateSlider = () => {
   // Ensure that priceRange values are within bounds
-  if (priceRange.value[0] < 100000) priceRange.value[0] = 100000;
+  if (priceRange.value[0] < 1000000) priceRange.value[0] = 1000000;
   if (priceRange.value[1] > maxPriceValue.value) priceRange.value[1] = maxPriceValue.value;
   applyFilter();
 };
