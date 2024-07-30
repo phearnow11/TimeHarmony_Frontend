@@ -102,10 +102,8 @@ onMounted(async () => {
       const result = await userStore.addOrder(authStore.user_id, orderData);
       console.log('Order creation result:', result);
 
-      if (result !== null) {
-
+      if (result) {
       console.log('Order ID:', result);
-
       const paymentDataToSave = {
         transaction_no: transactionNo.value,
         payment_amount: parseFloat(amountString.value),
@@ -134,7 +132,7 @@ onMounted(async () => {
           payment_amount: parseFloat(amountString.value),
           bank_code: bankCode.value,
           payment_method: vnpCardType.value,
-          order_id: null,
+          order_id: "",
           isSuccess: isSuccess,
           wids: widsString
         };
@@ -142,7 +140,7 @@ onMounted(async () => {
         const savedPayment = await savePaymentDetail(paymentDataNullOrder);
         console.log('Saved payment details:', savedPayment);
         return;
-        }
+      }
     } else {
       paymentStatus.value = 'Failed';
       errorMessage.value = `Payment was not successful. Response code: ${paymentData.vnp_ResponseCode}`;
