@@ -13,7 +13,6 @@
       </ul>
     </aside>
 
-    <!-- Nội dung -->
     <div class="container mx-auto p-4">
       <h2 class="text-2xl mt-4 text-primary relative bottom-4">Thống kê thu nhập</h2>
       <div class="p-1">
@@ -33,7 +32,7 @@
                 <div>
                   <h3 class="text-2xl font-bold">{{ formatValue(item.value, item.isCurrency) }}</h3>
                   <p class="text-sm text-gray-99">{{ item.label }}</p>
-                  <!-- Add comparison for the first item only -->
+                  <!-- Chỉ hiển thị phần trăm thay đổi cho biểu đồ doanh thu theo ngày -->
                   <p v-if="index === 0" :class="`text-sm ${item.isIncrease ? 'text-green-500' : 'text-red-500'}`">
                     <i :class="`fas ${item.isIncrease ? 'fa-arrow-up' : 'fa-arrow-down'} mr-1`"></i>
                     {{ item.percentChange }}% so với hôm qua
@@ -46,7 +45,9 @@
             </div>
           </div>
         </div>
-        <button @click="exportToExcel" class="hover-underline-animation">Xuất Excel</button>
+        <button @click="exportToExcel" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          Xuất Excel
+        </button>
       </div>
     </div>
   </div>
@@ -107,48 +108,6 @@ const formatValue = (value, isCurrency) => {
   return value
 }
 
-const createCharts = () => {
-  performanceItems.value.forEach((item, index) => {
-    const ctx = chartRefs[index].getContext('2d')
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
-        datasets: [{
-          label: item.label,
-          data: item.data,
-          borderColor: getChartColor(index),
-          backgroundColor: getChartColor(index, 0.1),
-          tension: 0.4,
-          fill: true,
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: 'rgba(0, 0, 0, 0.7)',
-            titleColor: '#fff',
-            bodyColor: '#fff',
-            padding: 10,
-            cornerRadius: 5,
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: {
-              callback: (value) => formatValue(value, item.isCurrency),
-              stepSize: 1
-            }
-          }
-        },
-      }
-    })
-  })
-}
 
 const createIncomeChart = (monthlyProfit) => {
   const ctx = incomeChart.value.getContext('2d');
@@ -190,25 +149,109 @@ const createIncomeChart = (monthlyProfit) => {
   });
 };
 
+const updateDailyProfitChart = (labels, data) => {
+  const ctx = chartRefs[0].getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels.map(formatDateForDisplay), // Áp dụng định dạng mới cho nhãn
+      datasets: [{
+        label: 'Doanh thu theo ngày',
+        data: data,
+        backgroundColor: getChartColor(0, 0.6),
+        borderColor: getChartColor(0),
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        
+        y: {
+          beginAtZero: true,
+          ticks: {
+            callback: (value) => formatValue(value, true)
+          }
+        }
+      },
+      plugins: {
+        tooltip: {
+          callbacks: {
+            title: (tooltipItems) => {
+              return formatDateForDisplay(labels[tooltipItems[0].dataIndex]);
+            },
+            label: (context) => formatValue(context.parsed.y, true)
+          }
+        }
+      }
+    }
+  });
+};
+
+const createCharts = () => {
+  performanceItems.value.forEach((item, index) => {
+    if (index === 0) return;
+    const ctx = chartRefs[index].getContext('2d')
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+        datasets: [{
+          label: item.label,
+          data: item.data,
+          borderColor: getChartColor(index),
+          backgroundColor: getChartColor(index, 0.1),
+          tension: 0.4,
+          fill: true,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            titleColor: '#fff',
+            bodyColor: '#fff',
+            padding: 10,
+            cornerRadius: 5,
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: (value) => formatValue(value, item.isCurrency),
+              stepSize: 1
+            }
+          }
+        },
+      }
+    })
+  })
+}
+
 const getChartColor = (index, alpha = 1) => {
   const colors = ['#9061f9', '#3B82F6', '#F59E0B']
   return alpha === 1 ? colors[index] : `${colors[index]}${Math.round(alpha * 255).toString(16)}`
 }
 
+
 const exportToExcel = () => {
   const data = performanceItems.value.map(item => ({
     label: item.label,
     value: item.isCurrency ? formatValue(item.value, item.isCurrency) : item.value,
-    data: item.data.join(', '),  // Convert data array to string for Excel
+    data: item.data.join(', '),
     isCurrency: item.isCurrency
   }));
 
-  // Lấy dữ liệu từ biểu đồ Tổng thu nhập
-  const totalProfitData = incomeChart.value?.chart?.data?.datasets[0]?.data || [];
+  const totalProfitData = incomeChart.value || [];
   const totalProfit = {
     label: 'Tổng thu nhập của tôi',
-    value: totalProfitData.reduce((acc, val) => acc + val, 0),  // Tổng hợp các giá trị
-    data: totalProfitData.join(', '),  // Chuyển đổi mảng dữ liệu thành chuỗi cho Excel
+    value: formatValue(totalProfitData.reduce((acc, val) => acc + val, 0), true),
+    data: totalProfitData.join(', '),
     isCurrency: true
   };
   data.push(totalProfit);
@@ -217,51 +260,72 @@ const exportToExcel = () => {
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Performance Data');
 
-  XLSX.writeFile(workbook, 'Dữ liệu thu nhập cá nhân.xlsx');
+  XLSX.writeFile(workbook, 'Thu nhập cá nhân.xlsx');
 }
-
 onMounted(async () => {
   const sellerId = authStore.user_id;
 
   try {
     function formatDate(date) {
       const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0 nên cần cộng thêm 1
+      const month = String(date.getMonth() + 1).padStart(2, '0');
       const day = String(date.getDate()).padStart(2, '0');
       return `${year}-${month}-${day}`;
     }
 
-    // Sử dụng hàm
-    const date = new Date();
-    const yesterday = new Date(date);
-    yesterday.setDate(date.getDate() - 1)
-    const formattedDate = formatDate(yesterday);
+    const currentDate = new Date();
+    const dailyProfits = [];
+    const labels = [];
 
-    const profitData = await userStore.getProfitOfSeller(sellerId);
-    const postedWatchesData = await userStore.countPostWatch(sellerId);
-    const soldWatchesData = await userStore.countSoldWatch(sellerId);
-    const dailyData = await userStore.getProfitOfSellerByDate(sellerId, formatDate(date));
-    const yesterdayData = await userStore.getProfitOfSellerByDate(sellerId, formattedDate);
+    // Lấy dữ liệu cho 7 ngày gần nhất
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(currentDate);
+      date.setDate(currentDate.getDate() - i);
+      const formattedDate = formatDate(date);
+      const profit = await userStore.getProfitOfSellerByDate(sellerId, formattedDate);
+      dailyProfits.push(profit);
+      labels.push(formattedDate);
+    }
 
-    const percentChange = yesterdayData !== 0
-      ? ((dailyData - yesterdayData) / yesterdayData) * 100
+    // Cập nhật dữ liệu cho biểu đồ doanh thu theo ngày
+    performanceItems.value[0].value = dailyProfits[6]; // Ngày hiện tại
+    performanceItems.value[0].data = dailyProfits;
+
+    const profitToday = dailyProfits[6];
+    const profitYesterday = dailyProfits[5];
+    const percentChange = profitYesterday !== 0
+      ? ((profitToday - profitYesterday) / profitYesterday) * 100
       : 100;
 
-    // Cập nhật dữ liệu cho các biểu đồ
-    performanceItems.value[0].value = dailyData;
-    performanceItems.value[0].data = createMonthlyData(dailyData);
-    performanceItems.value[0].yesterdayValue = yesterdayData;
     performanceItems.value[0].percentChange = Math.abs(percentChange).toFixed(0);
     performanceItems.value[0].isIncrease = percentChange >= 0;
+
+    // Cập nhật biểu đồ doanh thu hàng ngày
+    updateDailyProfitChart(labels, dailyProfits);
+
+    // Lấy và cập nhật dữ liệu cho các biểu đồ khác
+    const postedWatchesData = await userStore.countPostWatch(sellerId);
+    const soldWatchesData = await userStore.countSoldWatch(sellerId);
+
     performanceItems.value[1].value = postedWatchesData;
     performanceItems.value[1].data = createMonthlyData(postedWatchesData);
     performanceItems.value[2].value = soldWatchesData;
     performanceItems.value[2].data = createMonthlyData(soldWatchesData);
 
+    // Cập nhật các biểu đồ khác
     createCharts();
+    
+    // Lấy và cập nhật dữ liệu cho biểu đồ tổng thu nhập
+    const profitData = await userStore.getProfitOfSeller(sellerId);
     createIncomeChart(createMonthlyData(profitData));
   } catch (error) {
     console.error('Error fetching data:', error);
   }
 });
+
+function formatDateForDisplay(dateString) {
+  const [year, month, day] = dateString.split('-');
+  return `${day}/${month}`;
+}
+
 </script>

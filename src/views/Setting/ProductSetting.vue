@@ -31,7 +31,7 @@
 
       <!-- My Orders Section -->
       <div v-if="activeSection === 'orders'" id="orders">
-        <h2 class="text-2xl mb-4 text-secondary">Đơn hàng mua</h2>
+        <h2 class="text-2xl mb-4 text-secondary">Đơn hàng mua <button @click="refreshOrderData" class="fa fa-refresh text-gray-99 hover:text-secondary p-1 text-lg transition-colors duration-300"></button></h2>
         <div class="table-container">
           <table class="w-full border-collapse table">
             <thead class="table-header">
@@ -71,7 +71,7 @@
 
       <!-- My Purchased Watches Section -->
       <div v-if="activeSection === 'purchases'" id="purchases">
-        <h2 class="text-2xl mb-4">Các đơn hàng đồng hồ đã đăng bán</h2>
+        <h2 class="text-2xl mb-4">Các đơn hàng đồng hồ đã đăng bán <button @click="refreshOrderData" class="fa fa-refresh text-gray-99 hover:text-secondary p-1 text-lg transition-colors duration-300"></button></h2>
         <div class="table-container">
           <table class="w-full border-collapse table">
             <thead class="table-header">
@@ -111,7 +111,7 @@
 
       <!-- Pending Watches Section -->
       <div v-if="activeSection === 'pending-watches'" id="pending-watches">
-        <h2 class="text-2xl mb-4 text-secondary">Các đơn hàng chờ xác nhận bởi người bán</h2>
+        <h2 class="text-2xl mb-4 text-secondary">Các đơn hàng chờ xác nhận bởi người bán <button @click="refreshPending" class="fa fa-refresh text-gray-99 hover:text-secondary p-1 text-lg transition-colors duration-300"></button></h2>
         <div class="table-container">
           <table class="w-full border-collapse table">
             <thead class="table-header">
@@ -143,7 +143,7 @@
                 <td class="py-4 pl-2">{{ item.phone }}</td>
                 <td class="py-4 pl-2">{{ item.notice ? item.notice : 'Không có thông tin' }}</td>
                 <td class="py-4 pl-2">{{ formatPriceVND(item.total_price) }}</td>
-                <td class="py-4 pl-2">{{ item.state === 'PENDING' ? 'Đang chờ người vận chuyển đóng gói' : 'Đã được gửi đến người vận chuyển' }}</td>
+                <td class="py-4 pl-2">{{ item.state === 'PENDING' ? 'Đang chờ người bán đóng gói' : 'Đã được gửi đến người vận chuyển' }}</td>
                 <td class="py-4 pl-2">{{ shipping_date ? shipping_date : 'Không có thông tin' }}</td>
 
                 <td class="py-4 px-2">
@@ -157,7 +157,7 @@
       </div>
       <!-- Shipping Orders Section -->
       <div v-if="activeSection === 'shipping-orders'" id="shipping-orders">
-  <h2 class="text-2xl mb-4 text-secondary">Đơn hàng đang vận chuyển của tôi</h2>
+  <h2 class="text-2xl mb-4 text-secondary">Đơn hàng đang vận chuyển của tôi <button @click="refreshShipping" class="fa fa-refresh text-gray-99 hover:text-secondary p-1 text-lg transition-colors duration-300"></button></h2>
   <div class="table-container">
     <table class="w-full border-collapse table">
       <thead class="table-header">
@@ -229,6 +229,39 @@ const fetchOrderDetails = async (watchId, orderId) => {
   }
 };
 
+const refreshOrderData = async () => {
+  try {
+    isLoading.value = true;
+    await Promise.all([loadOrders(), loadOrderStates()]);
+  } catch (error) {
+    console.error('Lỗi khi làm mới dữ liệu đơn hàng:', error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const refreshPending = async () => {
+  try {
+    isLoading.value = true;
+    await Promise.all([loadPendingWatches(), loadOrderStates()]);
+  } catch (error) {
+    console.error('Lỗi khi làm mới dữ liệu đơn hàng:', error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const refreshShipping = async () => {
+  try {
+    isLoading.value = true;
+    await Promise.all([loadShippingOrders(), loadOrderStates()]);
+  } catch (error) {
+    console.error('Lỗi khi làm mới dữ liệu đơn hàng:', error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
 const orderLocations = ref({});
 
 const fetchOrderLocation = async (orderId, latitude, longitude) => {
@@ -284,10 +317,11 @@ const confirmShip = async (orderId) => {
       const state = orderStates.value[orderId];
     if (state === 'SHIPPED') {
       await useUserStore().confirmShip(orderId)
-      await loadOrders();
     } else {
       alert('Không chấp thuận, lỗi');
     }
+    await loadOrders(); 
+    await loadOrderStates();
     } catch (error) {
       console.log(error);
     } finally {
@@ -363,7 +397,7 @@ const loadOrders = async () => {
 
     wlists.value = await user.getOrderWaiting(auth.user_id);
     console.log('Waiting orders:', wlists.value);
-
+    
     for (const order of orders.value) {
       console.log('fetching location');
       const detail = await user.getOrderDetail(order.order_id);
@@ -440,7 +474,9 @@ const setShip = async (watchid, orderId) => {
     isLoading.value = true;
     const res = await user.setShipping(watchid, orderId);
     console.log(res);
-  } catch (error) {
+    await loadOrders();
+    await loadOrderStates();
+    } catch (error) {
     console.error('Lỗi khi cập nhật trạng thái giao hàng:', error);
   } finally {
     isLoading.value = false;
@@ -510,6 +546,8 @@ const shipOrder = async (order_id, user_id) => {
     }
     const res = await useStaffStore().shipOrderByShipper(order_id, user_id)
     console.log(res);
+    await loadPendingWatches();
+    await loadOrderStates();
     if(res === 'java.lang.Exception: Order is not packed') 
       alert('Người bán chưa đóng gói hàng và gửi cho Shipper')
   } catch (error) {
@@ -524,6 +562,8 @@ const shippedOrderToMember = async (order_id, user_id) => {
   try {
     isLoading.value = true
     await useStaffStore().shippedToMember(order_id, user_id);
+    await loadShippingOrders()
+    await loadOrderStates()
   } catch (error) {
     console.error('Lỗi khi cập nhật trạng thái vận chuyển:', error);
   } finally{
