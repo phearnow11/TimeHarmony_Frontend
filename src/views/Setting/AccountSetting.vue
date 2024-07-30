@@ -119,6 +119,7 @@ const isValidPhoneNumber = (phone) => {
   // - Optionally starts with +84
   // - Can start with 0
   // - Followed by 9-10 digits
+  if (!phone.trim()) return true;
   const phoneRegex = /^(\+84|0)([3|5|7|8|9])?[0-9]{8}$/;
   return phoneRegex.test(phone);
 };
