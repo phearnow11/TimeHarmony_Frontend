@@ -1,4 +1,12 @@
 <template>
+  <div v-if="isLoading" class="overlay">
+      <div class="loader-container">
+        <div class="loader">
+          <div class="loaderBar"></div>
+        </div>
+      </div>
+    </div>
+
   <div class="admin-page p-6 gap-6">
     <h1 class="text-3xl font-bold mb-4">Bảng Điều Khiển Quản Trị</h1>
     <div class="flex items-center gap-9">
@@ -490,38 +498,61 @@ const closeBanModal = () => {
   banMessage.value = "";
   selectedMember.value = null;
 };
-
+const isLoading = ref(false)
 // Confirm ban user
-const confirmBanUser = () => {
+
+const confirmBanUser = async () => {
+  isLoading.value = true;
   if (selectedMember.value) {
-    useChatStore()
-      .registerUser2(selectedMember.value.member_id)
-      .then(() => {
-        return useChatStore().sendMessage(
-          selectedMember.value.member_id,
-          `Tài khoản mang tên ${selectedMember.value.user_log_info.username} đã bị cấm khỏi nền tảng! Lý do: ${banMessage.value}.`
-        );
-      })
-      .then(() => {
-        useMailStore().send(
-          selectedMember.value.email,
-          "THÔNG BÁO BẠN ĐÃ BỊ BAN KHỎI TIME HARMONY.",
-          `Tài khoản mang tên ${selectedMember.value.user_log_info.username} đã bị cấm khỏi nền tảng! Lý do: ${banMessage.value}.`
-        );
-        return useAdminStore().ban(selectedMember.value.user_log_info.username);
-      })
-      .catch((error) => {
-        console.error("Error banning user:", error);
-      })
-      .finally(() => {
-        closeBanModal();
-      });
+    try {
+      await useChatStore().registerUser2(selectedMember.value.member_id);
+      await useChatStore().sendMessage(
+        selectedMember.value.member_id,
+        `Tài khoản mang tên ${selectedMember.value.user_log_info.username} đã bị cấm khỏi nền tảng! Lý do: ${banMessage.value}.`
+      );
+      await useMailStore().send(
+        selectedMember.value.email,
+        "THÔNG BÁO BẠN ĐÃ BỊ BAN KHỎI TIME HARMONY.",
+        `Tài khoản mang tên ${selectedMember.value.user_log_info.username} đã bị cấm khỏi nền tảng! Lý do: ${banMessage.value}.`
+      );
+      await useAdminStore().ban(selectedMember.value.user_log_info.username);
+      
+      // Refresh the members list to update the UI
+      await adminStore.getMembers();
+      
+      // Update the specific member in the filteredMembers list
+      const index = filteredMembers.value.findIndex(m => m.member_id === selectedMember.value.member_id);
+      if (index !== -1) {
+        filteredMembers.value[index].user_log_info.enabled = 0;
+      }
+    } catch (error) {
+      console.error("Error banning user:", error);
+    } finally {
+      closeBanModal();
+      isLoading.value = false;
+    }
   }
 };
 
-const unbanUser = (member) => {
-  useChatStore().removeChat(useAuthStore().user_id, member.member_id);
-  useAdminStore().unBan(member.user_log_info.username);
+const unbanUser = async (member) => {
+  try {
+    isLoading.value = true;
+    await useChatStore().removeChat(useAuthStore().user_id, member.member_id);
+    await useAdminStore().unBan(member.user_log_info.username);
+    
+    // Refresh the members list to update the UI
+    await adminStore.getMembers();
+    
+    // Update the specific member in the filteredMembers list
+    const index = filteredMembers.value.findIndex(m => m.member_id === member.member_id);
+    if (index !== -1) {
+      filteredMembers.value[index].user_log_info.enabled = 1;
+    }
+  } catch (error) {
+    console.error("Error unbanning user:", error);
+  } finally {
+    isLoading.value = false;
+  }
 };
 
 // Compute financial metrics with error handling
@@ -775,8 +806,13 @@ const currency = (value) => `${value.toLocaleString("vi-VN")} ₫`;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000; /* Ensure the modal is above all other content */
+  backdrop-filter: blur(5px);
+  background: rgba(
+    23,
+    23,
+    23,
+    0.5
+  );  z-index: 1000; /* Ensure the modal is above all other content */
 }
 
 .modal-content {
@@ -879,4 +915,80 @@ const currency = (value) => `${value.toLocaleString("vi-VN")} ₫`;
   width: 20px;
   height: 20px;
 }
+
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  z-index: 9999;
+}
+.loader-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+  background: rgba(
+    23,
+    23,
+    23,
+    0.5
+  ); /* Adjust the alpha value for transparency */
+}
+
+.loader {
+  width: 80px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  padding: 1px;
+}
+
+.loader .loaderBar {
+  position: absolute;
+  top: 0;
+  right: 100%;
+  bottom: 0;
+  left: 0;
+  background: var(--secondary);
+  width: 0;
+  animation: borealisBar 2s linear infinite;
+}
+
+
+
+.loader::after {
+  content: "";
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--secondary);
+  left: 0;
+  top: 0;
+  animation: rotation 2s ease-in-out infinite alternate;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
 </style>
