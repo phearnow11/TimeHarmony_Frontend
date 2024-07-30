@@ -7,7 +7,11 @@
     <div v-if="user" class="chat-interface">
       <div class="sidebar">
         <div class="py-5 px-2">
-          <router-link to="/"><span class="hover-underline-animation">Quay về trang chủ</span></router-link>
+          <router-link to="/"
+            ><span class="hover-underline-animation"
+              >Quay về trang chủ</span
+            ></router-link
+          >
         </div>
         <div class="user-info flex gap-2 items-center">
           <img :src="userInfo?.image" alt="Ảnh đại diện" class="avatar" />
@@ -15,76 +19,102 @@
         </div>
         <div>
           <div class="ui-input-container col-span-3 mb-5">
-        <input
-          required
-          placeholder="Tìm kiếm tên người dùng"
-          class="ui-input"
-          type="text"
-          v-model="qMembers"
-          @keyup="searchMembers"
-        />
-        <div class="ui-input-underline"></div>
-        <div class="ui-input-highlight"></div>
-        <div class="ui-input-icon">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-width="2"
-              stroke="currentColor"
-              d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
-            ></path>
-          </svg>
-        </div>
-      </div>
-        </div>
-        <div class="user-list">
-        <div v-for="chatUser in chatUsers" :key="chatUser.user_id" 
-            @click="selectUser(chatUser)"
-            class="user-item"
-            :class="{ 'active': selectedUser && selectedUser?.user_id === chatUser?.user_id }">
-          <img :src="chatUser?.image" alt="Ảnh đại diện" class="avatar" />
-          <div class="user-details">
-            <span class="username">{{ chatUser?.username }}</span>
-            <span class="last-message">{{ getLatestMessagePreview(chatUser) }}</span>
+            <input
+              required
+              placeholder="Tìm kiếm tên người dùng"
+              class="ui-input"
+              type="text"
+              v-model="qMembers"
+              @keyup="searchMembers"
+            />
+            <div class="ui-input-underline"></div>
+            <div class="ui-input-highlight"></div>
+            <div class="ui-input-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-width="2"
+                  stroke="currentColor"
+                  d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
+                ></path>
+              </svg>
+            </div>
           </div>
         </div>
-      </div>
+        <div class="user-list">
+          <div
+            v-for="chatUser in filteredChatUsers"
+            :key="chatUser.user_id"
+            @click="selectUser(chatUser)"
+            class="user-item"
+            :class="{
+              active:
+                selectedUser && selectedUser?.user_id === chatUser?.user_id,
+            }"
+          >
+            <img :src="chatUser?.image" alt="Ảnh đại diện" class="avatar" />
+            <div class="user-details">
+              <span class="username">{{ chatUser?.username }}</span>
+              <span class="last-message">{{
+                getLatestMessagePreview(chatUser)
+              }}</span>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="chat-window flex flex-end" v-if="selectedUser">
         <div class="chat-header">
-          <img :src="selectedUserInfo.image" alt="Ảnh đại diện" class="avatar" />
+          <img
+            :src="selectedUserInfo.image"
+            alt="Ảnh đại diện"
+            class="avatar"
+          />
           <div class="chat-name">{{ selectedUserInfo.username }}</div>
         </div>
         <div class="messages-container" ref="messagesContainer">
-          <div v-for="message in messages" :key="message.id" class="message-wrapper">
+          <div
+            v-for="message in messages"
+            :key="message.id"
+            class="message-wrapper"
+          >
             <div v-if="message.sender_id !== user.id" class="message-avatar">
               <img :src="getUserAvatar(message.sender_id)" alt="Ảnh đại diện" />
             </div>
-            <div class="message"
-                 :class="{ 'own-message': message.sender_id === user.id }">
+            <div
+              class="message"
+              :class="{ 'own-message': message.sender_id === user.id }"
+            >
               <div class="message-content">
                 <p>{{ message.text }}</p>
               </div>
-              <div class="message-time">{{ formatTime(message.created_at) }}</div>
+              <div class="message-time">
+                {{ formatTime(message.created_at) }}
+              </div>
             </div>
           </div>
         </div>
-        <div class="input-container flex w-full" v-if="useUserStore().role != 'ROLE_ADMIN'">
+        <div
+          class="input-container flex w-full"
+          v-if="useUserStore().role != 'ROLE_ADMIN'"
+        >
           <div class="u-input-container flex-grow">
             <input
               required=""
-              v-model="newMessage" @keyup.enter="sendMessage" placeholder="Nhập tin nhắn..."
+              v-model="newMessage"
+              @keyup.enter="sendMessage"
+              placeholder="Nhập tin nhắn..."
               class="u-input"
               type="text"
             />
             <div class="u-input-underline"></div>
             <div class="u-input-highlight"></div>
           </div>
-          <button class="th-p-btn gap-1 rounded-lg" @click="sendMessage">Gửi 
-            <span class="mdi mdi-send"></span></button>
+          <button class="th-p-btn gap-1 rounded-lg" @click="sendMessage">
+            Gửi <span class="mdi mdi-send"></span>
+          </button>
         </div>
       </div>
       <div v-else class="no-chat-selected w-full">
@@ -98,13 +128,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
-import { useChatStore } from '../stores/chat';
-import { useAuthStore } from '../stores/auth';
-import { useUserStore } from '../stores/user'; // Import the user store
-import { storeToRefs } from 'pinia';
-import axios from 'axios';
-import { createClient } from '@supabase/supabase-js';
+import { ref, onMounted, watch, computed } from "vue";
+import { useChatStore } from "../stores/chat";
+import { useAuthStore } from "../stores/auth";
+import { useUserStore } from "../stores/user"; // Import the user store
+import { storeToRefs } from "pinia";
+import axios from "axios";
+import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = import.meta.env.VITE_SUPABASEURL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASEANONKEY;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
@@ -115,54 +145,74 @@ const userStore = useUserStore();
 const authStore = useAuthStore();
 const { user_id } = storeToRefs(authStore);
 
-const newMessage = ref('');
+const newMessage = ref("");
 const selectedUser = ref(null);
 const selectedUserInfo = ref(null);
 const userInfo = ref(null);
 const messagesContainer = ref(null);
 const chatUsers = ref([]);
 const userMap = ref(new Map());
+const qMembers = ref("");
 
 var api = import.meta.env.VITE_API_PORT;
 
+const filteredChatUsers = computed(() => {
+  if (!qMembers.value) return chatUsers.value;
+  const searchTerm = qMembers.value.toLowerCase();
+  return chatUsers.value.filter((user) =>
+    user.username.toLowerCase().includes(searchTerm)
+  );
+});
+
 const getLatestMessagePreview = (chatUser) => {
   if (chatUser.latestMessage) {
-    return chatUser.latestMessage.text.length > 30 
-      ? chatUser.latestMessage.text.substring(0, 30) + '...' 
+    return chatUser.latestMessage.text.length > 30
+      ? chatUser.latestMessage.text.substring(0, 30) + "..."
       : chatUser.latestMessage.text;
   }
-  return 'No messages yet';
+  return "No messages yet";
 };
 
 const fetchChatUsers = async () => {
   try {
-    const response = await axios.get(`${api}/chat/getall?user_id=${user_id.value}`);
-    const users = response.data.filter(u => u !== user.value?.id);
-    
-    const usersWithLatestMessage = await Promise.all(users.map(async u_id => {
-      const userInfo = await userStore.getUserInfo(u_id);
-      const latestMessage = await fetchLatestMessage(u_id);
-      return { 
-        user_id: u_id, 
-        username: userInfo.username, 
-        image: userInfo.image,
-        latestMessage: latestMessage
-      };
-    }));
+    const response = await axios.get(
+      `${api}/chat/getall?user_id=${user_id.value}`
+    );
+    const users = response.data.filter((u) => u !== user.value?.id);
+
+    const usersWithLatestMessage = await Promise.all(
+      users.map(async (u_id) => {
+        const userInfo = await userStore.getUserInfo(u_id);
+        const latestMessage = await fetchLatestMessage(u_id);
+        return {
+          user_id: u_id,
+          username: userInfo.username,
+          image: userInfo.image,
+          latestMessage: latestMessage,
+        };
+      })
+    );
 
     // Sort users by latest message timestamp
     chatUsers.value = usersWithLatestMessage.sort((a, b) => {
-      const timeA = a.latestMessage ? new Date(a.latestMessage.created_at).getTime() : 0;
-      const timeB = b.latestMessage ? new Date(b.latestMessage.created_at).getTime() : 0;
+      const timeA = a.latestMessage
+        ? new Date(a.latestMessage.created_at).getTime()
+        : 0;
+      const timeB = b.latestMessage
+        ? new Date(b.latestMessage.created_at).getTime()
+        : 0;
       return timeB - timeA;
     });
 
     // Update userMap
-    chatUsers.value.forEach(user => {
-      userMap.value.set(user.user_id, { username: user.username, image: user.image });
+    chatUsers.value.forEach((user) => {
+      userMap.value.set(user.user_id, {
+        username: user.username,
+        image: user.image,
+      });
     });
   } catch (error) {
-    console.error('Error fetching chat users:', error);
+    console.error("Error fetching chat users:", error);
     chatUsers.value = [];
   }
 };
@@ -171,17 +221,19 @@ const fetchChatUsers = async () => {
 const fetchLatestMessage = async (userId) => {
   try {
     const { data, error } = await supabase
-      .from('messages')
-      .select('*')
-      .or(`and(sender_id.eq.${user.value.id},receiver_id.eq.${userId}),and(sender_id.eq.${userId},receiver_id.eq.${user.value.id})`)
-      .order('created_at', { ascending: false })
+      .from("messages")
+      .select("*")
+      .or(
+        `and(sender_id.eq.${user.value.id},receiver_id.eq.${userId}),and(sender_id.eq.${userId},receiver_id.eq.${user.value.id})`
+      )
+      .order("created_at", { ascending: false })
       .limit(1)
       .single();
 
     if (error) throw error;
     return data;
   } catch (error) {
-    console.error('Error fetching latest message:', error);
+    console.error("Error fetching latest message:", error);
     return null;
   }
 };
@@ -190,31 +242,40 @@ const fetchMessages = async () => {
   if (selectedUser.value) {
     try {
       await chatStore.fetchMessages(selectedUser.value.user_id);
-      const uniqueUserIds = [...new Set(messages.value.map(msg => msg.sender_id))];
-      await Promise.all(uniqueUserIds.map(async u_id => {
-        if (!userMap.value.has(u_id)) {
-          const userInfo = await userStore.getUserInfo(u_id);
-          userMap.value.set(u_id, { username: userInfo.username, image: userInfo.image });
-        }
-      }));
+      const uniqueUserIds = [
+        ...new Set(messages.value.map((msg) => msg.sender_id)),
+      ];
+      await Promise.all(
+        uniqueUserIds.map(async (u_id) => {
+          if (!userMap.value.has(u_id)) {
+            const userInfo = await userStore.getUserInfo(u_id);
+            userMap.value.set(u_id, {
+              username: userInfo.username,
+              image: userInfo.image,
+            });
+          }
+        })
+      );
       scrollToBottom(); // Scroll to the newest chat
     } catch (fetchError) {
-      console.error('Error fetching messages:', fetchError);
+      console.error("Error fetching messages:", fetchError);
     }
   }
 };
 
 const sendMessage = async () => {
-  if (newMessage.value.trim() === '' || !selectedUser.value) return;
+  if (newMessage.value.trim() === "" || !selectedUser.value) return;
   try {
     await chatStore.sendMessage(selectedUser.value.user_id, newMessage.value);
-    newMessage.value = '';
+    newMessage.value = "";
     if (selectedUser.value) {
-      await axios.post(`${api}/chat/addtochat?user_id=${selectedUser.value.user_id}&user_id2=${user.value.id}`);
+      await axios.post(
+        `${api}/chat/addtochat?user_id=${selectedUser.value.user_id}&user_id2=${user.value.id}`
+      );
     }
-    scrollToBottom()
+    scrollToBottom();
   } catch (sendError) {
-    console.error('Error sending message:', sendError);
+    console.error("Error sending message:", sendError);
   }
 };
 
@@ -229,7 +290,7 @@ const fetchSelectedUserInfo = async (user_id) => {
     const response = await userStore.getUserInfo(user_id);
     selectedUserInfo.value = response;
   } catch (error) {
-    console.error('Error fetching selected user info:', error);
+    console.error("Error fetching selected user info:", error);
     selectedUserInfo.value = null;
   }
 };
@@ -239,12 +300,12 @@ const getUserName = (user_id) => {
 };
 
 const getUserAvatar = (user_id) => {
-  return userMap.value.get(user_id)?.image || '';
+  return userMap.value.get(user_id)?.image || "";
 };
 
 const formatTime = (timestamp) => {
   const date = new Date(timestamp);
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 };
 
 onMounted(async () => {
@@ -252,37 +313,45 @@ onMounted(async () => {
     await chatStore.autoLogin();
     const userInfoResponse = await userStore.getUserInfo(user_id.value);
     userInfo.value = userInfoResponse;
-    userMap.value.set(user_id.value, { username: userInfoResponse.username, image: userInfoResponse.image });
+    userMap.value.set(user_id.value, {
+      username: userInfoResponse.username,
+      image: userInfoResponse.image,
+    });
     await fetchChatUsers();
 
     // Set up real-time listener for new messages
     supabase
-      .channel('public:messages')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
-        console.log('New message received:', payload);
-        // Fetch chat users again to update the sidebar
-        fetchChatUsers();
-      })
+      .channel("public:messages")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "messages" },
+        (payload) => {
+          console.log("New message received:", payload);
+          // Fetch chat users again to update the sidebar
+          fetchChatUsers();
+        }
+      )
       .subscribe();
-
   } catch (loginError) {
-    console.error('Error during auto-login:', loginError);
+    console.error("Error during auto-login:", loginError);
   }
 });
 
-watch(messages, () => {
-  if (messagesContainer.value) {
-    scrollToBottom()
-  }
-}, { deep: true });
-
+watch(
+  messages,
+  () => {
+    if (messagesContainer.value) {
+      scrollToBottom();
+    }
+  },
+  { deep: true }
+);
 
 const scrollToBottom = () => {
   if (messagesContainer.value) {
     messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
   }
 };
-
 </script>
 
 <style scoped>
@@ -332,7 +401,8 @@ const scrollToBottom = () => {
   transition: background-color 0.3s;
 }
 
-.user-item:hover, .user-item.active {
+.user-item:hover,
+.user-item.active {
   background-color: #131313;
 }
 
@@ -402,7 +472,9 @@ const scrollToBottom = () => {
 }
 
 .message {
-  max-width: calc(100% - 50px); /* Điều chỉnh kích thước tin nhắn để phù hợp với không gian */
+  max-width: calc(
+    100% - 50px
+  ); /* Điều chỉnh kích thước tin nhắn để phù hợp với không gian */
   padding: 10px;
   border-radius: 10px;
   position: relative;
@@ -431,7 +503,7 @@ const scrollToBottom = () => {
 }
 
 .message:before {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 4px;
   width: 0;
