@@ -15,6 +15,7 @@ export const useChatStore = defineStore('chat', {
     error: null,
     selected: null,
     subscription: null,
+    haveNewMessage: false,
   }),
   actions: {
     async addToChat(user_id){
@@ -196,6 +197,10 @@ export const useChatStore = defineStore('chat', {
           },
           payload => {
             console.log('New message:', payload.new);
+            this.haveNewMessage = true
+            setTimeout(() => {
+              this.haveNewMessage = false
+            }, 5000);
             console.log(import.meta.env.VITE_ADMIN_USERID);
             if(payload.new.sender_id==import.meta.env.VITE_ADMIN_USERID){
               console.log("YOU HAVE BEEN BANNED!");

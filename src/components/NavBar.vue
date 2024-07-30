@@ -60,6 +60,7 @@
       
       <a href="/chat">
         <span class="mdi mdi-message-text-outline hover-animation"></span>
+        <span class="absolute top-5 newmessnoti text-blue-400" v-if="useChatStore().haveNewMessage">●</span>
       </a>
       <router-link to="/favorite">
         <span class="mdi mdi-heart-outline hover-animation"></span>
@@ -138,6 +139,7 @@ import { useUserStore } from "../stores/user";
 import { onMounted } from "vue";
 import { useCartStore } from "../stores/cart";
 import { useWatchStore } from "../stores/watch";
+import { useChatStore } from "../stores/chat";
 
 const authStore = useAuthStore();
 const cartStore = useCartStore();
@@ -477,5 +479,22 @@ body {
 
 .upload-button{
   height: 35px;
+}
+
+.newmessnoti {
+  animation: blink 1s infinite; /* Áp dụng animation chớp chớp */
+}
+
+/* Định nghĩa keyframes cho hiệu ứng chớp chớp */
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 </style>

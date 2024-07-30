@@ -12,7 +12,7 @@
       </div>
 
     <!-- Dropdown Menu -->
-    <div v-show="showMenu" class="dropdown-menu py-2 top-12 absolute z-10 w-48">
+    <div v-show="showMenu" class="dropdown-menu top-12 absolute z-10 w-48">
       <!-- Men -->
       <div class="menu-item relative" @mouseenter="showSubmenu('menWatch')" @mouseleave="hideSubmenu('menWatch')">
         <a href="/discover/Đồng hồ nam?page=0&gender=male" class="flex items-center justify-between hover-underline-animation w-full px-4 py-2">
