@@ -13,6 +13,33 @@
           <img :src="userInfo?.image" alt="Ảnh đại diện" class="avatar" />
           <h2>{{ userInfo?.username }}</h2>
         </div>
+        <div>
+          <div class="ui-input-container col-span-3 mb-5">
+        <input
+          required
+          placeholder="Tìm kiếm tên người dùng"
+          class="ui-input"
+          type="text"
+          v-model="qMembers"
+          @keyup="searchMembers"
+        />
+        <div class="ui-input-underline"></div>
+        <div class="ui-input-highlight"></div>
+        <div class="ui-input-icon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-width="2"
+              stroke="currentColor"
+              d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
+            ></path>
+          </svg>
+        </div>
+      </div>
+        </div>
         <div class="user-list">
         <div v-for="chatUser in chatUsers" :key="chatUser.user_id" 
             @click="selectUser(chatUser)"
@@ -46,15 +73,15 @@
           </div>
         </div>
         <div class="input-container flex w-full" v-if="useUserStore().role != 'ROLE_ADMIN'">
-          <div class="ui-input-container flex-grow">
+          <div class="u-input-container flex-grow">
             <input
               required=""
               v-model="newMessage" @keyup.enter="sendMessage" placeholder="Nhập tin nhắn..."
-              class="ui-input"
+              class="u-input"
               type="text"
             />
-            <div class="ui-input-underline"></div>
-            <div class="ui-input-highlight"></div>
+            <div class="u-input-underline"></div>
+            <div class="u-input-highlight"></div>
           </div>
           <button class="th-p-btn gap-1 rounded-lg" @click="sendMessage">Gửi 
             <span class="mdi mdi-send"></span></button>
@@ -450,13 +477,13 @@ const scrollToBottom = () => {
   border-top: 1px solid #202020;
 }
 
-.ui-input-container {
+.u-input-container {
   position: relative;
   flex-grow: 1;
   margin-right: 10px;
 }
 
-.ui-input {
+.u-input {
   width: 100%;
   padding: 10px;
   font-size: 1em;
@@ -467,8 +494,89 @@ const scrollToBottom = () => {
   transition: border-color 0.3s;
 }
 
-.ui-input:focus {
+.u-input:focus {
   border-color: var(--primary);
+}
+
+.u-input-underline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background-color: var(--primary);
+  transform: scaleX(0);
+  transition: transform 0.3s;
+}
+
+.u-input:focus + .u-input-underline {
+  transform: scaleX(1);
+}
+
+.u-input-highlight {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  background-color: var(--back);
+  transition: width 0.3s;
+}
+
+.u-input:focus ~ .u-input-highlight {
+  width: 100%;
+}
+
+.u-input-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ccc;
+  transition: color 0.3s;
+}
+
+.u-input:focus ~ .u-input-icon {
+  color: #6c63ff;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.no-chat-selected {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 1.2em;
+  color: #999;
+}
+
+.ui-input-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.ui-input {
+  width: 100%;
+  padding: 10px 10px 10px 40px;
+  font-size: 1em;
+  border: none;
+  border-bottom: 2px solid #ccc;
+  background-color: transparent;
+  transition: border-color 0.3s, background-color 0.3s, padding 0.3s;
+}
+
+.ui-input:focus {
+  border-color: var(--secondary);
+
+  padding: 10px 10px 10px 40px; /* Ensuring the padding remains the same on focus */
 }
 
 .ui-input-underline {
@@ -505,27 +613,16 @@ const scrollToBottom = () => {
   left: 10px;
   top: 50%;
   transform: translateY(-50%);
-  color: #ccc;
+  color: #999;
   transition: color 0.3s;
 }
 
 .ui-input:focus ~ .ui-input-icon {
-  color: #6c63ff;
+  color: #e6c591;
 }
 
-.avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.no-chat-selected {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  font-size: 1.2em;
-  color: #999;
+.ui-input-icon svg {
+  width: 20px;
+  height: 20px;
 }
 </style>
