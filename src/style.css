@@ -11,6 +11,20 @@
   --secondary: #E6C591; 
   --wait: #9b9b9b;
   --back: #e6c5911b;
+  --slider-bg: #E6C591; /* Secondary color */
+  --slider-connect-bg: #FFBD59; /* Primary color */
+  --slider-handle-bg: #FFBD59; /* Primary color */
+  --slider-tooltip-bg: #ffbd592a; /* Primary color */
+  --slider-tooltip-color: #FFBD59; /* White text color */
+  --slider-tooltip-arrow-size: 5px;
+  --slider-tooltip-distance: 3px;
+  --slider-handle-border: 0;
+  --slider-handle-shadow: 0.5px 0.5px 2px 1px rgba(0,0,0,0.32);
+  --slider-handle-shadow-active: 0.5px 0.5px 2px 1px rgba(0,0,0,0.42);
+  --slider-handle-ring-width: 3px;
+  --slider-handle-ring-color: #FFBD5930; /* Semi-transparent primary color */
+  --slider-tooltip-bg-disabled: #9CA3AF;
+  --slider-tooltip-color-disabled: #fff;
   height: 100%;
   margin: 0;
   padding: 0;
