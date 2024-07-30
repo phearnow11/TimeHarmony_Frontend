@@ -1,10 +1,37 @@
 <template>
-  <div class="container mx-auto p-4">
+  <div class=" mx-auto p-4">
     <div class="flex justify-between items-center mb-4">
       <h1 class="text-2xl font-bold text-primary">Kiểm duyệt và thẩm định đồng hồ</h1>
     </div>
+    <div>
+      <div class="ui-input-container col-span-3 mb-5">
+            <input
+              required
+              placeholder="Tìm kiếm id sản phẩm"
+              class="ui-input"
+              type="text"
+              v-model="id"
+              @keyup="search"
+            />
+            <div class="ui-input-underline"></div>
+            <div class="ui-input-highlight"></div>
+            <div class="ui-input-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-width="2"
+                  stroke="currentColor"
+                  d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
+                ></path>
+              </svg>
+            </div>
+          </div>
+    </div>
     <div :class="{ 'flex align-middle justify-center space-x-4': viewMode === 'kanban' }">
-      <div v-for="(column) in columns" :key="column.name"
+      <div v-for="(column) in filteredColumns" :key="column.name"
         :class="[
           viewMode === 'kanban' ? 'w-1/3' : 'mb-4',
           'frame flex flex-col'
@@ -74,7 +101,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import draggable from 'vuedraggable';
 import { useStaffStore } from '../stores/staff';
 import { useAuthStore } from '../stores/auth';
@@ -85,6 +112,8 @@ if(useUserStore().role!='ROLE_STAFF'){
   console.log('Not STAFF');
   router.push('/')
 }
+
+const id = ref('');
 
 const authStore = useAuthStore();
 const viewMode = ref('kanban');
@@ -114,6 +143,54 @@ const reportContent = ref('');
 const draggedItem = ref(null);
 const watchSellerMap = ref(new Map());
 
+
+const allWatches = computed(() => [
+  ...columns.value[0].tasks,
+  ...columns.value[1].tasks,
+  ...columns.value[2].tasks
+]);
+
+const search = () => {
+  const searchTerm = id.value.toLowerCase().trim();
+  columns.value.forEach(column => {
+    if (searchTerm === '') {
+      // If search is empty, restore original tasks
+      if (column.name === 'Chưa duyệt') column.tasks = staffStore.unapprovedWatches.map(mapWatchToTask);
+      if (column.name === 'Đã được duyệt') column.tasks = staffStore.approvedWatches.map(mapWatchToTask);
+      if (column.name === 'Không chấp thuận') column.tasks = staffStore.deleteWatches.map(mapWatchToTask);
+    } else {
+      // Filter tasks based on search term
+      column.tasks = column.tasks.filter(task => 
+        task.id.toString().toLowerCase().includes(searchTerm) ||
+        task.title.toLowerCase().includes(searchTerm)
+      );
+    }
+  });
+};
+
+// Helper function to map watch data to task object
+const mapWatchToTask = (watch) => ({
+  id: watch.watch_id,
+  title: watch.watch_name,
+  price: watch.price,
+  dueDate: new Date(watch.watch_create_date).toLocaleDateString(),
+});
+
+watch(id, () => {
+  search();
+});
+
+const filteredColumns = computed(() => {
+  if (!id.value.trim()) return columns.value;
+  
+  return columns.value.map(column => ({
+    ...column,
+    tasks: column.tasks.filter(task => 
+      task.id.toString().toLowerCase().includes(id.value.toLowerCase())
+    )
+  }));
+});
+
 onMounted(async () => {
   const unapprovedWatches = await staffStore.getAllWatch(0);
   unapprovedWatches.forEach(watch => {
@@ -129,6 +206,9 @@ onMounted(async () => {
   await staffStore.getAllWatch(1);
   await staffStore.getAllWatch(2);
   const pendingWatches = await staffStore.getAllWatch(3);
+
+  refreshColumns();
+  search(); // Apply initial search (which will show all items if search is empty)
 
 console.log('Pending Watches:', JSON.stringify(pendingWatches, null, 2));
 
@@ -151,10 +231,6 @@ console.log('Pending Watches:', JSON.stringify(pendingWatches, null, 2));
     dueDate: new Date(watch.watch_create_date).toLocaleDateString(),
   }));
 });
-
-const toggleViewMode = () => {
-  viewMode.value = viewMode.value === 'kanban' ? 'list' : 'kanban';
-};
 
 const onDragEnd = (event) => {
   if (event.to) {
@@ -222,24 +298,10 @@ const handleCancel = (type) => {
 };
 
 const refreshColumns = () => {
-  columns.value[0].tasks = staffStore.unapprovedWatches.map(watch => ({
-    id: watch.watch_id,
-    title: watch.watch_name,
-    price: watch.price,
-    dueDate: new Date(watch.watch_create_date).toLocaleDateString(),
-  }));
-  columns.value[1].tasks = staffStore.approvedWatches.map(watch => ({
-    id: watch.watch_id,
-    title: watch.watch_name,
-    price: watch.price,
-    dueDate: new Date(watch.watch_create_date).toLocaleDateString(),
-  }));
-  columns.value[2].tasks = staffStore.deleteWatches.map(watch => ({
-    id: watch.watch_id,
-    title: watch.watch_name,
-    price: watch.price,
-    dueDate: new Date(watch.watch_create_date).toLocaleDateString(),
-  }));
+  columns.value[0].tasks = staffStore.unapprovedWatches.map(mapWatchToTask);
+  columns.value[1].tasks = staffStore.approvedWatches.map(mapWatchToTask);
+  columns.value[2].tasks = staffStore.deleteWatches.map(mapWatchToTask);
+  search(); // Apply search after refreshing columns
 };
 
 const formatPriceVND = (price) => {
@@ -268,5 +330,76 @@ const formatPriceVND = (price) => {
 .box:hover{
   box-shadow: 0px 0px 20px 1px #ffbb763f;
   border: 1px solid rgba(255, 255, 255, 0.454);
+}
+
+
+.ui-input-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.ui-input {
+  width: 100%;
+  padding: 10px 10px 10px 40px;
+  font-size: 1em;
+  border: none;
+  border-bottom: 2px solid #ccc;
+  background-color: transparent;
+  transition: border-color 0.3s, background-color 0.3s, padding 0.3s;
+}
+
+.ui-input:focus {
+  border-color: var(--secondary);
+
+  padding: 10px 10px 10px 40px; /* Ensuring the padding remains the same on focus */
+}
+
+.ui-input-underline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background-color: var(--primary);
+  transform: scaleX(0);
+  transition: transform 0.3s;
+}
+
+.ui-input:focus + .ui-input-underline {
+  transform: scaleX(1);
+}
+
+.ui-input-highlight {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  background-color: var(--back);
+  transition: width 0.3s;
+}
+
+.ui-input:focus ~ .ui-input-highlight {
+  width: 100%;
+}
+
+.ui-input-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+  transition: color 0.3s;
+}
+
+.ui-input:focus ~ .ui-input-icon {
+  color: #e6c591;
+}
+
+.ui-input-icon svg {
+  width: 20px;
+  height: 20px;
 }
 </style>
