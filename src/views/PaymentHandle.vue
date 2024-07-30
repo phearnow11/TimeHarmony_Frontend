@@ -41,7 +41,8 @@ const payDate = ref('');
 const transactionNo = ref('');
 const responseCode = ref('');
 const vnpCardType = ref('');
-const loadUser = userStore.loadUser(auth.user_id);
+
+const loadUser = userStore.loadUser(authStore.user_id);
 
 const countdown = ref(15);
 let countdownTimer;
