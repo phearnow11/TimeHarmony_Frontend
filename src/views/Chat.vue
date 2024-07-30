@@ -10,21 +10,21 @@
           <router-link to="/"><span class="hover-underline-animation">Quay về trang chủ</span></router-link>
         </div>
         <div class="user-info flex gap-2 items-center">
-          <img :src="userInfo.image" alt="Ảnh đại diện" class="avatar" />
-          <h2>{{ userInfo.username }}</h2>
+          <img :src="userInfo?.image" alt="Ảnh đại diện" class="avatar" />
+          <h2>{{ userInfo?.username }}</h2>
         </div>
         <div class="user-list">
-          <div v-for="chatUser in chatUsers" :key="chatUser.user_id" 
-               @click="selectUser(chatUser)"
-               class="user-item"
-               :class="{ 'active': selectedUser && selectedUser.user_id === chatUser.user_id }">
-            <img :src="chatUser.image" alt="Ảnh đại diện" class="avatar" />
-            <div class="user-details">
-              <span class="username">{{ chatUser.username }}</span>
-              <span class="last-message">Xem trước tin nhắn cuối cùng...</span>
-            </div>
+        <div v-for="chatUser in chatUsers" :key="chatUser.user_id" 
+            @click="selectUser(chatUser)"
+            class="user-item"
+            :class="{ 'active': selectedUser && selectedUser?.user_id === chatUser?.user_id }">
+          <img :src="chatUser?.image" alt="Ảnh đại diện" class="avatar" />
+          <div class="user-details">
+            <span class="username">{{ chatUser?.username }}</span>
+            <span class="last-message">{{ getLatestMessagePreview(chatUser) }}</span>
           </div>
         </div>
+      </div>
       </div>
       <div class="chat-window flex flex-end" v-if="selectedUser">
         <div class="chat-header">
@@ -77,6 +77,10 @@ import { useAuthStore } from '../stores/auth';
 import { useUserStore } from '../stores/user'; // Import the user store
 import { storeToRefs } from 'pinia';
 import axios from 'axios';
+import { createClient } from '@supabase/supabase-js';
+const supabaseUrl = import.meta.env.VITE_SUPABASEURL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASEANONKEY;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const chatStore = useChatStore();
 const { user, messages, error } = storeToRefs(chatStore);
@@ -94,18 +98,64 @@ const userMap = ref(new Map());
 
 var api = import.meta.env.VITE_API_PORT;
 
+const getLatestMessagePreview = (chatUser) => {
+  if (chatUser.latestMessage) {
+    return chatUser.latestMessage.text.length > 30 
+      ? chatUser.latestMessage.text.substring(0, 30) + '...' 
+      : chatUser.latestMessage.text;
+  }
+  return 'No messages yet';
+};
+
 const fetchChatUsers = async () => {
   try {
     const response = await axios.get(`${api}/chat/getall?user_id=${user_id.value}`);
     const users = response.data.filter(u => u !== user.value?.id);
-    chatUsers.value = await Promise.all(users.map(async u_id => {
+    
+    const usersWithLatestMessage = await Promise.all(users.map(async u_id => {
       const userInfo = await userStore.getUserInfo(u_id);
-      userMap.value.set(u_id, { username: userInfo.username, image: userInfo.image });
-      return { user_id: u_id, username: userInfo.username, image: userInfo.image };
+      const latestMessage = await fetchLatestMessage(u_id);
+      return { 
+        user_id: u_id, 
+        username: userInfo.username, 
+        image: userInfo.image,
+        latestMessage: latestMessage
+      };
     }));
+
+    // Sort users by latest message timestamp
+    chatUsers.value = usersWithLatestMessage.sort((a, b) => {
+      const timeA = a.latestMessage ? new Date(a.latestMessage.created_at).getTime() : 0;
+      const timeB = b.latestMessage ? new Date(b.latestMessage.created_at).getTime() : 0;
+      return timeB - timeA;
+    });
+
+    // Update userMap
+    chatUsers.value.forEach(user => {
+      userMap.value.set(user.user_id, { username: user.username, image: user.image });
+    });
   } catch (error) {
     console.error('Error fetching chat users:', error);
-    chatUsers.value = []; // Handle error
+    chatUsers.value = [];
+  }
+};
+
+// Helper function to fetch the latest message for a user
+const fetchLatestMessage = async (userId) => {
+  try {
+    const { data, error } = await supabase
+      .from('messages')
+      .select('*')
+      .or(`and(sender_id.eq.${user.value.id},receiver_id.eq.${userId}),and(sender_id.eq.${userId},receiver_id.eq.${user.value.id})`)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Error fetching latest message:', error);
+    return null;
   }
 };
 
@@ -135,6 +185,7 @@ const sendMessage = async () => {
     if (selectedUser.value) {
       await axios.post(`${api}/chat/addtochat?user_id=${selectedUser.value.user_id}&user_id2=${user.value.id}`);
     }
+    scrollToBottom()
   } catch (sendError) {
     console.error('Error sending message:', sendError);
   }
