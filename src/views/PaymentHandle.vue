@@ -125,7 +125,7 @@ onMounted(async () => {
 
       if (orderDetails) {
         successMessage.value = 'Order created successfully. Redirecting to confirmation page...';
-        router.push(`/orderconfirmation/${result.order_id}`);
+        router.push(`/orderconfirmation/${result}`);
       } else {
         throw new Error('Invalid order details received');
       }
