@@ -483,18 +483,13 @@ const createOrder = async () => {
       if(checkWatch){
         const result = await userStore.addOrder(auth.user_id, orderData);
         console.log("Order created successfully: ", result);
-
-        const mostRecentOrder = await userStore.getNewestOrder(auth.user_id);
-        console.log("Most recent order:", mostRecentOrder);
-  
-        if (mostRecentOrder) {
-          console.log("Fetching order details for order ID:", mostRecentOrder);
-          const orderDetails = await userStore.getOrderDetail(mostRecentOrder);
+        if (result) {
+          console.log("Fetching order details for order ID:", result);
+          const orderDetails = await userStore.getOrderDetail(result);
           console.log("Order details:", orderDetails);
   
           if (orderDetails && orderDetails.order_detail) {
-            userStore.setCurrentOrder(orderDetails);
-            router.push(`/orderconfirmation/${mostRecentOrder}`);
+            router.push(`/orderconfirmation/${result}`);
           } else {
             console.error("Invalid order details:", orderDetails);
             alert("Error processing order. Please try again.");
