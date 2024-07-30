@@ -103,7 +103,7 @@ onMounted(async () => {
       const result = await userStore.addOrder(authStore.user_id, orderData);
       console.log('Order creation result:', result);
 
-      if (result !== null) {
+      if (result !== "java.lang.Exception: An Error occur") {
       console.log('Order ID:', result);
       const paymentDataToSave = {
         transaction_no: transactionNo.value,
