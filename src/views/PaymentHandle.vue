@@ -89,6 +89,7 @@ onMounted(async () => {
     const wids = JSON.parse(localStorage.getItem('pendingWids') || '[]');
     console.log('Watch id: ' + wids);
 
+
     const widsString = `[${wids.join(',')}]`;
 
     if (isSuccess) {
@@ -102,7 +103,7 @@ onMounted(async () => {
       const result = await userStore.addOrder(authStore.user_id, orderData);
       console.log('Order creation result:', result);
 
-      if (result) {
+      if (result !== null) {
       console.log('Order ID:', result);
       const paymentDataToSave = {
         transaction_no: transactionNo.value,
