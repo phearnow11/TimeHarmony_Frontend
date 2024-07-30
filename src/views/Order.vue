@@ -404,6 +404,7 @@ import { onMounted, ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import OrderItem from "../components/OrderItem.vue";
 import { createVnPayPayment, paymentCOD } from "../stores/payment";
+import { useMailStore } from "../stores/mail";
 
 const cartStore = useCartStore();
 const userStore = useUserStore();
@@ -418,6 +419,8 @@ const isProcessingPayment = ref(false);
 const shipFee = computed(() => cartStore.getShipFee);
 const totalPrice = computed(() => cartStore.getTotalPrice);
 const totalAll = computed(() => cartStore.getTotalWithShipping);
+const loadUser = userStore.loadUser(auth.user_id);
+
 
 onMounted(async () => {
   selectedItems.value = cartStore.getSelectedItems;
@@ -490,6 +493,10 @@ const createOrder = async () => {
   
           if (orderDetails && orderDetails.order_detail) {
             router.push(`/orderconfirmation/${result}`);
+            useMailStore().send(
+        (await loadUser).email,
+        "THÔNG BÁO ĐƠN HÀNG ĐÃ ĐẶT THÀNH CÔNG - TIME HARMONY.",
+        `Đơn hàng có mã #${result} đã được đặt thành công. Vui lòng chú ý đến cái trạng thái giao hàng để nhận được hàng. Chúc bạn 1 ngày tốt lành`)
           } else {
             console.error("Invalid order details:", orderDetails);
             alert("Error processing order. Please try again.");

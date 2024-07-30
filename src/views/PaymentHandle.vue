@@ -14,7 +14,7 @@
 
     <div v-if="paymentStatus === 'Failed'">
       <p>Returning to homepage in {{ countdown }} seconds...</p>
-      <button @click="returnToHomepage">Return to Homepage</button>
+      <button @click="returnToHomepage" class="hover-underline-animation">Return to Homepage</button>
     </div>
   </div>
 </template>
@@ -26,6 +26,7 @@ import { useUserStore } from '../stores/user';
 import { useAuthStore } from '../stores/auth';
 import { savePaymentDetail } from '../stores/payment';
 import { useCartStore } from '../stores/cart';
+import { useMailStore } from '../stores/mail';
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -40,8 +41,10 @@ const payDate = ref('');
 const transactionNo = ref('');
 const responseCode = ref('');
 const vnpCardType = ref('');
-// const countdown = ref(30);
-// let countdownTimer;
+const loadUser = userStore.loadUser(auth.user_id);
+
+const countdown = ref(15);
+let countdownTimer;
 
 const parseDateTimeString = (dateTimeString) => {
   return new Date(dateTimeString).toLocaleString();
@@ -51,21 +54,21 @@ const returnToHomepage = () => {
   router.push('/');
 };
 
-// const startCountdown = () => {
-//   countdownTimer = setInterval(() => {
-//     countdown.value--;
-//     if (countdown.value <= 0) {
-//       clearInterval(countdownTimer);
-//       returnToHomepage();
-//     }
-//   }, 1000);
-// };
+const startCountdown = () => {
+  countdownTimer = setInterval(() => {
+    countdown.value--;
+    if (countdown.value <= 0) {
+      clearInterval(countdownTimer);
+      returnToHomepage();
+    }
+  }, 1000);
+};
 
-// onUnmounted(() => {
-//   if (countdownTimer) {
-//     clearInterval(countdownTimer);
-//   }
-// });
+onUnmounted(() => {
+  if (countdownTimer) {
+    clearInterval(countdownTimer);
+  }
+});
 
 onMounted(async () => {
   try {
@@ -93,17 +96,17 @@ onMounted(async () => {
     const widsString = `[${wids.join(',')}]`;
 
     if (isSuccess) {
-      successMessage.value = 'Payment successful. Saving payment details...';
-      paymentStatus.value = 'Successful';
-
+      
       successMessage.value = 'Payment details saved. Creating order...';
       const orderData = userStore.getPendingOrder();
       console.log('Attempting to create order with data:', orderData);
-
+      
       const result = await userStore.addOrder(authStore.user_id, orderData);
       console.log('Order creation result:', result);
-
+      
       if (result !== "java.lang.Exception: An Error occur") {
+      successMessage.value = 'Payment successful. Saving payment details...';
+      paymentStatus.value = 'Successful';
       console.log('Order ID:', result);
       const paymentDataToSave = {
         transaction_no: transactionNo.value,
@@ -111,35 +114,45 @@ onMounted(async () => {
         bank_code: bankCode.value,
         payment_method: vnpCardType.value,
         order_id: result,
+        member_id: authStore.user_id,
         isSuccess: isSuccess,
         wids: widsString
       };
       console.log('Payment ok: ' + JSON.stringify(paymentDataToSave));
       const savedPayment = await savePaymentDetail(paymentDataToSave);
       console.log('Saved payment details:', savedPayment);
-        
+
       const orderDetails = await userStore.getOrderDetail(result);
       console.log('Order details:', orderDetails);
       if (orderDetails) {
         successMessage.value = 'Order created successfully. Redirecting to confirmation page...';
         router.push(`/orderconfirmation/${result}`);
+        useMailStore().send(
+        (await loadUser).email,
+        "THÔNG BÁO ĐƠN HÀNG ĐÃ ĐẶT THÀNH CÔNG - TIME HARMONY.",
+        `Đơn hàng có mã #${result} đã được đặt thành công. Vui lòng chú ý đến cái trạng thái giao hàng để nhận được hàng. Chúc bạn 1 ngày tốt lành`)
       } else {
         throw new Error('Invalid order details received');
       }
 
       } else {
+        successMessage.value = 'Có lỗi khi tại đơn hàng, hãy cung cấp số giao dịch ở trên với Time Harmony để được liên hệ giải quyết';
+        paymentStatus.value = 'Failed';
         const paymentDataNullOrder = {
           transaction_no: transactionNo.value,
           payment_amount: parseFloat(amountString.value),
           bank_code: bankCode.value,
           payment_method: vnpCardType.value,
           order_id: null,
+          member_id: authStore.user_id,
           isSuccess: isSuccess,
           wids: widsString
         };
         console.log('Payment order id null: ' + JSON.stringify(paymentDataNullOrder));
         const savedPayment = await savePaymentDetail(paymentDataNullOrder);
         console.log('Saved payment details:', savedPayment);
+
+
         return;
       }
     } else {
@@ -158,7 +171,7 @@ onMounted(async () => {
       console.log('Failed Payment: ' + JSON.stringify(paymentFailDataToSave));
       const savedPayment = await savePaymentDetail(paymentFailDataToSave);
       console.log('Payment details saved:', savedPayment);
-      
+      startCountdown();
       localStorage.removeItem(wids)
     }
   } catch (error) {
