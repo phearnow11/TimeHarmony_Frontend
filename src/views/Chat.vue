@@ -223,10 +223,21 @@ const formatTime = (timestamp) => {
 onMounted(async () => {
   try {
     await chatStore.autoLogin();
-    const userInfoResponse = await userStore.getUserInfo(user_id.value); // Fetch current user info
+    const userInfoResponse = await userStore.getUserInfo(user_id.value);
     userInfo.value = userInfoResponse;
     userMap.value.set(user_id.value, { username: userInfoResponse.username, image: userInfoResponse.image });
     await fetchChatUsers();
+
+    // Set up real-time listener for new messages
+    supabase
+      .channel('public:messages')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+        console.log('New message received:', payload);
+        // Fetch chat users again to update the sidebar
+        fetchChatUsers();
+      })
+      .subscribe();
+
   } catch (loginError) {
     console.error('Error during auto-login:', loginError);
   }
