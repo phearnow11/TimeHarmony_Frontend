@@ -9,6 +9,7 @@ export const useAdminStore = defineStore("admin", {
     members: [],
     products: [],
     orders: [],
+    nullOrders: [],
     isLoading: false,
     error: null,
   }),
@@ -75,6 +76,28 @@ export const useAdminStore = defineStore("admin", {
       } catch (error) {
         console.error("Error fetching orders:", error);
         this.error = error.message || "Failed to fetch orders";
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    async getOrdersNull() {
+      const token = useAuthStore().token;
+      if (!token) return;
+      
+      this.isLoading = true;
+      this.error = null;
+
+      try {
+        const response = await axios.get(`${api}/admin/get/refund-payment`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        this.nullOrders = response.data;
+      } catch (error) {
+        console.error("Error fetching null orders:", error);
+        this.error = error.message || "Failed to fetch null orders";
       } finally {
         this.isLoading = false;
       }
@@ -173,6 +196,17 @@ export const useAdminStore = defineStore("admin", {
           order.order_id.toLowerCase().includes(lowerQuery) ||
           order.receive_name.toLowerCase().includes(lowerQuery) ||
           new Date(order.create_time).toLocaleDateString().toLowerCase().includes(lowerQuery)
+      );
+    },
+    filteredNullOrders: (state) => (query) => {
+      const lowerQuery = query.toLowerCase();
+      return state.nullOrders.filter(
+        (transaction) =>
+          transaction.transaction_no.toLowerCase().includes(lowerQuery) ||
+          transaction.member_id.toLowerCase().includes(lowerQuery) ||
+          transaction.bank_code.toLowerCase().includes(lowerQuery) ||
+          transaction.payment_method.toLowerCase().includes(lowerQuery) ||
+          new Date(transaction.create_at).toLocaleDateString().toLowerCase().includes(lowerQuery)
       );
     },
   }

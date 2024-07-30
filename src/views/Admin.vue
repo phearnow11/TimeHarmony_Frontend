@@ -231,6 +231,43 @@
         </table>
       </div>
     </section>
+    
+    <section class="mb-6">
+    <h2 class="text-2xl font-semibold mb-2">Giao dịch cần hoàn tiền</h2>
+    <div class="table-container">
+      <table class="table">
+        <thead class="table-header">
+            <tr class="text-primary">
+              <th class="p-2 border-b">Mã giao dịch</th>
+              <th class="p-2 border-b">Số tiền</th>
+              <th class="p-2 border-b">ID Thành viên</th>
+              <th class="p-2 border-b">Tên Thành viên</th>
+              <th class="p-2 border-b">Phương thức thanh toán</th>
+              <th class="p-2 border-b">Ngân hàng</th>
+              <th class="p-2 border-b">Thời gian tạo</th>
+              <th class="p-2 border-b">Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="transaction in filteredNullOrders" :key="transaction.transaction_no">
+              <td class="p-2 border-b">{{ transaction.transaction_no }}</td>
+              <td class="p-2 border-b">{{ currency(transaction.payment_amount) }}</td>
+              <td class="p-2 border-b">{{ transaction.member_id }}</td>
+              <td class="p-2 border-b">{{ getMemberName(transaction.member_id) }}</td>
+              <td class="p-2 border-b">{{ transaction.payment_method }}</td>
+              <td class="p-2 border-b">{{ transaction.bank_code }}</td>
+              <td class="p-2 border-b">{{ formatDate(transaction.create_at) }}</td>
+              <td>
+                <button class="hover-underline-animation" @click="sendEmail(transaction.transaction_no, transaction.member_id)">
+                  Phản hồi
+                </button>
+              </td>
+            </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
 
     <section class="mb-6">
       <h2 class="text-2xl font-semibold mb-2">Tổng Quan Lợi Nhuận</h2>
@@ -311,11 +348,12 @@ const selectedMember = ref(null);
 const qMembers = ref('');
 const qWatches = ref('');
 const qOrders = ref('');
-
+const nOrders = ref('');
 const overviewChart = ref(null);
 const revenueChart = ref(null);
 const costChart = ref(null);
 const profitChart = ref(null);
+const selectedTransaction = ref(null);
 
 let overviewChartInstance = null;
 let revenueChartInstance = null;
@@ -339,6 +377,7 @@ onMounted(async () => {
     await adminStore.getMembers();
     await adminStore.getWatches();
     await adminStore.getOrders();
+    await adminStore.getOrdersNull();
     createCharts();
   } catch (err) {
     console.error("Error fetching data:", err);
@@ -355,6 +394,15 @@ if (
   console.log("Not ADMIN");
   router.push("/");
 }
+
+const getMemberName = (memberId) => {
+  const member = adminStore.members.find(m => m.member_id === memberId);
+  return member ? `${member.first_name} ${member.last_name}` : 'Unknown';
+};
+
+const getMember = (memberId) => {
+  return adminStore.members.find(m => m.member_id === memberId);
+};
 
 // Define computed properties with error handling
 const filteredMembers = computed(() => {
@@ -380,6 +428,16 @@ const filteredWatches = computed(() => {
 const filteredOrders = computed(() => {
   try {
     return adminStore.filteredOrders(qOrders.value);
+  } catch (err) {
+    console.error("Error in filteredOrders:", err);
+    error.value = "Error filtering orders. Please try again.";
+    return [];
+  }
+});
+
+const filteredNullOrders = computed(() => {
+  try {
+    return adminStore.filteredNullOrders(nOrders.value);
   } catch (err) {
     console.error("Error in filteredOrders:", err);
     error.value = "Error filtering orders. Please try again.";
@@ -555,6 +613,33 @@ const unbanUser = async (member) => {
   }
 };
 
+const sendEmail = async (transactionNo, member_id) => {
+  if (transactionNo && member_id) {
+    const transaction = filteredNullOrders.value.find(t => t.transaction_no === transactionNo);
+    if (!transaction) {
+        throw new Error("Transaction not found");
+      }
+    const u = userStore.loadUser(member_id)
+      try {
+        useMailStore().send(
+          (await u).email,
+          "THÔNG BÁO HOÀN TIỀN",
+          `Time Harmony xin thông báo: Đơn đặt hàng của người dùng ${(await u).first_name} ${(await u).last_name} được tạo vào thời điểm ${formatDate(transaction.create_at)} với mã giao dịch ${transactionNo} có số tiền: ${currency(transaction.payment_amount)} đã xảy ra lỗi ngoài ý muốn. Chúng tôi xin lỗi về sự cố xảy ra trong quá trình xác nhận đơn hàng. Đơn hàng sẽ được hoàn tiền ngay khi có thể. Xin cảm ơn bạn đã thông cảm và kiên nhẫn đợi.`
+          );
+
+
+        // Thông báo gửi email thành công
+        alert("Email đã được gửi thành công!");
+        // Có thể thêm logic để cập nhật trạng thái giao dịch nếu cần
+      } catch (error) {
+        console.error("Error sending email:", error);
+        alert("Có lỗi xảy ra khi gửi email. Vui lòng thử lại.");
+      }
+    } else {
+      alert("Không tìm thấy thông tin thành viên.");
+    }
+  
+};
 // Compute financial metrics with error handling
 const totalCost = computed(() => {
   try {
@@ -723,6 +808,10 @@ watch([totalRevenue, totalCost, totalProfit], () => {
 // Format currency
 const currency = (value) => `${value.toLocaleString("vi-VN")} ₫`;
 
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return date.toLocaleString('vi-VN')
+};
 
 </script>
 
