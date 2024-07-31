@@ -64,6 +64,10 @@ const props = defineProps({
     type: String,
     required: true
   },
+  seller_id: {
+    type: String,
+    required: true
+  }
 });
 
 const confirmDeleteWatch = () => {
@@ -76,7 +80,7 @@ const handleCancel = () => {
 
 const handleDelete = async () => {
   try {
-    await useWatchStore().deleteWatch(props.watch_id);
+    await useWatchStore().deleteWatch(props.seller_id,props.watch_id);
     showDeleteModal.value = false;
   } catch (error) {
     console.error("Error deleting watch:", error);

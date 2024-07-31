@@ -59,6 +59,7 @@
           :price="i.price"
           :state="i.state"
           :watch_id="i.watch_id"
+          :seller_id="useUserStore().user_id"
         />
       </div>
       <div
