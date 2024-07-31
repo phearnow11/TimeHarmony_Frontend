@@ -119,7 +119,7 @@
   const detailedWatches = ref([]);
   const order = ref([])
   const paymentMethod = localStorage.getItem(`pay_method`)
-  const transactionNo = localStorage.getItem(`trans_no`)
+  const transactionNo = ref(null);
   userStore.payment_method = null;
   userStore.transaction_no = null;
   const auth = useAuthStore();
@@ -127,10 +127,13 @@
   onMounted(async () => {
     const orderId = route.params.order_id;
     order.value = await useUserStore().getAllOrders(auth.user_id)
-    
+
     if (orderId) {
       try {
         orderDetails.value = await userStore.getOrderDetail(orderId);
+
+        transactionNo.value = orderDetails.value.order_detail.transaction_no || localStorage.getItem('trans_no') || '123456';
+
         await fetchWatchDetails(orderDetails.value.watch);
         const orderState = await userStore.getOrderState(orderId);
         state.value = mapOrderState(orderState);

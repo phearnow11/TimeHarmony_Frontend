@@ -106,6 +106,9 @@ onMounted(async () => {
       console.log('Order creation result:', result);
       
       if (result !== "java.lang.Exception: An Error occur") {
+      const vnpayTransactionNo = paymentData.vnp_TransactionNo;
+      localStorage.setItem('trans_no', vnpayTransactionNo);
+      
       successMessage.value = 'Payment successful. Saving payment details...';
       paymentStatus.value = 'Successful';
       console.log('Order ID:', result);
@@ -137,7 +140,7 @@ onMounted(async () => {
       }
 
       } else {
-        successMessage.value = 'Có lỗi khi tại đơn hàng, hãy cung cấp số giao dịch ở trên với Time Harmony để được liên hệ giải quyết';
+        successMessage.value = 'Có lỗi khi tạo đơn hàng, hãy cung cấp số giao dịch ở trên với Time Harmony để được liên hệ giải quyết';
         paymentStatus.value = 'Failed';
         const paymentDataNullOrder = {
           transaction_no: transactionNo.value,

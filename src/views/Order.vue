@@ -420,6 +420,7 @@ const shipFee = computed(() => cartStore.getShipFee);
 const totalPrice = computed(() => cartStore.getTotalPrice);
 const totalAll = computed(() => cartStore.getTotalWithShipping);
 const loadUser = userStore.loadUser(auth.user_id);
+const transactionNo = ref(null);
 
 
 onMounted(async () => {
@@ -444,11 +445,12 @@ const createOrder = async () => {
     notice: note.value,
     total_price: totalAll.value,
     payment_method: selectedOption.value,
-    transaction_no: "123456", // Replace with actual logic
+    transaction_no: selectedOption.value === "card" 
+      ? localStorage.getItem('trans_no') 
+      : "123456",
   };
 
-  localStorage.setItem("pay_method", orderData.payment_method);
-  localStorage.setItem("trans_no", orderData.transaction_no);
+  
   const wids = Object.values(cartStore.selected_wids);
 
   try {
@@ -518,6 +520,7 @@ const createOrder = async () => {
 const handleVNPayReturn = async () => {
   const urlParams = new URLSearchParams(window.location.search);
   const vnpResponseCode = urlParams.get("vnp_ResponseCode");
+  const vnpayTransactionNo = urlParams.get("vnp_TransactionNo");
 
   if (vnpResponseCode === "00") {
     try {
@@ -527,13 +530,13 @@ const handleVNPayReturn = async () => {
         notice: note.value,
         total_price: totalPrice.value,
         payment_method: "card",
+        transaction_no: vnpayTransactionNo,
       });
-      const mostRecentOrder = await userStore.getOrder(auth.user_id);
-      if (mostRecentOrder && mostRecentOrder.order_id) {
-        const orderDetails = await userStore.getOrderDetail(mostRecentOrder.order_id);
+      if (result) {
+        const orderDetails = await userStore.getOrderDetail(result);
         if (orderDetails && orderDetails.order_detail) {
           userStore.setCurrentOrder(orderDetails);
-          router.push(`/orderconfirmation/${mostRecentOrder.order_id}`);
+          router.push(`/orderconfirmation/${result}`);
         } else {
           throw new Error("Invalid order details");
         }
