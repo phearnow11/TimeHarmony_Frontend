@@ -36,7 +36,7 @@
                 <th class="pb-2 pl-2">SĐT người nhận</th>
                 <th class="pb-2">Lời nhắn</th>
                 <th class="pb-2">Giá đơn</th>
-                <th class="pb-2">Thu hộ</th>
+                <th class="pb-2">Phương thức thanh toán</th>
                 <th class="pb-2">Trạng thái</th>
                 <th class="pb-2">Ngày giao đến</th>
                 <th class="pb-2">Hành động</th>

@@ -429,7 +429,7 @@ export const useUserStore = defineStore("user", {
         const response = await axios.put(
           `${api}/member/cancel/order/${order_id}`
         );
-        console.log("Full Cancel Order response:", response.data);
+        console.log(' Order ID:' + order_id  + "Full Cancel Order response:", response.data);
         return response.data; // This will return the entire response object
       } catch (error) {
         console.error("Error fetching order details:", error);

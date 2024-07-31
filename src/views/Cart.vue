@@ -6,7 +6,7 @@
       </div>
     </section>
     
-    <div class="flex justify-center h-0 items-start w-full px-10 pt-5">
+    <div class="flex justify-center h-24 items-start w-full px-10 pt-5">
       <section class="w-8/12 flex items-center bg-zinc-900 p-4 mr-4">
         <div class="flex items-center flex-grow">
           <label
