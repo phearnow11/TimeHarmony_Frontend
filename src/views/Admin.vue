@@ -218,6 +218,8 @@
               <th class="p-2 border-b">Địa Chỉ</th>
               <th class="p-2 border-b">Tên Nhận Hàng</th>
               <th class="p-2 border-b">Số Điện Thoại</th>
+              <th class="p-2 border-b">Ngày giao hàng</th>
+              <th class="p-2 border-b">Trạng thái</th>
               <th class="p-2 border-b">Ghi Chú</th>
               <th class="p-2 border-b">Tổng</th>
             </tr>
@@ -231,6 +233,8 @@
               <td class="p-2 border-b">{{ order.address }}</td>
               <td class="p-2 border-b">{{ order.receive_name }}</td>
               <td class="p-2 border-b">{{ order.phone }}</td>
+              <td class="p-2 border-b">{{ order.shipping_date ?? "Không có thông tin"}}</td>
+              <td class="p-2 border-b">{{ stateOrders[order.state] }}</td>
               <td class="p-2 border-b">{{ order.notice || "Không có thông tin" }}</td>
               <td class="p-2 border-b">{{ currency(order.total_price) }}</td>
             </tr>
@@ -356,6 +360,16 @@ const stateLabels = {
   5: "Đang thanh toán",
   6: "Hoàn tất",
   7: "Đã giao",
+};
+
+const stateOrders = {
+  NEW: "Vừa tạo",
+  PENDING: "Đang chờ",
+  SHIPPING: "Đang giao",
+  SUCCESS: "Giao thành công",
+  FAILED: "Hủy",
+  DELETED: "Xóa",
+  SHIPPED: "Đã giao",
 };
 
 const roleLabels = {
