@@ -1,12 +1,12 @@
 <template>
-  <div v-if="auth.user_id" class="flex justify-center items-center flex-col mb-96">
+  <div v-if="auth.user_id" class="flex justify-center h-full pb-96 items-center flex-col mb-96">
     <section class="w-full pt-5 px-9">
       <div class="flex justify-between">
         <span class="text-2xl font-semibold">Giỏ hàng</span>
       </div>
     </section>
     
-    <div class="flex justify-center h-0 items-start w-full px-10 pt-5 pb-20">
+    <div class="flex justify-center h-0 items-start w-full px-10 pt-5">
       <section class="w-8/12 flex items-center bg-zinc-900 p-4 mr-4">
         <div class="flex items-center flex-grow">
           <label

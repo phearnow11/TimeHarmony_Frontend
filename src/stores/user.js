@@ -584,6 +584,20 @@ export const useUserStore = defineStore("user", {
       }
     },
 
+    async deleteUser(user_id) {
+      try {
+        const response = await axios.delete(
+          `${api}/member/delete/user/${user_id}`
+        );
+        console.log("Sold watches response:", response.data);
+        this.soldWatches = response.data.sold_watches;
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching sold watches count:", error);
+        throw error;
+      }
+    },
+
     updateUserInfo(id, updateData) {
       axios
         .put(
