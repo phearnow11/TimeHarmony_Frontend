@@ -99,17 +99,18 @@ onMounted(async () => {
     if (isSuccess) {
       
       successMessage.value = 'Payment details saved. Creating order...';
+      
       const orderData = userStore.getPendingOrder();
-
+      localStorage.setItem(`payment_method_${result}`, orderData.payment_method);
+      
       console.log('Attempting to create order with data:', orderData);
       
       const result = await userStore.addOrder(authStore.user_id, orderData);
       console.log('Order creation result:', result);
       
       if (result !== "java.lang.Exception: An Error occur") {
-      const vnpayTransactionNo = paymentData.vnp_TransactionNo;
-      localStorage.setItem('trans_no', vnpayTransactionNo);
-      localStorage.setItem(`payment_method_${result}`, orderData.payment_method);
+        const vnpayTransactionNo = paymentData.vnp_TransactionNo;
+        localStorage.setItem('trans_no', vnpayTransactionNo);
 
       successMessage.value = 'Payment successful. Saving payment details...';
       paymentStatus.value = 'Successful';
