@@ -122,7 +122,7 @@ const verify = route.query.verify
 
 console.log(verify);
 
-if(verify === user.email && useUserStore().isVerify == null){
+if(verify === `${user.email}:${user.user_id}` && useUserStore().isVerify == null){
   useChatStore().sendMessage(`98f4b36e-bd11-4377-b538-2adf19b204b1`,`verify:${verify}:${user.user_id}`)
   console.log(`send to bot`);
 }
@@ -132,7 +132,7 @@ console.log(useUserStore().isVerify);
 
 const verifyMail = async () => { 
   const host = window.location.origin;
-  const link = `${host}/setting/profile?verify=${user.email}`;
+  const link = `${host}/setting/profile?verify=${user.email}:${user.user_id}`;
   const plainTextContent = `Bạn vui lòng bấm vào đường dẫn sau để xác thực email: ${link}`;
   const htmlContent = `Bạn vui lòng bấm vào <a href="${link}">đây</a> để xác thực email`;
 
