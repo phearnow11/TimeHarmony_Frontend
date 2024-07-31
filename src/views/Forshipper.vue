@@ -23,7 +23,7 @@
 
       <!-- Pending Watches Section -->
       <div v-if="activeSection === 'pending-watches'" id="pending-watches">
-        <h2 class="text-2xl mb-4 text-secondary">Các đơn hàng chờ xác nhận bởi người bán</h2>
+        <h2 class="text-2xl mb-4 text-secondary">Các đơn hàng chờ xác nhận bởi người bán <button @click="refreshPending" class="fa fa-refresh text-gray-99 hover:text-secondary p-1 text-lg transition-colors duration-300"></button></h2>
         <div class="table-container">
           <table class="w-full border-collapse table">
             <thead class="table-header">
@@ -55,7 +55,7 @@
                 <td class="py-4 pl-2">{{ item.phone }}</td>
                 <td class="py-4 pl-2">{{ item.notice ? item.notice : 'Không có thông tin' }}</td>
                 <td class="py-4 pl-2">{{ formatPriceVND(item.total_price) }}</td>
-                <td class="py-4 pl-2">{{ item.state === 'PENDING' ? 'Đang chờ người vận chuyển hoặc người bán' : 'Đã được gửi đến người vận chuyển' }}</td>
+                <td class="py-4 pl-2">{{ item.state === 'PENDING' ? 'Đang chờ người bán đóng gói' : 'Đã được gửi đến người vận chuyển' }}</td>
                 <td class="py-4 pl-2">{{ shipping_date ? shipping_date : 'Không có thông tin' }}</td>
 
                 <td class="py-4 px-2">
@@ -67,43 +67,40 @@
           </table>
         </div>
       </div>
-
       <!-- Shipping Orders Section -->
       <div v-if="activeSection === 'shipping-orders'" id="shipping-orders">
-        <h2 class="text-2xl mb-4 text-primary">Đơn hàng đang vận chuyển</h2>
-        <div class="table-container">
-          <table class="w-full border-collapse table">
-            <thead class="table-header">
-              <tr class="bg-[#494949] text-primary">
-                <th class="pb-2">Số Thứ Tự</th>
-                <th class="pb-2">Mã Đơn Hàng</th>
-                <th class="pb-2 pl-2">Thời gian tạo đơn</th>
-                <th class="pb-2 pl-2">Địa chỉ giao hàng</th>
-                <th class="pb-2 pl-2">Tên người nhận</th>
-                <th class="pb-2 pl-2">SĐT người nhận</th>
-                <th class="pb-2 pl-2">Tiền</th>
-                <!-- <th class="pb-2">Trạng thái</th> -->
-                <th class="pb-2">Hành động</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(order, index) in shippingOrders" :key="order.order_id" class="border-t">
-                <td class="py-4">{{ index + 1 }}</td>
-                <td class="py-4">{{ order.order_id }}</td>
-                <td class="py-4 pl-2">{{ formatDate(order.create_time) }}</td>
-                <td class="py-4 pl-2">{{ order.address }}</td>
-                <td class="py-4 pl-2">{{ order.receive_name }}</td>
-                <td class="py-4 pl-2">{{ order.phone }}</td>
-                <td class="py-4 pl-2">{{ currency(order.total_price) }}</td>
-                <!-- <td class="py-4 pl-2">{{ getShippingStatusText(order.state) }}</td> -->
-                <td class="py-4 px-2">
-                  <button class="hover-underline-animation" @click="shippedOrderToMember(order.order_id, auth.user_id)">Xác nhận đã giao</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+  <h2 class="text-2xl mb-4 text-secondary">Đơn hàng đang vận chuyển của tôi <button @click="refreshShipping" class="fa fa-refresh text-gray-99 hover:text-secondary p-1 text-lg transition-colors duration-300"></button></h2>
+  <div class="table-container">
+    <table class="w-full border-collapse table">
+      <thead class="table-header">
+        <tr class="bg-[#494949] text-primary">
+          <th class="pb-2">Số Thứ Tự</th>
+          <th class="pb-2">Mã Đơn Hàng</th>
+          <th class="pb-2 pl-2">Thời gian tạo đơn</th>
+          <th class="pb-2 pl-2">Địa chỉ giao hàng</th>
+          <th class="pb-2 pl-2">Tên người nhận</th>
+          <th class="pb-2 pl-2">SĐT người nhận</th>
+          <th class="pb-2">Trạng thái</th>
+          <th class="pb-2">Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(order, index) in shippingOrders" :key="order.order_id" class="border-t">
+          <td class="py-4">{{ index + 1 }}</td>
+          <td class="py-4">{{ order.order_id }}</td>
+          <td class="py-4 pl-2">{{ formatDate(order.create_time) }}</td>
+          <td class="py-4 pl-2">{{ order.address }}</td>
+          <td class="py-4 pl-2">{{ order.receive_name }}</td>
+          <td class="py-4 pl-2">{{ order.phone }}</td>
+          <td class="py-4 pl-2">{{ getShippingStatusText(order.state) }}</td>
+          <td class="py-4 px-2">
+            <button class="hover-underline-animation" @click="shippedOrderToMember(order.order_id, auth.user_id)">Đã giao đến người nhận</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
     </div>
   </div>
 </template>
@@ -115,7 +112,7 @@
   import { onMounted, ref, computed, onUnmounted } from 'vue';
   import { useRouter } from 'vue-router';
   import { useLocationStore } from '../stores/location';
-import axios from 'axios';
+  import axios from 'axios';
   
   const user = useUserStore();
   const auth = useAuthStore();
@@ -123,7 +120,7 @@ import axios from 'axios';
   const orderStates = ref({}); // Store order states
   const pendingWatches = ref([]);
   const shippingOrders = ref([]);
-  const activeSection = ref('pending-watches'); 
+  const activeSection = ref('pending-watches'); // Default section is 'orders'
   const isStaff = ref(false);
   const watchOrderDetails = ref({});
   const isLoading = ref(false);
@@ -138,6 +135,30 @@ import axios from 'axios';
     }
   };
 
+  
+
+const refreshPending = async () => {
+  try {
+    isLoading.value = true;
+    await Promise.all([loadPendingWatches(), loadOrderStates()]);
+  } catch (error) {
+    console.error('Lỗi khi làm mới dữ liệu đơn hàng:', error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const refreshShipping = async () => {
+  try {
+    isLoading.value = true;
+    await Promise.all([loadShippingOrders(), loadOrderStates()]);
+  } catch (error) {
+    console.error('Lỗi khi làm mới dữ liệu đơn hàng:', error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
   onMounted(async () => {
     if (!auth.user_id) {
       console.log('Người dùng chưa đăng nhập. Đang chuyển hướng đến trang đăng nhập...');
@@ -150,6 +171,7 @@ import axios from 'axios';
       else 
         isStaff.value = false;
       if (isStaff) {
+        await loadPendingWatches()
         await loadShippingOrders();
       }
     }
@@ -239,6 +261,25 @@ import axios from 'axios';
         console.log('Lỗi canceled order:', error);
       }
     }
+
+  const confirmShip = async (orderId) => {
+    try {
+      isLoading.value = true;
+      const state = orderStates.value[orderId];
+    if (state === 'SHIPPED') {
+      await useUserStore().confirmShip(orderId)
+    } else {
+      alert('Không chấp thuận, lỗi');
+    }
+    await loadOrders(); 
+    await loadOrderStates();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      isLoading.value = false;
+    }
+    
+};
   
   
   const setShip = async (watchid, orderId) => {
@@ -271,6 +312,8 @@ import axios from 'axios';
     }
     activeSection.value = 'shipping-orders';
   };
+
+  
   
   //load đơn của mình
   const loadShippingOrders = async () => {
