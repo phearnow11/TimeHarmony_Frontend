@@ -84,7 +84,14 @@
               <td class="p-2 border-b">{{ member.user_log_info.username }}</td>
               <td class="p-2 border-b">{{ member.phone || "N/A" }}</td>
               <td class="p-2 border-b">
+                <div v-if="member.user_log_info.authorities.authority == 'ROLE_STAFF' && member.staff_role == null" class="cursor-pointer hover-underline-animation"
+                  @click="openPromote"
+                >
                   {{ member.staff_role ? member.staff_role : member.user_log_info.authorities.authority }}
+                </div>
+                <div v-else>
+                  {{ member.staff_role ? member.staff_role : member.user_log_info.authorities.authority }}
+                </div>
               </td>
               <td class="p-2 border-b">
                 {{
