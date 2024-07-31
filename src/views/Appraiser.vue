@@ -107,6 +107,9 @@ import { useStaffStore } from '../stores/staff';
 import { useAuthStore } from '../stores/auth';
 import { useUserStore } from '../stores/user';
 import router from '../router';
+import { useChatStore } from '../stores/chat';
+import axios from 'axios';
+import { useMailStore } from '../stores/mail';
 
 if(useUserStore().role!='ROLE_STAFF'){
   console.log('Not STAFF');
@@ -280,6 +283,11 @@ const handleConfirm = async (type) => {
     if(sellerId){
       console.log(data);
       await useStaffStore().notapproveWatch(data);
+      var seller = await useUserStore().getUserInfo(sellerId)
+      console.log("BBBBBB",seller);
+      axios.post(`${import.meta.env.VITE_API_PORT}/chat/addtochat?user_id=${sellerId}&user_id2=${useUserStore().user_id}`);
+      useChatStore().sendMessage(sellerId,`Đây là tin nhắn tự động gửi bởi nhân viên Time Harmony\nBài đăng đồng hồ: ${draggedItem.value.title} của bạn đã bị từ chối, vui lòng tạo bài đăng khác theo đề xuất của người kiểm duyệt(Lý do từ chối)\nLý do từ chối: ${reportContent.value}`)
+      useMailStore().send(seller?.email,`Rất tiết bài đăng của bạn không được chúng tôi chấp thuận`,`Đây là tin nhắn tự động gửi bởi nhân viên Time Harmony\nBài đăng đồng hồ: ${draggedItem.value.title} của bạn đã bị từ chối, vui lòng tạo bài đăng khác theo đề xuất của người kiểm duyệt(Lý do từ chối)\nLý do từ chối: ${reportContent.value}`)
     } else {
       console.error('Seller ID not found for watch:', draggedItemId.value);
     }

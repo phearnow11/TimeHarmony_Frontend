@@ -4,6 +4,7 @@ import router from "../router";
 import Cookies from "js-cookie";
 import { useUserStore } from "./user";
 import { useCartStore } from './cart';
+import { useChatStore } from "./chat";
 
 var api = import.meta.env.VITE_API_PORT
 
@@ -25,6 +26,7 @@ export const useAuthStore = defineStore('auth', {
                     this.token = res.data.token;
                     Cookies.set('token', this.token, { expires: 7 }); // Expires in 7 days
                     Cookies.set('user_id', this.user_id, { expires: 7 });
+                    useChatStore().registerUser2(this?.user_id)
                     const cartStore = useCartStore();
                     const userStore = useUserStore();
                     await cartStore.getCart(this.user_id);
@@ -59,6 +61,7 @@ export const useAuthStore = defineStore('auth', {
                     // Save token and user_id in cookies
                     Cookies.set('token', this.token, { expires: 7 }); // Expires in 7 days
                     Cookies.set('user_id', this.user_id, { expires: 7 });
+                    useChatStore().registerUser2(this?.user_id)
                     const cartStore = useCartStore();
                     const userStore = useUserStore();
                     cartStore.getCart(this.user_id);
