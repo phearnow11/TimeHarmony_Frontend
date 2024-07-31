@@ -20,7 +20,11 @@
         />
         <label for="userid" class="form__label">ID người dùng</label>
       </div>
-      <button @click="promoteToStaff" class="th-p-btn">
+      <button 
+      @click="promoteToStaff" 
+      :disabled="!userId" 
+      :class="['th-p-btn', { 'disabled-btn': !userId }]"
+      >
         Thêm làm nhân viên
       </button>
     </div>
@@ -167,7 +171,7 @@
                   <img
                     :src="product.seller.member_image"
                     alt="Seller Image"
-                    class="w-8 h-8 rounded-full mr-2"
+                    class="w-8 h-8 mr-2"
                   />
                   <span>{{ product.seller.user_log_info.username }}</span>
                 </div>
@@ -282,7 +286,7 @@
 
     <section class="mb-6">
       <h2 class="text-2xl font-semibold mb-2">Tổng Quan Lợi Nhuận</h2>
-      <div class="profit-container p-4 border border-secondary rounded mb-6">
+      <div class="profit-container p-4 border border-secondary mb-6">
         <p class="text-xl font-medium">
           Doanh Thu Tổng: {{ currency(totalRevenue) }}
         </p>
@@ -327,12 +331,12 @@
     <!-- Promote Modal -->
     <div class="promoteBox" v-if="openPromote">
       <div class="promote">
-        <h2>Chọn vị trí bổ nhiệm</h2>
-        <select name="promote" id="promote">
+        <h2 class="mb-5">Chọn vị trí bổ nhiệm</h2>
+        <select class="py-3" name="promote" id="promote">
           <option value="0">Trở thành chuyên viên kiểm định</option>
           <option value="1">Trở thành nhân viên vận chuyển</option>
         </select>
-        <div class="gap-1 flex justify-end mt-2">
+        <div class="gap-1 flex justify-end mt-5">
           <button class="th-s-btn" @click="closePromoteModal">Hủy</button>
           <button class="th-p-btn" @click="promote">Xác nhận</button>
         </div>
@@ -603,12 +607,31 @@ const searchOrders = () => {
 
 // Define a method to promote a user to staff
 const promoteToStaff = async () => {
+  if (!userId.value) return; // Không cần thiết vì nút đã bị disabled, nhưng thêm để chắc chắn
+
   try {
+    const memberExists = await checkMemberExists(userId.value);
+    if (!memberExists) {
+      alert("ID người dùng không đúng hoặc không tồn tại");
+      return;
+    }
+
     await adminStore.promoteToStaff(userId.value);
-    // Optionally refresh members data after promotion
     await adminStore.getMembers();
+    alert("Thêm làm nhân viên thành công");
   } catch (error) {
     console.error("Failed to promote user:", error);
+    alert("Có lỗi xảy ra khi thêm làm nhân viên");
+  }
+};
+
+const checkMemberExists = async (id) => {
+  try {
+    const member = getMember(id);
+    return !!member;
+  } catch (error) {
+    console.error("Error checking member existence:", error);
+    return false;
   }
 };
 
@@ -884,6 +907,12 @@ const formatDate = (dateString) => {
 </script>
 
 <style scoped>
+.disabled-btn {
+  border: 1px solid #888;
+  background-color: #888;
+  cursor: not-allowed;
+}
+
 .admin-page {
   background-color: #212121;
   color: var(--secondary);
@@ -1153,7 +1182,13 @@ const formatDate = (dateString) => {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  background: rgba(
+    23,
+    23,
+    23,
+    0.5
+  );
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1162,10 +1197,22 @@ const formatDate = (dateString) => {
 }
 
 .promote {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  /* Add more styles as needed */
-  gap: 3px;
+  background-color: #1b1b1b;
+  padding: 30px; /* Tăng padding từ 20px lên 30px */
+  gap: 10px; /* Tăng gap nếu cần */
+  min-width: 300px; /* Tăng chiều rộng tối thiểu nếu cần */
+}
+
+.promote select {
+  background-color: rgba(63, 55, 55 ,0.1);
+  color: var(--secondary);
+  border: 1px solid var(--secondary);
+  gap: 5px;
+}
+
+.promote select option {
+  background-color: rgba(63, 55, 55);
+  color: var(--primary);
+  border: 0px solid var(--secondary);
 }
 </style>

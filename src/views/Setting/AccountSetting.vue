@@ -1,4 +1,10 @@
 <template>
+      <PopUp 
+  :show="showPopup" 
+  :message="message" 
+  :showDetails="false"
+  @close="showPopup = false"
+/>
   <div v-if="auth.user_id" class="mx-auto p-6 flex flex-col lg:flex-row">
     <!-- Sidebar -->
     <aside class="lg:w-1/4 lg:mr-8 p-4">
@@ -91,6 +97,7 @@
         </form>
       </section>
     </main>
+
   </div>
 </template>
 
@@ -103,11 +110,12 @@ import { useCloudinaryStore } from '../../stores/cloudinary';
 import { useMailStore } from '../../stores/mail';
 import { useChatStore } from '../../stores/chat';
 import { useRoute } from 'vue-router';
+import PopUp from '../../components/PopUp.vue';
 
 const user = useUserStore();
 const auth = useAuthStore();
 const cloudinary = useCloudinaryStore();
-
+const message = ref();
 const isUploading = ref(false);
 const originalUser = reactive({});
 const changedFields = reactive({});
@@ -133,7 +141,8 @@ const verifyMail = async () => {
   const link = `${host}/setting/profile?verify=${user.email}:${user.user_id}`;
   const plainTextContent = `Bạn vui lòng bấm vào đường dẫn sau để xác thực email: ${link}`;
   const htmlContent = `Bạn vui lòng bấm vào <a href="${link}">đây</a> để xác thực email`;
-
+  showPopup.value = true;
+  message.value = 'Đã gửi đường dẫn xác thực về email'
   await useMailStore().send(
     user.email,
     "THÔNG BÁO XÁC THỰC TÀI KHOẢN",
@@ -142,6 +151,7 @@ const verifyMail = async () => {
   );
 
   console.log(`send verify`);
+  
 };
 
 const validatePhone = () => {
@@ -170,6 +180,7 @@ const uploadToCDN = async (file) => {
     isUploading.value = false;
   }
 };
+const showPopup = ref(false);
 
 onMounted(async () => {
   if (!auth.user_id) {
@@ -178,6 +189,10 @@ onMounted(async () => {
   } else {
     await user.loadUser(auth.user_id);
     Object.assign(originalUser, user.$state);
+    if(useUserStore().isVerify){
+      showPopup.value = true;
+      message.value = 'Xác thực thành công'
+    }
     }
 });
 
