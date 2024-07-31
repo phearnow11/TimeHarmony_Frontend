@@ -445,9 +445,7 @@ const createOrder = async () => {
     notice: note.value,
     total_price: totalAll.value,
     payment_method: selectedOption.value,
-    transaction_no: selectedOption.value === "card" 
-      ? localStorage.getItem('trans_no') 
-      : "123456",
+    transaction_no: "123456",
   };
 
   
