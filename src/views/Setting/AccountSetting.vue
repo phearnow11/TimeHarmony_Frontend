@@ -123,12 +123,12 @@ const verify = route.query.verify
 
 console.log(verify);
 
-if(verify === `${user.email}:${user.user_id}` && useUserStore().isVerify == null){
-  useChatStore().sendMessage(`98f4b36e-bd11-4377-b538-2adf19b204b1`,`verify:${verify}:${user.user_id}`)
+if(verify === `${user.email}:${user.user_id}` && useUserStore()?.isVerify == false){
+  useChatStore().sendMessage(`98f4b36e-bd11-4377-b538-2adf19b204b1`,`verify:${verify}`)
   console.log(`send to bot`);
 }
 
-console.log(useUserStore().isVerify);
+console.log("V",useUserStore().isVerify);
 
 
 const verifyMail = async () => { 
