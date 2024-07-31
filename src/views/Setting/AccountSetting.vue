@@ -75,7 +75,7 @@
               Số điện thoại không hợp lệ
             </p>
           </div>
-          <div class="form__group field">
+          <div class="form__group field flex justify-between">
             <input
               type="email"
               class="form__field"
@@ -84,7 +84,8 @@
               @input="updateChangedField('email')"
               required
             />
-            <label for="email" class="form__label">Email</label>
+            <label for="email" class="form__label">Email <i :class="`fa ${isEmailValid ? 'fa-check text-green-500' : 'fa-times text-red-500'}`"></i></label>
+            <button @click="verifyMail" v-if="!isEmailValid" class="flex ml-5 w-32 th-p-btn">Xác thực</button>
           </div>
           <button type="submit" class="th-p-btn mt-8" @click="submit">Lưu thay đổi</button>
         </form>
@@ -94,11 +95,14 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { useAuthStore } from '../../stores/auth';
 import { onMounted } from 'vue';
 import { useUserStore } from '../../stores/user';
 import { useCloudinaryStore } from '../../stores/cloudinary';
+import { useMailStore } from '../../stores/mail';
+import { useChatStore } from '../../stores/chat';
+import axios from 'axios';
 
 const user = useUserStore();
 const auth = useAuthStore();
@@ -109,6 +113,46 @@ const originalUser = reactive({});
 const changedFields = reactive({});
 
 const isPhoneValid = ref(true);
+const isEmailValid = ref(false);
+const sendBotMail = ref(false);
+
+var api = import.meta.env.VITE_API_PORT;
+
+
+const verifyMail = async () => { 
+  const link = "http://localhost:5173/setting/profile";
+  const plainTextContent = `Bạn vui lòng bấm vào đường dẫn sau để xác thực email: ${link}`;
+  const htmlContent = `Bạn vui lòng bấm vào <a href="${link}">đây</a> để xác thực email`;
+
+  await useMailStore().send(
+    user.email,
+    "THÔNG BÁO XÁC THỰC TÀI KHOẢN",
+    plainTextContent,
+    htmlContent
+  );
+  
+  // Gửi tin nhắn cho bot ngay sau khi gửi email
+  await sendMessage();
+  sendBotMail.value = true;
+};
+
+
+const sendMessage = async () => {
+  try {
+    const botId = "98f4b36e-bd11-4377-b538-2adf19b204b1";
+    const message = `Yêu cầu xác thực Email\nBạn cần xác thực ${user.email} này để có thể tiếp tục sử dụng dịch vụ của trang web`;
+    
+    await useChatStore().sendMessage(botId, message);
+    
+    const res = await axios.post(
+      `${api}/chat/addtochat?user_id=${botId}&user_id2=${auth.user_id}`
+    );
+    
+    console.log('Message sent to bot:', res);
+  } catch (sendError) {
+    console.error("Error sending message:", sendError);
+  }
+};
 
 const validatePhone = () => {
   isPhoneValid.value = isValidPhoneNumber(user.phone);
@@ -136,6 +180,8 @@ const uploadToCDN = async (file) => {
     isUploading.value = false;
   }
 };
+const message = ref(null)
+
 
 onMounted(async () => {
   if (!auth.user_id) {
@@ -145,6 +191,8 @@ onMounted(async () => {
     await user.loadUser(auth.user_id);
     Object.assign(originalUser, user.$state);
   }
+
+ 
 });
 
 async function handleFileUpload(event) {

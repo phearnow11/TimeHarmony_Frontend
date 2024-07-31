@@ -31,6 +31,7 @@ export const useUserStore = defineStore("user", {
     totalProfit: 0,
     postedWatches: 0,
     soldWatches: 0,
+    isVerify: false,
   }),
 
   actions: {

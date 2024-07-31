@@ -45,6 +45,30 @@ export const useChatStore = defineStore('chat', {
       }
     },    
 
+    async findVerifyMail(sender_id, receiver_id, email) {
+      try {
+        console.log('Searching for messages with:', { sender_id , receiver_id, email });
+        const response = await supabase
+          .from('messages')
+          .select("*")
+          .eq('sender_id', sender_id)
+          .eq('receiver_id', receiver_id)
+          .ilike('text', `%${email}%`);
+    
+        console.log('Supabase response:', response);
+    
+        if (response.data && response.data.length > 0) {
+          console.log('Set email:', response.data);
+          return response.data;
+        } else {
+          console.log('No verify messages found');
+          return null;
+        }
+      } catch (error) {
+        console.log('Error finding chat', error);
+      }
+    },  
+
     async removeChat(sender_id, receiver_id){
       try {
         const response = await supabase

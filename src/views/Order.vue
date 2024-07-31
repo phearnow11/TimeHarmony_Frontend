@@ -511,6 +511,8 @@ const createOrder = async () => {
     console.error("Failed to create order:", error);
     alert("Failed to create order. Please try again.");
   }
+
+  cartStore.selected_wids = [];
 };
 
 const handleVNPayReturn = async () => {

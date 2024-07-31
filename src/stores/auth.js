@@ -118,7 +118,7 @@ export const useAuthStore = defineStore('auth', {
                 console.log('Error');
             }
         },
-        emailVerify(email, input){
+        async emailVerify(email, input){
             const verify = axios.get(`${api}/api/auth/verify/google/getcode?email=${email}`)
             if(input === verify.data){
                 return true;

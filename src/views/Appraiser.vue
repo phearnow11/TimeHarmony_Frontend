@@ -287,7 +287,7 @@ const handleConfirm = async (type) => {
       console.log("BBBBBB",seller);
       axios.post(`${import.meta.env.VITE_API_PORT}/chat/addtochat?user_id=${sellerId}&user_id2=${useUserStore().user_id}`);
       useChatStore().sendMessage(sellerId,`Đây là tin nhắn tự động gửi bởi nhân viên Time Harmony\nBài đăng đồng hồ: ${draggedItem.value.title} của bạn đã bị từ chối, vui lòng tạo bài đăng khác theo đề xuất của người kiểm duyệt(Lý do từ chối)\nLý do từ chối: ${reportContent.value}`)
-      useMailStore().send(seller?.email,`Rất tiết bài đăng của bạn không được chúng tôi chấp thuận`,`Đây là tin nhắn tự động gửi bởi nhân viên Time Harmony\nBài đăng đồng hồ: ${draggedItem.value.title} của bạn đã bị từ chối, vui lòng tạo bài đăng khác theo đề xuất của người kiểm duyệt(Lý do từ chối)\nLý do từ chối: ${reportContent.value}`)
+      useMailStore().send(seller?.email,`Rất tiếc bài đăng của bạn không được chúng tôi chấp thuận`,`Đây là tin nhắn tự động gửi bởi nhân viên Time Harmony\nBài đăng đồng hồ: ${draggedItem.value.title} của bạn đã bị từ chối, vui lòng tạo bài đăng khác theo đề xuất của người kiểm duyệt(Lý do từ chối)\nLý do từ chối: ${reportContent.value}`)
     } else {
       console.error('Seller ID not found for watch:', draggedItemId.value);
     }
