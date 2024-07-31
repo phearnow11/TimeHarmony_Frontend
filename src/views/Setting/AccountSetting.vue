@@ -125,15 +125,19 @@ const isEmailValid = useUserStore().isVerify;
 
 var api = import.meta.env.VITE_API_PORT;
 
+const showPopup = ref(false);
 const route = useRoute();
 const verify = route.query.verify
 
 if(verify === `${user.email}:${user.user_id}` && useUserStore()?.isVerify == false){
   useChatStore().sendMessage(`98f4b36e-bd11-4377-b538-2adf19b204b1`,`verify:${verify}`)
   console.log(`send to bot`);
+  showPopup.value = true;
+  message.value = 'Xác thực email thành công'
 }
 
 console.log("V",useUserStore().isVerify);
+
 
 
 const verifyMail = async () => { 
@@ -180,7 +184,6 @@ const uploadToCDN = async (file) => {
     isUploading.value = false;
   }
 };
-const showPopup = ref(false);
 
 onMounted(async () => {
   if (!auth.user_id) {
@@ -189,10 +192,7 @@ onMounted(async () => {
   } else {
     await user.loadUser(auth.user_id);
     Object.assign(originalUser, user.$state);
-    if(useUserStore().isVerify){
-      showPopup.value = true;
-      message.value = 'Xác thực thành công'
-    }
+    
     }
 });
 
