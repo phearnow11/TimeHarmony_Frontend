@@ -120,9 +120,6 @@ var api = import.meta.env.VITE_API_PORT;
 const route = useRoute();
 const verify = route.query.verify
 
-
-console.log(verify);
-
 if(verify === `${user.email}:${user.user_id}` && useUserStore()?.isVerify == false){
   useChatStore().sendMessage(`98f4b36e-bd11-4377-b538-2adf19b204b1`,`verify:${verify}`)
   console.log(`send to bot`);
