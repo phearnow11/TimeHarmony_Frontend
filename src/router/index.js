@@ -133,7 +133,7 @@ const router = createRouter({
       }),
     },
     {
-      path: '/setting/shipper',
+      path: '/forshipper',
       name: 'Forshipper',
       component: () => import('../views/Forshipper.vue').catch(err => {
         console.error(err);
@@ -143,6 +143,13 @@ const router = createRouter({
       path: '/setting/profit',
       name: 'ProfitSetting',
       component: () => import('../views/Setting/ProfitSetting.vue').catch(err => {
+        console.error(err);
+      }),
+    },
+    {
+      path: '/setting/delete',
+      name: 'DeleteAccount',
+      component: () => import('../views/Setting/DeleteAccount.vue').catch(err => {
         console.error(err);
       }),
     },

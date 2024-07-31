@@ -9,7 +9,7 @@
         <li><router-link to="/setting/address" class="hover-underline-animation">Sổ địa chỉ</router-link></li>
         <li><router-link to="/setting/product" class="hover-underline-animation">Đơn hàng của tôi</router-link></li>
         <li class="text-secondary">Thu nhập</li>
-        <li><router-link to="#" class="hover-underline-animation-r">Xoá tài khoản</router-link></li>
+        <li><router-link to="/setting/delete" class="hover-underline-animation-r">Xoá tài khoản</router-link></li>
       </ul>
     </aside>
 

@@ -16,7 +16,7 @@
         <li><router-link to="/setting/address" class="hover-underline-animation">Sổ địa chỉ</router-link></li>
         <li class="text-secondary">Đơn hàng của tôi</li>
         <li><router-link to="/setting/profit" class="hover-underline-animation">Thu nhập</router-link></li>
-        <li><router-link to="#" class="hover-underline-animation-r">Xoá tài khoản</router-link></li>
+        <li><router-link to="/setting/delete" class="hover-underline-animation-r">Xoá tài khoản</router-link></li>
       </ul>
     </aside>
     <!-- Content -->
