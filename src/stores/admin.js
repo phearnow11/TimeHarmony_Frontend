@@ -165,6 +165,21 @@ export const useAdminStore = defineStore("admin", {
         console.error('Error banning user:', error);
       });
     },
+
+    updateStaffRole(id, role){
+      const token = useAuthStore().token;
+      axios.put(`${api}/admin/update/staff-role?id=${id}&role=${role}`,{}, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+    })
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error('Error updating staff role:', error);
+      })
+    },
   },
   getters: {
     filteredMembers: (state) => (query) => {

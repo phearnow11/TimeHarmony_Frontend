@@ -82,15 +82,15 @@
               </td>
               <td class="p-2 border-b">{{ member.email }}</td>
               <td class="p-2 border-b">{{ member.user_log_info.username }}</td>
-              <td class="p-2 border-b">{{ member.phone || "N/A" }}</td>
+              <td class="p-2 border-b">{{ member.phone || "Không có thông tin" }}</td>
               <td class="p-2 border-b">
-                <div v-if="member.user_log_info.authorities.authority == 'ROLE_STAFF' && member.staff_role == null" class="cursor-pointer hover-underline-animation"
-                  @click="openPromote"
+                <div v-if="member.user_log_info.authorities.authority == 'ROLE_STAFF' && member.staff_role == null" class="cursor-pointer hover-underline-animation flex items-center justify-center"
+                  @click="openPromoteModal(member)"
                 >
-                  {{ member.staff_role ? member.staff_role : member.user_log_info.authorities.authority }}
+                  {{ member.staff_role ? roleLabels[member.staff_role] : roleLabels[member.user_log_info.authorities.authority] }}
                 </div>
-                <div v-else>
-                  {{ member.staff_role ? member.staff_role : member.user_log_info.authorities.authority }}
+                <div v-else class="flex items-center justify-center">
+                  {{ member.staff_role ? roleLabels[member.staff_role] : roleLabels[member.user_log_info.authorities.authority] }}
                 </div>
               </td>
               <td class="p-2 border-b">
@@ -231,7 +231,7 @@
               <td class="p-2 border-b">{{ order.address }}</td>
               <td class="p-2 border-b">{{ order.receive_name }}</td>
               <td class="p-2 border-b">{{ order.phone }}</td>
-              <td class="p-2 border-b">{{ order.notice || "N/A" }}</td>
+              <td class="p-2 border-b">{{ order.notice || "Không có thông tin" }}</td>
               <td class="p-2 border-b">{{ currency(order.total_price) }}</td>
             </tr>
           </tbody>
@@ -319,6 +319,21 @@
         <button @click="confirmBanUser" class="confirm-btn">Xác nhận</button>
       </div>
     </div>
+
+    <!-- Promote Modal -->
+    <div class="promoteBox" v-if="openPromote">
+      <div class="promote">
+        <h2>Chọn vị trí bổ nhiệm</h2>
+        <select name="promote" id="promote">
+          <option value="0">Trở thành chuyên viên kiểm định</option>
+          <option value="1">Trở thành nhân viên vận chuyển</option>
+        </select>
+        <div class="gap-1 flex justify-end mt-2">
+          <button class="th-s-btn" @click="closePromoteModal">Hủy</button>
+          <button class="th-p-btn" @click="promote">Xác nhận</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -343,6 +358,15 @@ const stateLabels = {
   7: "Đã giao",
 };
 
+const roleLabels = {
+  ROLE_USER: "Người dùng",
+  ROLE_SELLER: "Người bán",
+  ROLE_STAFF: "Nhân viên",
+  SHIPPER: "Nhân viên vận chuyển",
+  APPRAISER: "Chuyên viên kiểm định",
+  ROLE_ADMIN: "Quản trị viên",
+};
+
 // Initialize the store
 const adminStore = useAdminStore();
 
@@ -362,6 +386,8 @@ const costChart = ref(null);
 const profitChart = ref(null);
 const selectedTransaction = ref(null);
 
+const openPromote = ref(false)
+
 let overviewChartInstance = null;
 let revenueChartInstance = null;
 let costChartInstance = null;
@@ -369,6 +395,27 @@ let profitChartInstance = null;
 
 // Error state
 const error = ref(null);
+
+const openPromoteModal = (member) => {
+  selectedMember.value = member;
+  openPromote.value = true
+};
+
+const closePromoteModal = () => {
+  openPromote.value = false
+};
+
+const promote = () => {
+  const promoteSelect = document.getElementById('promote');
+  const selectedValue = promoteSelect.options[promoteSelect.selectedIndex].value;
+  
+  console.log('Member ID:', selectedMember.value.member_id);
+  console.log('Selected Promotion Value:', selectedValue);
+
+  adminStore.updateStaffRole(selectedMember.value.member_id, selectedValue==0?'APPRAISER':'SHIPPER')
+  closePromoteModal()
+};
+
 
 
 const createCharts = () => {
@@ -1086,5 +1133,25 @@ const formatDate = (dateString) => {
   }
 }
 
+.promoteBox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  gap: 3px;
+}
 
+.promote {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  /* Add more styles as needed */
+  gap: 3px;
+}
 </style>
