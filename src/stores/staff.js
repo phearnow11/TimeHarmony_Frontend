@@ -50,6 +50,7 @@ export const useStaffStore = defineStore("staff", {
       try {
         const res = await axios.post(`${api}/staff/send/unapprove-report`, data);
         console.log('Watch Unapproved:', res.data);
+        axios.patch(`${api}/staff/unapprove-watch?watch_id=${data.watch_id}`)
         const watch = this.approvedWatches.find(w => w.watch_id === data.watch_id) || 
                       this.unapprovedWatches.find(w => w.watch_id === data.watch_id);
         if (watch) {
