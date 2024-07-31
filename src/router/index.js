@@ -231,6 +231,11 @@ router.beforeEach(async (to, from, next) => {
 
   if (user_id != null) {
     await userStore.loadUser(user_id);
+
+    var v = await useChatStore().findVerifyMail()
+    if(v && v.length>0){
+      console.log(useUserStore().isVerify);
+    }
     
     // Subscribe to messages if authenticated and not already subscribed
     if (!chatStore.subscription) {

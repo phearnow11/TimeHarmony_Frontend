@@ -102,7 +102,7 @@ import { useUserStore } from '../../stores/user';
 import { useCloudinaryStore } from '../../stores/cloudinary';
 import { useMailStore } from '../../stores/mail';
 import { useChatStore } from '../../stores/chat';
-import axios from 'axios';
+import { useRoute } from 'vue-router';
 
 const user = useUserStore();
 const auth = useAuthStore();
@@ -114,13 +114,25 @@ const changedFields = reactive({});
 
 const isPhoneValid = ref(true);
 const isEmailValid = ref(false);
-const sendBotMail = ref(false);
 
 var api = import.meta.env.VITE_API_PORT;
 
+const route = useRoute();
+const verify = route.query.verify
+
+console.log(verify);
+
+if(verify === user.email && useUserStore().isVerify == null){
+  useChatStore().sendMessage(`98f4b36e-bd11-4377-b538-2adf19b204b1`,`verify:${verify}:${user.user_id}`)
+  console.log(`send to bot`);
+}
+
+console.log(useUserStore().isVerify);
+
 
 const verifyMail = async () => { 
-  const link = "http://localhost:5173/setting/profile";
+  const host = window.location.origin;
+  const link = `${host}/setting/profile?verify=${user.email}`;
   const plainTextContent = `Bạn vui lòng bấm vào đường dẫn sau để xác thực email: ${link}`;
   const htmlContent = `Bạn vui lòng bấm vào <a href="${link}">đây</a> để xác thực email`;
 
@@ -130,28 +142,8 @@ const verifyMail = async () => {
     plainTextContent,
     htmlContent
   );
-  
-  // Gửi tin nhắn cho bot ngay sau khi gửi email
-  await sendMessage();
-  sendBotMail.value = true;
-};
 
-
-const sendMessage = async () => {
-  try {
-    const botId = "98f4b36e-bd11-4377-b538-2adf19b204b1";
-    const message = `Yêu cầu xác thực Email\nBạn cần xác thực ${user.email} này để có thể tiếp tục sử dụng dịch vụ của trang web`;
-    
-    await useChatStore().sendMessage(botId, message);
-    
-    const res = await axios.post(
-      `${api}/chat/addtochat?user_id=${botId}&user_id2=${auth.user_id}`
-    );
-    
-    console.log('Message sent to bot:', res);
-  } catch (sendError) {
-    console.error("Error sending message:", sendError);
-  }
+  console.log(`send verify`);
 };
 
 const validatePhone = () => {
@@ -180,8 +172,6 @@ const uploadToCDN = async (file) => {
     isUploading.value = false;
   }
 };
-const message = ref(null)
-
 
 onMounted(async () => {
   if (!auth.user_id) {
@@ -190,9 +180,7 @@ onMounted(async () => {
   } else {
     await user.loadUser(auth.user_id);
     Object.assign(originalUser, user.$state);
-  }
-
- 
+    }
 });
 
 async function handleFileUpload(event) {

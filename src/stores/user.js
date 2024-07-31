@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import { useAuthStore } from "./auth";
+import { useChatStore } from "./chat";
 var api = import.meta.env.VITE_API_PORT;
 export const useUserStore = defineStore("user", {
   state: () => ({
@@ -219,6 +220,7 @@ export const useUserStore = defineStore("user", {
         this.cur_fav = fav.data;
         this.role = res.data.user_log_info.authorities.authority;
         this.staff_role = res.data.staff_role;
+        
         return {
           username: this.username,
           email: this.email,

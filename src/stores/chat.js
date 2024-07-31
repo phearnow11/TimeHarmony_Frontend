@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { createClient } from "@supabase/supabase-js";
 import { useAuthStore } from "./auth";
 import axios from "axios";
+import { useUserStore } from "./user";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASEURL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASEANONKEY;
@@ -45,23 +46,24 @@ export const useChatStore = defineStore('chat', {
       }
     },    
 
-    async findVerifyMail(sender_id, receiver_id, email) {
+    async findVerifyMail() {
       try {
-        console.log('Searching for messages with:', { sender_id , receiver_id, email });
+        console.log(`try verify ${useUserStore()?.email} : ${useUserStore()?.user_id}`);
         const response = await supabase
           .from('messages')
           .select("*")
-          .eq('sender_id', sender_id)
-          .eq('receiver_id', receiver_id)
-          .ilike('text', `%${email}%`);
+          .eq('sender_id', useUserStore()?.user_id)
+          .ilike('text', `verify:${useUserStore()?.email}:${useUserStore()?.user_id}`);
     
-        console.log('Supabase response:', response);
+        console.log('Verify email response:', response);
+        useUserStore().isVerify = true
     
         if (response.data && response.data.length > 0) {
           console.log('Set email:', response.data);
           return response.data;
         } else {
           console.log('No verify messages found');
+          useUserStore().isVerify = false
           return null;
         }
       } catch (error) {
