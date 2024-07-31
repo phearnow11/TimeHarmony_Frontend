@@ -36,6 +36,7 @@
                 <th class="pb-2 pl-2">SĐT người nhận</th>
                 <th class="pb-2">Lời nhắn</th>
                 <th class="pb-2">Giá đơn</th>
+                <th class="pb-2">Thu hộ</th>
                 <th class="pb-2">Trạng thái</th>
                 <th class="pb-2">Ngày giao đến</th>
                 <th class="pb-2">Hành động</th>
@@ -55,6 +56,7 @@
                 <td class="py-4 pl-2">{{ item.phone }}</td>
                 <td class="py-4 pl-2">{{ item.notice ? item.notice : 'Không có thông tin' }}</td>
                 <td class="py-4 pl-2">{{ formatPriceVND(item.total_price) }}</td>
+                <td class="py-4 pl-2">{{ getPaymentMethod(item.order_id) }}</td>
                 <td class="py-4 pl-2">{{ item.state === 'PENDING' ? 'Đang chờ người bán đóng gói' : 'Đã được gửi đến người vận chuyển' }}</td>
                 <td class="py-4 pl-2">{{ shipping_date ? shipping_date : 'Không có thông tin' }}</td>
 
@@ -109,7 +111,7 @@
   import { useAuthStore } from '../stores/auth';
   import { useStaffStore } from '../stores/staff';
   import { useUserStore } from '../stores/user';
-  import { onMounted, ref, computed, onUnmounted } from 'vue';
+  import { onMounted, ref, computed, onUnmounted, watch } from 'vue';
   import { useRouter } from 'vue-router';
   import { useLocationStore } from '../stores/location';
   import axios from 'axios';
@@ -125,6 +127,17 @@
   const watchOrderDetails = ref({});
   const isLoading = ref(false);
   
+  const getPaymentMethod = (orderId) => {
+  try {
+    const method = localStorage.getItem(`payment_method_${orderId}`);
+    console.log(`Payment method for order ${orderId}:`, method);
+    return method || 'Unknown';
+  } catch (error) {
+    console.error('Error accessing localStorage:', error);
+    return 'Unknown';
+  }
+};
+
   const viewOrderDetails = (orderId) => {
     const state = orderStates.value[orderId];
     if (state !== 'DELETED') {
@@ -158,6 +171,7 @@ const refreshShipping = async () => {
     isLoading.value = false;
   }
 };
+
 
   onMounted(async () => {
     if (!auth.user_id) {
@@ -230,14 +244,28 @@ const refreshShipping = async () => {
   const loadPendingWatches = async () => {
     try {
       pendingWatches.value = await useStaffStore().getPendingOrder();
-      console.log('aaaaa' + pendingWatches.value);
+      console.log('Pending watches:', pendingWatches.value);
+      // Load payment methods for each order
+      pendingWatches.value.forEach(watch => {
+        const method = getPaymentMethod(watch.order_id);
+        console.log(`Payment method for order ${watch.order_id}:`, method);
+      });
     } catch (error) {
       console.error('Lỗi khi tải đồng hồ chờ duyệt:', error);
-      // Xử lý lỗi (ví dụ: hiển thị thông báo lỗi cho người dùng)
     }
   };
   
-  
+  watch([pendingWatches, shippingOrders], () => {
+  console.log('Orders list updated, refreshing payment methods');
+  pendingWatches.value.forEach(watch => {
+    const method = getPaymentMethod(watch.order_id);
+    console.log(`Payment method for pending order ${watch.order_id}:`, method);
+  });
+  shippingOrders.value.forEach(order => {
+    const method = getPaymentMethod(order.order_id);
+    console.log(`Payment method for shipping order ${order.order_id}:`, method);
+  });
+}, { deep: true });
   
   const sortedPendingWatches = computed(() => {
     return [...pendingWatches.value].sort((a, b) => {

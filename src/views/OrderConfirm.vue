@@ -71,7 +71,7 @@
               </div>
               <div class="flex justify-between font-bold text-lg mt-4 pt-4 border-t">
                 <span>Phương thức thanh toán</span>
-                <span>{{ paymentMethod || 'COD' }}</span>
+                <span>{{ getPaymentMethod(orderDetails.order_detail.order_id) }}</span>
               </div>
               <div class="flex justify-between font-bold text-lg mt-4 pt-4 border-t">
                 <span>Tạm tính ({{ detailedWatches.length }} sản phẩm)</span>
@@ -118,7 +118,6 @@
   const buttonState = ref(false)
   const detailedWatches = ref([]);
   const order = ref([])
-  const paymentMethod = localStorage.getItem(`pay_method`)
   const transactionNo = ref(null);
   userStore.payment_method = null;
   userStore.transaction_no = null;
@@ -128,12 +127,13 @@
     const orderId = route.params.order_id;
     order.value = await useUserStore().getAllOrders(auth.user_id)
 
+    
     if (orderId) {
       try {
         orderDetails.value = await userStore.getOrderDetail(orderId);
-
+        
         transactionNo.value = orderDetails.value.order_detail.transaction_no || localStorage.getItem('trans_no') || '123456';
-
+        
         await fetchWatchDetails(orderDetails.value.watch);
         const orderState = await userStore.getOrderState(orderId);
         state.value = mapOrderState(orderState);
@@ -142,10 +142,14 @@
         console.error('Failed to fetch order details:', error);
       }
     }
-
-
+    
+    
     
   });
+  
+  const getPaymentMethod = (orderId) => {
+    return localStorage.getItem(`payment_method_${orderId}`);
+  };
 
   const mapOrderState = (state) => {
   switch (state) {

@@ -420,7 +420,6 @@ const shipFee = computed(() => cartStore.getShipFee);
 const totalPrice = computed(() => cartStore.getTotalPrice);
 const totalAll = computed(() => cartStore.getTotalWithShipping);
 const loadUser = userStore.loadUser(auth.user_id);
-const transactionNo = ref(null);
 
 
 onMounted(async () => {
@@ -444,7 +443,7 @@ const createOrder = async () => {
     address: shippingAddress.value ? shippingAddress.value.id : null,
     notice: note.value,
     total_price: totalAll.value,
-    payment_method: selectedOption.value,
+    payment_method: selectedOption.value === 'cod' ? 'COD' : 'Card',
     transaction_no: "123456",
   };
 
@@ -482,10 +481,11 @@ const createOrder = async () => {
       const checkWatch = await paymentCOD(wids);
       console.log('Watch id ' + wids);
       console.log(checkWatch);
-
+      
       if(checkWatch){
         const result = await userStore.addOrder(auth.user_id, orderData);
         console.log("Order created successfully: ", result);
+        localStorage.setItem(`payment_method_${result}`, orderData.payment_method);
         if (result) {
           console.log("Fetching order details for order ID:", result);
           const orderDetails = await userStore.getOrderDetail(result);
@@ -527,10 +527,11 @@ const handleVNPayReturn = async () => {
         address: shippingAddress.value ? shippingAddress.value.id : null,
         notice: note.value,
         total_price: totalPrice.value,
-        payment_method: "card",
+        payment_method: "Card",
         transaction_no: vnpayTransactionNo,
       });
       if (result) {
+        localStorage.setItem(`payment_method_${result}`, result.payment_method);
         const orderDetails = await userStore.getOrderDetail(result);
         if (orderDetails && orderDetails.order_detail) {
           userStore.setCurrentOrder(orderDetails);

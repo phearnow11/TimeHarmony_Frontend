@@ -6,6 +6,7 @@
           class="file-upload-form"
           @drop.prevent="handleDrop"
           @dragover.prevent
+          @dragenter.prevent
         >
           <label for="file" class="file-upload-label w-full">
             <div class="file-upload-design">
@@ -20,7 +21,7 @@
           <input
             id="file"
             type="file"
-            accept="image/png, image/gif, image/jpeg"
+            accept="image/*"
             style="display: none"
             @change="handleFileUpload"
           />
@@ -553,7 +554,12 @@ async function uploadHandle() {
   }
 }
 
+const isImageFile = (file) => {
+  return file.type.startsWith('image/');
+};
+
 const handleDrop = async (event) => {
+  event.preventDefault();
   const files = event.dataTransfer.files;
   await handleFiles(files);
 };
@@ -566,6 +572,10 @@ const handleFileUpload = async (event) => {
 const handleFiles = async (files) => {
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
+    if (!isImageFile(file)) {
+      alert('Chỉ cho phép tải lên file ảnh!');
+      continue;
+    }
     const reader = new FileReader();
 
     reader.onload = () => {
