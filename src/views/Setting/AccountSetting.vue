@@ -113,12 +113,13 @@ const originalUser = reactive({});
 const changedFields = reactive({});
 
 const isPhoneValid = ref(true);
-const isEmailValid = ref(false);
+const isEmailValid = useUserStore().isVerify;
 
 var api = import.meta.env.VITE_API_PORT;
 
 const route = useRoute();
 const verify = route.query.verify
+
 
 console.log(verify);
 

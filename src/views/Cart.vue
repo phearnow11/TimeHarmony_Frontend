@@ -322,12 +322,19 @@ const isPopupVisible = ref(false);
 const popupMessage = ref('');
 const showProductDetails = ref(true);
 
-const closePopup = () => {
-  isPopupVisible.value = false;
-};
+
 
 
 const errorMessage = ref('');
+
+const handleUploadClick = (event) => {
+  if (!userStore.isVerify) {
+    event.preventDefault();
+    isPopupVisible.value = true;
+    popupMessage.value = 'Vui lòng xác nhận Email để có thể mua hàng';
+    showProductDetails.value = false;
+  }
+};
 
 function validatePhone(event) {
   const value = event.target.value;
@@ -671,18 +678,24 @@ const createOrder = async () => {
     showProductDetails.value = false;
     return;
   }
-  const selectedItems = cartItems.value.filter(item => item.isSelected);
-  if (selectedAddress.value !== null) {
-    cartStore.setSelectedItems(selectedItems);
-    cartStore.setTotalPrice(totalPrice.value);
-    cartStore.setShippingAddress(selectedAddress.value);
-    cartStore.setNote(note.value);
-    router.push('/order');
-  } else {
+  if (!userStore.isVerify) {
     isPopupVisible.value = true;
-    popupMessage.value = 'Vui lòng chọn địa chỉ giao hàng trước khi xác nhận giỏ hàng';
+    popupMessage.value = 'Vui lòng xác nhận Email để có thể mua hàng';
     showProductDetails.value = false;
-    console.log('Address must be chosen');
+  } else{
+    const selectedItems = cartItems.value.filter(item => item.isSelected);
+    if (selectedAddress.value !== null) {
+      cartStore.setSelectedItems(selectedItems);
+      cartStore.setTotalPrice(totalPrice.value);
+      cartStore.setShippingAddress(selectedAddress.value);
+      cartStore.setNote(note.value);
+      router.push('/order');
+    } else {
+      isPopupVisible.value = true;
+      popupMessage.value = 'Vui lòng chọn địa chỉ giao hàng trước khi xác nhận giỏ hàng';
+      showProductDetails.value = false;
+      console.log('Address must be chosen');
+    }
   }
 };
 

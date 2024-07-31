@@ -1,4 +1,10 @@
 <template>
+  <PopUp 
+          :show="showPopup" 
+          :message="'Yêu cầu xác thực email để tiếp tục đăng bán hàng'" 
+          :showDetails="false"
+          @close="showPopup = false"
+        />
  <nav
   v-if="(!auth.user_id && !['/login', '/signup', '/chat', '/upload', '/order', '/cart', '/forgot'].includes(route.path)) || (auth.user_id && !['/chat', '/order', '/orderconfirmation/:order_id'].includes(route.path))"
 
@@ -52,8 +58,8 @@
         >Upload</router-link
       > -->
       <router-link to="/upload" v-if="auth.user_id && userStore.role!='ROLE_STAFF' && userStore.role!='ROLE_ADMIN'">
-
-        <button  class="th-p-btn upload-button px-6">
+        
+        <button @click="handleUploadClick" class="th-p-btn upload-button px-6">
           Đăng bán<span class="mdi mdi-plus"></span>
         </button>
       </router-link>
@@ -123,6 +129,7 @@
             >
           </div>
         </div>
+        
       </div>
       <!-- User Page -->
     </div>
@@ -133,13 +140,15 @@
 import { useAuthStore } from "../stores/auth";
 import SideBar from "./MenuBar.vue";
 import { useRoute } from "vue-router";
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "../stores/user";
 import { onMounted } from "vue";
 import { useCartStore } from "../stores/cart";
 import { useWatchStore } from "../stores/watch";
 import { useChatStore } from "../stores/chat";
+import PopUp from "./PopUp.vue"
+
 
 const authStore = useAuthStore();
 const cartStore = useCartStore();
@@ -161,6 +170,14 @@ const submenus = ref({
   collection: false,
   // Add other submenus as needed
 });
+const showPopup = ref(false);
+
+const handleUploadClick = (event) => {
+  if (!userStore.isVerify) {
+    event.preventDefault();
+    showPopup.value = true;
+  }
+};
 
 const logout = () => {
    useAuthStore().logout().then(
