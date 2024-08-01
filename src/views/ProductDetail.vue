@@ -554,7 +554,7 @@ async function buyNow() {
 }
 
 const isWatchAvailable = computed(() => {
-  return watchStore.watch_data.state === 1 && useUserStore().role !=='ROLE_ADMIN';
+  return watchStore.watch_data.state === 1 && useUserStore().role !=='ROLE_ADMIN' && useUserStore().role !=='ROLE_STAFF';
 });
 
 const checkState = computed(() => {

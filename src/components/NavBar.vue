@@ -68,10 +68,10 @@
         <span class="mdi mdi-message-text-outline hover-animation"></span>
         <span class="absolute top-5 newmessnoti text-blue-400" v-if="useChatStore().haveNewMessage">●</span>
       </a>
-      <router-link v-if="useUserStore().role !=='ROLE_ADMIN'" to="/favorite">
+      <router-link v-if="useUserStore().role !=='ROLE_ADMIN'  && useUserStore().role !=='ROLE_STAFF'" to="/favorite">
         <span class="mdi mdi-heart-outline hover-animation"></span>
       </router-link>
-      <router-link v-if="useUserStore().role !=='ROLE_ADMIN'" to="/cart">
+      <router-link v-if="useUserStore().role !=='ROLE_ADMIN'  && useUserStore().role !=='ROLE_STAFF' " to="/cart">
         <div class="pr-2">
           <span class="mdi mdi-shopping-outline hover-animation"></span>
           <span class="absolute top-6">{{ useUserStore().cart_num }}</span>
@@ -105,7 +105,7 @@
         </div>
         <div v-show="showMenu">
           <div class="submenu absolute top-10 right-0.5 text-white pt-1 w-48">
-            <router-link v-if="useUserStore().role !=='ROLE_ADMIN'" to="/setting/profile" 
+            <router-link v-if="useUserStore().role !=='ROLE_ADMIN'  && useUserStore().role !=='ROLE_STAFF' " to="/setting/profile" 
             class="submenu-item block px-4 py-2 hover-underline-animation"
             >Cài đặt</router-link>
             <router-link to="/myself" 

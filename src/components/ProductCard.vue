@@ -3,7 +3,7 @@
     <div class="box" :class="{ bookmarked: isBookmarked }">
       <div class="image-container">
         <img class="watch-img" :src="productImage" />
-        <i v-if="useUserStore().role !=='ROLE_ADMIN'"
+        <i v-if="useUserStore().role !=='ROLE_ADMIN'  && useUserStore().role !=='ROLE_STAFF' "
           :class="['fa-sharp', isBookmarked ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark', 'bookmark-icon', { 'active': isBookmarked }]"
           @click="toggleBookmark"
         ></i>
