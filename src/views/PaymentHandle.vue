@@ -100,18 +100,18 @@ onMounted(async () => {
       
       successMessage.value = 'Payment details saved. Creating order...';
       
+      
       const orderData = userStore.getPendingOrder();
       
       console.log('Attempting to create order with data:', orderData);
       
       const result = await userStore.addOrder(authStore.user_id, orderData);
       
-      localStorage.setItem(`payment_method_${result}`, orderData.payment_method);
       console.log('Order creation result:', result);
-      
-      if (result !== "java.lang.Exception: An Error occur") {
+      if (result !== "java.lang.Exception: An Error occur" && orderData !== null) {
         const vnpayTransactionNo = paymentData.vnp_TransactionNo;
         localStorage.setItem('trans_no', vnpayTransactionNo);
+        localStorage.setItem(`payment_method_${result}`, orderData.payment_method);
 
       successMessage.value = 'Payment successful. Saving payment details...';
       paymentStatus.value = 'Successful';
@@ -186,6 +186,19 @@ onMounted(async () => {
     console.error('Error handling payment result:', error);
     errorMessage.value = 'An unexpected error occurred. Please try again or contact support.';
     paymentStatus.value = 'Error';
+    const paymentDataNullOrder = {
+          transaction_no: transactionNo.value,
+          payment_amount: parseFloat(amountString.value),
+          bank_code: bankCode.value,
+          payment_method: vnpCardType.value,
+          order_id: null,
+          member_id: authStore.user_id,
+          isSuccess: isSuccess,
+          wids: widsString
+        };
+        console.log('Payment order id null: ' + JSON.stringify(paymentDataNullOrder));
+        const savedPayment = await savePaymentDetail(paymentDataNullOrder);
+        console.log('Saved payment details:', savedPayment);
   }
 
 });
