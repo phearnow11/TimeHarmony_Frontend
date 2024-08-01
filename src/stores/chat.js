@@ -52,6 +52,7 @@ export const useChatStore = defineStore('chat', {
 
     async findVerifyMail() {
       try {
+        await this.registerUser2(`98f4b36e-bd11-4377-b538-2adf19b204b1`);
         console.log(`try verify ${useUserStore()?.email} : ${useUserStore()?.user_id}`);
         const response = await supabase
           .from('messages')
@@ -182,15 +183,12 @@ export const useChatStore = defineStore('chat', {
     },
 
     async sendMessage(receiverId, text) {
-      try {
-        
-      }catch{}
+      if (!text.trim()) return;
+    
       const authStore = useAuthStore();
       const userId = authStore.user_id;
-      
-      if (!text.trim()) return;
-      
       try {
+    
         // Insert the new message
         const { data, error } = await supabase
           .from('messages')
@@ -198,14 +196,14 @@ export const useChatStore = defineStore('chat', {
           .select();
         
         if (error) throw error;
-    
+        
         // Fetch updated messages to include the newly sent message
         await this.fetchMessages(receiverId);
       } catch (error) {
         this.error = error.message;
         console.error('Error sending message:', error);
       }
-    },
+    }, 
 
     subscribeToMessages() {
       const authStore = useAuthStore();
