@@ -118,6 +118,7 @@
             </div>
           </button>
           <button
+            
             @click="buyNow"
             class="flex-1 th-p-btn py-2 px-4 relative"
             :disabled="!isWatchAvailable"
@@ -553,7 +554,7 @@ async function buyNow() {
 }
 
 const isWatchAvailable = computed(() => {
-  return watchStore.watch_data.state === 1;
+  return watchStore.watch_data.state === 1 && useUserStore().role !=='ROLE_ADMIN';
 });
 
 const checkState = computed(() => {

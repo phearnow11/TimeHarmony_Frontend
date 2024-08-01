@@ -164,7 +164,9 @@
           </thead>
           <tbody>
             <tr v-for="product in filteredWatches" :key="product.watch_id">
-              <td class="p-2 border-b">{{ product.watch_id }}</td>
+              <td class="p-2 border-b">
+              <router-link class="hover-underline-animation " :to="`/detail/${product.watch_id}`">{{ product.watch_id }}</router-link>
+              </td>
               <td class="p-2 border-b">{{ product.watch_name }}</td>
               <td class="p-2 border-b">
                 <div class="flex items-center">

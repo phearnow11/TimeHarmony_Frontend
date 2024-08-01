@@ -68,10 +68,10 @@
         <span class="mdi mdi-message-text-outline hover-animation"></span>
         <span class="absolute top-5 newmessnoti text-blue-400" v-if="useChatStore().haveNewMessage">●</span>
       </a>
-      <router-link to="/favorite">
+      <router-link v-if="useUserStore().role !=='ROLE_ADMIN'" to="/favorite">
         <span class="mdi mdi-heart-outline hover-animation"></span>
       </router-link>
-      <router-link to="/cart">
+      <router-link v-if="useUserStore().role !=='ROLE_ADMIN'" to="/cart">
         <div class="pr-2">
           <span class="mdi mdi-shopping-outline hover-animation"></span>
           <span class="absolute top-6">{{ useUserStore().cart_num }}</span>
