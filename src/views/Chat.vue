@@ -73,6 +73,7 @@
             class="avatar"
           />
           <div class="chat-name">{{ selectedUserInfo.username }}</div>
+          <div class="ml-4 hover-underline-animation cursor-pointer" @click="hide(selectedUserInfo)">Ẩn đoạn hội thoại và người dùng này</div>
         </div>
         <div class="messages-container" ref="messagesContainer">
           <div
@@ -352,6 +353,13 @@ const scrollToBottom = () => {
     messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
   }
 };
+
+const hide = (u) => {
+  console.log("hide ",u?.user_id)
+  useChatStore().hide(u?.user_id)
+  fetchChatUsers();
+}
+
 </script>
 
 <style scoped>
