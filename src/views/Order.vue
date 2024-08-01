@@ -444,7 +444,7 @@ const createOrder = async () => {
     notice: note.value,
     total_price: totalAll.value,
     payment_method: selectedOption.value === 'cod' ? 'COD' : 'Card',
-    transaction_no: "",
+    transaction_no: selectedOption.value === 'cod' ? "" : "Chờ xử lý",
   };
 
   

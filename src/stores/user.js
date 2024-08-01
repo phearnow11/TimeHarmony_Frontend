@@ -333,6 +333,7 @@ export const useUserStore = defineStore("user", {
           throw new Error("No order data available");
         }
 
+        console.log('Sending order data to API:', orderData);
         const response = await axios.post(
           `${api}/member/add/order/${user_id}`,
           dataToUse
