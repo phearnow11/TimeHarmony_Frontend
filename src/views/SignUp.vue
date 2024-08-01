@@ -31,7 +31,7 @@
               <input type="password" class="form__field" placeholder="Password" v-model="signUpForm.password" @input="checkPasswordFormat" required />
               <label for="password" class="form__label">Mật khẩu*</label>
               <p v-if="!isPasswordValid && signUpForm.password !== ''" class="error-message">
-                Password must be at least 8 characters, contain at least one uppercase letter, one number, and one special character.
+                Mật khẩu phải có ít nhất 8 ký tự, chứa ít nhất một chữ cái viết hoa, một số, và một ký tự đặc biệt.
               </p>
             </div>
             <div :class="['form__group', 'field', 'w-96', {'input-error': !passwordsMatch && signUpForm.repassword !== ''}]">
