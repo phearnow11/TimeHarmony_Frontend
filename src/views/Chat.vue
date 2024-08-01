@@ -291,6 +291,7 @@ const sendMessage = async () => {
 const selectUser = async (chatUser) => {
   selectedUser.value = chatUser;
   await fetchSelectedUserInfo(chatUser.user_id); // Fetch selected user info
+  await chatStore.registerUser2(chatUser.user_id)
   await fetchMessages();
 };
 

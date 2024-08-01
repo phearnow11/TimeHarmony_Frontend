@@ -107,6 +107,17 @@
         </div>
       </div>
     </div>
+  <!-- Pagination -->
+  <div v-if="!loading" class="pagination-container flex justify-center items-center mt-10">
+    <div class="pagination-button" @click="setPage(watchStore.currentPage - 1)">
+      <span>{{ `<` }}</span>
+      <span class="button-text">Back</span>
+    </div>
+    <div class="pagination-button" @click="setPage(watchStore.currentPage + 1)">
+      <span class="button-text">Next</span>
+      <span>{{ `>` }}</span>
+    </div>
+  </div>
   </div>
 </template>
 
@@ -130,6 +141,16 @@ const selectedCategory = ref(null); // Only one category
 const selectedBrand = ref(null); // Only one brand
 const priceRange = ref([1000000, 5000000000]); // Default price range
 const maxPriceValue = ref(5000000000); // Adjust this value based on your data
+
+const currentPage = ref(0);
+const loading = ref(false);
+
+const setPage = async (page) => {
+  if (page < 0 || page >= watchStore.totalPage) return;
+  currentPage.value = page;
+  watchStore.currentPage = page
+  await applyFilter()
+};
 
 const formattedPrice = computed(() => {
   return priceRange.value.map(price => formatPrice(price));
@@ -194,7 +215,8 @@ const applyFilter = async () => {
   try {
     // Clear the watches map and fetch filtered results
     watchStore.watches.clear();
-    await watchStore.getWatchesOfPage(0, searchQuery.value, filters);
+    await watchStore.getWatchesOfPage(currentPage.value , searchQuery.value, filters);
+  
   } catch (error) {
     console.error('Error applying filters:', error);
   }
@@ -250,5 +272,40 @@ const searchResults = computed(() => {
   border: 1px solid var(--primary);
   border-radius: 4px;
   background: none;
+}
+
+.pagination-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.pagination-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  background-color: #202020;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  border: solid 1px var(--primary);
+}
+
+.pagination-button:hover:not(.disabled) {
+  background-color: #4e4e4e;
+}
+
+.pagination-button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.button-text {
+  margin: 0 8px;
+}
+
+.pagination-info {
+  font-size: 14px;
 }
 </style>
