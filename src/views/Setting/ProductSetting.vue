@@ -53,7 +53,12 @@
                 <td class="py-4">{{ index + 1 }}</td>
                 <td class="py-4">{{ order.order_id }}</td>
                 <td class="py-4 pl-2">{{ formatDate(order.create_time) }}</td>
-                <td class="py-4 pl-2">{{ orderDetails[order.order_id]?.payment_method ? orderDetails[order.order_id]?.payment_method : 'COD' }}</td>
+                <td class="py-4 pl-2">
+                  {{ 
+                    orderStates[order.order_id] === 'DELETED' ? 'N/A' :
+                    orderDetails[order.order_id]?.payment_method === 'ATM' ? 'ATM' : 'COD'
+                  }}
+                </td>                
                 <td class="py-4 pl-2">{{ formatPriceVND(order.total_price) }}</td>
                 <td class="py-4 pl-2">{{ getOrderStatusText(order.order_id) }}</td>
                 <td class="py-4 pl-2">

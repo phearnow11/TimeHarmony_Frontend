@@ -16,12 +16,7 @@
     <div class="container mx-auto p-4">
       <h2 class="text-2xl mt-4 text-primary relative bottom-4">Thống kê thu nhập</h2>
       <div class="p-1">
-        <div class="mt-8">
-          <h3 class="text-xl font-semibold mb-4">TỔNG THU NHẬP CỦA TÔI</h3>
-          <div class="relative h-64">
-            <canvas ref="incomeChart"></canvas>
-          </div>
-        </div>
+        
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <div v-for="(item, index) in performanceItems" :key="index" class="p-4 shadow">
             <div class="flex items-center justify-between mb-4">
@@ -37,15 +32,17 @@
                     <i :class="`fas ${item.isIncrease ? 'fa-arrow-up' : 'fa-arrow-down'} mr-1`"></i>
                     {{ item.percentChange }}% so với hôm qua
                   </p>
+                  
                 </div>
               </div>
+              
             </div>
             <div class="h-64">
               <canvas :ref="el => { if (el) chartRefs[index] = el }"></canvas>
             </div>
           </div>
         </div>
-        <button @click="exportToExcel" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <button @click="exportToExcel" class="th-p-btn hover:opacity-3 py-2 px-4">
           Xuất Excel
         </button>
       </div>
@@ -88,7 +85,6 @@ const performanceItems = ref([
     value: 0,
     label: 'Sản phẩm đã đăng',
     bgColor: 'bg-blue-500',
-    data: [],
     isCurrency: false
   },
   {
@@ -96,7 +92,6 @@ const performanceItems = ref([
     value: 0,
     label: 'Sản phẩm đã bán',
     bgColor: 'bg-yellow-500',
-    data: [],
     isCurrency: false
   },
 ])
@@ -108,46 +103,6 @@ const formatValue = (value, isCurrency) => {
   return value
 }
 
-
-const createIncomeChart = (monthlyProfit) => {
-  const ctx = incomeChart.value.getContext('2d');
-  new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
-      datasets: [{
-        label: 'Tổng thu nhập',
-        data: monthlyProfit,
-        borderColor: '#10B981',
-        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-        tension: 0.4,
-        fill: true,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          backgroundColor: 'rgba(0, 0, 0, 0.7)',
-          titleColor: '#fff',
-          bodyColor: '#fff',
-          padding: 10,
-          cornerRadius: 5,
-        }
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            callback: (value) => formatValue(value, true)
-          }
-        }
-      },
-    }
-  });
-};
 
 const updateDailyProfitChart = (labels, data) => {
   const ctx = chartRefs[0].getContext('2d');
@@ -194,7 +149,7 @@ const createCharts = () => {
     if (index === 0) return;
     const ctx = chartRefs[index].getContext('2d')
     new Chart(ctx, {
-      type: 'line',
+      type: 'table',
       data: {
         labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
         datasets: [{
@@ -240,28 +195,31 @@ const getChartColor = (index, alpha = 1) => {
 
 
 const exportToExcel = () => {
-  const data = performanceItems.value.map(item => ({
-    label: item.label,
-    value: item.isCurrency ? formatValue(item.value, item.isCurrency) : item.value,
-    data: item.data.join(', '),
-    isCurrency: item.isCurrency
-  }));
+  const data = [
+    {
+      label: performanceItems.value[0].label,
+      value: formatValue(performanceItems.value[0].value, true),
+      isCurrency: true
+    },
+    {
+      label: performanceItems.value[1].label,
+      value: performanceItems.value[1].value,
+      isCurrency: false
+    },
+    {
+      label: performanceItems.value[2].label,
+      value: performanceItems.value[2].value,
+      isCurrency: false
+    }
+  ];
 
-  const totalProfitData = incomeChart.value || [];
-  const totalProfit = {
-    label: 'Tổng thu nhập của tôi',
-    value: formatValue(totalProfitData.reduce((acc, val) => acc + val, 0), true),
-    data: totalProfitData.join(', '),
-    isCurrency: true
-  };
-  data.push(totalProfit);
-
-  const worksheet = XLSX.utils.json_to_sheet(data, { header: ['label', 'value', 'data'] });
+  const worksheet = XLSX.utils.json_to_sheet(data, { header: ['label', 'value'] });
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Performance Data');
 
-  XLSX.writeFile(workbook, 'Thu nhập cá nhân.xlsx');
+  XLSX.writeFile(workbook, 'Data.xlsx');
 }
+
 onMounted(async () => {
   const sellerId = authStore.user_id;
 
@@ -295,7 +253,7 @@ onMounted(async () => {
     const profitYesterday = dailyProfits[5];
     const percentChange = profitYesterday !== 0
       ? ((profitToday - profitYesterday) / profitYesterday) * 100
-      : 100;
+      : 0;
 
     performanceItems.value[0].percentChange = Math.abs(percentChange).toFixed(0);
     performanceItems.value[0].isIncrease = percentChange >= 0;
@@ -308,9 +266,7 @@ onMounted(async () => {
     const soldWatchesData = await userStore.countSoldWatch(sellerId);
 
     performanceItems.value[1].value = postedWatchesData;
-    performanceItems.value[1].data = createMonthlyData(postedWatchesData);
     performanceItems.value[2].value = soldWatchesData;
-    performanceItems.value[2].data = createMonthlyData(soldWatchesData);
 
     // Cập nhật các biểu đồ khác
     createCharts();
