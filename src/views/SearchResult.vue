@@ -107,6 +107,34 @@
         </div>
       </div>
     </div>
+    <!-- Pagination -->
+  <div v-if="!loading" class="pagination-container flex justify-center items-center mt-10">
+    <div class="pagination-number arrow" @click="setPage(0)">
+      <svg width="18" height="18">
+        <use xlink:href="#left" />
+      </svg>
+      <span class="arrow-text">Đầu</span>
+    </div>
+
+    <div v-for="page in visiblePages" :key="page" class="pagination-number" :class="{'pagination-active': page === watchStore.currentPage + 1}" @click="setPage(page - 1)">
+      {{ page }}
+    </div>
+
+    <div class="pagination-number arrow" @click="setPage(watchStore.totalPage-1)">
+      <span class="arrow-text">Cuối</span>
+      <svg width="18" height="18">
+        <use xlink:href="#right" />
+      </svg>
+    </div>
+  </div>
+  <svg class="hide">
+    <symbol id="left" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+    </symbol>
+    <symbol id="right" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+    </symbol>
+  </svg>
   </div>
 </template>
 
@@ -130,6 +158,40 @@ const selectedCategory = ref(null); // Only one category
 const selectedBrand = ref(null); // Only one brand
 const priceRange = ref([1000000, 5000000000]); // Default price range
 const maxPriceValue = ref(5000000000); // Adjust this value based on your data
+
+const currentPage = ref(0);
+const totalPages = ref(1);
+const loading = ref(false);
+
+const visiblePages = computed(() => {
+  const delta = 2;
+  const range = [];
+  for (let i = Math.max(1, currentPage.value + 1 - delta); 
+       i <= Math.min(totalPages.value, currentPage.value + 1 + delta); 
+       i++) {
+    range.push(i);
+  }
+  return range;
+});
+
+const setPage = async (page) => {
+  if (page < 0 || page >= totalPages.value) return;
+  currentPage.value = page;
+  await applyFilter()
+};
+
+const fetchWatches = async () => {
+  loading.value = true;
+  try {
+    const filters = applyFilter()
+    await watchStore.getWatchesOfPage(currentPage.value, searchQuery.value, filters);
+    totalPages.value = watchStore.totalPage;
+  } catch (error) {
+    console.error('Error fetching watches:', error);
+  } finally {
+    loading.value = false;
+  }
+};
 
 const formattedPrice = computed(() => {
   return priceRange.value.map(price => formatPrice(price));
@@ -194,7 +256,8 @@ const applyFilter = async () => {
   try {
     // Clear the watches map and fetch filtered results
     watchStore.watches.clear();
-    await watchStore.getWatchesOfPage(0, searchQuery.value, filters);
+    await watchStore.getWatchesOfPage(currentPage.value , searchQuery.value, filters);
+  
   } catch (error) {
     console.error('Error applying filters:', error);
   }
@@ -250,5 +313,45 @@ const searchResults = computed(() => {
   border: 1px solid var(--primary);
   border-radius: 4px;
   background: none;
+}
+
+.pagination-container {
+  display: flex;
+  align-items: center;
+}
+
+.arrow-text {
+  display: block;
+  font-size: 13px;
+}
+
+.pagination-number {
+  --size: 32px;
+  --margin: 6px;
+  margin: 0 var(--margin);
+  background: #202020;
+  max-width: auto;
+  min-width: var(--size);
+  height: var(--size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0 6px;
+}
+
+@media (hover: hover) {
+  .pagination-number:hover {
+    background: #4e4e4e;
+  }
+}
+
+.pagination-number:active {
+  background: #282828;
+}
+
+.pagination-active {
+  background: #282828;
+  border: 1px solid var(--primary);
 }
 </style>
