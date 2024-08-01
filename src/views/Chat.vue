@@ -1,5 +1,5 @@
 <template>
-  <div class="chat-container">
+  <div v-if="authStore.user_id" class="chat-container">
     <div v-if="error" class="error">
       <h3>Lỗi:</h3>
       <pre>{{ error }}</pre>
@@ -124,6 +124,14 @@
     </div>
     <div v-else>
       <p v-if="!user">Đang tải dữ liệu người dùng...</p>
+    </div>
+  </div>
+  <div v-else class="h-screen flex flex-col items-center justify-center">
+    <div>
+      <p class="text-xl font-medium text-center">Bạn cần đăng nhập để sử dụng chức năng này, <router-link class="hover-underline-animation" to="/login">Đăng nhập ngay</router-link></p>
+    </div>
+    <div class="mt-4">
+      <router-link to="/" class="hover-underline-animation">Quay trở lại trang chủ</router-link>
     </div>
   </div>
 </template>

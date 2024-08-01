@@ -1,4 +1,11 @@
 <template>
+  <div v-if="isLoading" class="overlay">
+      <div class="loader-container">
+        <div class="loader">
+          <div class="loaderBar"></div>
+        </div>
+      </div>
+    </div>
   <div v-if="auth.user_id">
     <div class="flex justify-center items-center flex-col pb-40">
       <div class="flex max-w mx-auto mt-10 left-10 justify-center">
@@ -436,8 +443,10 @@ onMounted(async () => {
     await handleVNPayReturn();
   }
 });
+const isLoading = ref(false)
 
 const createOrder = async () => {
+  isLoading.value = true
   const orderData = {
     wids: selectedItems.value.map((item) => item.watch_id),
     address: shippingAddress.value ? shippingAddress.value.id : null,
@@ -509,6 +518,7 @@ const createOrder = async () => {
   } catch (error) {
     console.error("Failed to create order:", error);
     alert("Failed to create order. Please try again.");
+    isLoading.value = false;
   }
 
   cartStore.selected_wids = [];
@@ -574,5 +584,79 @@ const handleVNPayReturn = async () => {
   stroke-dasharray: 320;
   stroke-dashoffset: 320;
   transition: stroke-dashoffset 0.3s ease;
+}
+
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  z-index: 9999;
+}
+.loader-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+  background: rgba(
+    23,
+    23,
+    23,
+    0.5
+  ); /* Adjust the alpha value for transparency */
+}
+
+.loader {
+  width: 80px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  padding: 1px;
+}
+
+.loader .loaderBar {
+  position: absolute;
+  top: 0;
+  right: 100%;
+  bottom: 0;
+  left: 0;
+  background: var(--secondary);
+  width: 0;
+  animation: borealisBar 2s linear infinite;
+}
+
+
+
+.loader::after {
+  content: "";
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--secondary);
+  left: 0;
+  top: 0;
+  animation: rotation 2s ease-in-out infinite alternate;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

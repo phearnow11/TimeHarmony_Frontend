@@ -1,4 +1,11 @@
 <template>
+  <div v-if="isLoading" class="overlay">
+      <div class="loader-container">
+        <div class="loader">
+          <div class="loaderBar"></div>
+        </div>
+      </div>
+    </div>
   <div>
     <p>This page handles payment result from VNPAY</p>
     <p v-if="amountString">Payment amount: {{ amountString }}</p>
@@ -71,8 +78,11 @@ onUnmounted(() => {
   }
 });
 
+const isLoading = ref(false)
+
 onMounted(async () => {
   try {
+    isLoading.value = true;
     const urlParams = new URLSearchParams(window.location.search);
     const paymentData = Object.fromEntries(urlParams.entries());
 
@@ -103,7 +113,7 @@ onMounted(async () => {
       
       const orderData = userStore.getPendingOrder();
       orderData.transaction_no = transactionNo.value;
-      
+
       console.log('Attempting to create order with data:', orderData);      
       const result = await userStore.addOrder(authStore.user_id, orderData);
       
@@ -197,6 +207,8 @@ onMounted(async () => {
         console.log('Payment order id null: ' + JSON.stringify(paymentDataNullOrder));
         const savedPayment = await savePaymentDetail(paymentDataNullOrder);
         console.log('Saved payment details:', savedPayment);
+  } finally {
+    isLoading.value = false;
   }
 
 });
@@ -210,5 +222,78 @@ onMounted(async () => {
 .success-message {
   color: green;
   font-weight: bold;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  z-index: 9999;
+}
+.loader-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+  background: rgba(
+    23,
+    23,
+    23,
+    0.5
+  ); /* Adjust the alpha value for transparency */
+}
+
+.loader {
+  width: 80px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  padding: 1px;
+}
+
+.loader .loaderBar {
+  position: absolute;
+  top: 0;
+  right: 100%;
+  bottom: 0;
+  left: 0;
+  background: var(--secondary);
+  width: 0;
+  animation: borealisBar 2s linear infinite;
+}
+
+
+
+.loader::after {
+  content: "";
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--secondary);
+  left: 0;
+  top: 0;
+  animation: rotation 2s ease-in-out infinite alternate;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

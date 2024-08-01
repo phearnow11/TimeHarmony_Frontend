@@ -109,6 +109,7 @@
   import { useUserStore } from '../stores/user'; // Adjust the import path as needed
   import { useWatchStore } from '../stores/watch';
   import { useAuthStore } from '../stores/auth';
+import router from '../router';
   
   const userStore = useUserStore();
   const watchStore = useWatchStore();
@@ -168,6 +169,7 @@
           await userStore.cancelOrder(orderid);
           // Sau khi huỷ đơn hàng thành công, cập nhật lại trạng thái
           state.value = mapOrderState('CANCELLED');
+          window.location.replace('/')
         } else {
           alert("Không thể huỷ đơn hàng trong trạng thái hiện tại");
         }
