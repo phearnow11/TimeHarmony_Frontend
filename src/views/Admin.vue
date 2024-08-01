@@ -23,7 +23,7 @@
       <button 
       @click="promoteToStaff" 
       :disabled="!userId" 
-      :class="['th-p-btn', { 'disabled-btn': !userId }]"
+      :class="['th-p-btn', { 'opacity-50 cursor-not-allowed': !userId }]"
       >
         Thêm làm nhân viên
       </button>

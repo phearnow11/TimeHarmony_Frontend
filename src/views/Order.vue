@@ -161,10 +161,10 @@
                 >{{ Math.round(shipFee).toLocaleString("vi-VN") }} ₫</span
               >
             </div>
-            <div class="flex justify-between">
+            <!-- <div class="flex justify-between">
               <span class="text-gray-99">Discount</span>
               <span class="text-[whitesmoke] font-bold">0 ₫</span>
-            </div>
+            </div> -->
           </div>
 
           <div

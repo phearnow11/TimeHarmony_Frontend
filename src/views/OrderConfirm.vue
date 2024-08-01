@@ -71,16 +71,16 @@
               </div>
               <div class="flex justify-between font-bold text-lg mt-4 pt-4 border-t">
                 <span>Phương thức thanh toán</span>
-                <span>{{ orderDetails.payment_method }}</span>
+                <span>{{ orderDetails.payment_method ? orderDetails.payment_method : "COD"}}</span>
               </div>
               <div class="flex justify-between font-bold text-lg mt-4 pt-4 border-t">
                 <span>Tạm tính ({{ detailedWatches.length }} sản phẩm)</span>
                 <span>{{ orderDetails.order_detail.total_price.toLocaleString('vi-VN') }} ₫</span>
               </div>
-              <div class="flex justify-between mb-2">
+              <!-- <div class="flex justify-between mb-2">
                 <span class="text-[whitesmoke]">Voucher</span>
                 <span class="text-[whitesmoke]">0 ₫</span>
-              </div>
+              </div> -->
               <div class="flex justify-between font-bold text-lg mt-4 pt-4 border-t">
                 <span>Tổng tiền</span>
                 <span>{{ orderDetails.order_detail.total_price.toLocaleString('vi-VN') }} ₫</span>

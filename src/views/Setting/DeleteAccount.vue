@@ -36,7 +36,7 @@
           <button 
             @click="confirmDelete()" 
             :disabled="!check" 
-            :class="['th-p-btn', { 'disabled-btn': !check }]"
+            :class="['th-p-btn', { 'opacity-50 cursor-not-allowed': !check }]"
             >
             Xác nhận xoá !
             </button>

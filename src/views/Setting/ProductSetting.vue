@@ -39,6 +39,7 @@
                 <th class="pb-2">Số Thứ Tự</th>
                 <th class="pb-2">Mã Đơn Hàng</th>
                 <th class="pb-2 pl-2">Ngày Đặt</th>
+                <th class="pb-2 pl-2">Phương thức thanh toán</th>
                 <th class="pb-2 pl-2">Tổng Tiền</th>
                 <th class="pb-2 pl-2">Trạng Thái</th>
                 <th class="pb-2">Đơn hàng đang tại</th>
@@ -52,6 +53,7 @@
                 <td class="py-4">{{ index + 1 }}</td>
                 <td class="py-4">{{ order.order_id }}</td>
                 <td class="py-4 pl-2">{{ formatDate(order.create_time) }}</td>
+                <td class="py-4 pl-2">{{ orderDetails[order.order_id]?.payment_method ? orderDetails[order.order_id]?.payment_method : 'COD' }}</td>
                 <td class="py-4 pl-2">{{ formatPriceVND(order.total_price) }}</td>
                 <td class="py-4 pl-2">{{ getOrderStatusText(order.order_id) }}</td>
                 <td class="py-4 pl-2">
@@ -59,7 +61,7 @@
                 </td>
                 <td class="py-4 pl-2">{{ order.shipping_date ? formatDate(order.shipping_date) : "N/A" }}</td>
                 <td class="py-4 px-2">
-                  <button v-if="orderStates[order.order_id] !== 'DELETED'" class="hover-underline-animation px-2" @click="viewOrderDetails(order.order_id)">Xem Chi Tiết</button>
+                  <button v-if="orderStates[order.order_id] !== 'DELETED' || orderStates[order.order_id] === 'PENDING'" class="hover-underline-animation px-2" @click="viewOrderDetails(order.order_id)">Xem Chi Tiết</button>
                   <button v-if="orderStates[order.order_id] === 'PENDING'" class="hover-underline-animation px-2 border-l border-secondary" @click="cancelOrder(order.order_id)">Huỷ Đơn</button>
                   <button v-if="orderStates[order.order_id] === 'SHIPPED'" class="hover-underline-animation px-2 border-l border-secondary" @click="confirmShip(order.order_id)">Đã nhận</button>
                 </td>
@@ -219,15 +221,17 @@ const locations = ref({});
 const isLoading = ref(false);
 
 
-const fetchOrderDetails = async (watchId, orderId) => {
+const fetchOrderDetails = async (orderId) => {
   try {
-    const result = await user.getOrderDetail(orderId);
-    orderDetails.value[watchId] = result;
+    const details = await user.getOrderDetail(orderId);
+    if (details) {
+      orderDetails.value[orderId] = details;
+    }
   } catch (error) {
-    console.error(`Error fetching order detail for watch ${watchId}:`, error);
-    orderDetails.value[watchId] = 'Error';
+    console.error(`Error fetching details for order ${orderId}:`, error);
   }
 };
+
 
 const refreshOrderData = async () => {
   try {
@@ -400,7 +404,8 @@ const loadOrders = async () => {
     
     for (const order of orders.value) {
       console.log('fetching location');
-      const detail = await user.getOrderDetail(order.order_id);
+      const detail = await fetchOrderDetails(order.order_id);
+      
       console.log("DET", detail);
 
       if (detail && detail.locations && detail.locations[0]) {

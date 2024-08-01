@@ -61,10 +61,7 @@
               {{ selectedItemsCount > 0 ? Math.round(shipFee).toLocaleString("vi-VN") + ' ₫' : '0 ₫' }}
             </span>
           </div>
-          <div class="flex justify-between">
-            <span class="text-gray-99">Giảm giá</span>
-            <span class="text-gray-99 font-bold">0 ₫</span>
-          </div>
+          
         </div>
         <div class="border-t border-secondary border-dashed pt-5 form-content">
           <span class="text-xl font-bold">Ghi chú</span>
@@ -78,22 +75,7 @@
             <label for="note" class="form__label">Nhập ghi chú ở đây</label>
           </div>
         </div>
-        <div class="border-t border-secondary border-dashed pt-5 form-content">
-          <span class="text-xl font-bold">Voucher</span>
-          <div class="flex items-center w-full mt-1">
-            <div class="form__group field flex-grow relative">
-              <input
-                type="text"
-                class="form__field w-full"
-                placeholder="Enter a voucher"
-              />
-              <label for="voucher" class="form__label">Nhập mã voucher</label>
-            </div>
-            <button class="th-p-btn ml-2 mt-3">
-              Áp dụng
-            </button>
-          </div>
-        </div>
+        
 
         <div class="border-t border-secondary border-dashed pt-5 flex justify-between items-center">
           <span class="font-semibold text-xl">Tổng tiền</span>
@@ -101,7 +83,9 @@
         </div>
         <button
           @click="createOrder"
-          class="th-p-btn text-white px-4 py-2 w-full text-center"
+          :disabled="isCartEmpty || selectedItemsCount === 0"
+          :class="['th-p-btn text-white px-4 py-2 w-full text-center', 
+                  {'opacity-50 cursor-not-allowed': isCartEmpty || selectedItemsCount === 0}]"
         >
           Xác nhận giỏ hàng ({{ selectedItemsCount }})
         </button>
@@ -527,7 +511,7 @@ function checkSelectedItems() {
   }
 }
 
-const isCartEmpty = computed(() => cartItems.value.length === 0);
+const isCartEmpty = computed(() => cartItems.value.length === 0 || selectedItemsCount.value === 0);
 
 onMounted(async () => {
   try {
@@ -678,7 +662,7 @@ const createOrder = async () => {
     showProductDetails.value = false;
     return;
   }
-  if (!userStore.isVerify) {
+  else if (!userStore.isVerify) {
     isPopupVisible.value = true;
     popupMessage.value = 'Vui lòng xác nhận Email để có thể mua hàng';
     showProductDetails.value = false;
