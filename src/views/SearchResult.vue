@@ -111,10 +111,10 @@
   <div v-if="!loading" class="pagination-container flex justify-center items-center mt-10">
     <div class="pagination-button" @click="setPage(watchStore.currentPage - 1)">
       <span>{{ `<` }}</span>
-      <span class="button-text">Back</span>
+      <span class="button-text">Trước</span>
     </div>
     <div class="pagination-button" @click="setPage(watchStore.currentPage + 1)">
-      <span class="button-text">Next</span>
+      <span class="button-text">Sau</span>
       <span>{{ `>` }}</span>
     </div>
   </div>
