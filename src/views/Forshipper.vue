@@ -82,6 +82,7 @@
           <th class="pb-2 pl-2">Địa chỉ giao hàng</th>
           <th class="pb-2 pl-2">Tên người nhận</th>
           <th class="pb-2 pl-2">SĐT người nhận</th>
+          <th class="pb-2 pl-2">Thu tiền hộ</th>
           <th class="pb-2">Trạng thái</th>
           <th class="pb-2">Hành động</th>
         </tr>
@@ -94,6 +95,7 @@
           <td class="py-4 pl-2">{{ order.address }}</td>
           <td class="py-4 pl-2">{{ order.receive_name }}</td>
           <td class="py-4 pl-2">{{ order.phone }}</td>
+          <td class="py-4 pl-2">{{ order.payment_method === 'ATM' ? '0đ' : formatPriceVND(order.total_price) + ' (Thu hộ COD)' }}</td>
           <td class="py-4 pl-2">{{ getShippingStatusText(order.state) }}</td>
           <td class="py-4 px-2">
             <button class="hover-underline-animation" @click="shippedOrderToMember(order.order_id, auth.user_id)">Đã giao đến người nhận</button>
@@ -144,7 +146,8 @@
 const refreshPending = async () => {
   try {
     isLoading.value = true;
-    await Promise.all([loadPendingWatches(), loadOrderStates()]);
+    await loadPendingWatches();
+    await loadOrderStates();
   } catch (error) {
     console.error('Lỗi khi làm mới dữ liệu đơn hàng:', error);
   } finally {
@@ -155,7 +158,8 @@ const refreshPending = async () => {
 const refreshShipping = async () => {
   try {
     isLoading.value = true;
-    await Promise.all([loadShippingOrders(), loadOrderStates()]);
+    await loadShippingOrders();
+    await loadOrderStates();
   } catch (error) {
     console.error('Lỗi khi làm mới dữ liệu đơn hàng:', error);
   } finally {
@@ -183,11 +187,10 @@ const refreshShipping = async () => {
   });
   
   const loadOrderStates = async () => {
-    try {
-      const ordersList = orders.value; // Assuming orders are already loaded
-      for (const order of ordersList) {
-        const state = await user.getOrderState(order.order_id);
-        orderStates.value[order.order_id] = state;
+  try {
+    for (const order of shippingOrders.value) {
+      const state = await user.getOrderState(order.order_id);
+      orderStates.value[order.order_id] = state;
       }
     } catch (error) {
       console.error('Lỗi khi tải trạng thái đơn hàng:', error);
@@ -341,7 +344,9 @@ const refreshShipping = async () => {
           orderIds.map(orderId => useUserStore().getOrderDetail(orderId))
         );
         
-        shippingOrders.value = orderDetails.map(detail => detail.order_detail);
+        shippingOrders.value = orderDetails.map(detail => ({
+          ...detail.order_detail,
+          payment_method: detail.payment_method})); 
         console.log("Shipping order details:", shippingOrders.value);
       
     } catch (error) {
