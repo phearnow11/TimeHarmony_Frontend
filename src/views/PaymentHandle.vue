@@ -109,9 +109,7 @@ onMounted(async () => {
       
       console.log('Order creation result:', result);
       if (result !== "java.lang.Exception: An Error occur" && orderData !== null) {
-        const vnpayTransactionNo = paymentData.vnp_TransactionNo;
-        localStorage.setItem('trans_no', vnpayTransactionNo);
-        localStorage.setItem(`payment_method_${result}`, orderData.payment_method);
+        
 
       successMessage.value = 'Payment successful. Saving payment details...';
       paymentStatus.value = 'Successful';

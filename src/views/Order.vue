@@ -444,14 +444,14 @@ const createOrder = async () => {
     notice: note.value,
     total_price: totalAll.value,
     payment_method: selectedOption.value === 'cod' ? 'COD' : 'Card',
-    transaction_no: "123456",
+    transaction_no: "",
   };
 
   
   const wids = Object.values(cartStore.selected_wids);
 
   try {
-    if (selectedOption.value === "card") {
+    if (selectedOption.value === 'card') {
     userStore.setPendingOrder(orderData);
     isProcessingPayment.value = true;
 
@@ -476,7 +476,7 @@ const createOrder = async () => {
     } finally {
       isProcessingPayment.value = false;
     }
-    } else {
+  } else {
       console.log("Sending order data:", orderData);
       const checkWatch = await paymentCOD(wids);
       console.log('Watch id ' + wids);
@@ -485,7 +485,6 @@ const createOrder = async () => {
       if(checkWatch){
         const result = await userStore.addOrder(auth.user_id, orderData);
         console.log("Order created successfully: ", result);
-        localStorage.setItem(`payment_method_${result}`, orderData.payment_method);
         if (result) {
           console.log("Fetching order details for order ID:", result);
           const orderDetails = await userStore.getOrderDetail(result);
@@ -531,7 +530,6 @@ const handleVNPayReturn = async () => {
         transaction_no: vnpayTransactionNo,
       });
       if (result) {
-        localStorage.setItem(`payment_method_${result}`, result.payment_method);
         const orderDetails = await userStore.getOrderDetail(result);
         if (orderDetails && orderDetails.order_detail) {
           userStore.setCurrentOrder(orderDetails);
