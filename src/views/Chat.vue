@@ -357,7 +357,7 @@ const scrollToBottom = () => {
 const hide = (u) => {
   console.log("hide ",u?.user_id)
   useChatStore().hide(u?.user_id)
-  fetchChatUsers();
+  window.location.reload()
 }
 
 </script>
