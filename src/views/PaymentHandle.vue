@@ -102,9 +102,9 @@ onMounted(async () => {
       
       
       const orderData = userStore.getPendingOrder();
+      orderData.transaction_no = transactionNo.value;
       
-      console.log('Attempting to create order with data:', orderData);
-      
+      console.log('Attempting to create order with data:', orderData);      
       const result = await userStore.addOrder(authStore.user_id, orderData);
       
       console.log('Order creation result:', result);
