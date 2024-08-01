@@ -132,8 +132,9 @@ const verify = route.query.verify
 if(verify === `${user.email}:${user.user_id}` && useUserStore()?.isVerify == false){
   useChatStore().sendMessage(`98f4b36e-bd11-4377-b538-2adf19b204b1`,`verify:${verify}`)
   console.log(`send to bot`);
-  showPopup.value = true;
   message.value = 'Xác thực email thành công'
+  window.location.reload()
+  // showPopup.value = true;
 }
 
 console.log("V",useUserStore().isVerify);
@@ -232,6 +233,13 @@ const submit = () => {
     updatedFields.username = user.username;
   }
 
-  user.updateUserInfo(user.user_id, updatedFields);
+  user.updateUserInfo(user.user_id, updatedFields)
+    .then(() => {
+      window.location.reload()
+    })
+    .catch((error) => {
+      console.error("Lỗi khi cập nhật thông tin người dùng:", error);
+      alert("Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại.");
+    });
 };
 </script>

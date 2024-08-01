@@ -2,7 +2,7 @@
   <div v-if="auth.user_id" class="flex justify-center h-full pb-96 items-center flex-col mb-96">
     <section class="w-full pt-5 px-9">
       <div class="flex justify-between">
-        <span class="text-2xl font-semibold">Giỏ hàng</span>
+        <span class="text-2xl font-semibold text-primary">Giỏ hàng</span>
       </div>
     </section>
     

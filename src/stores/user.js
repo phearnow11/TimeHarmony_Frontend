@@ -599,11 +599,8 @@ export const useUserStore = defineStore("user", {
     },
 
     updateUserInfo(id, updateData) {
-      axios
-        .put(
-          `${api}/member/update/member/${id}`,
-          updateData
-        )
+      return axios
+        .put(`${api}/member/update/member/${id}`, updateData)
         .then((res) => {
           console.log(res.data);
           // Update the local user state with the changes
@@ -611,7 +608,8 @@ export const useUserStore = defineStore("user", {
         })
         .catch((err) => {
           console.log(err);
+          throw err; // Re-throw the error to handle it in the submit function
         });
-    },
+    },    
   },
 });
