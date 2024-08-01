@@ -105,7 +105,7 @@
         </div>
         <div v-show="showMenu">
           <div class="submenu absolute top-10 right-0.5 text-white pt-1 w-48">
-            <router-link to="/setting/profile" 
+            <router-link v-if="useUserStore().role !=='ROLE_ADMIN'" to="/setting/profile" 
             class="submenu-item block px-4 py-2 hover-underline-animation"
             >Cài đặt</router-link>
             <router-link to="/myself" 
