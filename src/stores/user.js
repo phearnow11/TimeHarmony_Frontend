@@ -424,7 +424,18 @@ export const useUserStore = defineStore("user", {
         throw error;
       }
     },
-
+    async getOrderTransactionNo(order_id) {
+      try {
+        const response = await axios.get(
+          `${api}/member/get/tno/${order_id}`
+        );
+        console.log("Full getOrderDetail transaction response:", response.data);
+        return response.data; // This will return the entire response object
+      } catch (error) {
+        console.error("Error fetching order details:", error);
+        throw error;
+      }
+    },
     async cancelOrder(order_id) {
       try {
         const response = await axios.put(

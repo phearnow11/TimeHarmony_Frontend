@@ -71,7 +71,7 @@
               </div>
               <div class="flex justify-between font-bold text-lg mt-4 pt-4 border-t">
                 <span>Phương thức thanh toán</span>
-                <span>{{ orderDetails.order_detail.transaction_no ? 'Card' : 'COD' }}</span>
+                <span>{{ orderDetails.payment_method }}</span>
               </div>
               <div class="flex justify-between font-bold text-lg mt-4 pt-4 border-t">
                 <span>Tạm tính ({{ detailedWatches.length }} sản phẩm)</span>
@@ -88,7 +88,7 @@
               <div class="mt-6">
                 <div class="flex justify-between text-sm text-gray-99">
                   <span>Mã giao dịch</span>
-                  <span>{{ orderDetails.order_detail.transaction_no ? orderDetails.order_detail.transaction_no : "123456" }}</span>
+                  <span>{{ transactionNo ? transactionNo : "123456" }}</span>
                 </div>
                 <div class="flex justify-between text-sm text-gray-99">
                   <span>Giờ/Ngày thực hiện giao dịch</span>
@@ -120,8 +120,7 @@
   const order = ref([])
   const transactionNo = ref(null);
   const paymentMethod = ref(null);
-  userStore.payment_method = null;
-  userStore.transaction_no = null;
+
   const auth = useAuthStore();
 
   onMounted(async () => {
@@ -132,6 +131,7 @@
     if (orderId) {
       try {
         orderDetails.value = await userStore.getOrderDetail(orderId);
+        transactionNo.value = await userStore.getOrderTransactionNo(orderId);
         await fetchWatchDetails(orderDetails.value.watch);
         const orderState = await userStore.getOrderState(orderId);
         state.value = mapOrderState(orderState);

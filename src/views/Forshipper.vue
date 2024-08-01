@@ -36,7 +36,7 @@
                 <th class="pb-2 pl-2">SĐT người nhận</th>
                 <th class="pb-2">Lời nhắn</th>
                 <th class="pb-2">Giá đơn</th>
-                <th class="pb-2">Phương thức thanh toán</th>
+                <th class="pb-2">Thu tiền (COD)</th>
                 <th class="pb-2">Trạng thái</th>
                 <th class="pb-2">Ngày giao đến</th>
                 <th class="pb-2">Hành động</th>
@@ -56,7 +56,7 @@
                 <td class="py-4 pl-2">{{ item.phone }}</td>
                 <td class="py-4 pl-2">{{ item.notice ? item.notice : 'Không có thông tin' }}</td>
                 <td class="py-4 pl-2">{{ formatPriceVND(item.total_price) }}</td>
-                <td class="py-4 pl-2">{{ getPaymentMethod(item.order_id) }}</td>
+                <td class="py-4 pl-2">{{ item.payment_method === 'ATM' ? '0đ' : formatPriceVND(item.total_price) + ' (Thu hộ COD)'  }}</td>
                 <td class="py-4 pl-2">{{ item.state === 'PENDING' ? 'Đang chờ người bán đóng gói' : 'Đã được gửi đến người vận chuyển' }}</td>
                 <td class="py-4 pl-2">{{ shipping_date ? shipping_date : 'Không có thông tin' }}</td>
 
@@ -127,16 +127,7 @@
   const watchOrderDetails = ref({});
   const isLoading = ref(false);
   
-  const getPaymentMethod = (orderId) => {
-  try {
-    const method = localStorage.getItem(`payment_method_${orderId}`);
-    console.log(`Payment method for order ${orderId}:`, method);
-    return method || 'Unknown';
-  } catch (error) {
-    console.error('Error accessing localStorage:', error);
-    return 'Unknown';
-  }
-};
+
 
   const viewOrderDetails = (orderId) => {
     const state = orderStates.value[orderId];
@@ -242,31 +233,27 @@ const refreshShipping = async () => {
   };
   
   const loadPendingWatches = async () => {
-    try {
-      pendingWatches.value = await useStaffStore().getPendingOrder();
-      console.log('Pending watches:', pendingWatches.value);
-      // Load payment methods for each order
-      pendingWatches.value.forEach(watch => {
-        const method = getPaymentMethod(watch.order_id);
-        console.log(`Payment method for order ${watch.order_id}:`, method);
-      });
-    } catch (error) {
-      console.error('Lỗi khi tải đồng hồ chờ duyệt:', error);
+  try {
+    pendingWatches.value = await useStaffStore().getPendingOrder();
+    console.log('Pending watches:', pendingWatches.value);
+    
+    // Loop through each pending watch and get its order details
+    for (const watch of pendingWatches.value) {
+      try {
+        const orderDetails = await useUserStore().getOrderDetail(watch.order_id);
+        // Assuming orderDetails contains a payment_method property
+        watch.payment_method = orderDetails.payment_method;
+      } catch (error) {
+        console.error(`Error fetching order details for order ${watch.order_id}:`, error);
+        watch.payment_method = 'Unknown'; // Or some default value if there's an error
+      }
     }
-  };
-  
-  watch([pendingWatches, shippingOrders], () => {
-  console.log('Orders list updated, refreshing payment methods');
-  pendingWatches.value.forEach(watch => {
-    const method = getPaymentMethod(watch.order_id);
-    console.log(`Payment method for pending order ${watch.order_id}:`, method);
-  });
-  shippingOrders.value.forEach(order => {
-    const method = getPaymentMethod(order.order_id);
-    console.log(`Payment method for shipping order ${order.order_id}:`, method);
-  });
-}, { deep: true });
-  
+  } catch (error) {
+    console.error('Lỗi khi tải đồng hồ chờ duyệt:', error);
+  }
+};
+
+
   const sortedPendingWatches = computed(() => {
     return [...pendingWatches.value].sort((a, b) => {
       return new Date(b.create_time) - new Date(a.create_time);
