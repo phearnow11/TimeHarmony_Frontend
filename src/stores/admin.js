@@ -102,6 +102,19 @@ export const useAdminStore = defineStore("admin", {
         this.isLoading = false;
       }
     },
+    async deleteOrdersNull(id) {
+      
+      this.isLoading = true;
+      this.error = null;
+      try {
+        await axios.delete(`${api}/payment/delete/${id}`);
+      } catch (error) {
+        console.error("Error fetching null orders:", error);
+        this.error = error.message || "Failed to fetch null orders";
+      } finally {
+        this.isLoading = false;
+      }
+    },
 
     async promoteToStaff(userId) {
       const token = useAuthStore().token;

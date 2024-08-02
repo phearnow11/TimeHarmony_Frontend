@@ -720,9 +720,10 @@ const sendEmail = async (transactionNo, member_id) => {
           `Time Harmony xin thông báo: Đơn đặt hàng của người dùng ${(await u).first_name} ${(await u).last_name} được tạo vào thời điểm ${formatDate(transaction.create_at)} với mã giao dịch ${transactionNo} có số tiền: ${currency(transaction.payment_amount)} đã xảy ra lỗi ngoài ý muốn. Chúng tôi xin lỗi về sự cố xảy ra trong quá trình xác nhận đơn hàng. Đơn hàng sẽ được hoàn tiền ngay khi có thể. Xin cảm ơn bạn đã thông cảm và kiên nhẫn đợi.`
           );
 
-
+        useAdminStore().deleteOrdersNull(transactionNo)
         // Thông báo gửi email thành công
         alert("Email đã được gửi thành công!");
+        await adminStore.getOrdersNull();
         // Có thể thêm logic để cập nhật trạng thái giao dịch nếu cần
       } catch (error) {
         console.error("Error sending email:", error);
