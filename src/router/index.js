@@ -253,7 +253,8 @@ router.beforeEach(async (to, from, next) => {
     if (['/login', '/signup', '/forgot'].includes(to.path)) {
       return next('/');
     }
-  } else {
+    
+    } else {
     // Unsubscribe from messages if not authenticated
     chatStore.unsubscribeFromMessages();
   }

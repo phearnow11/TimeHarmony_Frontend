@@ -20,6 +20,7 @@
     "@mui/material": "^5.15.18",
     "@supabase/supabase-js": "^2.44.4",
     "@vueform/slider": "^2.1.10",
+    "@vuepic/vue-datepicker": "^9.0.1",
     "axios": "^1.6.8",
     "chart.js": "^4.4.3",
     "cloudinary": "^2.2.0",
