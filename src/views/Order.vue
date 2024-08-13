@@ -472,14 +472,14 @@ const createOrder = async () => {
       const paymentResponse = await createVnPayPayment(totalAll.value, wids);
       console.log('Payment Response:', paymentResponse);
 
-      // if (
-      //   paymentResponse &&
-      //   paymentResponse.data &&
-      //   paymentResponse.data.data &&
-      //   paymentResponse.data.data.paymentUrl
-      // ) {
-      //   window.location.href = paymentResponse.data.data.paymentUrl;
-      // }
+      if (
+        paymentResponse &&
+        paymentResponse.data &&
+        paymentResponse.data.data &&
+        paymentResponse.data.data.paymentUrl
+      ) {
+        window.location.href = paymentResponse.data.data.paymentUrl;
+      }
        
     } catch (error) {
       console.error("Failed to process payment:", error);
