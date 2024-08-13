@@ -6,14 +6,14 @@
           @close="showPopup = false"
         />
  <nav
-  v-if="(!auth.user_id && !['/login', '/signup', '/chat', '/upload', '/order', '/cart', '/forgot'].includes(route.path)) || (auth.user_id && !['/chat', '/order', '/orderconfirmation/:order_id'].includes(route.path))"
+  v-if="(!auth.user_id && !['/login', '/signup', '/chat', '/upload', '/order', '/cart', '/forgot'].includes(route.path)) || (auth.user_id && !['/chat', '/order', '/orderconfirmation/:order_id', '/admin', '/appraiser'].includes(route.path))"
 
   class="myheader grid grid-cols-6 gap-4 h-20 items-center sticky top-0 z-50 w-full pl-6 pr-6"
 >
     <div class="flex items-center justify-between col-span-1">
       <side-bar />
       <div class="flex justify-center items-center h-full">
-        <router-link to="/">
+        <router-link v-if="!checkRole" to="/">
           <img src="../assets/time-harmony.png" class="h-12" />
         </router-link>
       </div>
@@ -171,6 +171,11 @@ const submenus = ref({
   // Add other submenus as needed
 });
 const showPopup = ref(false);
+const checkRole = ref(false)
+
+
+
+
 
 const handleUploadClick = (event) => {
   if (!userStore.isVerify) {
@@ -249,6 +254,7 @@ function setGreeting() {
 
 onMounted(async () => {
   try {
+    
     setGreeting();
     if (authStore.user_id) {
     await cartStore.getCart(authStore.user_id);

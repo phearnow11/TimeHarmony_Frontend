@@ -1,4 +1,6 @@
 <template>
+  
+
   <div class=" mx-auto p-4">
     <div class="flex justify-between items-center mb-4">
       <h1 class="text-2xl font-bold text-primary">Kiểm duyệt và thẩm định đồng hồ</h1>
@@ -62,12 +64,88 @@
 
     <!-- Approval Confirmation Modal -->
     <div v-if="showApproveModal" class="fixed inset-0 z-50 flex items-center justify-center back bg-opacity-50">
-      <div class="bg-[#1b1b1b] p-6 shadow-lg">
+      <div class="bg-[#1b1b1b] p-6 shadow-lg w-full max-w-3xl my-8 max-h-[80vh] overflow-y-auto">
         <h2 class="text-lg font-semibold mb-4">Xác nhận Duyệt</h2>
-        <p>Bạn có muốn duyệt đồng hồ này không?</p>
+        <div class="form-content mb-6">
+          <div class="form__group field w-full">
+            <input
+              v-model="watchData.price"
+              type="number"
+              class="form__field text-2xl"
+              placeholder="Price"
+              @input="validatePrice"
+            />
+            <label for="price" class="form__label text-xl">Giá</label>
+          </div>
+          <p v-if="priceWarning" class="text-red-500 mt-2">{{ priceWarning }}</p>
+        </div>
+        <div class="form-content mb-6">
+          <div class="form__group field w-full">
+            <textarea
+              v-model="watchData.description"
+              class="form__field form__field-description"
+              placeholder="Description"
+              id="description"
+              rows="4"
+              @input="adjustHeight"
+              ref="textarea"
+              :style="{ height: textareaHeight + 'px' }"
+              @focus="isFocused = true"
+              @blur="isFocused = false"
+            ></textarea>
+            <label
+              for="description"
+              class="desclabel"
+              :class="{ active: isFocused }"
+            >Mô tả</label>
+        </div>
+      </div>
+        <div class="flex flex-col md:flex-row gap-6 overflow-y-auto">
+      <!-- Left Column -->
+      <div class="w-full">
+        <h3 class="text-xl mb-4">Tính năng</h3>
+        <div class="form-content mb-4">
+          <div class="form__group field">
+            <input type="text" class="form__field" placeholder="Lịch" />
+            <label class="form__label">Lịch</label>
+          </div>
+        </div>
+        <div class="form-content mb-4">
+          <div class="form__group field">
+            <input type="text" class="form__field" placeholder="Tính năng" />
+            <label class="form__label">Tính năng</label>
+          </div>
+        </div>
+        <!-- Add more fields for the left column -->
+
+      <!-- Right Column -->
+        <h3 class="text-xl mb-4">Thuộc tính</h3>
+        <div class="form-content mb-4">
+          <div class="form__group field">
+            <input  type="text" class="form__field" placeholder="Thương hiệu" />
+            <label class="form__label">Thương hiệu</label>
+          </div>
+        </div>
+        <div class="form-content mb-4">
+          <div class="form__group field">
+            <input type="text" class="form__field" placeholder="Series" />
+            <label class="form__label">Series</label>
+          </div>
+        </div>
+        <!-- Add more fields for the right column -->
+      </div>
+    </div>
+
         <div class="mt-6 flex justify-end space-x-4">
           <button @click="handleCancel('approve')" class="border-2 px-2 py-2 border-secondary">Huỷ</button>
-          <button @click="handleConfirm('approve')" class="btn">Xác nhận</button>
+          <button 
+            @click="handleConfirm('approve')" 
+            class="btn" 
+            :class="{'bg-gray-600 hover:bg-gray-600 cursor-not-allowed': !isFormValid}"
+            :disabled="!isFormValid"
+          >
+            Xác nhận
+          </button>
         </div>
       </div>
     </div>
@@ -101,7 +179,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue';
+import { ref, onMounted, computed, watch, reactive } from 'vue';
 import draggable from 'vuedraggable';
 import { useStaffStore } from '../stores/staff';
 import { useAuthStore } from '../stores/auth';
@@ -117,7 +195,6 @@ if(useUserStore().role!='ROLE_STAFF'){
 }
 
 const id = ref('');
-
 const authStore = useAuthStore();
 const viewMode = ref('kanban');
 const columns = ref([
@@ -137,6 +214,7 @@ const columns = ref([
     columnName: 'Không chấp thuận',
   },
 ]);
+const priceWarning = ref('');
 const staffStore = useStaffStore();
 const showApproveModal = ref(false);
 const showDeleteModal = ref(false);
@@ -146,12 +224,73 @@ const reportContent = ref('');
 const draggedItem = ref(null);
 const watchSellerMap = ref(new Map());
 
+const textareaHeight = ref("80"); // Initial height of textarea
+const isFocused = ref(false); // Flag to track textarea focus state
 
 const allWatches = computed(() => [
   ...columns.value[0].tasks,
   ...columns.value[1].tasks,
   ...columns.value[2].tasks
 ]);
+
+const watchData = reactive({
+  name: "",
+  price: "",
+  description: "",
+  brand: "",
+  series: "",
+  model: "",
+  gender: "Unisex",
+  style_type: "",
+  sub_class: "",
+  made_label: "",
+  calender: "",
+  feature: "",
+  movement: "",
+  function: "",
+  engine: "",
+  water_resistant: "",
+  band_color: "",
+  band_type: "",
+  clasp: "",
+  bracelet: "",
+  dial_type: "",
+  dial_color: "",
+  crystal: "",
+  second_makers: "",
+  bezel: "",
+  bezel_material: "",
+  case_back: "",
+  casedimension: "",
+  case_shape: ""
+}
+)
+
+
+const validatePrice = () => {
+  const price = Number(watchData.price);
+  if (price < 100000) {
+    priceWarning.value = 'Giá phải lớn hơn hoặc bằng 100.000 VND';
+  } else if (price > 1000000000) {
+    priceWarning.value = 'Giá phải nhỏ hơn hoặc bằng 1 tỷ VND';
+  } else {
+    priceWarning.value = '';
+  }
+};
+
+const isFormValid = computed(() => {
+  return watchData.price.trim() !== '' &&
+         watchData.description.trim() !== '' &&
+         isPriceValid.value;
+});
+
+watch(() => showApproveModal.value, (newValue) => {
+  if (newValue) {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = '';
+  }
+});
 
 const search = () => {
   const searchTerm = id.value.toLowerCase().trim();
@@ -327,6 +466,7 @@ const formatPriceVND = (price) => {
   background-color: rgba(20, 20, 20, 0.836);
   backdrop-filter: blur(10px);
 }
+
 .btn {
   @apply bg-primary hover:bg-primary text-black font-semibold py-2 px-4 inline-flex items-center;
 }
@@ -341,6 +481,30 @@ const formatPriceVND = (price) => {
 }
 
 
+.desclabel.active {
+  color: var(--secondary); /* Change label color when textarea is focused */
+}
+
+.form__field-description:focus {
+  border: 1px solid #ffbd59;
+}
+
+.form__field-description {
+  border: 0.5px solid #9b9b9b; /* Border for description textarea */
+  min-height: 80px; /* Adjust minimum height for textarea */
+  margin-top: 1rem; /* Ensure space between top border and label */
+  position: relative; /* Ensure relative positioning for containing the textarea */
+  z-index: 1; /* Ensure textarea is behind the label */
+}
+.desclabel {
+  color: #9b9b9b;
+  font-size: 17px;
+  position: absolute;
+  top: -0rem; /* Adjust top positioning to overlap with textarea border */
+  left: 0rem; /* Align with textarea */
+  z-index: 2; /* Ensure label is above the textarea border */
+  transition: color 0.2s ease-out; /* Smooth transition for label color change */
+}
 .ui-input-container {
   position: relative;
   width: 100%;

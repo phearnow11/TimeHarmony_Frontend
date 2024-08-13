@@ -48,6 +48,8 @@ import Brand from '../components/Brand.vue';
 import { ref, computed, onMounted, defineAsyncComponent, onUnmounted } from 'vue';
 import axios from 'axios';
 import { useMailStore } from '../stores/mail';
+import { useUserStore } from '../stores/user';
+import router from '../router';
 
 const ProductCard = defineAsyncComponent(() => import('../components/ProductCard.vue'));
 const SkeletonCard = defineAsyncComponent(() => import('../components/SkeletonCard.vue'));
@@ -66,14 +68,18 @@ const paginatedWatches = computed(() => {
 });
 
 onMounted(async () => {
-  try {
-    console.log(api)
-    const response = await axios.get(`${api}/watch/get/30-watches`);
-    watches.value = response.data;
-    isLoading.value = false;
-  } catch (error) {
-    console.error('Error fetching watches:', error);
-  }
+  if(useUserStore().role ==='ROLE_ADMIN') return router.push('/admin')
+  if(useUserStore().staff_role === 'APPRAISER') return router.push('/appraiser')
+
+    try {
+      console.log(api)
+      const response = await axios.get(`${api}/watch/get/30-watches`);
+      watches.value = response.data;
+      isLoading.value = false;
+    } catch (error) {
+      console.error('Error fetching watches:', error);
+    }
+  
 })
 
 // function handleBeforeUnload(event) {

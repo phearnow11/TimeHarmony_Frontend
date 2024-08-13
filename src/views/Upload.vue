@@ -399,6 +399,12 @@
           <label for="price" class="form__label">Nhãn thực hiện</label>
         </div>
       </div>
+      <h3 class="text-3xl">Chọn ngày kiểm định</h3>
+
+      <div class="flex w-full px-20 justify-start ">
+        <VueDatePicker v-model="date" placeholder="Chọn ngày muốn kiểm định" :format="formatDate"></VueDatePicker>
+      </div>
+      <p v-if="dateWarning" class="text-red-500">{{ dateWarning }}</p>
       <br />
       <div class="flex justify-end button-div">
         <div class="flex items-center submit-watch">
@@ -434,13 +440,45 @@
 </template>
 
 <script setup>
-import { reactive, onMounted, ref} from "vue";
+import { reactive, onMounted, ref, watch} from "vue";
 import { useWatchStore } from "../stores/watch";
 import { useUserStore } from "../stores/user";
 import { useCloudinaryStore } from "../stores/cloudinary";
 import PopUp from "../components/PopUp.vue"
 import router from "../router";
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
 
+const date = ref(new Date());
+const dateWarning = ref('');
+
+const validateDate = (selectedDate) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Reset time part for comparison
+  if(!selectedDate) return null
+
+  if (selectedDate < today) {
+    dateWarning.value = "Bạn không thể chọn ngày trong quá khứ.";
+    date.value = null;
+  } else {
+    dateWarning.value = "";
+  }
+};
+
+watch(date, (newDate) => {
+  validateDate(newDate);
+});
+
+const formatDate = (date) => {
+  const day = date.getDate();
+  const month = date.getMonth()+1
+  const year = date.getFullYear()
+  const hour = date.getHours()
+  const minute = date.getMinutes()
+  
+  return `${day}/${month}/${year} vào lúc ${hour}:${minute}`
+}
+console.log(formatDate(date.value));
 const isPopupVisible = ref(false);
 const popupMessage = ref('');
 const showProductDetails = ref(true);
@@ -496,6 +534,7 @@ const imageURLs = ref([])
 // };
 
 onMounted(() => {
+  date.value = null
   if (localStorage.getItem('showUploadSuccessPopup') === 'true') {
     popupMessage.value = 'Đăng bán thành công';
     isPopupVisible.value = true;
@@ -622,6 +661,8 @@ watchData.bezel_material= "",
  watchData.case_back= "",
 watchData.casedimension= "",
     watchData.case_shape= ""
+    date.value = null
+
 }
 
 const uploadToCDN = async (file, imageObject) => {

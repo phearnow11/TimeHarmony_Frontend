@@ -39,7 +39,7 @@ export const useAuthStore = defineStore('auth', {
             }
         },
 
-        login(username, password) {
+        async login(username, password) {
             axios.post(
                 `${api}/api/auth/login`,
                 {}, // Empty body
@@ -62,12 +62,24 @@ export const useAuthStore = defineStore('auth', {
                     Cookies.set('token', this.token, { expires: 7 }); // Expires in 7 days
                     Cookies.set('user_id', this.user_id, { expires: 7 });
                     useChatStore().registerUser2(this?.user_id)
+
+
+                    useUserStore().loadUser(this.user_id).
+                    then((userData) =>{
+                        console.log(userData.role);
+                        if(userData.role === 'ROLE_ADMIN')
+                            router.push('/admin')
+                        if(userData.staff_role === 'APPRAISER')
+                            router.push('/appraiser')
+                    });
+                    
                     const cartStore = useCartStore();
                     const userStore = useUserStore();
                     cartStore.getCart(this.user_id);
                     userStore.setCartNum(cartStore.cart_count);
                     router.push(this.returnURL || '/');
-                } else{
+                } 
+                else{
                     throw new Error('Login failed');
                 }
             })

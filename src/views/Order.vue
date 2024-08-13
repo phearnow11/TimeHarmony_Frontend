@@ -452,12 +452,13 @@ const createOrder = async () => {
     address: shippingAddress.value ? shippingAddress.value.id : null,
     notice: note.value,
     total_price: totalAll.value,
-    payment_method: selectedOption.value === 'cod' ? 'COD' : 'Card',
+    payment_method: selectedOption.value === 'cod' ? 'COD' : 'ATM',
     transaction_no: selectedOption.value === 'cod' ? "" : "Chờ xử lý",
   };
 
   
   const wids = Object.values(cartStore.selected_wids);
+
 
   try {
     if (selectedOption.value === 'card') {
@@ -467,18 +468,18 @@ const createOrder = async () => {
     try {
       console.log('Selected WIDs:', wids);
       localStorage.setItem('pendingWids', JSON.stringify(wids));
-
+      
       const paymentResponse = await createVnPayPayment(totalAll.value, wids);
       console.log('Payment Response:', paymentResponse);
 
-      if (
-        paymentResponse &&
-        paymentResponse.data &&
-        paymentResponse.data.data &&
-        paymentResponse.data.data.paymentUrl
-      ) {
-        window.location.href = paymentResponse.data.data.paymentUrl;
-      }
+      // if (
+      //   paymentResponse &&
+      //   paymentResponse.data &&
+      //   paymentResponse.data.data &&
+      //   paymentResponse.data.data.paymentUrl
+      // ) {
+      //   window.location.href = paymentResponse.data.data.paymentUrl;
+      // }
        
     } catch (error) {
       console.error("Failed to process payment:", error);
@@ -536,7 +537,7 @@ const handleVNPayReturn = async () => {
         address: shippingAddress.value ? shippingAddress.value.id : null,
         notice: note.value,
         total_price: totalPrice.value,
-        payment_method: "Card",
+        payment_method: "ATM",
         transaction_no: vnpayTransactionNo,
       });
       if (result) {

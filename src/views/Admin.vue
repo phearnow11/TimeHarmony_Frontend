@@ -1,169 +1,423 @@
 <template>
-  <div v-if="isLoading" class="overlay">
+  <div class="h-screen">
+    
+    <div v-if="isLoading" class="overlay">
       <div class="loader-container">
         <div class="loader">
           <div class="loaderBar"></div>
         </div>
       </div>
     </div>
-
-  <div class="admin-page p-6 gap-6">
-    <h1 class="text-3xl font-bold mb-4">Bảng Điều Khiển Quản Trị</h1>
-    <div class="flex items-center gap-9">
-      <div class="form__group mb-3">
-        <input
-          type="text"
-          class="form__field"
-          placeholder="Nhập ID người dùng"
-          v-model="userId"
-          required
-        />
-        <label for="userid" class="form__label">ID người dùng</label>
-      </div>
-      <button 
-      @click="promoteToStaff" 
-      :disabled="!userId" 
-      :class="['th-p-btn', { 'opacity-50 cursor-not-allowed': !userId }]"
-      >
-        Thêm làm nhân viên
-      </button>
-    </div>
-
-    <section class="mb-6">
-      <h2 class="text-2xl font-semibold mb-2">Danh Sách Thành Viên</h2>
-      <div class="ui-input-container col-span-3 mb-5">
-        <input
-          required
-          placeholder="Tìm kiếm id, tên hoặc email.."
-          class="ui-input"
-          type="text"
-          v-model="qMembers"
-          @keyup="searchMembers"
-        />
-        <div class="ui-input-underline"></div>
-        <div class="ui-input-highlight"></div>
-        <div class="ui-input-icon">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-width="2"
-              stroke="currentColor"
-              d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
-            ></path>
-          </svg>
+    
+    <div class="flex h-screen w-screen overflow-hidden">
+      <!-- Sidebar -->
+      <aside class="w-80 bg-black-99 text-white p-4 overflow-y-auto border-r border-gray-99">
+        <nav>
+        <div class="flex text-xl justify-center p-5 w-full">
+          <div class="text-primary text-center text-2xl">Quản trị viên Time Harmony</div>
         </div>
-      </div>
-      <div class="table-container">
-        <table class="table">
-          <thead class="table-header">
-            <tr class="text-primary">
-              <th class="p-2 border-b">ID</th>
-              <th class="p-2 border-b">Hình Ảnh</th>
-              <th class="p-2 border-b">Tên</th>
-              <th class="p-2 border-b">Email</th>
-              <th class="p-2 border-b">Username</th>
-              <th class="p-2 border-b">Số Điện Thoại</th>
-              <th class="p-2 border-b">Vai trò</th>
-              <th class="p-2 border-b">Trạng Thái</th>
-              <th class="p-2 border-b">Cấm người dùng</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="member in filteredMembers" :key="member.member_id">
-              <td class="p-2 border-b">{{ member.member_id }}</td>
-              <td class="p-2 border-b">
-                <img
-                  :src="member.member_image"
-                  alt="Member Image"
-                  class="w-12 h-12"
-                />
-              </td>
-              <td class="p-2 border-b">
-                {{ member?.first_name }} {{ member?.last_name }}
-              </td>
-              <td class="p-2 border-b">{{ member.email }}</td>
-              <td class="p-2 border-b">{{ member.user_log_info.username }}</td>
-              <td class="p-2 border-b">{{ member.phone || "Không có thông tin" }}</td>
-              <td class="p-2 border-b">
-                <div v-if="member.user_log_info.authorities.authority == 'ROLE_STAFF' && member.staff_role == null" class="cursor-pointer hover-underline-animation flex items-center justify-center"
-                  @click="openPromoteModal(member)"
-                >
-                  {{ member.staff_role ? roleLabels[member.staff_role] : roleLabels[member.user_log_info.authorities.authority] }}
-                </div>
-                <div v-else class="flex items-center justify-center">
-                  {{ member.staff_role ? roleLabels[member.staff_role] : roleLabels[member.user_log_info.authorities.authority] }}
-                </div>
-              </td>
-              <td class="p-2 border-b">
-                {{
-                  member.user_log_info.enabled === 1 ? "Hoạt động" : "Bị cấm"
-                }}
-              </td>
-              <td class="p-2 border-b">
-                <div
-                  v-if="member.user_log_info.enabled === 1"
-                  class="hover-underline-animation-r flex items-center justify-center gap-2"
-                  @click="openBanModal(member)"
-                >
-                  Cấm khỏi hệ thống <span class="mdi mdi-cancel"></span>
-                </div>
-                <div
-                  v-else
-                  class="hover-underline-animation-r flex items-center justify-center gap-2"
-                  @click="unbanUser(member)"
-                >
-                  Bỏ cấm người dùng<span class="mdi mdi-cancel"></span>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+        <h1 class="text-xl flex justify-center text-primary font-bold mb-4">Bảng Điều Khiển Quản Trị</h1>
+        <ul class="p-6">
+          <li class="mb-4">
+            <a href="#" @click.prevent="currentSection = 'profit-overview'" 
+               :class="{'text-primary': currentSection === 'profit-overview'}">
+              Tổng quan lợi nhuận
+            </a>
+          </li>
+          <li class="mb-4">
+            <a href="#" @click.prevent="currentSection = 'member-list'"
+               :class="{'text-primary': currentSection === 'member-list'}">
+              Danh Sách Người Dùng
+            </a>
+          </li>
+          <li class="mb-4">
+            <a href="#" @click.prevent="currentSection = 'seller-list'"
+               :class="{'text-primary': currentSection === 'seller-list'}">
+              Danh Sách Người Đăng Bán
+            </a>
+          </li>
+          <li class="mb-4">
+            <a href="#" @click.prevent="currentSection = 'staff-list'"
+               :class="{'text-primary': currentSection === 'staff-list'}">
+              Danh Sách Nhân Viên
+            </a>
+          </li>
+          <li class="mb-4">
+            <a href="#" @click.prevent="currentSection = 'products'"
+               :class="{'text-primary': currentSection === 'products'}">
+              Danh Sách Sản Phẩm
+            </a>
+          </li>
+          <li class="mb-4">
+            <a href="#" @click.prevent="currentSection = 'pending-products'"
+               :class="{'text-primary': currentSection === 'pending-products'}">
+              Danh Sách Chờ Duyệt
+            </a>
+          </li>
+          <li class="mb-4">
+            <a href="#" @click.prevent="currentSection = 'orders'"
+               :class="{'text-primary': currentSection === 'orders'}">
+              Đơn Hàng
+            </a>
+          </li>
+          <li class="mb-4">
+            <a href="#" @click.prevent="currentSection = 'shipping'"
+               :class="{'text-primary': currentSection === 'shipping'}">
+              Danh sách đơn giao
+            </a>
+          </li>
+          <li class="mb-4">
+            <a href="#" @click.prevent="currentSection = 'refund-transactions'"
+               :class="{'text-primary': currentSection === 'refund-transactions'}">
+              Giao dịch cần hoàn tiền
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <span class="ml-24  hover-underline-animation  cursor-pointer">
+            <i @click="logout" class="fa fa-sign-out"></i> Đăng xuất
+      </span>
+    </aside>
 
-    <section class="mb-6">
-      <h2 class="text-2xl font-semibold mb-2">Sản Phẩm</h2>
-      <div class="ui-input-container col-span-3 mb-5">
-        <input
-          required
-          placeholder="Tìm kiếm id, tên sản phẩm hoặc người bán.."
-          class="ui-input"
-          type="text"
-          v-model="qWatches"
-          @keyup.enter="searchWatches"
-        />
-        <div class="ui-input-underline"></div>
-        <div class="ui-input-highlight"></div>
-        <div class="ui-input-icon">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-width="2"
-              stroke="currentColor"
-              d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
-            ></path>
-          </svg>
+    <!-- Main Content -->
+    <main class="flex-1 p-6 overflow-y-auto">
+      <!-- Tổng quan lợi nhuận -->
+      <section v-if="currentSection === 'profit-overview'" class="mb-6">
+        <h2 class="text-2xl font-semibold mb-4">Tổng Quan Lợi Nhuận</h2>
+        <div class="grid grid-cols-3 gap-4 mb-6">
+          <div class="back p-4 rounded-lg shadow">
+            <p class="text-xl font-medium">Doanh Thu Tổng: {{ currency(totalRevenue) }}</p>
+          </div>
+          <div class="back p-4 rounded-lg shadow">
+            <p class="text-xl font-medium">Chi Phí Tổng: {{ currency(totalCost) }}</p>
+          </div>
+          <div class="back p-4 rounded-lg shadow">
+            <p class="text-xl font-medium">Lợi Nhuận Tổng: {{ currency(totalProfit) }}</p>
+          </div>
         </div>
-      </div>
-      <div class="table-container">
-        <table class="table">
-          <thead class="table-header">
-            <tr class="text-primary">
-              <th class="p-2 border-b">ID</th>
-              <th class="p-2 border-b">Tên</th>
-              <th class="p-2 border-b">Người Bán</th>
-              <th class="p-2 border-b">Giá</th>
-              <th class="p-2 border-b">Trạng Thái</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="product in filteredWatches" :key="product.watch_id">
+        <div v-if="showCharts" class="grid  grid-cols-2 gap-6 mb-6">
+          <div class="back-4 rounded-lg back shadow">
+            <canvas ref="revenueChart"></canvas>
+          </div>
+          <div class="back p-4 rounded-lg shadow">
+            <canvas ref="costChart"></canvas>
+          </div>
+        </div>
+        <div class="back p-4 rounded-lg shadow">
+          <canvas ref="overviewChart"></canvas>
+        </div>
+      </section>
+      
+      <!-- Quản trị người dùng -->
+      <section v-if="currentSection === 'member-list'" class="mb-6">
+        <h2 class="text-3xl text-center font-semibold mb-5">Danh Sách Người Dùng</h2>
+        <h2 class="text-xl font-semibold mb-4">Thêm làm nhân viên</h2>
+        <div class="flex items-center gap-4 mb-6">
+          <div class="flex-1">
+            <input
+              type="text"
+              placeholder="Nhập ID người dùng"
+              class="ui-input w-full px-4 py-2 border rounded-lg"
+              v-model="userId"
+              required
+            />
+          </div>
+          <button 
+            @click="promoteToStaff" 
+            :disabled="!userId" 
+            :class="['th-p-btn py-2 px-4 rounded-lg', { 'opacity-50 cursor-not-allowed': !userId }]"
+          >
+            Thêm làm nhân viên
+          </button>
+        </div>
+        <div class="mb-6">
+          <h2 class="text-xl font-semibold mb-4">Tìm kiếm người dùng</h2>
+          <div class="ui-input-container mb-4">
+            <input
+              required
+              placeholder="Tìm kiếm id, tên hoặc email.."
+              class="ui-input w-full px-4 py-2 border rounded-lg"
+              type="text"
+              v-model="qMembers"
+              @keyup="searchMembers"
+            />
+          </div>
+          <!-- User -->
+          <h3 class="text-3xl py-10 text-center">Danh sách thành viên</h3>
+          <div class="overflow-x-auto back p-4 rounded-lg shadow">
+            <table class="table w-full">
+              <thead class="bg-gray-200">
+                <tr class="text-left text-gray-700">
+                  <th class="p-2">ID</th>
+                  <th class="p-2">Hình Ảnh</th>
+                  <th class="p-2">Tên</th>
+                  <th class="p-2">Email</th>
+                  <th class="p-2">Username</th>
+                  <th class="p-2">Vai trò</th>
+                  <th class="p-2">Trạng Thái</th>
+                  <th class="p-2">Cấm người dùng</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="member in filteredMembers" :key="member.member_id" class="border-t">
+                  <td class="p-2">{{ member.member_id }}</td>
+                  <td class="p-2">
+                    <img
+                      :src="member.member_image"
+                      alt="Member Image"
+                      class="w-12 h-12"
+                    />
+                  </td>
+                  <td class="p-2">
+                    {{ member?.first_name }} {{ member?.last_name }}
+                  </td>
+                  <td class="p-2">{{ member.email }}</td>
+                  <td class="p-2">{{ member.user_log_info.username }}</td>
+                  <td class="p-2 text-center">
+                    <div v-if="member.user_log_info.authorities.authority == 'ROLE_STAFF' && member.staff_role == null" class="cursor-pointer hover-underline-animation"
+                      @click="openPromoteModal(member)"
+                    >
+                      {{ member.staff_role ? roleLabels[member.staff_role] : roleLabels[member.user_log_info.authorities.authority] }}
+                    </div>
+                    <div v-else>
+                      {{ member.staff_role ? roleLabels[member.staff_role] : roleLabels[member.user_log_info.authorities.authority] }}
+                    </div>
+                  </td>
+                  <td class="p-2 text-center">
+                    {{ member.user_log_info.enabled === 1 ? "Hoạt động" : "Bị cấm" }}
+                  </td>
+                  <td class="p-2 text-center">
+                    <div
+                      v-if="member.user_log_info.enabled === 1"
+                      class="hover-underline-animation-r cursor-pointer text-red-600"
+                      @click="openBanModal(member)"
+                    >
+                      Cấm khỏi hệ thống
+                    </div>
+                    <div
+                      v-else
+                      class="hover-underline-animation-r cursor-pointer text-green-600"
+                      @click="unbanUser(member)"
+                    >
+                      Bỏ cấm người dùng
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- DS Thành viên -->
+        </div>
+      </section>
+
+      <!-- Danh sách seller -->
+      <section v-if="currentSection === 'seller-list'" class="mb-6">
+        <h2 class="text-xl font-semibold mb-4">Tìm kiếm người dùng</h2>
+          <div class="ui-input-container mb-4">
+            <input
+              required
+              placeholder="Tìm kiếm id, tên hoặc email.."
+              class="ui-input w-full px-4 py-2 border rounded-lg"
+              type="text"
+              v-model="qMembers"
+              @keyup="searchMembers"
+            />
+          </div>
+        <h3 class="text-3xl py-10 text-center">Danh sách người đăng bán</h3>
+          <div class="overflow-x-auto back p-4 rounded-lg shadow">
+            <table class="table w-full">
+              <thead class="bg-gray-200">
+                <tr class="text-left text-gray-700">
+                  <th class="p-2">ID</th>
+                  <th class="p-2">Hình Ảnh</th>
+                  <th class="p-2">Tên</th>
+                  <th class="p-2">Email</th>
+                  <th class="p-2">Username</th>
+                  <th class="p-2">Vai trò</th>
+                  <th class="p-2">Trạng Thái</th>
+                  <th class="p-2">Cấm người dùng</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="member in filteredSeller" :key="member.member_id" class="border-t">
+                  <td class="p-2">{{ member.member_id }}</td>
+                  <td class="p-2">
+                    <img
+                      :src="member.member_image"
+                      alt="Member Image"
+                      class="w-12 h-12"
+                    />
+                  </td>
+                  <td class="p-2">
+                    {{ member?.first_name }} {{ member?.last_name }}
+                  </td>
+                  <td class="p-2">{{ member.email }}</td>
+                  <td class="p-2">{{ member.user_log_info.username }}</td>
+                  <td class="p-2 text-center">
+                    <div v-if="member.user_log_info.authorities.authority == 'ROLE_STAFF' && member.staff_role == null" class="cursor-pointer hover-underline-animation"
+                      @click="openPromoteModal(member)"
+                    >
+                      {{ member.staff_role ? roleLabels[member.staff_role] : roleLabels[member.user_log_info.authorities.authority] }}
+                    </div>
+                    <div v-else>
+                      {{ member.staff_role ? roleLabels[member.staff_role] : roleLabels[member.user_log_info.authorities.authority] }}
+                    </div>
+                  </td>
+                  <td class="p-2 text-center">
+                    {{ member.user_log_info.enabled === 1 ? "Hoạt động" : "Bị cấm" }}
+                  </td>
+                  <td class="p-2 text-center">
+                    <div
+                      v-if="member.user_log_info.enabled === 1"
+                      class="hover-underline-animation-r cursor-pointer text-red-600"
+                      @click="openBanModal(member)"
+                    >
+                      Cấm khỏi hệ thống
+                    </div>
+                    <div
+                      v-else
+                      class="hover-underline-animation-r cursor-pointer text-green-600"
+                      @click="unbanUser(member)"
+                    >
+                      Bỏ cấm người dùng
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+      </section>
+
+
+      <!-- Danh sách staff -->
+      <section v-if="currentSection === 'staff-list'" class="mb-6">
+        <h2 class="text-xl font-semibold mb-4">Tìm kiếm người dùng</h2>
+          <div class="ui-input-container mb-4">
+            <input
+              required
+              placeholder="Tìm kiếm id, tên hoặc email.."
+              class="ui-input w-full px-4 py-2 border rounded-lg"
+              type="text"
+              v-model="qStaff"
+              @keyup="searchMembers"
+            />
+          </div>
+          <div class="w-full flex justify-start">
+            <label class="container flex justify-start items-center text-center gap-2">
+              <input type="checkbox" :checked="selectedRole === 'staff'" @change="toggleRole('staff')" />
+              <svg viewBox="0 0 64 64" height="1em">
+                <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+              </svg>
+              <label>Nhân viên</label>
+            </label>
+            <label class="container flex justify-start items-center text-center gap-2">
+              <input type="checkbox" :checked="selectedRole === 'appraiser'" @change="toggleRole('appraiser')" />
+              <svg viewBox="0 0 64 64" height="1em">
+                <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+              </svg>
+              <label>Chuyên viên kiểm định</label>
+            </label>
+            <label class="container flex justify-start items-center text-center gap-2">
+              <input type="checkbox" :checked="selectedRole === 'shipper'" @change="toggleRole('shipper')" />
+              <svg viewBox="0 0 64 64" height="1em">
+                <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+              </svg>
+              <label>Nhân viên vận chuyển</label>
+            </label>
+          </div>
+        <h3 class="text-3xl text-center py-10">Danh sách nhân viên</h3>
+          <div class="overflow-x-auto back p-4 rounded-lg shadow">
+            <table class="table w-full">
+              <thead class="bg-gray-200">
+                <tr class="text-left text-gray-700">
+                  <th class="p-2">ID</th>
+                  <th class="p-2">Hình Ảnh</th>
+                  <th class="p-2">Tên</th>
+                  <th class="p-2">Email</th>
+                  <th class="p-2">Username</th>
+                  <th class="p-2">Vai trò</th>
+                  <th class="p-2">Trạng Thái</th>
+                  <th class="p-2">Cấm người dùng</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="member in filteredStaff" :key="member.member_id" class="border-t">
+                  <td class="p-2">{{ member.member_id }}</td>
+                  <td class="p-2">
+                    <img
+                      :src="member.member_image"
+                      alt="Member Image"
+                      class="w-12 h-12"
+                    />
+                  </td>
+                  <td class="p-2">
+                    {{ member?.first_name }} {{ member?.last_name }}
+                  </td>
+                  <td class="p-2">{{ member.email }}</td>
+                  <td class="p-2">{{ member.user_log_info.username }}</td>
+                  <td class="p-2 text-center">
+                    <div v-if="member.user_log_info.authorities.authority == 'ROLE_STAFF' && member.staff_role == null" class="cursor-pointer hover-underline-animation"
+                      @click="openPromoteModal(member)"
+                    >
+                      {{ member.staff_role ? roleLabels[member.staff_role] : roleLabels[member.user_log_info.authorities.authority] }}
+                    </div>
+                    <div v-else>
+                      {{ member.staff_role ? roleLabels[member.staff_role] : roleLabels[member.user_log_info.authorities.authority] }}
+                    </div>
+                  </td>
+                  <td class="p-2 text-center">
+                    {{ member.user_log_info.enabled === 1 ? "Hoạt động" : "Bị cấm" }}
+                  </td>
+                  <td class="p-2 text-center">
+                    <div
+                      v-if="member.user_log_info.enabled === 1"
+                      class="hover-underline-animation-r cursor-pointer text-red-600"
+                      @click="openBanModal(member)"
+                    >
+                      Cấm khỏi hệ thống
+                    </div>
+                    <div
+                      v-else
+                      class="hover-underline-animation-r cursor-pointer text-green-600"
+                      @click="unbanUser(member)"
+                    >
+                      Bỏ cấm người dùng
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+      </section>
+
+      <!-- Quản trị Danh Sách sản phẩm -->
+      <section v-if="currentSection === 'products'" class="mb-6">
+        <h2 class="text-2xl font-semibold mb-4">Danh Sách Sản Phẩm</h2>
+        <div class="ui-input-container mb-4">
+          <input
+            required
+            placeholder="Tìm kiếm id, tên Danh Sách sản phẩm hoặc người bán.."
+            class="ui-input w-full px-4 py-2 border rounded-lg"
+            type="text"
+            v-model="qWatches"
+            @keyup.enter="searchWatches"
+          />
+        </div>
+        <div class="overflow-x-auto back p-4 rounded-lg shadow">
+          <table class="table w-full">
+            <thead class="bg-gray-200">
+              <tr class="text-left text-gray-700">
+                <th class="p-2">ID</th>
+                <th class="p-2">Tên</th>
+                <th class="p-2">Người bán</th>
+                <th class="p-2">Giá</th>
+                <th class="p-2">Trạng thái</th>
+                
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="product in filteredWatches" :key="product.watch_id">
               <td class="p-2 border-b">
               <router-link class="hover-underline-animation " :to="`/detail/${product.watch_id}`">{{ product.watch_id }}</router-link>
               </td>
@@ -183,40 +437,83 @@
                 {{ stateLabels[product.state] }}
               </td>
             </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="mb-6">
-      <h2 class="text-2xl font-semibold mb-2">Đơn Hàng</h2>
-      <div class="ui-input-container col-span-3 mb-5">
-        <input
-          required
-          placeholder="Tìm kiếm id, tên hoặc ngày tạo.."
-          class="ui-input"
-          type="text"
-          v-model="qOrders"
-          @keyup.enter="searchOrders"
-        />
-        <div class="ui-input-underline"></div>
-        <div class="ui-input-highlight"></div>
-        <div class="ui-input-icon">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-width="2"
-              stroke="currentColor"
-              d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
-            ></path>
-          </svg>
+            </tbody>
+          </table>
         </div>
-      </div>
-      <div class="table-container">
-        <table class="table">
+      </section>
+      
+      <!-- Danh sách chờ duyệt -->
+      <section v-if="currentSection === 'pending-products'" class="mb-6">
+        <h2 class="text-2xl font-semibold mb-4">Danh Sách Đồng Hồ Chờ Duyệt</h2>
+        <div class="ui-input-container mb-4">
+          <input
+            required
+            placeholder="Tìm kiếm id, tên Danh Sách sản phẩm hoặc người bán.."
+            class="ui-input w-full px-4 py-2 border rounded-lg"
+            type="text"
+            v-model="qPendingWatches"
+            @keyup.enter="searchPendingWatches"
+          />
+        </div>
+         <div class="overflow-x-auto back  p-4 rounded-lg shadow">
+          <table class="table w-full">
+            <thead class="bg-gray-200">
+              <tr class="text-left text-gray-700">
+                <th class="p-2">ID</th>
+                <th class="p-2">Tên</th>
+                <th class="p-2">Người bán</th>
+                <th class="p-2">Được kiểm định bởi</th>
+                <th class="p-2">Thời gian được kiểm định</th>
+                <th class="p-2">Hành động</th>
+                
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="product in filteredPendingWatches" :key="product.watch_id">
+              <td class="p-2 border-b">
+              <router-link class="hover-underline-animation " :to="`/detail/${product.watch_id}`">{{ product.watch_id }}</router-link>
+              </td>
+              <td class="p-2 border-b">{{ product.watch_name }}</td>
+              <td class="p-2 border-b">
+                <div class="flex items-center">
+                  <img
+                    :src="product.seller.member_image"
+                    alt="Seller Image"
+                    class="w-8 h-8 mr-2"
+                  />
+                  <span>{{ product.seller.user_log_info.username }}</span>
+                </div>
+              </td>
+              <td class="p-2 border-b">N/a</td>
+              <td class="p-2 border-b">N/a</td>
+              <td class="p-2 border-b">
+                <button @click="openAssignModal(product)" class="hover-underline-animation">
+                  Giao cho Kiểm định viên
+                </button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Quản trị đơn hàng -->
+      <section v-if="currentSection === 'orders'" class="mb-6">
+        <h2 class="text-2xl font-semibold mb-4">Đơn Hàng</h2>
+        <div class="ui-input-container mb-4">
+          <input
+            required
+            placeholder="Tìm kiếm đơn hàng id, trạng thái, Danh Sách sản phẩm hoặc tên khách hàng.."
+            class="ui-input w-full px-4 py-2 border rounded-lg"
+            type="text"
+            v-model="qOrders"
+            @keyup.enter="searchOrders"
+          />
+        </div>
+        <!-- Các đơn bình thường -->
+        <h1 class="text-center text-2xl py-5">Danh sách các đơn hàng</h1>
+        <div class="overflow-x-auto back p-4 rounded-lg shadow">
+          <table class="table">
           <thead class="table-header">
             <tr class="text-primary">
               <th class="p-2 border-b">ID Đơn Hàng</th>
@@ -246,19 +543,144 @@
             </tr>
           </tbody>
         </table>
-      </div>
-    </section>
-    
-    <section class="mb-6">
-    <h2 class="text-2xl font-semibold mb-2">Giao dịch cần hoàn tiền</h2>
-    <div class="table-container">
-      <table class="table">
+        </div>
+        <!-- Đơn thành công -->
+        <h1 class="text-center text-2xl py-5">Danh sách các đơn hàng giao thành công</h1>
+        <div class="overflow-x-auto back p-4 rounded-lg shadow">
+          <table class="table">
+          <thead class="table-header">
+            <tr class="text-primary">
+              <th class="p-2 border-b">ID Đơn Hàng</th>
+              <th class="p-2 border-b">Ngày Tạo</th>
+              <th class="p-2 border-b">Địa Chỉ</th>
+              <th class="p-2 border-b">Tên Nhận Hàng</th>
+              <th class="p-2 border-b">Số Điện Thoại</th>
+              <th class="p-2 border-b">Ngày giao hàng</th>
+              <th class="p-2 border-b">Trạng thái</th>
+              <th class="p-2 border-b">Ghi Chú</th>
+              <th class="p-2 border-b">Tổng</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="order in filteredSuccessOrders" :key="order.order_id">
+              <td class="p-2 border-b">{{ order.order_id }}</td>
+              <td class="p-2 border-b">
+                {{ new Date(order.create_time).toLocaleDateString() }}
+              </td>
+              <td class="p-2 border-b">{{ order.address }}</td>
+              <td class="p-2 border-b">{{ order.receive_name }}</td>
+              <td class="p-2 border-b">{{ order.phone }}</td>
+              <td class="p-2 border-b">{{ order.shipping_date ?? "Không có thông tin"}}</td>
+              <td class="p-2 border-b">{{ stateOrders[order.state] }}</td>
+              <td class="p-2 border-b">{{ order.notice || "Không có thông tin" }}</td>
+              <td class="p-2 border-b">{{ currency(order.total_price) }}</td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+        <!-- Các đơn hàng bị huỷ -->
+        <h1 class="text-center text-2xl py-5">Danh sách các đơn hàng bị huỷ</h1>
+        <div class="overflow-x-auto back p-4 rounded-lg shadow">
+          <table class="table">
+          <thead class="table-header">
+            <tr class="text-primary">
+              <th class="p-2 border-b">ID Đơn Hàng</th>
+              <th class="p-2 border-b">Ngày Tạo</th>
+              <th class="p-2 border-b">Địa Chỉ</th>
+              <th class="p-2 border-b">Tên Nhận Hàng</th>
+              <th class="p-2 border-b">Số Điện Thoại</th>
+              <th class="p-2 border-b">Ngày giao hàng</th>
+              <th class="p-2 border-b">Trạng thái</th>
+              <th class="p-2 border-b">Ghi Chú</th>
+              <th class="p-2 border-b">Tổng</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="order in filteredFailOrders" :key="order.order_id">
+              <td class="p-2 border-b">{{ order.order_id }}</td>
+              <td class="p-2 border-b">
+                {{ new Date(order.create_time).toLocaleDateString() }}
+              </td>
+              <td class="p-2 border-b">{{ order.address }}</td>
+              <td class="p-2 border-b">{{ order.receive_name }}</td>
+              <td class="p-2 border-b">{{ order.phone }}</td>
+              <td class="p-2 border-b">{{ order.shipping_date ?? "Không có thông tin"}}</td>
+              <td class="p-2 border-b">{{ stateOrders[order.state] }}</td>
+              <td class="p-2 border-b">{{ order.notice || "Không có thông tin" }}</td>
+              <td class="p-2 border-b">{{ currency(order.total_price) }}</td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+      </section>
+
+      <!-- Quản trị shipping -->
+      <section v-if="currentSection === 'shipping'" class="mb-6">
+        <h2 class="text-2xl font-semibold mb-4">Giao đơn cho shipper</h2>
+        <div class="overflow-x-auto back p-4 rounded-lg shadow">
+            <table class="table w-full">
+              <thead class="bg-gray-200">
+                <tr class="text-left text-gray-700">
+                  <th class="p-2">ID</th>
+                  <th class="p-2">Hình Ảnh</th>
+                  <th class="p-2">Tên</th>
+                  <th class="p-2">Email</th>
+                  <th class="p-2">Username</th>
+                  <th class="p-2">Vai trò</th>
+                  <th class="p-2">Trạng Thái</th>
+                  <th class="p-2">Hoạt động</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="member in filteredShipper" :key="member.member_id" class="border-t">
+                  <td class="p-2">{{ member.member_id }}</td>
+                  <td class="p-2">
+                    <img
+                      :src="member.member_image"
+                      alt="Member Image"
+                      class="w-12 h-12"
+                    />
+                  </td>
+                  <td class="p-2">
+                    {{ member?.first_name }} {{ member?.last_name }}
+                  </td>
+                  <td class="p-2">{{ member.email }}</td>
+                  <td class="p-2">{{ member.user_log_info.username }}</td>
+                  <td class="p-2 text-center"> {{ roleLabels[member.staff_role] }} </td>
+                  <td class="p-2 text-center">
+                    {{ member.user_log_info.enabled === 1 ? "Hoạt động" : "Bị cấm" }}
+                  </td>
+                  <td class="p-2 text-center justify-between">
+                    <button @click="openAssign(member)" class="hover-underline-animation">Giao đơn</button>
+                    <button @click="openDetail(member)" class="hover-underline-animation">Xem chi tiết</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+      </section>
+      <!--  -->
+      <!-- Quản trị giao dịch cần hoàn tiền -->
+      <section v-if="currentSection === 'refund-transactions'" class="mb-6">
+        <h2 class="text-2xl font-semibold mb-4">Giao Dịch Cần Hoàn Tiền</h2>
+        <div class="ui-input-container mb-4">
+          <input
+            required
+            placeholder="Tìm kiếm mã giao dịch, Danh Sách sản phẩm, hoặc tên khách hàng.."
+            class="ui-input w-full px-4 py-2 border rounded-lg"
+            type="text"
+            v-model="qRefunds"
+            @keyup.enter="searchRefunds"
+          />
+        </div>
+        <div class="overflow-x-auto back p-4 rounded-lg shadow">
+          <table class="table">
         <thead class="table-header">
             <tr class="text-primary">
               <th class="p-2 border-b">Mã giao dịch</th>
               <th class="p-2 border-b">Số tiền</th>
-              <th class="p-2 border-b">ID Thành viên</th>
-              <th class="p-2 border-b">Tên Thành viên</th>
+              <th class="p-2 border-b">ID Người Dùng</th>
+              <th class="p-2 border-b">Tên Người Dùng</th>
               <th class="p-2 border-b">Phương thức thanh toán</th>
               <th class="p-2 border-b">Ngân hàng</th>
               <th class="p-2 border-b">Thời gian tạo</th>
@@ -282,38 +704,11 @@
             </tr>
         </tbody>
       </table>
-    </div>
-  </section>
+        </div>
+      </section>
+    </main>
 
 
-    <section class="mb-6">
-      <h2 class="text-2xl font-semibold mb-2">Tổng Quan Lợi Nhuận</h2>
-      <div class="profit-container p-4 border border-secondary mb-6">
-        <p class="text-xl font-medium">
-          Doanh Thu Tổng: {{ currency(totalRevenue) }}
-        </p>
-        <p class="text-xl font-medium">
-          Chi Phí Tổng: {{ currency(totalCost) }}
-        </p>
-        <p class="text-xl font-medium">
-          Lợi Nhuận Tổng: {{ currency(totalProfit) }}
-        </p>
-      </div>
-      <div class="chart-grid">
-        <div class="chart-container">
-          <canvas ref="revenueChart"></canvas>
-        </div>
-        <div class="chart-container">
-          <canvas ref="costChart"></canvas>
-        </div>
-        <div class="chart-container">
-          <canvas ref="profitChart"></canvas>
-        </div>
-      </div>
-      <div class="chart-container-large">
-        <canvas ref="overviewChart"></canvas>
-      </div>
-    </section>
 
     <!-- Ban User Modal -->
     <div v-if="isBanModalOpen" class="modal">
@@ -344,11 +739,128 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal để giao việc -->
+    <div v-if="showAssignModal" class="modal">
+      <div class="modal-content">
+        <h2 class="text-2xl font-semibold mb-4">Giao đồng hồ cho kiểm định viên</h2>
+    
+          <!-- Thông tin đồng hồ -->
+          <div class="watch-info mb-4">
+            <h3 class="text-xl font-medium mb-2">Đồng hồ được chọn:</h3>
+            <p><strong>ID:</strong> {{ selectedWatch.watch_id }}</p>
+            <p><strong>Tên:</strong> {{ selectedWatch.watch_name }}</p>
+          </div>
+
+          <!-- Dropdown để chọn Appraiser -->
+          <div class="appraiser-select mb-4">
+            <h3 class="text-xl font-medium mb-2">Chọn kiểm định viên:</h3>
+            <select v-model="selectedAppraiser" class="w-full p-2 border rounded bg-black-99">
+              <option value="" disabled>Chọn một kiểm định viên</option>
+              <option v-for="appraiser in getAppraisers" :key="appraiser.member_id" :value="appraiser">
+                {{ appraiser.first_name }} {{ appraiser.last_name }}
+              </option>
+            </select>
+          </div>
+        <div class="flex w-full justify-start ">
+          <VueDatePicker v-model="date" placeholder="Chọn ngày giao kiểm định" :format="formatDate"></VueDatePicker>
+        </div>
+          <p v-if="dateWarning" class="text-red-500 pt-2">{{ dateWarning }}</p>
+        <br />
+        <div class="modal-actions">
+          <button @click="showAssignModal = false" class="border-2 border-secondary p-2">
+            Hủy
+          </button>
+          <button @click="assignWatch" :disabled="!selectedAppraiser || !selectedDate" class="th-p-btn">
+            Xác nhận
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal để giao đơn -->
+    <div v-if="assignShipModal" class="modal">
+      <div class="modal-content">
+        <h2 class="text-2xl font-semibold mb-4">Giao đơn cho Shipper</h2>
+        
+        <!-- Shipper Information -->
+        <div class="shipper-info mb-4">
+          <h3 class="text-xl font-medium mb-2">Thông tin Shipper:</h3>
+          <p><strong>ID:</strong> {{ selectedShipper.member_id }}</p>
+          <p><strong>Tên:</strong> {{ selectedShipper.first_name }} {{ selectedShipper.last_name }}</p>
+        </div>
+
+        <!-- Pending Orders Dropdown -->
+        <div class="order-select mb-4">
+          <h3 class="text-xl font-medium mb-2">Chọn đơn hàng cần giao:</h3>
+          <select v-model="selectedOrder" class="w-full p-2 border rounded bg-black-99">
+            <option value="" disabled>Chọn một đơn hàng</option>
+            <option v-for="order in getShipOrder" :key="order.order_id" :value="order">
+              Đơn hàng #{{ order.order_id }} - {{ order.receive_name }}
+            </option>
+          </select>
+        </div>
+        
+        <div class="modal-actions">
+          <button @click="assignShipModal = false" class="border-2 border-secondary p-2">
+            Hủy
+          </button>
+          <button @click="assignOrderToShipper" :disabled="!selectedOrder" class="th-p-btn">
+            Xác nhận
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal để xem các đơn giao -->
+    <div v-if="showShipperOrdersModal" class="modal">
+  <div class="modal-content">
+    <h2 class="text-2xl font-semibold mb-4">Các đơn được giao bởi {{ selectedShipper.first_name }}</h2>
+    
+    <!-- Shipper Information -->
+    <div class="shipper-info mb-4">
+      <h3 class="text-xl font-medium mb-2">Thông tin Shipper:</h3>
+      <p><strong>ID:</strong> {{ selectedShipper.member_id }}</p>
+      <p><strong>Tên:</strong> {{ selectedShipper.first_name }} {{ selectedShipper.last_name }}</p>
+    </div>
+
+    <!-- Assigned Orders Table -->
+    <div class="assigned-orders mb-4">
+      <h3 class="text-xl font-medium mb-2">Đơn hàng đã giao:</h3>
+      <table class="w-full border-collapse">
+        <thead>
+          <tr>
+            <th class="border p-2">Mã đơn hàng</th>
+            <th class="border p-2">Tên khách hàng</th>
+            <th class="border p-2">Trạng thái</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="order in assignedOrders" :key="order.order_id">
+            <td class="border p-2">{{ order.order_id }}</td>
+            <td class="border p-2">{{ order.customer_name }}</td>
+            <td class="border p-2">{{ stateOrders[order.state] }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="modal-actions">
+      <button @click="showShipperOrdersModal = false" class="border-2 border-secondary p-2">
+        Đóng
+      </button>
+    </div>
   </div>
+</div>
+
+  </div>
+
+</div>
+
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted, watch, nextTick } from "vue";
 import { useAdminStore } from "../stores/admin";
 import Chart from 'chart.js/auto';
 import { useChatStore } from "../stores/chat";
@@ -356,6 +868,64 @@ import { useAuthStore } from "../stores/auth";
 import { useUserStore } from "../stores/user";
 import router from "../router";
 import { useMailStore } from "../stores/mail";
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
+
+const currentSection = ref('profit-overview');
+
+const date = ref(new Date());
+const dateWarning = ref('');
+
+const validateDate = (selectedDate) => {
+  const today = new Date();
+  // Set time to midnight to avoid issues with time comparison
+  today.setHours(0, 0, 0, 0);
+
+  // Add one day to today's date
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  if (!selectedDate) return null;
+
+  // Compare selectedDate with tomorrow
+  if (selectedDate < tomorrow) {
+    dateWarning.value = "Bạn phải chọn ngày sau hôm nay ít nhất 1 ngày.";
+    date.value = null;
+  } else {
+    dateWarning.value = "";
+  }
+};
+
+const selectedRole = ref(null);
+
+const toggleRole = (role) => {
+  if (selectedRole.value === role) {
+    selectedRole.value = null;
+  } else {
+    selectedRole.value = role;
+  }
+};
+
+
+watch(date, (newDate) => {
+  validateDate(newDate);
+});
+
+const formatBoxDate = (date) => {
+  const day = date.getDate();
+  const month = date.getMonth()+1
+  const year = date.getFullYear()
+  const hour = date.getHours()
+  const minute = date.getMinutes()
+  
+  return `${day}/${month}/${year} vào lúc ${hour}:${minute}`
+}
+
+const logout = () => {
+   useAuthStore().logout().then(
+    window.location.replace('/')
+  )
+};
 
 const stateLabels = {
   0: "Vừa đăng",
@@ -387,6 +957,8 @@ const roleLabels = {
   ROLE_ADMIN: "Quản trị viên",
 };
 
+
+
 // Initialize the store
 const adminStore = useAdminStore();
 
@@ -395,16 +967,24 @@ const userId = ref("");
 const isBanModalOpen = ref(false);
 const banMessage = ref("");
 const selectedMember = ref(null);
+const showCharts = ref(false);
 
 const qMembers = ref('');
+const qStaff = ref('');
 const qWatches = ref('');
+const qPendingWatches = ref('')
 const qOrders = ref('');
 const nOrders = ref('');
+
+// Chart
 const overviewChart = ref(null);
 const revenueChart = ref(null);
 const costChart = ref(null);
 const profitChart = ref(null);
+// Chart variable
+
 const selectedTransaction = ref(null);
+const greeting = ref("");
 
 const openPromote = ref(false)
 
@@ -425,6 +1005,49 @@ const closePromoteModal = () => {
   openPromote.value = false
 };
 
+const showAssignModal = ref('')
+const selectedWatch = ref(null);
+
+const assignShipModal = ref(false);
+const showShipperOrdersModal = ref(false);
+const selectedShipper = ref(null);
+const selectedOrder = ref(null);
+const pendingOrders = ref([]);
+const assignedOrders = ref([]);
+
+const openAssign = async (shipper) => {
+  assignShipModal.value = true;
+  selectedShipper.value = shipper;
+  pendingOrders.value = []; // Replace with actual API call
+};
+
+const openDetail = async (shipper) => {
+  showShipperOrdersModal.value = true;
+  selectedShipper.value = shipper;
+  assignedOrders.value = []; // Replace with actual API call
+};
+
+const openAssignModal = async (watch) => {
+  selectedWatch.value = watch;
+  showAssignModal.value = true;  
+};
+
+function setGreeting() {
+  const now = new Date();
+  const hour = now.getHours();
+
+  if (hour >= 0 && hour < 5) {
+    greeting.value = "Chào buổi tối";
+  } else if (hour >= 5 && hour < 12) {
+    greeting.value = "Chào buổi sáng";
+  } else if (hour >= 12 && hour < 18) {
+    greeting.value = "Chào buổi chiều";
+  } else{
+    greeting.value = "Chào buổi tối";
+  }
+}
+
+
 const promote = () => {
   const promoteSelect = document.getElementById('promote');
   const selectedValue = promoteSelect.options[promoteSelect.selectedIndex].value;
@@ -439,20 +1062,50 @@ const promote = () => {
 
 
 const createCharts = () => {
-  createOverviewChart();
-  createRevenueChart();
-  createCostChart();
-  createProfitChart();
+  if (currentSection.value !== 'profit-overview') return;
+
+  // Destroy existing chart instances
+  if (overviewChartInstance) overviewChartInstance.destroy();
+  if (revenueChartInstance) revenueChartInstance.destroy();
+  if (costChartInstance) costChartInstance.destroy();
+  if (profitChartInstance) profitChartInstance.destroy();
+
+  nextTick(() => {
+    showCharts.value = true;
+    nextTick(() => {
+      createOverviewChart();
+      createRevenueChart();
+      createCostChart();
+      createProfitChart();
+    });
+  });
 };
 
+watch(currentSection, (newSection, oldSection) => {
+  if (newSection === 'profit-overview') {
+    if (oldSection !== 'profit-overview') {
+      showCharts.value = false;
+      nextTick(() => {
+        createCharts();
+      });
+    }
+  } else {
+    showCharts.value = false;
+  }
+});
 // Fetch data from the store on component mount
 onMounted(async () => {
   try {
+    date.value = null
     await adminStore.getMembers();
     await adminStore.getWatches();
     await adminStore.getOrders();
     await adminStore.getOrdersNull();
+  setGreeting();
+
+  if (currentSection.value === 'profit-overview') {
     createCharts();
+  }
   } catch (err) {
     console.error("Error fetching data:", err);
     error.value = "Failed to fetch initial data. Please try refreshing the page.";
@@ -478,10 +1131,71 @@ const getMember = (memberId) => {
   return adminStore.members.find(m => m.member_id === memberId);
 };
 
+const getAppraisers = computed(() => {
+  return adminStore.members.filter(member => 
+    member.staff_role === 'APPRAISER'
+  );
+});
+
+const getShipOrder = computed(() => {
+  return adminStore.orders.filter(order => 
+    order.state === 'PENDING'
+  );
+});
+
 // Define computed properties with error handling
 const filteredMembers = computed(() => {
   try {
-    return adminStore.filteredMembers(qMembers.value);
+    return adminStore.filteredMembers(qMembers.value).filter(member => member.user_log_info.authorities.authority === 'ROLE_USER');
+  } catch (err) {
+    console.error("Error in filteredMembers:", err);
+    error.value = "Error filtering members. Please try again.";
+    return [];
+  }
+});
+
+const filteredSeller = computed(() => {
+  try {
+    return adminStore.filteredMembers(qMembers.value).filter(member => member.user_log_info.authorities.authority === 'ROLE_SELLER');
+  } catch (err) {
+    console.error("Error in filteredMembers:", err);
+    error.value = "Error filtering members. Please try again.";
+    return [];
+  }
+});
+
+const filteredStaff = computed(() => {
+  try {
+    let filter = adminStore.filteredMembers(qStaff.value).filter(member => 
+      member.user_log_info.authorities.authority === 'ROLE_STAFF'
+    );
+
+    if (selectedRole.value) {
+      filter = filter.filter(member => {
+        switch (selectedRole.value) {
+          case 'staff':
+            return member.staff_role === null;
+          case 'appraiser':
+            return member.staff_role === 'APPRAISER';
+          case 'shipper':
+            return member.staff_role === 'SHIPPER';
+          default:
+            return true;
+        }
+      });
+    }
+
+    return filter;
+  } catch (err) {
+    console.error("Error in filteredMembers:", err);
+    error.value = "Error filtering members. Please try again.";
+    return [];
+  }
+});
+
+const filteredShipper = computed(() => {
+  try {
+    return adminStore.filteredMembers(qMembers.value).filter(member => member.staff_role === 'SHIPPER');
   } catch (err) {
     console.error("Error in filteredMembers:", err);
     error.value = "Error filtering members. Please try again.";
@@ -491,7 +1205,7 @@ const filteredMembers = computed(() => {
 
 const filteredWatches = computed(() => {
   try {
-    return adminStore.filteredWatches(qWatches.value);
+    return adminStore.filteredWatches(qWatches.value).filter(product => product.state !== 0);
   } catch (err) {
     console.error("Error in filteredWatches:", err);
     error.value = "Error filtering watches. Please try again.";
@@ -499,15 +1213,46 @@ const filteredWatches = computed(() => {
   }
 });
 
-const filteredOrders = computed(() => {
+const filteredPendingWatches = computed(() => {
   try {
-    return adminStore.filteredOrders(qOrders.value);
+    return adminStore.filteredWatches(qPendingWatches.value).filter(product => product.state === 0);
+  } catch (err) {
+    console.error("Error in filteredPendingWatches:", err);
+    error.value = "Error filtering newly posted watches. Please try again.";
+    return [];
+  }
+});
+
+const filteredSuccessOrders = computed(() => {
+  try {
+    return adminStore.filteredOrders(qOrders.value).filter(order => order.state === 'SUCCESS');
   } catch (err) {
     console.error("Error in filteredOrders:", err);
     error.value = "Error filtering orders. Please try again.";
     return [];
   }
 });
+
+const filteredFailOrders = computed(() => {
+  try {
+    return adminStore.filteredOrders(qOrders.value).filter(order => order.state === 'FAIL');
+  } catch (err) {
+    console.error("Error in filteredOrders:", err);
+    error.value = "Error filtering orders. Please try again.";
+    return [];
+  }
+});
+
+const filteredOrders = computed(() => {
+  try {
+    return adminStore.filteredOrders(qOrders.value).filter(order => order.state !== 'FAIL' && order.state !== 'SUCCESS');
+  } catch (err) {
+    console.error("Error in filteredOrders:", err);
+    error.value = "Error filtering orders. Please try again.";
+    return [];
+  }
+});
+
 
 const filteredNullOrders = computed(() => {
   try {
@@ -573,6 +1318,34 @@ const searchWatches = () => {
           name.includes(query) ||
           seller.includes(query)
         );
+      });
+    })
+    .catch(error => {
+      console.error("Error searching watches:", error);
+    });
+};
+
+const searchPendingWatches = () => {
+  adminStore.getWatches()
+    .then(() => {
+      adminStore.products = adminStore.products.filter(watch => {
+        if (!watch) return false;
+        else if(watch.state === 0){
+          // Ensure member properties are defined
+          const id = watch.watch_id ? watch.watch_id.toString().toLowerCase() : '' ;
+          const name = watch.watch_name ? watch.watch_name.toLowerCase() : '' 
+          const seller = watch.seller.user_log_info.username ? watch.seller.user_log_info.username.toLowerCase() : ''
+  
+          // Convert query to lower case
+          const query = qWatches.value.toLowerCase();
+  
+          // Check if any field includes the search query
+          return (
+            id.includes(query) || 
+            name.includes(query) ||
+            seller.includes(query)
+          );
+        }
       });
     })
     .catch(error => {
@@ -730,7 +1503,7 @@ const sendEmail = async (transactionNo, member_id) => {
         alert("Có lỗi xảy ra khi gửi email. Vui lòng thử lại.");
       }
     } else {
-      alert("Không tìm thấy thông tin thành viên.");
+      alert("Không tìm thấy thông tin Người Dùng.");
     }
   
 };
@@ -772,7 +1545,7 @@ const createOverviewChart = () => {
   overviewChartInstance = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+      labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', '2024', 'T9', 'T10', 'T11', 'T12'],
       datasets: [
         {
           label: 'Doanh Thu Tổng',
@@ -910,6 +1683,64 @@ const formatDate = (dateString) => {
 </script>
 
 <style scoped>
+
+.back{
+  background: linear-gradient(to bottom, #3b3638, #40413a);
+}
+
+.appraiser-list {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.appraiser-item {
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #ccc;
+}
+
+.appraiser-item:hover {
+  background-color: #f0f0f0;
+}
+
+.appraiser-item.selected {
+  background-color: var(--primary);
+  color: white;
+}
+
+.date-picker {
+  margin-bottom: 20px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.confirm-btn, .cancel-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.confirm-btn {
+  background-color: var(--primary);
+  color: white;
+}
+
+.confirm-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cancel-btn {
+  background-color: #ccc;
+}
+
+
 .disabled-btn {
   border: 1px solid #888;
   background-color: #888;
