@@ -31,16 +31,69 @@ export const useStaffStore = defineStore("staff", {
         return [];
       }
     },
-    async approveWatch(watch_id) {
-      console.log('Watch Approved ID:', watch_id);
+    async getRequestFromAdmin(appraiser_id) {
+      console.log('Appraiser ID:', appraiser_id);
       try {
-        const res = await axios.patch(`${api}/staff/approve-watch?watch_id=${watch_id}`);
+        const res = await axios.get(`${api}/staff/get/my-request/${appraiser_id}`);
+        console.log('Requests:', res.data);
+    
+        this.unapprovedWatches = res.data
+          .filter(request => request.status === 'PROCESSING')
+          .map(request => ({
+            watch_id: request.appraise_watch,
+            request_id: request.request_id,
+            created_by: request.created_by,
+            appointment_date: request.appointment_date,
+            created_at: request.created_at,
+            note: request.note,
+            status: request.status
+          }));
+    
+        this.approvedWatches = res.data
+          .filter(request => request.status === 'COMPLETED')
+          .map(request => ({
+            watch_id: request.appraise_watch,
+            request_id: request.request_id,
+            created_by: request.created_by,
+            appointment_date: request.appointment_date,
+            created_at: request.created_at,
+            note: request.note,
+            status: request.status
+          }));
+    
+        this.deleteWatches = res.data
+          .filter(request => request.status === 'FAILED')
+          .map(request => ({
+            watch_id: request.appraise_watch,
+            request_id: request.request_id,
+            created_by: request.created_by,
+            appointment_date: request.appointment_date,
+            created_at: request.created_at,
+            note: request.note,
+            status: request.status
+          }));
+
+          this.deleteWatches = res.data
+          .filter(request => request.status === 'EXPIRED')
+          .map(request => ({
+            watch_id: request.appraise_watch,
+            request_id: request.request_id,
+            created_by: request.created_by,
+            appointment_date: request.appointment_date,
+            created_at: request.created_at,
+            note: request.note,
+            status: request.status
+          }));
+    
+      } catch (err) {
+        console.error(err);
+      }
+    },    
+    async approveWatch(id) {
+      console.log('Watch Approved ID:', id);
+      try {
+        const res = await axios.patch(`${api}/staff/approve-watch?watch_id=${id}`);
         console.log('Watch Approved:', res.data);
-        const watchIndex = this.unapprovedWatches.findIndex(w => w.watch_id === watch_id);
-        if (watchIndex !== -1) {
-          const [watch] = this.unapprovedWatches.splice(watchIndex, 1);
-          this.approvedWatches.push(watch);
-        }
       } catch (err) {
         console.error(err);
       }
@@ -62,12 +115,20 @@ export const useStaffStore = defineStore("staff", {
         console.error(err);
       }
     },
-    async unapproveWatch(watch_id) {
-      console.log('Watch Unapproved ID:', watch_id);
+    async unapproveWatch(appraiser_id) {
+      console.log('Watch Unapproved ID:', appraiser_id);
       try {
-        const res = await axios.patch(`${api}/staff/unapprove-watch?watch_id=${watch_id}`);
+        const res = await axios.get(`${api}/staff/get/my-request/${appraiser_id}`);
         console.log('Watch Unapproved:', res.data);
-        const watchIndex = this.approvedWatches.findIndex(w => w.watch_id === watch_id);
+        const watchIndex = this.unapprovedWatches = res.data.map(request => ({
+          watch_id: request.appraise_watch,
+          request_id: request.request_id,
+          created_by: request.created_by,
+          appointment_date: request.appointment_date,
+          created_at: request.created_at,
+          note: request.note,
+          status: request.status
+        }));
         if (watchIndex !== -1) {
           const [watch] = this.approvedWatches.splice(watchIndex, 1);
           this.unapprovedWatches.push(watch);
@@ -76,16 +137,17 @@ export const useStaffStore = defineStore("staff", {
         console.error(err);
       }
     },
-    async getPendingOrder() {
+    async getPendingOrder(shipper_id) {
       try {
-        const res = await axios.get(`${api}/staff/get/pending-order`);
+        console.log('aaaa' + shipper_id);
+        const res = await axios.get(`${api}/staff/get/my-assigned-order/${shipper_id}`);
         console.log(res.data);
         return res.data;  
       } catch (err) {
         console.error(err);
         return [];
       }
-    }, 
+    },
     async shipOrderByShipper(order_id, user_id) {
       try {
         const res = await axios.post(`${api}/staff/ship/order?oid=${order_id}&id=${user_id}`);
@@ -118,5 +180,17 @@ export const useStaffStore = defineStore("staff", {
         return [];
       }
     },
+    updateWatch(id, data) {
+      axios.patch(`${api}/staff/update/fields/${id}`, data)
+        .then((res) => {
+          console.log('Update successful:', res.data);
+        })
+        .catch((err) => {
+          console.error('Update failed:', err.response ? err.response.data : err.message);
+          if (err.response) {
+            console.log('Full error response:', err.response);
+          }
+        });
+    }    
   },
 });

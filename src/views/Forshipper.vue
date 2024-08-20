@@ -16,14 +16,14 @@
           <div class="text-secondary text-sm">{{ locationStore.translatedName ?? locationStore.locationName }}</div></span>
       </div>
       <div class="mb-6">
-        <a href="#pending-watches" class="mr-4 hover-underline-animation" @click="activeSection = 'pending-watches'">Đồng hồ đang chờ người bán xác nhận</a>     
+        <a href="#pending-watches" class="mr-4 hover-underline-animation" @click="activeSection = 'pending-watches'">Đồng hồ được phân giao</a>     
         <a href="#shipping-orders" class="mr-4 hover-underline-animation" @click="handleShippingOrdersClick">Đơn hàng đang vận chuyển</a>
       </div>
 
 
       <!-- Pending Watches Section -->
       <div v-if="activeSection === 'pending-watches'" id="pending-watches">
-        <h2 class="text-2xl mb-4 text-secondary">Các đơn hàng chờ xác nhận bởi người bán <button @click="refreshPending" class="fa fa-refresh text-gray-99 hover:text-secondary p-1 text-lg transition-colors duration-300"></button></h2>
+        <h2 class="text-2xl mb-4 text-secondary">Các đơn hàng được phân giao và đang chờ xác nhận bởi người bán <button @click="refreshPending" class="fa fa-refresh text-gray-99 hover:text-secondary p-1 text-lg transition-colors duration-300"></button></h2>
         <div class="table-container">
           <table class="w-full border-collapse table">
             <thead class="table-header">
@@ -43,7 +43,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(item, index) in sortedPendingWatches" :key="item" class="border-t">
+              <tr v-for="(item, index) in pendingWatches" :key="item" class="border-t">
                 <td class="py-4">{{ index + 1 }}</td>
                 <td class="py-4">
                 <span @click="viewOrderDetails(item.order_id)" class="hover-underline-animation">
@@ -62,6 +62,9 @@
 
                 <td class="py-4 px-2">
                   <button class="hover-underline-animation" @click="shipOrder(item.order_id, auth.user_id)">Xác nhận giao đơn</button>                
+                </td>
+                <td class="py-4 px-2">
+                  <button class="hover-underline-animation" @click="shipOrder(item.order_id, auth.user_id)">Huỷ lấy đơn</button>
                 </td>
                 
               </tr>
@@ -99,6 +102,9 @@
           <td class="py-4 pl-2">{{ getShippingStatusText(order.state) }}</td>
           <td class="py-4 px-2">
             <button class="hover-underline-animation" @click="shippedOrderToMember(order.order_id, auth.user_id)">Đã giao đến người nhận</button>
+          </td>
+          <td class="py-4 px-2">
+            <button v-if="order.state === 4" class="hover-underline-animation" @click="shipOrder(item.order_id, auth.user_id)">Huỷ giao đơn</button>
           </td>
         </tr>
       </tbody>
@@ -237,7 +243,8 @@ const refreshShipping = async () => {
   
   const loadPendingWatches = async () => {
   try {
-    pendingWatches.value = await useStaffStore().getPendingOrder();
+    console.log(auth.user_id);
+    pendingWatches.value = await useStaffStore().getPendingOrder(auth.user_id);
     console.log('Pending watches:', pendingWatches.value);
     
     // Loop through each pending watch and get its order details
@@ -371,7 +378,10 @@ const refreshShipping = async () => {
       isLoading.value = true;
       const user = await useUserStore().loadUser(auth.user_id);
       console.log('Loaded user:', user);
-  
+      console.log('aaa' + order_id);
+      console.log('aaa' + user_id);
+      
+      
       if (user.staff_role !== 'SHIPPER') {
         alert('Bạn không phải là shipper nên không thể sử dụng chức năng này');
         return;

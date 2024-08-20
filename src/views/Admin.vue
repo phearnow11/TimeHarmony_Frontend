@@ -1,9 +1,10 @@
 <template>
+  <div v-if="checkAdmin(authStore.user_id)" >
+
   <div class="h-screen">
-    
     <div v-if="isLoading" class="overlay">
       <div class="loader-container">
-        <div class="loader">
+        <div class="loader">num
           <div class="loaderBar"></div>
         </div>
       </div>
@@ -20,11 +21,17 @@
         <ul class="p-6">
           <li class="mb-4">
             <a href="#" @click.prevent="currentSection = 'profit-overview'" 
-               :class="{'text-primary': currentSection === 'profit-overview'}">
-              Tổng quan lợi nhuận
-            </a>
-          </li>
-          <li class="mb-4">
+            :class="{'text-primary': currentSection === 'profit-overview'}">
+            Tổng Quan Thông Tin
+          </a>
+        </li>
+        <li class="mb-4">
+          <a href="#" @click.prevent="currentSection = 'pending-products'"
+             :class="{'text-primary': currentSection === 'pending-products'}">
+            Danh Sách Chờ Duyệt
+          </a>
+        </li>
+        <li class="mb-4">
             <a href="#" @click.prevent="currentSection = 'member-list'"
                :class="{'text-primary': currentSection === 'member-list'}">
               Danh Sách Người Dùng
@@ -45,13 +52,7 @@
           <li class="mb-4">
             <a href="#" @click.prevent="currentSection = 'products'"
                :class="{'text-primary': currentSection === 'products'}">
-              Danh Sách Sản Phẩm
-            </a>
-          </li>
-          <li class="mb-4">
-            <a href="#" @click.prevent="currentSection = 'pending-products'"
-               :class="{'text-primary': currentSection === 'pending-products'}">
-              Danh Sách Chờ Duyệt
+               Danh Sách Đồng Hồ
             </a>
           </li>
           <li class="mb-4">
@@ -63,7 +64,7 @@
           <li class="mb-4">
             <a href="#" @click.prevent="currentSection = 'shipping'"
                :class="{'text-primary': currentSection === 'shipping'}">
-              Danh sách đơn giao
+              Phân đơn cho shipper
             </a>
           </li>
           <li class="mb-4">
@@ -74,8 +75,8 @@
           </li>
         </ul>
       </nav>
-      <span class="ml-24  hover-underline-animation  cursor-pointer">
-            <i @click="logout" class="fa fa-sign-out"></i> Đăng xuất
+      <span @click="logout" class="ml-24  hover-underline-animation  cursor-pointer">
+            <i  class="fa fa-sign-out"></i> Đăng xuất
       </span>
     </aside>
 
@@ -83,16 +84,88 @@
     <main class="flex-1 p-6 overflow-y-auto">
       <!-- Tổng quan lợi nhuận -->
       <section v-if="currentSection === 'profit-overview'" class="mb-6">
-        <h2 class="text-2xl font-semibold mb-4">Tổng Quan Lợi Nhuận</h2>
-        <div class="grid grid-cols-3 gap-4 mb-6">
+          <div class="back w-full p-4 rounded-lg shadow">
+            <h2 class="flex text-2xl font-semibold justify-center">Top 3 Hãng Được Đăng Bán Nhiều Nhất</h2>
+            <ol>
+              <li class="w-full flex justify-center p-1 text-xl" v-for="(item, index) in topThreeWatch" :key="item.brand">
+                {{ index + 1 }}. {{ item.brand }} - {{ item[""] }} chiếc
+              </li>
+            </ol>
+          </div>
+        <div class="w-full justify-between flex p-5">
+          <h2 class="text-2xl font-semibold mb-4">Tổng Quan Lợi Nhuận</h2>
+     <div class="relative">
+    <span @click="toggleFilter" class="text-xl h-8 cursor-pointer hover-underline-animation inline-block">
+      <i class="fa fa-filter"></i> Lọc dữ liệu biểu đồ doanh thu
+    </span>
+    <div v-if="showFilter" class="filter-panel mt-2 p-4 back rounded-md absolute right-2 z-10 shadow-lg" style="min-width: 400px;">
+      <div class="space-y-4">
+        <div class="flex flex-col">
+          <label class="container flex justify-start items-center text-center gap-2 mb-2">
+            <input type="checkbox" v-model="selectedFilter" value="yearMonthDay" @change="handleFilterChange">
+            <svg viewBox="0 0 64 64" height="1em">
+              <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+            </svg>
+            <span>Year, Month, Day</span>
+          </label>
+          <div v-if="selectedFilter.includes('yearMonthDay')" class="flex space-x-2">
+            <div class="form__group field flex-1">
+              <VueDatePicker class="pt-2" v-model="filters.yearMonthDay.from" placeholder="Từ ngày" :format="'yyyy-MM-dd'" :max-date="new Date()" @input="validateYearMonthDayInput('from')"></VueDatePicker>
+              <label for="min_yearMonthDay_date" class="form__label">From (yyyy-mm-dd)</label>
+            </div>
+            <div class="form__group field flex-1">
+              <VueDatePicker class="pt-2" v-model="filters.yearMonthDay.to" placeholder="Đến ngày" :format="'yyyy-MM-dd'" :min-date="filters.yearMonthDay.from" :max-date="new Date()" @input="validateYearMonthDayInput('to')"></VueDatePicker>
+              <label for="max_yearMonthDay_date" class="form__label">To (yyyy-mm-dd)</label>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col">
+          <label class="container flex justify-start items-center text-center gap-2 mb-2">
+            <input type="checkbox" v-model="selectedFilter" value="yearMonth" @change="handleFilterChange">
+            <svg viewBox="0 0 64 64" height="1em">
+              <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+            </svg>
+            <span>Year, Month</span>
+          </label>
+          <div v-if="selectedFilter.includes('yearMonth')" class="flex space-x-2">
+            <div class="form__group field flex-1">
+              <VueDatePicker class="pt-2" v-model="filters.yearMonth.from" placeholder="Từ tháng" :format="'yyyy-MM'" :min-date="new Date(new Date().getFullYear(), new Date().getMonth() - 11, 1)" :max-date="new Date()" @input="validateYearMonthInput('from')"></VueDatePicker>
+              <label for="min_yearMonth_date" class="form__label">From (yyyy-mm)</label>
+            </div>
+            <div class="form__group field flex-1">
+              <VueDatePicker class="pt-2" v-model="filters.yearMonth.to" placeholder="Đến tháng" :format="'yyyy-MM'" :min-date="filters.yearMonth.from" :max-date="new Date()" @input="validateYearMonthInput('to')"></VueDatePicker>
+              <label for="max_yearMonth_date" class="form__label">To (yyyy-mm)</label>
+            </div>
+          </div>
+        </div>
+        <div class="flex justify-center">
+          <button @click="applyFilters" class="mt-4 th-p-btn px-4 py-2 rounded">Áp dụng</button>
+        </div>
+      </div>
+    </div>
+  </div>
+        </div>
+
+        <div class="mb-4">
+          <label for="month-select" class="mr-2">Chọn tháng:</label>
+          <input 
+            type="month"
+            id="month-select" 
+            v-model="selectedMonth" 
+            @change="updateOrderStats"
+            class="p-2 border bg-black-99 rounded"
+          >
+        </div>
+       
+        <div class="grid grid-cols-3 gap-4 mt-5 mb-6">
           <div class="back p-4 rounded-lg shadow">
-            <p class="text-xl font-medium">Doanh Thu Tổng: {{ currency(totalRevenue) }}</p>
+            <p class="text-xl font-medium">Số lượng đơn đặt thành công: {{ numSuccessOrder }}</p>
           </div>
           <div class="back p-4 rounded-lg shadow">
-            <p class="text-xl font-medium">Chi Phí Tổng: {{ currency(totalCost) }}</p>
+            <p class="text-xl font-medium">Chi Phí Tổng: {{ currency(totalAmountOrder) }}</p>
           </div>
           <div class="back p-4 rounded-lg shadow">
-            <p class="text-xl font-medium">Lợi Nhuận Tổng: {{ currency(totalProfit) }}</p>
+            <p class="text-xl font-medium">Lợi Nhuận Tổng: {{ currency(totalAmountProfit) }}</p>
           </div>
         </div>
         <div v-if="showCharts" class="grid  grid-cols-2 gap-6 mb-6">
@@ -111,25 +184,7 @@
       <!-- Quản trị người dùng -->
       <section v-if="currentSection === 'member-list'" class="mb-6">
         <h2 class="text-3xl text-center font-semibold mb-5">Danh Sách Người Dùng</h2>
-        <h2 class="text-xl font-semibold mb-4">Thêm làm nhân viên</h2>
-        <div class="flex items-center gap-4 mb-6">
-          <div class="flex-1">
-            <input
-              type="text"
-              placeholder="Nhập ID người dùng"
-              class="ui-input w-full px-4 py-2 border rounded-lg"
-              v-model="userId"
-              required
-            />
-          </div>
-          <button 
-            @click="promoteToStaff" 
-            :disabled="!userId" 
-            :class="['th-p-btn py-2 px-4 rounded-lg', { 'opacity-50 cursor-not-allowed': !userId }]"
-          >
-            Thêm làm nhân viên
-          </button>
-        </div>
+      
         <div class="mb-6">
           <h2 class="text-xl font-semibold mb-4">Tìm kiếm người dùng</h2>
           <div class="ui-input-container mb-4">
@@ -142,6 +197,26 @@
               @keyup="searchMembers"
             />
           </div>
+          <!-- Cột 1: Trạng thái -->
+            <div class="flex flex-col">
+              <h3 class="font-semibold mb-2">Trạng thái</h3>
+              <div class="flex flex-col gap-2">
+                <label class="container flex items-center gap-2">
+                  <input type="checkbox" :checked="selectedStatus === 'active'" @change="toggleStatus('active')" />
+                  <svg viewBox="0 0 64 64" height="1em">
+                    <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+                  </svg>
+                  <span>Hoạt động</span>
+                </label>
+                <label class="container flex items-center gap-2">
+                  <input type="checkbox" :checked="selectedStatus === 'banned'" @change="toggleStatus('banned')" />
+                  <svg viewBox="0 0 64 64" height="1em">
+                    <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+                  </svg>
+                  <span>Bị cấm</span>
+                </label>
+              </div>
+            </div>
           <!-- User -->
           <h3 class="text-3xl py-10 text-center">Danh sách thành viên</h3>
           <div class="overflow-x-auto back p-4 rounded-lg shadow">
@@ -153,9 +228,9 @@
                   <th class="p-2">Tên</th>
                   <th class="p-2">Email</th>
                   <th class="p-2">Username</th>
-                  <th class="p-2">Vai trò</th>
                   <th class="p-2">Trạng Thái</th>
                   <th class="p-2">Cấm người dùng</th>
+                  <th class="p-2">Thêm làm nhân viên</th>
                 </tr>
               </thead>
               <tbody>
@@ -174,16 +249,6 @@
                   <td class="p-2">{{ member.email }}</td>
                   <td class="p-2">{{ member.user_log_info.username }}</td>
                   <td class="p-2 text-center">
-                    <div v-if="member.user_log_info.authorities.authority == 'ROLE_STAFF' && member.staff_role == null" class="cursor-pointer hover-underline-animation"
-                      @click="openPromoteModal(member)"
-                    >
-                      {{ member.staff_role ? roleLabels[member.staff_role] : roleLabels[member.user_log_info.authorities.authority] }}
-                    </div>
-                    <div v-else>
-                      {{ member.staff_role ? roleLabels[member.staff_role] : roleLabels[member.user_log_info.authorities.authority] }}
-                    </div>
-                  </td>
-                  <td class="p-2 text-center">
                     {{ member.user_log_info.enabled === 1 ? "Hoạt động" : "Bị cấm" }}
                   </td>
                   <td class="p-2 text-center">
@@ -201,6 +266,15 @@
                     >
                       Bỏ cấm người dùng
                     </div>
+                  </td>
+                  <td class="p-2 text-center">
+                  <span
+                    v-if="member.user_log_info.enabled === 1"
+                    @click="promoteToStaff(member.member_id)" 
+                    class="hover-underline-animation cursor-pointer"
+                  >
+                    Thêm làm nhân viên
+                  </span>
                   </td>
                 </tr>
               </tbody>
@@ -224,6 +298,26 @@
               @keyup="searchMembers"
             />
           </div>
+          <!-- Cột 1: Trạng thái -->
+        <div class="flex flex-col">
+          <h3 class="font-semibold mb-2">Trạng thái</h3>
+          <div class="flex flex-col gap-2">
+            <label class="container flex items-center gap-2">
+              <input type="checkbox" :checked="selectedStatus === 'active'" @change="toggleStatus('active')" />
+              <svg viewBox="0 0 64 64" height="1em">
+                <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+              </svg>
+              <span>Hoạt động</span>
+            </label>
+            <label class="container flex items-center gap-2">
+              <input type="checkbox" :checked="selectedStatus === 'banned'" @change="toggleStatus('banned')" />
+              <svg viewBox="0 0 64 64" height="1em">
+                <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+              </svg>
+              <span>Bị cấm</span>
+            </label>
+          </div>
+        </div>
         <h3 class="text-3xl py-10 text-center">Danh sách người đăng bán</h3>
           <div class="overflow-x-auto back p-4 rounded-lg shadow">
             <table class="table w-full">
@@ -234,7 +328,6 @@
                   <th class="p-2">Tên</th>
                   <th class="p-2">Email</th>
                   <th class="p-2">Username</th>
-                  <th class="p-2">Vai trò</th>
                   <th class="p-2">Trạng Thái</th>
                   <th class="p-2">Cấm người dùng</th>
                 </tr>
@@ -250,20 +343,12 @@
                     />
                   </td>
                   <td class="p-2">
-                    {{ member?.first_name }} {{ member?.last_name }}
+                    <router-link class="hover-underline-animation" :to="`/retailer/${member.member_id}`">
+                      {{ member?.first_name }} {{ member?.last_name }}
+                    </router-link>
                   </td>
                   <td class="p-2">{{ member.email }}</td>
                   <td class="p-2">{{ member.user_log_info.username }}</td>
-                  <td class="p-2 text-center">
-                    <div v-if="member.user_log_info.authorities.authority == 'ROLE_STAFF' && member.staff_role == null" class="cursor-pointer hover-underline-animation"
-                      @click="openPromoteModal(member)"
-                    >
-                      {{ member.staff_role ? roleLabels[member.staff_role] : roleLabels[member.user_log_info.authorities.authority] }}
-                    </div>
-                    <div v-else>
-                      {{ member.staff_role ? roleLabels[member.staff_role] : roleLabels[member.user_log_info.authorities.authority] }}
-                    </div>
-                  </td>
                   <td class="p-2 text-center">
                     {{ member.user_log_info.enabled === 1 ? "Hoạt động" : "Bị cấm" }}
                   </td>
@@ -283,6 +368,7 @@
                       Bỏ cấm người dùng
                     </div>
                   </td>
+                  
                 </tr>
               </tbody>
             </table>
@@ -303,29 +389,56 @@
               @keyup="searchMembers"
             />
           </div>
-          <div class="w-full flex justify-start">
-            <label class="container flex justify-start items-center text-center gap-2">
-              <input type="checkbox" :checked="selectedRole === 'staff'" @change="toggleRole('staff')" />
-              <svg viewBox="0 0 64 64" height="1em">
-                <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
-              </svg>
-              <label>Nhân viên</label>
-            </label>
-            <label class="container flex justify-start items-center text-center gap-2">
-              <input type="checkbox" :checked="selectedRole === 'appraiser'" @change="toggleRole('appraiser')" />
-              <svg viewBox="0 0 64 64" height="1em">
-                <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
-              </svg>
-              <label>Chuyên viên kiểm định</label>
-            </label>
-            <label class="container flex justify-start items-center text-center gap-2">
-              <input type="checkbox" :checked="selectedRole === 'shipper'" @change="toggleRole('shipper')" />
-              <svg viewBox="0 0 64 64" height="1em">
-                <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
-              </svg>
-              <label>Nhân viên vận chuyển</label>
-            </label>
-          </div>
+          <div class="flex flex-row gap-8">
+  <!-- Cột 1: Trạng thái -->
+  <div class="flex flex-col">
+    <h3 class="font-semibold mb-2">Trạng thái</h3>
+    <div class="flex flex-col gap-2">
+      <label class="container flex items-center gap-2">
+        <input type="checkbox" :checked="selectedStatus === 'active'" @change="toggleStatus('active')" />
+        <svg viewBox="0 0 64 64" height="1em">
+          <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+        </svg>
+        <span>Hoạt động</span>
+      </label>
+      <label class="container flex items-center gap-2">
+        <input type="checkbox" :checked="selectedStatus === 'banned'" @change="toggleStatus('banned')" />
+        <svg viewBox="0 0 64 64" height="1em">
+          <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+        </svg>
+        <span>Bị cấm</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Cột 2: Vai trò -->
+  <div class="flex flex-col">
+    <h3 class="font-semibold mb-2">Vai trò</h3>
+    <div class="flex flex-col gap-2">
+      <label class="container flex items-center gap-2">
+        <input type="checkbox" :checked="selectedRole === 'staff'" @change="toggleRole('staff')" />
+        <svg viewBox="0 0 64 64" height="1em">
+          <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+        </svg>
+        <span>Nhân viên</span>
+      </label>
+      <label class="container flex items-center gap-2">
+        <input type="checkbox" :checked="selectedRole === 'appraiser'" @change="toggleRole('appraiser')" />
+        <svg viewBox="0 0 64 64" height="1em">
+          <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+        </svg>
+        <span>Chuyên viên kiểm định</span>
+      </label>
+      <label class="container flex items-center gap-2">
+        <input type="checkbox" :checked="selectedRole === 'shipper'" @change="toggleRole('shipper')" />
+        <svg viewBox="0 0 64 64" height="1em">
+          <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+        </svg>
+        <span>Nhân viên vận chuyển</span>
+      </label>
+    </div>
+  </div>
+</div>
         <h3 class="text-3xl text-center py-10">Danh sách nhân viên</h3>
           <div class="overflow-x-auto back p-4 rounded-lg shadow">
             <table class="table w-full">
@@ -362,7 +475,9 @@
                     >
                       {{ member.staff_role ? roleLabels[member.staff_role] : roleLabels[member.user_log_info.authorities.authority] }}
                     </div>
-                    <div v-else>
+                    <div v-else 
+                    class="cursor-pointer hover-underline-animation"
+                    @click="openPromoteModal(member)">
                       {{ member.staff_role ? roleLabels[member.staff_role] : roleLabels[member.user_log_info.authorities.authority] }}
                     </div>
                   </td>
@@ -393,7 +508,7 @@
 
       <!-- Quản trị Danh Sách sản phẩm -->
       <section v-if="currentSection === 'products'" class="mb-6">
-        <h2 class="text-2xl font-semibold mb-4">Danh Sách Sản Phẩm</h2>
+        <h2 class="text-2xl font-semibold mb-4">Danh Sách Đồng Hồ</h2>
         <div class="ui-input-container mb-4">
           <input
             required
@@ -404,6 +519,18 @@
             @keyup.enter="searchWatches"
           />
         </div>
+        <div class="flex flex-col mb-4">
+  <h3 class="font-semibold mb-2">Trạng thái</h3>
+  <div class="flex w-full justify-between p-1">
+    <label v-for="(label, state) in stateLabels" :key="state" class="container flex  items-center gap-1">
+      <input type="checkbox" v-model="selectedStates" :value="Number(state)" />
+      <svg viewBox="0 0 64 64" height="1em">
+        <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+      </svg>
+      <span>{{ label }}</span>
+    </label>
+  </div>
+</div>
         <div class="overflow-x-auto back p-4 rounded-lg shadow">
           <table class="table w-full">
             <thead class="bg-gray-200">
@@ -413,7 +540,6 @@
                 <th class="p-2">Người bán</th>
                 <th class="p-2">Giá</th>
                 <th class="p-2">Trạng thái</th>
-                
               </tr>
             </thead>
             <tbody>
@@ -461,10 +587,13 @@
               <tr class="text-left text-gray-700">
                 <th class="p-2">ID</th>
                 <th class="p-2">Tên</th>
+                <th class="p-2">Mã Duyệt</th>
                 <th class="p-2">Người bán</th>
                 <th class="p-2">Được kiểm định bởi</th>
                 <th class="p-2">Thời gian được kiểm định</th>
+                <th class="p-2">Trạng thái</th>
                 <th class="p-2">Hành động</th>
+                <th class="p-2">Xoá</th>
                 
               </tr>
             </thead>
@@ -475,6 +604,9 @@
               </td>
               <td class="p-2 border-b">{{ product.watch_name }}</td>
               <td class="p-2 border-b">
+                {{ req[product.watch_id]?.request_id ?? null }}
+              </td>
+              <td class="p-2 border-b">
                 <div class="flex items-center">
                   <img
                     :src="product.seller.member_image"
@@ -484,12 +616,16 @@
                   <span>{{ product.seller.user_log_info.username }}</span>
                 </div>
               </td>
-              <td class="p-2 border-b">N/a</td>
-              <td class="p-2 border-b">N/a</td>
+              <td class="p-2 border-b">{{ req[product.watch_id]?.appraiser_assigned ?? null }}</td>
+              <td class="p-2 border-b">{{ req[product.watch_id]?.appointment_date  ? formatDate(req[product.watch_id]?.appointment_date) : 'Chưa có ngày' }}</td>
+              <td class="p-2 border-b">{{ req[product.watch_id]?.status ?? null  }}</td>
               <td class="p-2 border-b">
                 <button @click="openAssignModal(product)" class="hover-underline-animation">
                   Giao cho Kiểm định viên
                 </button>
+              </td>
+              <td>
+                <button class="hover-underline-animation-r">Xoá</button>
               </td>
             </tr>
             </tbody>
@@ -616,7 +752,7 @@
 
       <!-- Quản trị shipping -->
       <section v-if="currentSection === 'shipping'" class="mb-6">
-        <h2 class="text-2xl font-semibold mb-4">Giao đơn cho shipper</h2>
+        <h2 class="text-2xl font-semibold mb-4">Phân đơn cho shipper</h2>
         <div class="overflow-x-auto back p-4 rounded-lg shadow">
             <table class="table w-full">
               <thead class="bg-gray-200">
@@ -626,7 +762,6 @@
                   <th class="p-2">Tên</th>
                   <th class="p-2">Email</th>
                   <th class="p-2">Username</th>
-                  <th class="p-2">Vai trò</th>
                   <th class="p-2">Trạng Thái</th>
                   <th class="p-2">Hoạt động</th>
                 </tr>
@@ -646,7 +781,6 @@
                   </td>
                   <td class="p-2">{{ member.email }}</td>
                   <td class="p-2">{{ member.user_log_info.username }}</td>
-                  <td class="p-2 text-center"> {{ roleLabels[member.staff_role] }} </td>
                   <td class="p-2 text-center">
                     {{ member.user_log_info.enabled === 1 ? "Hoạt động" : "Bị cấm" }}
                   </td>
@@ -771,7 +905,7 @@
           <button @click="showAssignModal = false" class="border-2 border-secondary p-2">
             Hủy
           </button>
-          <button @click="assignWatch" :disabled="!selectedAppraiser || !selectedDate" class="th-p-btn">
+          <button @click="assignWatch" :disabled="!selectedAppraiser || !date" class="th-p-btn">
             Xác nhận
           </button>
         </div>
@@ -793,9 +927,13 @@
         <!-- Pending Orders Dropdown -->
         <div class="order-select mb-4">
           <h3 class="text-xl font-medium mb-2">Chọn đơn hàng cần giao:</h3>
-          <select v-model="selectedOrder" class="w-full p-2 border rounded bg-black-99">
+          <select 
+            v-model="selectedOrderId" 
+            @change="logSelection" 
+            class="w-full p-2 border rounded bg-black-99"
+          >
             <option value="" disabled>Chọn một đơn hàng</option>
-            <option v-for="order in getShipOrder" :key="order.order_id" :value="order">
+            <option v-for="order in getShipOrder" :key="order.order_id" :value="order.order_id">
               Đơn hàng #{{ order.order_id }} - {{ order.receive_name }}
             </option>
           </select>
@@ -805,7 +943,7 @@
           <button @click="assignShipModal = false" class="border-2 border-secondary p-2">
             Hủy
           </button>
-          <button @click="assignOrderToShipper" :disabled="!selectedOrder" class="th-p-btn">
+          <button @click="assignOrderToShipper" :disabled="!selectedOrderId" class="th-p-btn">
             Xác nhận
           </button>
         </div>
@@ -856,11 +994,24 @@
   </div>
 
 </div>
+</div>
+
+<div v-else>
+  <div class="flex justify-center items-center gap-6 text-center title">
+      <span class="text-border">4</span>
+      <clock/>
+      <span class="text-border">4</span>
+  </div>
+  <div class="flex flex-col justify-center items-center gap-5">
+      <span>Oops, không có gì ở đây hết quay về <router-link to="/" class="hover-underline-animation">Trang chủ</router-link> đi !</span>
+  </div>
+
+</div>
 
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch, nextTick } from "vue";
+import { ref, computed, onMounted, watch, nextTick, reactive } from "vue";
 import { useAdminStore } from "../stores/admin";
 import Chart from 'chart.js/auto';
 import { useChatStore } from "../stores/chat";
@@ -870,6 +1021,25 @@ import router from "../router";
 import { useMailStore } from "../stores/mail";
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
+import Clock from '../components/Clock.vue'
+
+
+const req = ref({});
+
+onMounted(() => {
+  updateOrderStats() 
+  useAdminStore().getRequestWatches()
+    .then(response => {
+      req.value = response.reduce((map, watch) => {
+        map[watch.appraise_watch] = watch;
+        return map;
+      }, {});
+      console.log("BBB", req.value);
+    })
+    .catch(error => {
+      console.error("Error fetching request watches:", error);
+    });
+});
 
 const currentSection = ref('profit-overview');
 
@@ -897,6 +1067,15 @@ const validateDate = (selectedDate) => {
 };
 
 const selectedRole = ref(null);
+const selectedStatus = ref(null);
+
+const toggleStatus = (status) => {
+  if (selectedStatus.value === status) {
+    selectedStatus.value = null;
+  } else {
+    selectedStatus.value = status;
+  }
+};
 
 const toggleRole = (role) => {
   if (selectedRole.value === role) {
@@ -922,6 +1101,8 @@ const formatBoxDate = (date) => {
 }
 
 const logout = () => {
+  console.log(1);
+  
    useAuthStore().logout().then(
     window.location.replace('/')
   )
@@ -957,10 +1138,39 @@ const roleLabels = {
   ROLE_ADMIN: "Quản trị viên",
 };
 
+const isAdmin = ref(false)
+
+// Check user role
+const userStore = useUserStore();
+const authStore = useAuthStore();
+if (
+  userStore.role !== "ROLE_ADMIN" &&
+  authStore.user_id !== import.meta.env.VITE_ADMIN_USERID
+) {
+  console.log("Not ADMIN");
+  router.push("/");
+}
+
+const checkAdmin = (userId) => {
+  if(useUserStore().loadUser(userId).then(userStore.role==='ROLE_ADMIN')){
+    isAdmin.value = true;
+    console.log(isAdmin.value);
+    return router.push('/admin')
+  }
+  else{
+    isAdmin.value = false
+    router.push('/')
+  }
+
+}
+
+console.log(checkAdmin(authStore.user_id));
 
 
 // Initialize the store
 const adminStore = useAdminStore();
+
+
 
 // State variables
 const userId = ref("");
@@ -975,6 +1185,7 @@ const qWatches = ref('');
 const qPendingWatches = ref('')
 const qOrders = ref('');
 const nOrders = ref('');
+const topThree = ref('')
 
 // Chart
 const overviewChart = ref(null);
@@ -982,6 +1193,105 @@ const revenueChart = ref(null);
 const costChart = ref(null);
 const profitChart = ref(null);
 // Chart variable
+
+//Chart filter
+const showFilter = ref(false);
+const selectedFilter = ref([]);
+const filters = reactive({
+  yearMonthDay: {
+    from: null,
+    to: null
+  },
+  yearMonth: {
+    from: null,
+    to: null
+  }
+});
+
+const selectedAppraiser = ref(null)
+
+function formatTimestamp(timestamp) {
+    const date = new Date(timestamp);
+    
+    const pad = (num, size = 2) => String(num).padStart(size, '0');
+    
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1);
+    const day = pad(date.getDate());
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+    const seconds = pad(date.getSeconds());
+    const milliseconds = pad(date.getMilliseconds(), 6); // Adjust for microseconds
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
+}
+const assignWatch = () => {
+  console.log(req.value[selectedWatch.value.watch_id].request_id);
+  const timestamp = date.value.getTime();
+  adminStore.assignWatchRequest(req.value[selectedWatch.value.watch_id].request_id, selectedAppraiser.value.member_id ,formatTimestamp(timestamp));
+  showAssignModal.value = !showAssignModal.value
+}
+
+const toggleFilter = () => {
+  showFilter.value = !showFilter.value;
+};
+
+const handleFilterChange = () => {
+  if (selectedFilter.value.length > 1) {
+    const lastSelectedFilter = selectedFilter.value[selectedFilter.value.length - 1];
+    selectedFilter.value = [lastSelectedFilter];
+  }
+
+  if (!selectedFilter.value.includes('yearMonthDay')) {
+    filters.yearMonthDay.from = null;
+    filters.yearMonthDay.to = null;
+  }
+
+  if (!selectedFilter.value.includes('yearMonth')) {
+    filters.yearMonth.from = null;
+    filters.yearMonth.to = null;
+  }
+};
+
+const validateYearMonthDayInput = (type) => {
+  const dateValue = new Date(filters.yearMonthDay[type]);
+  const currentDate = new Date();
+
+  if (type === 'from') {
+    if (dateValue > currentDate) {
+      filters.yearMonthDay.from = currentDate.toISOString().slice(0, 10);
+    }
+  } else {
+    if (filters.yearMonthDay.from && new Date(filters.yearMonthDay.to) < new Date(filters.yearMonthDay.from)) {
+      filters.yearMonthDay.to = filters.yearMonthDay.from;
+    }
+  }
+};
+
+const validateYearMonthInput = (type) => {
+  const dateValue = new Date(filters.yearMonth[type]);
+  const currentDate = new Date();
+
+  if (type === 'from') {
+    if (dateValue.getFullYear() < currentDate.getFullYear() || (dateValue.getFullYear() === currentDate.getFullYear() && dateValue.getMonth() < currentDate.getMonth())) {
+      filters.yearMonth.from = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}`;
+    }
+  } else {
+    if (filters.yearMonth.from && new Date(filters.yearMonth.to) < new Date(filters.yearMonth.from)) {
+      filters.yearMonth.to = filters.yearMonth.from;
+    }
+  }
+};
+
+const applyFilters = () => {
+  const activeFilters = {
+    yearMonthDay: selectedFilter.value.includes('yearMonthDay') ? filters.yearMonthDay : null,
+    yearMonth: selectedFilter.value.includes('yearMonth') ? filters.yearMonth : null
+  };
+  console.log('Applied filters:', activeFilters);
+  // Ở đây bạn sẽ gọi hàm để áp dụng bộ lọc vào dữ liệu của bạn
+};
+//Chart filter
 
 const selectedTransaction = ref(null);
 const greeting = ref("");
@@ -1011,25 +1321,53 @@ const selectedWatch = ref(null);
 const assignShipModal = ref(false);
 const showShipperOrdersModal = ref(false);
 const selectedShipper = ref(null);
-const selectedOrder = ref(null);
-const pendingOrders = ref([]);
+const selectedOrderId = ref(null);
+const selectedOrder = computed(() => {
+  return getShipOrder.value.find(order => order.order_id === selectedOrderId.value) || null;
+});
+
+const logSelection = () => {
+  console.log('Selected Order ID:', selectedOrderId.value);
+  console.log('Selected Order:', selectedOrder.value);
+};
+
+
 const assignedOrders = ref([]);
 
-const openAssign = async (shipper) => {
+const openAssign = async (shipper, order) => {
   assignShipModal.value = true;
   selectedShipper.value = shipper;
-  pendingOrders.value = []; // Replace with actual API call
+  selectedOrderId.value = order;
 };
 
 const openDetail = async (shipper) => {
   showShipperOrdersModal.value = true;
   selectedShipper.value = shipper;
+  console.log(selectedOrder.value);
   assignedOrders.value = []; // Replace with actual API call
 };
 
 const openAssignModal = async (watch) => {
   selectedWatch.value = watch;
-  showAssignModal.value = true;  
+  showAssignModal.value = true;
+  console.log("RRRR",watch);
+};
+
+const assignOrderToShipper = () => {
+  console.log('assignOrderToShipper called');
+  console.log('Selected Order ID:', selectedOrderId.value);
+  console.log('Selected Order:', selectedOrder.value);
+  console.log('Selected Shipper:', selectedShipper.value.member_id);
+  
+    if (selectedOrder.value) {
+      // Your logic to assign the order to the shipper
+      useAdminStore().assignOrderToShipper(selectedShipper.value.member_id ,selectedOrderId.value)
+      console.log('Assigning order:', selectedOrderId.value, 'to shipper:', selectedShipper.value.member_id);
+    } else {
+      console.log('No order selected');
+    }
+  
+
 };
 
 function setGreeting() {
@@ -1097,6 +1435,7 @@ watch(currentSection, (newSection, oldSection) => {
 onMounted(async () => {
   try {
     date.value = null
+    await adminStore.getTopThreeWatch();
     await adminStore.getMembers();
     await adminStore.getWatches();
     await adminStore.getOrders();
@@ -1111,16 +1450,7 @@ onMounted(async () => {
     error.value = "Failed to fetch initial data. Please try refreshing the page.";
   }
 });
-// Check user role
-const userStore = useUserStore();
-const authStore = useAuthStore();
-if (
-  userStore.role !== "ROLE_ADMIN" &&
-  authStore.user_id !== import.meta.env.VITE_ADMIN_USERID
-) {
-  console.log("Not ADMIN");
-  router.push("/");
-}
+
 
 const getMemberName = (memberId) => {
   const member = adminStore.members.find(m => m.member_id === memberId);
@@ -1138,32 +1468,69 @@ const getAppraisers = computed(() => {
 });
 
 const getShipOrder = computed(() => {
+  console.log(adminStore.orders.filter(order => 
+    order.state === 'PENDING'
+  ));
+  
   return adminStore.orders.filter(order => 
     order.state === 'PENDING'
   );
 });
+//Get top three watch API
+const topThreeWatch = ref([]);
+
+watch(
+  () => adminStore.topThreeWatch,
+  (newValue) => {
+    topThreeWatch.value = newValue;
+  }
+);
+
 
 // Define computed properties with error handling
 const filteredMembers = computed(() => {
-  try {
-    return adminStore.filteredMembers(qMembers.value).filter(member => member.user_log_info.authorities.authority === 'ROLE_USER');
-  } catch (err) {
-    console.error("Error in filteredMembers:", err);
-    error.value = "Error filtering members. Please try again.";
-    return [];
+  
+  let filter = adminStore.filteredMembers(qMembers.value).filter(member => {
+    return member.user_log_info.authorities.authority === 'ROLE_USER';
+  });  
+  if (selectedStatus.value) {
+    filter = filter.filter(member => {
+      switch (selectedStatus.value) {
+        case 'active':
+          return member.user_log_info.enabled === 1;
+        case 'banned':
+          return member.user_log_info.enabled === 0;
+        default:
+          return true;
+      }
+    });
   }
+  
+  console.log("Final filtered data:", filter);
+  return filter;
 });
 
 const filteredSeller = computed(() => {
-  try {
-    return adminStore.filteredMembers(qMembers.value).filter(member => member.user_log_info.authorities.authority === 'ROLE_SELLER');
-  } catch (err) {
-    console.error("Error in filteredMembers:", err);
-    error.value = "Error filtering members. Please try again.";
-    return [];
+  
+  let filter = adminStore.filteredMembers(qMembers.value).filter(member => {
+    return member.user_log_info.authorities.authority === 'ROLE_SELLER';
+  });  
+  if (selectedStatus.value) {
+    filter = filter.filter(member => {
+      switch (selectedStatus.value) {
+        case 'active':
+          return member.user_log_info.enabled === 1;
+        case 'banned':
+          return member.user_log_info.enabled === 0;
+        default:
+          return true;
+      }
+    });
   }
+  
+  console.log("Final filtered data:", filter);
+  return filter;
 });
-
 const filteredStaff = computed(() => {
   try {
     let filter = adminStore.filteredMembers(qStaff.value).filter(member => 
@@ -1203,15 +1570,18 @@ const filteredShipper = computed(() => {
   }
 });
 
+const selectedStates = ref([]);
+
 const filteredWatches = computed(() => {
-  try {
-    return adminStore.filteredWatches(qWatches.value).filter(product => product.state !== 0);
-  } catch (err) {
-    console.error("Error in filteredWatches:", err);
-    error.value = "Error filtering watches. Please try again.";
-    return [];
+  let filtered = adminStore.filteredWatches(qWatches.value);
+  
+  if (selectedStates.value.length > 0) {
+    filtered = filtered.filter(product => selectedStates.value.includes(product.state));
   }
+  
+  return filtered;
 });
+
 
 const filteredPendingWatches = computed(() => {
   try {
@@ -1381,17 +1751,16 @@ const searchOrders = () => {
 };
 
 // Define a method to promote a user to staff
-const promoteToStaff = async () => {
-  if (!userId.value) return; // Không cần thiết vì nút đã bị disabled, nhưng thêm để chắc chắn
+const promoteToStaff = async (uID) => {
 
   try {
-    const memberExists = await checkMemberExists(userId.value);
+    const memberExists = await checkMemberExists(uID);
     if (!memberExists) {
       alert("ID người dùng không đúng hoặc không tồn tại");
       return;
     }
 
-    await adminStore.promoteToStaff(userId.value);
+    await adminStore.promoteToStaff(uID);
     await adminStore.getMembers();
     alert("Thêm làm nhân viên thành công");
   } catch (error) {
@@ -1430,16 +1799,16 @@ const confirmBanUser = async () => {
   if (selectedMember.value) {
     try {
       await useChatStore().registerUser2(selectedMember.value.member_id);
-      await useChatStore().sendMessage(
-        selectedMember.value.member_id,
-        `Tài khoản mang tên ${selectedMember.value.user_log_info.username} đã bị cấm khỏi nền tảng! Lý do: ${banMessage.value}.`
-      );
+      var user = {
+        username: selectedMember.value.user_log_info.username,
+        user_id: selectedMember.value.member_id
+      }
+      await useAdminStore().ban(user, banMessage.value)
       await useMailStore().send(
         selectedMember.value.email,
         "THÔNG BÁO BẠN ĐÃ BỊ BAN KHỎI TIME HARMONY.",
         `Tài khoản mang tên ${selectedMember.value.user_log_info.username} đã bị cấm khỏi nền tảng! Lý do: ${banMessage.value}.`
       );
-      await useAdminStore().ban(selectedMember.value.user_log_info.username);
       
       // Refresh the members list to update the UI
       await adminStore.getMembers();
@@ -1461,7 +1830,6 @@ const confirmBanUser = async () => {
 const unbanUser = async (member) => {
   try {
     isLoading.value = true;
-    await useChatStore().removeChat(useAuthStore().user_id, member.member_id);
     await useAdminStore().unBan(member.user_log_info.username);
     
     // Refresh the members list to update the UI
@@ -1518,9 +1886,34 @@ const totalCost = computed(() => {
   }
 });
 
+const selectedMonth = ref(new Date().toISOString().slice(0, 7));
+const numSuccessOrder = ref(0);
+const totalAmountOrder = ref(0)
+const totalAmountProfit = ref(0)
+
+
+const updateOrderStats = async () => {
+      if (selectedMonth.value) {
+        try {
+          const num = await adminStore.getNumOrderSuccess(selectedMonth.value)
+          const order = await adminStore.getTotalAmountOrderSuccess(selectedMonth.value)
+          const profit = await adminStore.getTotalProfitOrderSuccess(selectedMonth.value)
+          numSuccessOrder.value = num
+          totalAmountOrder.value = order
+          totalAmountProfit.value = profit
+          console.log(`Số đơn đặt thành công trong tháng ${selectedMonth.value}: ${num}`)
+        } catch (error) {
+          console.error('Lỗi khi lấy số đơn đặt thành công:', error)
+          numSuccessOrder.value = 0 // Đặt về 0 nếu có lỗi
+        }
+      }
+    }
+
+
+
 const totalRevenue = computed(() => {
   try {
-    return filteredOrders.value.reduce((sum, order) => sum + (order?.total_price || 0), 0);
+    return 1
   } catch (err) {
     console.error("Error calculating totalRevenue:", err);
     error.value = "Error calculating total revenue. Please try again.";
@@ -1545,7 +1938,7 @@ const createOverviewChart = () => {
   overviewChartInstance = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', '2024', 'T9', 'T10', 'T11', 'T12'],
+      labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
       datasets: [
         {
           label: 'Doanh Thu Tổng',
@@ -1683,6 +2076,11 @@ const formatDate = (dateString) => {
 </script>
 
 <style scoped>
+
+.filter-panel {
+  width: 100%;
+  max-width: 100px;
+}
 
 .back{
   background: linear-gradient(to bottom, #3b3638, #40413a);

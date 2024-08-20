@@ -1,5 +1,8 @@
 <template>
-  <div v-if="auth.user_id" class="flex grid-cols-2 items-start justify-center w-full">
+  <div
+    v-if="auth.user_id"
+    class="flex grid-cols-2 items-start justify-center w-full"
+  >
     <div class="col-span-1 mt-8 mx-auto">
       <div class="flex items-start">
         <div
@@ -12,7 +15,7 @@
             <div class="file-upload-design">
               <span class="mdi mdi-cloud-upload-outline text-xl"></span>
               <p>Kéo và thả</p>
-              <p>hoặc</p>  
+              <p>hoặc</p>
               <span class="hover-underline-animation" @click="handleFileUpload"
                 >Tải tệp lên</span
               >
@@ -30,22 +33,22 @@
 
       <div class="mt-3 upload-img grid grid-cols-5 gap-3">
         <div
-  v-for="(image, index) in uploadedImages"
-  :key="index"
-  class="uploaded-image w-full sm:w-1/5"
->
-  <img :src="image.url" alt="Uploaded Image" />
-  <div class="image-overlay"></div>
-  <div
-    v-if="image.loading"
-    class="loader-container flex justify-center items-center"
-  >
-    <div class="loader">
-      <div class="loaderBar"></div>
-    </div>
-  </div>
-  <button class="close-button" @click="removeImage(index)">×</button>
-</div>
+          v-for="(image, index) in uploadedImages"
+          :key="index"
+          class="uploaded-image w-full sm:w-1/5"
+        >
+          <img :src="image.url" alt="Uploaded Image" />
+          <div class="image-overlay"></div>
+          <div
+            v-if="image.loading"
+            class="loader-container flex justify-center items-center"
+          >
+            <div class="loader">
+              <div class="loaderBar"></div>
+            </div>
+          </div>
+          <button class="close-button" @click="removeImage(index)">×</button>
+        </div>
       </div>
     </div>
     <div class="col-span-1 mx-auto flex justify-start items-start">
@@ -83,7 +86,45 @@
           >
         </div>
       </div>
-      <div class="form-content">
+
+      <div class="form__group field flex flex-col w-96 justify-start">
+        <div class="mydict">
+          <div class="form">
+            <label class="mb-3 text-[#9b9b9b]">Hình thức kiểm định</label>
+            <div class="select pb-4 gender-select">
+              <label>
+                <input
+                  type="radio"
+                  name="radio"
+                  checked
+                  @click="unisexGender"
+                  id="defaut-gender"
+                  value="Unisex"
+                />
+                <span class="select-op">Offline</span>
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="radio"
+                  @click="maleGender"
+                  value="Male"
+                />
+                <span class="select-op">Online</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form__group field flex w-96 justify-start">
+        <VueDatePicker
+          v-model="date"
+          placeholder="Chọn ngày muốn kiểm định"
+          :format="formatDate"
+          :enable-time-picker="false"
+        ></VueDatePicker>
+      </div>
+      <!-- <div class="form-content">
         <div class="form__group field w-96">
           <input
             v-model="watchData.price"
@@ -91,10 +132,10 @@
             class="form__field"
             placeholder="Price"
           />
-          <label for="price" class="form__label">Giá</label>
+          <label for="price" class="form__label">Giá mong</label>
         </div>
-      </div>
-      <h3 class="text-3xl">Tính năng</h3>
+      </div> -->
+      <!-- <h3 class="text-3xl">Tính năng</h3>
       <div class="form-content">
         <div class="form__group field w-96">
           <input
@@ -307,7 +348,7 @@
           <label for="price" class="form__label">Hình dạng vỏ</label>
         </div>
       </div>
-      
+
       <h3 class="text-3xl">Thuộc tính</h3>
       <div class="form-content">
         <div class="form__group field w-96">
@@ -331,7 +372,7 @@
           <label for="price" class="form__label">Series</label>
         </div>
       </div>
-      <div class="form-content ">
+      <div class="form-content">
         <div class="form__group field w-96">
           <input
             v-model="watchData.model"
@@ -342,30 +383,7 @@
           <label for="price" class="form__label">Mẫu</label>
         </div>
       </div>
-      <div class="form__group field flex flex-col w-96 justify-start">
-           
-        <div class="mydict">
-	<div class="form">
-	    <label class=" mb-3 text-[#9b9b9b] ">Giới tính</label>
-	    <div class="select pb-4 gender-select">
-	    <label>
-			<input type="radio" name="radio" checked @click="unisexGender" id="defaut-gender" value="Unisex">
-			<span class="select-op">Phi giới</span>
-		</label>
-		<label>
-			<input type="radio" name="radio" @click="maleGender" value="Male">
-			<span class="select-op">Nam</span>
-		</label>
-		<label>
-			<input type="radio" name="radio" @click="femaleGender" value="Female">
-			<span class="select-op">Nữ</span>
-		</label>
-	    </div>
-	</div>
-</div>
-
-
-      </div>
+      
       <div class="form-content">
         <div class="form__group field w-96">
           <input
@@ -398,12 +416,7 @@
           />
           <label for="price" class="form__label">Nhãn thực hiện</label>
         </div>
-      </div>
-      <h3 class="text-3xl">Chọn ngày kiểm định</h3>
-
-      <div class="flex w-full px-20 justify-start ">
-        <VueDatePicker v-model="date" placeholder="Chọn ngày muốn kiểm định" :format="formatDate"></VueDatePicker>
-      </div>
+      </div> -->
       <p v-if="dateWarning" class="text-red-500">{{ dateWarning }}</p>
       <br />
       <div class="flex justify-end button-div">
@@ -421,41 +434,50 @@
           </div>
         </button>
       </div>
-      <PopUp 
-      :show="isPopupVisible" 
-      :product="currentProduct" 
-      :message="popupMessage" 
-      :showDetails="showProductDetails"
-      @close="isPopupVisible = false"  />
+      <PopUp
+        :show="isPopupVisible"
+        :product="currentProduct"
+        :message="popupMessage"
+        :showDetails="showProductDetails"
+        @close="isPopupVisible = false"
+      />
     </div>
   </div>
   <div v-else class="h-screen flex flex-col items-center justify-center">
     <div>
-      <p class="text-xl font-medium text-center">Bạn cần đăng nhập để sử dụng chức năng này, <router-link class="hover-underline-animation" to="/login">Đăng nhập ngay</router-link></p>
+      <p class="text-xl font-medium text-center">
+        Bạn cần đăng nhập để sử dụng chức năng này,
+        <router-link class="hover-underline-animation" to="/login"
+          >Đăng nhập ngay</router-link
+        >
+      </p>
     </div>
     <div class="mt-4">
-      <router-link to="/" class="hover-underline-animation">Quay trở lại trang chủ</router-link>
+      <router-link to="/" class="hover-underline-animation"
+        >Quay trở lại trang chủ</router-link
+      >
     </div>
   </div>
 </template>
 
 <script setup>
-import { reactive, onMounted, ref, watch} from "vue";
+import { reactive, onMounted, ref, watch } from "vue";
 import { useWatchStore } from "../stores/watch";
 import { useUserStore } from "../stores/user";
 import { useCloudinaryStore } from "../stores/cloudinary";
-import PopUp from "../components/PopUp.vue"
+import PopUp from "../components/PopUp.vue";
 import router from "../router";
-import VueDatePicker from '@vuepic/vue-datepicker';
-import '@vuepic/vue-datepicker/dist/main.css'
+import VueDatePicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
+import { useAuthStore } from "../stores/auth";
 
 const date = ref(new Date());
-const dateWarning = ref('');
+const dateWarning = ref("");
 
 const validateDate = (selectedDate) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0); // Reset time part for comparison
-  if(!selectedDate) return null
+  if (!selectedDate) return null;
 
   if (selectedDate < today) {
     dateWarning.value = "Bạn không thể chọn ngày trong quá khứ.";
@@ -471,19 +493,17 @@ watch(date, (newDate) => {
 
 const formatDate = (date) => {
   const day = date.getDate();
-  const month = date.getMonth()+1
-  const year = date.getFullYear()
-  const hour = date.getHours()
-  const minute = date.getMinutes()
-  
-  return `${day}/${month}/${year} vào lúc ${hour}:${minute}`
-}
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+
+  return `${day}/${month}/${year}`;
+};
 console.log(formatDate(date.value));
 const isPopupVisible = ref(false);
-const popupMessage = ref('');
+const popupMessage = ref("");
 const showProductDetails = ref(true);
 const isLoading = ref(false);
-const auth = useUserStore()
+const auth = useUserStore();
 const watchData = reactive({
   name: "",
   price: "",
@@ -513,20 +533,20 @@ const watchData = reactive({
   bezel_material: "",
   case_back: "",
   casedimension: "",
-  case_shape: ""
-}
-)
+  case_shape: "",
+});
 
-if(useUserStore().role!='ROLE_USER' && useUserStore().role!='ROLE_SELLER'){
-  router.push('/')
+if (
+  useUserStore().role != "ROLE_USER" &&
+  useUserStore().role != "ROLE_SELLER"
+) {
+  router.push("/");
 }
 
 const textareaHeight = ref("80"); // Initial height of textarea
 const isFocused = ref(false); // Flag to track textarea focus state
 const uploadedImages = ref([]); // Array to hold uploaded images
-const imageURLs = ref([])
-
-
+const imageURLs = ref([]);
 
 // const adjustHeight = () => {
 //   // Adjust textarea height dynamically based on content
@@ -534,18 +554,18 @@ const imageURLs = ref([])
 // };
 
 onMounted(() => {
-  date.value = null
-  if (localStorage.getItem('showUploadSuccessPopup') === 'true') {
-    popupMessage.value = 'Đăng bán thành công';
+  date.value = null;
+  if (localStorage.getItem("showUploadSuccessPopup") === "true") {
+    popupMessage.value = "Đăng bán thành công";
     isPopupVisible.value = true;
     showProductDetails.value = false;
-    localStorage.removeItem('showUploadSuccessPopup');
+    localStorage.removeItem("showUploadSuccessPopup");
   }
 });
 
 async function uploadHandle() {
   isLoading.value = true;
-   try {
+  try {
     const uploadData = {
       name: watchData.name,
       price: watchData.price,
@@ -576,16 +596,19 @@ async function uploadHandle() {
       bezelmaterial: watchData.bezel_material,
       caseback: watchData.case_back,
       casedimension: watchData.casedimension,
-      caseshape: watchData.case_shape
-
+      caseshape: watchData.case_shape,
     };
-    useWatchStore().loadWatch(uploadData)
-    const response = await useWatchStore().uploadWatch(useUserStore().user_id, useUserStore().username);
-    console.log("Upload successful", response);
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    localStorage.setItem('showUploadSuccessPopup', 'true');
-    window.location.reload()
+    useWatchStore().loadWatch(uploadData);
+    const response = await useWatchStore().uploadWatch(
+      useUserStore().user_id,
+      useUserStore().username
+    );
+    useWatchStore().createRequestWatch(useAuthStore().user_id, response.data, watchData.description)
+    console.log("Upload successful", response.data);
 
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    localStorage.setItem("showUploadSuccessPopup", "true");
+    window.location.reload();
   } catch (error) {
     console.error("Upload error", error);
   } finally {
@@ -594,7 +617,7 @@ async function uploadHandle() {
 }
 
 const isImageFile = (file) => {
-  return file.type.startsWith('image/');
+  return file.type.startsWith("image/");
 };
 
 const handleDrop = async (event) => {
@@ -612,7 +635,7 @@ const handleFiles = async (files) => {
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
     if (!isImageFile(file)) {
-      alert('Chỉ cho phép tải lên file ảnh!');
+      alert("Chỉ cho phép tải lên file ảnh!");
       continue;
     }
     const reader = new FileReader();
@@ -631,46 +654,45 @@ const handleFiles = async (files) => {
 };
 
 const clear = () => {
- watchData.name = "",
-watchData.price= "",
-watchData.description= "",
-imageURLs.value= "",
- watchData.brand= "",
-watchData.series= "",
-   watchData.model= "",
-    watchData.gender= "",
-   watchData.style_type= "",
-   watchData.sub_class= "",
-   watchData.made_label= "",
-   watchData.calender= "",
-     watchData.feature= "",
-    watchData.movement= "",
- watchData.function= "",
-    watchData.engine= "",
-       watchData.water_resistant= "",
-   watchData.band_color= "",
-     watchData.band_type= "",
-    watchData.clasp= "",
-   watchData.bracelet= "",
-   watchData.dial_type= "",
-     watchData.dial_color= "",
-       watchData.crystal= "",
-    watchData.second_makers= "",
-   watchData.bezel= "",
-watchData.bezel_material= "",
- watchData.case_back= "",
-watchData.casedimension= "",
-    watchData.case_shape= ""
-    date.value = null
-
-}
+  (watchData.name = ""),
+    (watchData.price = ""),
+    (watchData.description = ""),
+    (imageURLs.value = ""),
+    (watchData.brand = ""),
+    (watchData.series = ""),
+    (watchData.model = ""),
+    (watchData.gender = ""),
+    (watchData.style_type = ""),
+    (watchData.sub_class = ""),
+    (watchData.made_label = ""),
+    (watchData.calender = ""),
+    (watchData.feature = ""),
+    (watchData.movement = ""),
+    (watchData.function = ""),
+    (watchData.engine = ""),
+    (watchData.water_resistant = ""),
+    (watchData.band_color = ""),
+    (watchData.band_type = ""),
+    (watchData.clasp = ""),
+    (watchData.bracelet = ""),
+    (watchData.dial_type = ""),
+    (watchData.dial_color = ""),
+    (watchData.crystal = ""),
+    (watchData.second_makers = ""),
+    (watchData.bezel = ""),
+    (watchData.bezel_material = ""),
+    (watchData.case_back = ""),
+    (watchData.casedimension = ""),
+    (watchData.case_shape = "");
+  date.value = null;
+};
 
 const uploadToCDN = async (file, imageObject) => {
   try {
     const response = await useCloudinaryStore().uploadImage(file);
     // Update image URL and loading status after successful upload
     imageObject.url = response.secure_url;
-    imageURLs.value.push(imageObject.url)
+    imageURLs.value.push(imageObject.url);
     imageObject.loading = false;
   } catch (error) {
     console.error("Error uploading file:", error);
@@ -688,16 +710,16 @@ const removeImage = (index) => {
 };
 
 const unisexGender = () => {
-  watchData.gender = "Unisex"
-}
+  watchData.gender = "Unisex";
+};
 
 const maleGender = () => {
-  watchData.gender = "Male"
-}
+  watchData.gender = "Male";
+};
 
 const femaleGender = () => {
-  watchData.gender = "Female"
-}
+  watchData.gender = "Female";
+};
 </script>
 
 <style scoped>
@@ -838,8 +860,6 @@ const femaleGender = () => {
   animation: borealisBar 2s linear infinite;
 }
 
-
-
 .loader::after {
   content: "";
   box-sizing: border-box;
@@ -944,16 +964,16 @@ h3 {
   box-shadow: 0 0 0 4px #FFBD59;
 } */
 
-.select{
+.select {
   display: flex;
   flex-direction: row;
 }
 
-.mydict:hover label{
-  color:var(--secondary)
+.mydict:hover label {
+  color: var(--secondary);
 }
 
-.mydict .form{
+.mydict .form {
   color: #fff;
   display: flex;
   flex-wrap: wrap;
@@ -962,7 +982,7 @@ h3 {
   flex-direction: column;
 }
 
-.mydict input[type="radio"]{
+.mydict input[type="radio"] {
   clip: rect(0 0 0 0);
   clip-path: inset(100%);
   height: 1px;
@@ -972,23 +992,23 @@ h3 {
 }
 
 .mydict input[type="radio"]:checked + span {
-  box-shadow: 0 0 0 0.0625em #FFBD59;
+  box-shadow: 0 0 0 0.0625em #ffbd59;
   background-color: #5232003a;
   z-index: 1;
-  color: #FFBD59;
+  color: #ffbd59;
 }
 
 label .select-op {
   display: block;
   cursor: pointer;
-  padding: 0.375em .75em;
+  padding: 0.375em 0.75em;
   position: relative;
-  margin-left: .0625em;
+  margin-left: 0.0625em;
   box-shadow: 0 0 0 0.0625em #b5bfd9;
-  letter-spacing: .05em;
+  letter-spacing: 0.05em;
   color: #fff;
   text-align: center;
-  transition: background-color .5s ease;
+  transition: background-color 0.5s ease;
 }
 
 @media (max-width: 768px) {
@@ -1096,7 +1116,6 @@ label .select-op {
   top: 0;
   animation: rotation 2s ease-in-out infinite alternate;
 }
-
 
 @keyframes rotation {
   0% {

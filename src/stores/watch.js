@@ -261,5 +261,18 @@ export const useWatchStore = defineStore("watch", {
         throw error;
       }
     },
+
+    createRequestWatch(seller_id, watch_id, note){
+      axios.post(`${api}/seller/create/appraise-request/${seller_id}`,{
+        watch_id: watch_id,
+        note: note
+      })
+      .then((res)=>{
+        console.log(res);  
+      })
+      .catch((err)=>{
+        console.log(err);
+      })
+    }
   }
 });
